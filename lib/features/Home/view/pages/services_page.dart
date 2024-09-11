@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 class ServicesPage extends StatelessWidget {
   const ServicesPage({super.key});
@@ -11,7 +12,7 @@ class ServicesPage extends StatelessWidget {
           Navigator.pop(context);
         }, icon: Icon(Icons.arrow_back)),
       ),
-      body: Center(child: Text('Services Page'),),
+      body: Center(child: Lottie.asset('assets/animations/car_service.json')),
     );
   }
 }

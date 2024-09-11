@@ -15,6 +15,12 @@ class $AssetsIconsGen {
   /// File path: assets/icons/hand_car_icon.svg
   String get handCarIcon => 'assets/icons/hand_car_icon.svg';
 
+  /// File path: assets/icons/ic_car_seat_filled.svg
+  String get icCarSeatFilled => 'assets/icons/ic_car_seat_filled.svg';
+
+  /// File path: assets/icons/ic_car_seat_outline.svg
+  String get icCarSeatOutline => 'assets/icons/ic_car_seat_outline.svg';
+
   /// File path: assets/icons/ic_car_service_filled.svg
   String get icCarServiceFilled => 'assets/icons/ic_car_service_filled.svg';
 
@@ -33,6 +39,12 @@ class $AssetsIconsGen {
   /// File path: assets/icons/ic_home_outline.svg
   String get icHomeOutline => 'assets/icons/ic_home_outline.svg';
 
+  /// File path: assets/icons/ic_spare_filled.svg
+  String get icSpareFilled => 'assets/icons/ic_spare_filled.svg';
+
+  /// File path: assets/icons/ic_spare_outline.svg
+  String get icSpareOutline => 'assets/icons/ic_spare_outline.svg';
+
   /// File path: assets/icons/ic_subscription_filled.svg
   String get icSubscriptionFilled => 'assets/icons/ic_subscription_filled.svg';
 
@@ -49,12 +61,16 @@ class $AssetsIconsGen {
   /// List of all assets
   List<String> get values => [
         handCarIcon,
+        icCarSeatFilled,
+        icCarSeatOutline,
         icCarServiceFilled,
         icCarServiceOutline,
         icCarWashFilled,
         icCarWashOutline,
         icHomeFilled,
         icHomeOutline,
+        icSpareFilled,
+        icSpareOutline,
         icSubscriptionFilled,
         icSubscriptionOutline,
         icTireFilled,
