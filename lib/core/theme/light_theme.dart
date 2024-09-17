@@ -19,10 +19,12 @@ final lightTheme = ThemeData(
           backgroundSubtle: ColorPalette.black,
           white: ColorPalette.white400,
           warning: ColorPalette.red200,
-          green: ColorPalette.green100,
+          green100: ColorPalette.green100,
           background: ColorPalette.grey,
           btnShadow: ColorPalette.pink,
           containerShadow: ColorPalette.pink200,
+          green: ColorPalette.green
+
           ),
       TypographyExtention(
         h1: TextStyle(

@@ -5,12 +5,17 @@ class PlanButton extends StatelessWidget {
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
+  final LinearGradient gradient;
+  final Color textColor1;
+  final Color textColor2;
 
   const PlanButton({
     super.key,
     required this.label,
     required this.isSelected,
     required this.onTap,
+    required this.gradient
+    , required this.textColor1, required this.textColor2
   });
 
   @override
@@ -20,10 +25,10 @@ class PlanButton extends StatelessWidget {
       child: Container(
         padding:  EdgeInsets.symmetric(horizontal: context.space.space_200, vertical: context.space.space_100),
         decoration: BoxDecoration(
-          gradient: isSelected?LinearGradient(colors: [
-            Color(0xffDA1E21),
-            Color(0xffF77577)
-          ]):null,
+          gradient: isSelected?gradient
+            // Color(0xffDA1E21),
+            // Color(0xffF77577)
+:null,
           borderRadius: BorderRadius.circular(22),
         ),
         child: Text(
@@ -32,7 +37,7 @@ class PlanButton extends StatelessWidget {
           //   color: isSelected ? Colors.white : Color(0xffBE6A6B),
           //   fontWeight: FontWeight.w500,
           // ),
-          style: context.typography.bodyMedium.copyWith(color: isSelected?context.colors.white:Color(0xffBE6A6B)),
+          style: context.typography.bodyMedium.copyWith(color: isSelected?textColor1:textColor2),
         ),
       ),
     );

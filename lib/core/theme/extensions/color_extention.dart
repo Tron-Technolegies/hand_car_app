@@ -9,10 +9,11 @@ class ColorExtention extends ThemeExtension<ColorExtention> {
   final Color backgroundSubtle;
   final Color white;
   final Color warning;
-  final Color green;
+  final Color green100;
   final Color background;
   final Color btnShadow;
   final Color containerShadow;
+  final Color green;
   ColorExtention(
       {required this.primary,
       required this.primaryTxt,
@@ -20,10 +21,11 @@ class ColorExtention extends ThemeExtension<ColorExtention> {
       required this.backgroundSubtle,
       required this.white,
       required this.warning,
-      required this.green,
+      required this.green100,
       required this.background,
       required this.btnShadow,
       required this.containerShadow,
+      required this.green,
       });
   @override
   ThemeExtension<ColorExtention> copyWith({
@@ -33,10 +35,11 @@ class ColorExtention extends ThemeExtension<ColorExtention> {
     Color? backgroundSubtle,
     Color? white,
     Color? warning,
-    Color? green,
+    Color? green100,
     Color? background,
     Color? btnShadow,
     Color? containerShadow,
+    Color? green,
     
   }) {
     return ColorExtention(
@@ -46,10 +49,11 @@ class ColorExtention extends ThemeExtension<ColorExtention> {
         backgroundSubtle: backgroundSubtle ?? this.backgroundSubtle,
         white: white ?? this.white,
         warning: warning ?? this.warning,
-        green: green ?? this.green,
+        green100: green100 ?? this.green100,
         background: background ?? this.background,
         btnShadow: btnShadow ?? this.btnShadow,
         containerShadow: containerShadow ?? this.containerShadow,
+        green: green ?? this.green,
         );
   }
 
@@ -71,6 +75,7 @@ class ColorExtention extends ThemeExtension<ColorExtention> {
         background: Color.lerp(background, other.background, t)!,
         btnShadow: Color.lerp(btnShadow, other.btnShadow, t)!,
         containerShadow: Color.lerp(containerShadow, other.containerShadow, t)!,
+        green100: Color.lerp(green100, other.green100, t)!,
         );
   }
 }

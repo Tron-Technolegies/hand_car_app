@@ -9,6 +9,22 @@
 
 import 'package:flutter/widgets.dart';
 
+class $AssetsAnimationsGen {
+  const $AssetsAnimationsGen();
+
+  /// File path: assets/animations/car_animation.json
+  String get carAnimation => 'assets/animations/car_animation.json';
+
+  /// File path: assets/animations/car_service.json
+  String get carService => 'assets/animations/car_service.json';
+
+  /// File path: assets/animations/car_wash.json
+  String get carWash => 'assets/animations/car_wash.json';
+
+  /// List of all assets
+  List<String> get values => [carAnimation, carService, carWash];
+}
+
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
@@ -114,6 +130,34 @@ class $AssetsImagesGen {
   /// File path: assets/images/car.png
   AssetGenImage get car => const AssetGenImage('assets/images/car.png');
 
+  /// File path: assets/images/img_painting1.jpg
+  AssetGenImage get imgPainting1 =>
+      const AssetGenImage('assets/images/img_painting1.jpg');
+
+  /// File path: assets/images/img_painting2.jpg
+  AssetGenImage get imgPainting2 =>
+      const AssetGenImage('assets/images/img_painting2.jpg');
+
+  /// File path: assets/images/img_painting3.jpg
+  AssetGenImage get imgPainting3 =>
+      const AssetGenImage('assets/images/img_painting3.jpg');
+
+  /// File path: assets/images/img_painting4.jpg
+  AssetGenImage get imgPainting4 =>
+      const AssetGenImage('assets/images/img_painting4.jpg');
+
+  /// File path: assets/images/img_painting5.jpg
+  AssetGenImage get imgPainting5 =>
+      const AssetGenImage('assets/images/img_painting5.jpg');
+
+  /// File path: assets/images/img_painting6.jpg
+  AssetGenImage get imgPainting6 =>
+      const AssetGenImage('assets/images/img_painting6.jpg');
+
+  /// File path: assets/images/painting.png
+  AssetGenImage get painting =>
+      const AssetGenImage('assets/images/painting.png');
+
   /// File path: assets/images/spare_parts.png
   AssetGenImage get spareParts =>
       const AssetGenImage('assets/images/spare_parts.png');
@@ -130,6 +174,13 @@ class $AssetsImagesGen {
         tireMechanic,
         accessories,
         car,
+        imgPainting1,
+        imgPainting2,
+        imgPainting3,
+        imgPainting4,
+        imgPainting5,
+        imgPainting6,
+        painting,
         spareParts
       ];
 }
@@ -137,6 +188,7 @@ class $AssetsImagesGen {
 class Assets {
   Assets._();
 
+  static const $AssetsAnimationsGen animations = $AssetsAnimationsGen();
   static const $AssetsIconsGen icons = $AssetsIconsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
 }

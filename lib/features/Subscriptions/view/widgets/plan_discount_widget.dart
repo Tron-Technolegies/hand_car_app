@@ -4,8 +4,9 @@ class PlanDiscountWidget extends StatelessWidget {
   final String number;
   final String plan;
   final String price;
+  final Color color;
   const PlanDiscountWidget({
-    super.key, required this.number, required this.plan, required this.price,
+    super.key, required this.number, required this.plan, required this.price, required this.color,
   });
 
   @override
@@ -17,9 +18,9 @@ class PlanDiscountWidget extends StatelessWidget {
           Container(
             width: 24,
             height: 24,
-            decoration: const BoxDecoration(
+            decoration:  BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.green,
+              color: color,
             ),
             child: Center(
               child: Text(
