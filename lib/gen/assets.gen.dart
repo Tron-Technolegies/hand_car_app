@@ -21,8 +21,25 @@ class $AssetsAnimationsGen {
   /// File path: assets/animations/car_wash.json
   String get carWash => 'assets/animations/car_wash.json';
 
+  /// File path: assets/animations/premium_membership.json
+  String get premiumMembership => 'assets/animations/premium_membership.json';
+
+  /// File path: assets/animations/premium_service.json
+  String get premiumService => 'assets/animations/premium_service.json';
+
+  /// File path: assets/animations/premium_subscription.json
+  String get premiumSubscription =>
+      'assets/animations/premium_subscription.json';
+
   /// List of all assets
-  List<String> get values => [carAnimation, carService, carWash];
+  List<String> get values => [
+        carAnimation,
+        carService,
+        carWash,
+        premiumMembership,
+        premiumService,
+        premiumSubscription
+      ];
 }
 
 class $AssetsIconsGen {

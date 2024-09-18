@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/features/service/view/widgets/service_info_container_widget.dart';
-import 'package:hand_car/gen/assets.gen.dart';
 
 class AccessoriesPage extends StatelessWidget {
   const AccessoriesPage({super.key});
@@ -13,10 +10,10 @@ class AccessoriesPage extends StatelessWidget {
         title: const Text('Accessories'),
         centerTitle: true,
       ),
-      body: SafeArea(
+      body: const SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(8.0),   )))
+            padding: EdgeInsets.all(8.0),   )))
     );
   }
 }

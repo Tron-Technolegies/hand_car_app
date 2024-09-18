@@ -3,12 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
+import 'package:hand_car/features/Authentication/view/pages/login_page.dart';
 import 'package:hand_car/features/Home/view/pages/accessories_page.dart';
 import 'package:hand_car/features/Home/view/pages/home_page.dart';
 import 'package:hand_car/features/service/view/pages/services_page.dart';
-import 'package:hand_car/features/Home/view/pages/spares_page.dart';
 import 'package:hand_car/features/Subscriptions/view/pages/car_wash_subscription.dart';
-import 'package:hand_car/features/Subscriptions/view/pages/service_subscription_page.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -37,9 +36,9 @@ class NavigationPage extends HookConsumerWidget {
       physics: const NeverScrollableScrollPhysics(),
       children: [
          const HomePage(),
-        const SparesPage(),
+        const LoginPage(),
       
-        const ServicePlanScreen(),
+       const AccessoriesPage(),
         ServicesPage(),
         const CarWashPlanScreen()
       ],

@@ -26,8 +26,8 @@ class ServicesButtonWidget extends StatelessWidget {
       onPressed: () => onSelectPlan(selectedIndex),
       child: Text(
         title,
-        style: context.typography.bodyLarge.copyWith(
-          color: isSelected ? context.colors.white : Color(0xff767676),
+        style: context.typography.bodyLargeMedium.copyWith(
+          color: isSelected ? context.colors.white : const Color(0xff767676),
         ),
       ),
     );

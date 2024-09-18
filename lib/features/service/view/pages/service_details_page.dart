@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/features/service/view/widgets/contact_container_widget.dart';
 import 'package:hand_car/features/service/view/widgets/services_list_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -42,6 +41,7 @@ class ServiceDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Function to make phone call
 Future<void> makePhoneCall(String phoneNumber) async {
   final Uri launchUri = Uri(
     scheme: 'tel',
@@ -51,9 +51,10 @@ Future<void> makePhoneCall(String phoneNumber) async {
   if (await canLaunchUrl(launchUri)) {
     await launchUrl(launchUri);
   } else {
-    print('Could not launch $phoneNumber');
+    throw Exception('Could not launch $phoneNumber');
   }
 }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(' Service Details'),

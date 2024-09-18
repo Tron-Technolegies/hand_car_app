@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 
-
 class ButtonWidget extends StatelessWidget {
   final bool isDanger;
   final String label;
@@ -48,7 +47,11 @@ class ButtonWidget extends StatelessWidget {
           ? CircularProgressIndicator(
               color: context.colors.backgroundSubtle,
             )
-          : Text(label),
+          : Text(
+              label,
+              style: context.typography.bodyLarge
+                  .copyWith(color: context.colors.white),
+            ),
     );
   }
 }
