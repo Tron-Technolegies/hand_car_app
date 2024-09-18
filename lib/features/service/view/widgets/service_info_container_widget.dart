@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/features/service/view/widgets/service_hero_widget.dart';
+import 'package:hand_car/core/widgets/button_widget.dart';
 
 class PaintSolutionCard extends StatelessWidget {
   final String image;
@@ -23,20 +24,7 @@ class PaintSolutionCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PaintServiceDetails(
-                image: image,
-                title: title,
-                title2: title2,
-                rating: rating,
-                price: price,
-              ),
-            ),
-          );
-        },
+        onTap: () {},
         child: Container(
           decoration: BoxDecoration(
             color: Colors.grey.shade200,
@@ -96,6 +84,20 @@ class PaintSolutionCard extends StatelessWidget {
                   ],
                 ),
               ),
+              ButtonWidget(
+                  label: 'View Details',
+                  onTap: () {
+                    context.push(
+                      '/serviceDetailsPage',
+                      extra: {
+                        'image': image,
+                        'title': title,
+                        'title2': title2,
+                        'rating': rating,
+                        'price': price,
+                      },
+                    );
+                  })
             ],
           ),
         ),

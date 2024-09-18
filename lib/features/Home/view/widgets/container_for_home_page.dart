@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
-import 'package:hand_car/features/Home/view/pages/services_page.dart';
+import 'package:hand_car/features/service/view/pages/services_page.dart';
 
 class ContainerForHomePage extends StatelessWidget {
   final String text1;
@@ -39,7 +39,7 @@ class ContainerForHomePage extends StatelessWidget {
                   ),
                   SizedBox(height: context.space.space_200,),
             ButtonWidget(label: text3, onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context)=> const ServicesPage()),);
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>  ServicesPage()),);
             })
       
                 ],

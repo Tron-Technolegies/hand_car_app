@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
+import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -23,12 +24,7 @@ class ProductSearchContainerWidget extends StatelessWidget {
         await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
       } else {
         // Fallback if canLaunchUrl fails
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-                "Could not launch WhatsApp. Please open WhatsApp manually."),
-          ),
-        );
+       SnackbarUtil.showsnackbar(message: "Could not launch WhatsApp", showretry: true);
       }
     }
 

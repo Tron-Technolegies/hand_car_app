@@ -28,6 +28,9 @@ class $AssetsAnimationsGen {
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// File path: assets/icons/email.png
+  AssetGenImage get email => const AssetGenImage('assets/icons/email.png');
+
   /// File path: assets/icons/hand_car_icon.svg
   String get handCarIcon => 'assets/icons/hand_car_icon.svg';
 
@@ -74,8 +77,16 @@ class $AssetsIconsGen {
   /// File path: assets/icons/ic_tire_outline.svg
   String get icTireOutline => 'assets/icons/ic_tire_outline.svg';
 
+  /// File path: assets/icons/phone.png
+  AssetGenImage get phone => const AssetGenImage('assets/icons/phone.png');
+
+  /// File path: assets/icons/whatsapp.png
+  AssetGenImage get whatsapp =>
+      const AssetGenImage('assets/icons/whatsapp.png');
+
   /// List of all assets
-  List<String> get values => [
+  List<dynamic> get values => [
+        email,
         handCarIcon,
         icCarSeatFilled,
         icCarSeatOutline,
@@ -90,7 +101,9 @@ class $AssetsIconsGen {
         icSubscriptionFilled,
         icSubscriptionOutline,
         icTireFilled,
-        icTireOutline
+        icTireOutline,
+        phone,
+        whatsapp
       ];
 }
 

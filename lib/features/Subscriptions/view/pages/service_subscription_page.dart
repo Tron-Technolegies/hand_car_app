@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/features/Subscriptions/view/widgets/button_for%20plan_selection_widget.dart';
+import 'package:hand_car/features/Subscriptions/view/widgets/button_for_plan_selection_widget.dart';
 import 'package:hand_car/features/Subscriptions/view/widgets/plans_container_widget.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-
-
 
 class ServicePlanScreen extends HookConsumerWidget {
   static const String route = '/servicePlans';
   const ServicePlanScreen({super.key});
 
-
   @override
+
   /// Returns a Scaffold with a gradient background and a single child: a
   /// SingleChildScrollView with a Column of children.
   ///
@@ -31,7 +29,7 @@ class ServicePlanScreen extends HookConsumerWidget {
   /// state when the page changes.
   Widget build(BuildContext context, ref) {
     final selectedIndex = useState(0);
-    final pageController=usePageController();
+    final pageController = usePageController();
     //Page changing function
     void onItemTapped(int index) {
       selectedIndex.value = index;
@@ -39,15 +37,14 @@ class ServicePlanScreen extends HookConsumerWidget {
     }
 
     return Scaffold(
+      extendBody: true,
       body: SingleChildScrollView(
         child: Container(
-          decoration: const BoxDecoration(
-           
-          ),
+          decoration: const BoxDecoration(),
           child: SafeArea(
             child: Column(
               children: [
-                 const Padding(
+                const Padding(
                   padding: EdgeInsets.all(20.0),
                   child: Text(
                     'Plans for Maintainance Services',
@@ -74,12 +71,10 @@ class ServicePlanScreen extends HookConsumerWidget {
                     PlanSelectionButtons(
                       selectedIndex: selectedIndex.value,
                       onSelectPlan: onItemTapped,
-                      gradientColor:  const LinearGradient(
-                       
+                      gradientColor: const LinearGradient(
                         colors: [
                           Color(0xff000000),
                           Color(0xff787878),
-                      
                         ],
                       ),
                       textColor1: Colors.white,
@@ -95,12 +90,11 @@ class ServicePlanScreen extends HookConsumerWidget {
                   child: PageView(
                     controller: pageController,
                     onPageChanged: (index) => selectedIndex.value = index,
-                    children:  [
+                    children: [
                       PlansContainer(
                         planName: 'Basic',
                         price: '299',
-                        planFeature1:
-                            "Unlimited synthetic oil changes",
+                        planFeature1: "Unlimited synthetic oil changes",
                         planFeature2: "Seasonal tire rotations",
                         planFeature3: "Priority scheduling",
                         color: context.colors.primaryTxt,
@@ -119,21 +113,18 @@ class ServicePlanScreen extends HookConsumerWidget {
                         containerColor: context.colors.background,
                         textColor1: context.colors.primaryTxt,
                         textColor2: const Color(0xff787878),
-
                       ),
                       PlansContainer(
                         planName: "Luxury ",
                         price: "749",
-                        planFeature1:
-                            "All Premium Maintenance Plan services",
+                        planFeature1: "All Premium Maintenance Plan services",
                         planFeature2: "Monthly diagnostics",
                         planFeature3: "24/7 roadside assistance",
-                        planFeature4:"Complimentary detailing twice a year",
+                        planFeature4: "Complimentary detailing twice a year",
                         color: context.colors.primaryTxt,
                         containerColor: context.colors.background,
                         textColor1: context.colors.primaryTxt,
                         textColor2: const Color(0xff787878),
-
                       ),
                     ],
                   ),

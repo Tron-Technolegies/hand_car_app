@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:hand_car/core/router/router.dart';
 import 'package:hand_car/core/theme/light_theme.dart';
-import 'package:hand_car/features/Home/view/pages/navigation_page.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(const ProviderScope(child: MainApp()));
 }
 
 class MainApp extends StatelessWidget {
@@ -12,12 +13,13 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Hand Car',
       debugShowCheckedModeBanner: false,
       theme: lightTheme,
       scaffoldMessengerKey: scaffoldMessengerKey,
-      home: const NavigationPage(),
+      routerConfig: router,
+
     );
   }
 }
