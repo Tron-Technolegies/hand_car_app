@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SparesPage extends StatelessWidget {
+  static const String routeName = 'spares';
   const SparesPage({super.key});
 
   @override

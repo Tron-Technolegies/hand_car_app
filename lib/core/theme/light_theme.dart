@@ -23,7 +23,8 @@ final lightTheme = ThemeData(
           background: ColorPalette.grey,
           btnShadow: ColorPalette.pink,
           containerShadow: ColorPalette.pink200,
-          green: ColorPalette.green
+          green: ColorPalette.green,
+          yellow: ColorPalette.yellow
 
           ),
       TypographyExtention(

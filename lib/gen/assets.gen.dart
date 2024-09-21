@@ -15,6 +15,9 @@ class $AssetsAnimationsGen {
   /// File path: assets/animations/car_animation.json
   String get carAnimation => 'assets/animations/car_animation.json';
 
+  /// File path: assets/animations/car_rolling.json
+  String get carRolling => 'assets/animations/car_rolling.json';
+
   /// File path: assets/animations/car_service.json
   String get carService => 'assets/animations/car_service.json';
 
@@ -34,6 +37,7 @@ class $AssetsAnimationsGen {
   /// List of all assets
   List<String> get values => [
         carAnimation,
+        carRolling,
         carService,
         carWash,
         premiumMembership,
@@ -160,6 +164,18 @@ class $AssetsImagesGen {
   /// File path: assets/images/car.png
   AssetGenImage get car => const AssetGenImage('assets/images/car.png');
 
+  /// File path: assets/images/img_car_care_accessories.png
+  AssetGenImage get imgCarCareAccessories =>
+      const AssetGenImage('assets/images/img_car_care_accessories.png');
+
+  /// File path: assets/images/img_car_interior_accessories.jpg
+  AssetGenImage get imgCarInteriorAccessories =>
+      const AssetGenImage('assets/images/img_car_interior_accessories.jpg');
+
+  /// File path: assets/images/img_car_speaker.jpg
+  AssetGenImage get imgCarSpeaker =>
+      const AssetGenImage('assets/images/img_car_speaker.jpg');
+
   /// File path: assets/images/img_painting1.jpg
   AssetGenImage get imgPainting1 =>
       const AssetGenImage('assets/images/img_painting1.jpg');
@@ -204,6 +220,9 @@ class $AssetsImagesGen {
         tireMechanic,
         accessories,
         car,
+        imgCarCareAccessories,
+        imgCarInteriorAccessories,
+        imgCarSpeaker,
         imgPainting1,
         imgPainting2,
         imgPainting3,

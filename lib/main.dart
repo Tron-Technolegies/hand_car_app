@@ -9,6 +9,8 @@ void main() {
 
 class MainApp extends StatelessWidget {
   static final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+  static final navigatorkey = GlobalKey<NavigatorState>();
+  
   const MainApp({super.key});
 
   @override
@@ -19,6 +21,7 @@ class MainApp extends StatelessWidget {
       theme: lightTheme,
       scaffoldMessengerKey: scaffoldMessengerKey,
       routerConfig: router,
+      
 
     );
   }

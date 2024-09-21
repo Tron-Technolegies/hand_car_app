@@ -8,7 +8,8 @@ class ContainerForHomePage extends StatelessWidget {
   final String text2;
   final String text3;
   final String image;
-  const ContainerForHomePage({super.key, required this.text1, required this.text2, required this.text3, required this.image});
+  final VoidCallback onTap;
+  const ContainerForHomePage({super.key, required this.text1, required this.text2, required this.text3, required this.image, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -38,9 +39,7 @@ class ContainerForHomePage extends StatelessWidget {
                         .copyWith(color: context.colors.primaryTxt),
                   ),
                   SizedBox(height: context.space.space_200,),
-            ButtonWidget(label: text3, onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>  ServicesPage()),);
-            })
+            ButtonWidget(label: text3, onTap: onTap)
       
                 ],
               ),

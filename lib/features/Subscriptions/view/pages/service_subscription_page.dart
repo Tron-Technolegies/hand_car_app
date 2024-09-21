@@ -6,7 +6,7 @@ import 'package:hand_car/features/Subscriptions/view/widgets/plans_container_wid
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class ServicePlanScreen extends HookConsumerWidget {
-  static const String route = '/servicePlans';
+  static const String route = '/service_plans';
   const ServicePlanScreen({super.key});
 
   @override

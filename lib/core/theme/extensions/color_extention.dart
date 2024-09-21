@@ -14,6 +14,7 @@ class ColorExtention extends ThemeExtension<ColorExtention> {
   final Color btnShadow;
   final Color containerShadow;
   final Color green;
+  final Color yellow;
   ColorExtention(
       {required this.primary,
       required this.primaryTxt,
@@ -26,6 +27,7 @@ class ColorExtention extends ThemeExtension<ColorExtention> {
       required this.btnShadow,
       required this.containerShadow,
       required this.green,
+      required this.yellow
       });
   @override
   ThemeExtension<ColorExtention> copyWith({
@@ -40,6 +42,8 @@ class ColorExtention extends ThemeExtension<ColorExtention> {
     Color? btnShadow,
     Color? containerShadow,
     Color? green,
+    Color? yellow
+
     
   }) {
     return ColorExtention(
@@ -54,6 +58,7 @@ class ColorExtention extends ThemeExtension<ColorExtention> {
         btnShadow: btnShadow ?? this.btnShadow,
         containerShadow: containerShadow ?? this.containerShadow,
         green: green ?? this.green,
+        yellow: yellow?? this.yellow,
         );
   }
 
@@ -76,6 +81,7 @@ class ColorExtention extends ThemeExtension<ColorExtention> {
         btnShadow: Color.lerp(btnShadow, other.btnShadow, t)!,
         containerShadow: Color.lerp(containerShadow, other.containerShadow, t)!,
         green100: Color.lerp(green100, other.green100, t)!,
+        yellow: Color.lerp(yellow, other.yellow, t)!,
         );
   }
 }

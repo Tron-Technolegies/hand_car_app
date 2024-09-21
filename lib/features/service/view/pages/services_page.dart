@@ -10,7 +10,7 @@ import 'package:lottie/lottie.dart';
 
 //Services Page
 class ServicesPage extends HookConsumerWidget {
-  static const String route = '/services';
+  static const String route = '/services_page';
   final List<String> services = [
     "Painting",
     "Fitting",
@@ -79,7 +79,7 @@ class ServicesPage extends HookConsumerWidget {
           children: [
             SizedBox(height: context.space.space_200),
             SizedBox(
-              height: context.space.space_500,
+              height: context.space.space_600,
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: List.generate(
@@ -97,7 +97,7 @@ class ServicesPage extends HookConsumerWidget {
                 ),
               ),
             ),
-            SizedBox(height: context.space.space_200),
+            SizedBox(height: context.space.space_100),
             SizedBox(
               height: 600,
               //PageView For Services
