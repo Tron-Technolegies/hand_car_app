@@ -49,6 +49,18 @@ class $AssetsAnimationsGen {
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// File path: assets/icons/bosch_logo.png
+  AssetGenImage get boschLogo =>
+      const AssetGenImage('assets/icons/bosch_logo.png');
+
+  /// File path: assets/icons/delphi_logo.png
+  AssetGenImage get delphiLogo =>
+      const AssetGenImage('assets/icons/delphi_logo.png');
+
+  /// File path: assets/icons/denso_logo.jpg
+  AssetGenImage get densoLogo =>
+      const AssetGenImage('assets/icons/denso_logo.jpg');
+
   /// File path: assets/icons/email.png
   AssetGenImage get email => const AssetGenImage('assets/icons/email.png');
 
@@ -98,8 +110,20 @@ class $AssetsIconsGen {
   /// File path: assets/icons/ic_tire_outline.svg
   String get icTireOutline => 'assets/icons/ic_tire_outline.svg';
 
+  /// File path: assets/icons/mahle-logo.png
+  AssetGenImage get mahleLogo =>
+      const AssetGenImage('assets/icons/mahle-logo.png');
+
+  /// File path: assets/icons/nissens_logo.png
+  AssetGenImage get nissensLogo =>
+      const AssetGenImage('assets/icons/nissens_logo.png');
+
   /// File path: assets/icons/phone.png
   AssetGenImage get phone => const AssetGenImage('assets/icons/phone.png');
+
+  /// File path: assets/icons/pwr_logo.webp
+  AssetGenImage get pwrLogo =>
+      const AssetGenImage('assets/icons/pwr_logo.webp');
 
   /// File path: assets/icons/whatsapp.png
   AssetGenImage get whatsapp =>
@@ -107,6 +131,9 @@ class $AssetsIconsGen {
 
   /// List of all assets
   List<dynamic> get values => [
+        boschLogo,
+        delphiLogo,
+        densoLogo,
         email,
         handCarIcon,
         icCarSeatFilled,
@@ -123,7 +150,10 @@ class $AssetsIconsGen {
         icSubscriptionOutline,
         icTireFilled,
         icTireOutline,
+        mahleLogo,
+        nissensLogo,
         phone,
+        pwrLogo,
         whatsapp
       ];
 }
@@ -163,6 +193,18 @@ class $AssetsImagesGen {
 
   /// File path: assets/images/car.png
   AssetGenImage get car => const AssetGenImage('assets/images/car.png');
+
+  /// File path: assets/images/car_painting_service.png
+  AssetGenImage get carPaintingService =>
+      const AssetGenImage('assets/images/car_painting_service.png');
+
+  /// File path: assets/images/car_tyre_service.png
+  AssetGenImage get carTyreService =>
+      const AssetGenImage('assets/images/car_tyre_service.png');
+
+  /// File path: assets/images/car_washing_services.png
+  AssetGenImage get carWashingServices =>
+      const AssetGenImage('assets/images/car_washing_services.png');
 
   /// File path: assets/images/img_car_care_accessories.png
   AssetGenImage get imgCarCareAccessories =>
@@ -204,6 +246,12 @@ class $AssetsImagesGen {
   AssetGenImage get painting =>
       const AssetGenImage('assets/images/painting.png');
 
+  /// File path: assets/images/person.png
+  AssetGenImage get person => const AssetGenImage('assets/images/person.png');
+
+  /// File path: assets/images/pioneer.png
+  AssetGenImage get pioneer => const AssetGenImage('assets/images/pioneer.png');
+
   /// File path: assets/images/spare_parts.png
   AssetGenImage get spareParts =>
       const AssetGenImage('assets/images/spare_parts.png');
@@ -220,6 +268,9 @@ class $AssetsImagesGen {
         tireMechanic,
         accessories,
         car,
+        carPaintingService,
+        carTyreService,
+        carWashingServices,
         imgCarCareAccessories,
         imgCarInteriorAccessories,
         imgCarSpeaker,
@@ -230,6 +281,8 @@ class $AssetsImagesGen {
         imgPainting5,
         imgPainting6,
         painting,
+        person,
+        pioneer,
         spareParts
       ];
 }
