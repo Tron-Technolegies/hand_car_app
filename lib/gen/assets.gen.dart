@@ -53,6 +53,10 @@ class $AssetsIconsGen {
   AssetGenImage get boschLogo =>
       const AssetGenImage('assets/icons/bosch_logo.png');
 
+  /// File path: assets/icons/brembo_logo.png
+  AssetGenImage get bremboLogo =>
+      const AssetGenImage('assets/icons/brembo_logo.png');
+
   /// File path: assets/icons/car_washing_station.svg
   String get carWashingStation => 'assets/icons/car_washing_station.svg';
 
@@ -64,8 +68,16 @@ class $AssetsIconsGen {
   AssetGenImage get densoLogo =>
       const AssetGenImage('assets/icons/denso_logo.jpg');
 
+  /// File path: assets/icons/elring_logo.png
+  AssetGenImage get elringLogo =>
+      const AssetGenImage('assets/icons/elring_logo.png');
+
   /// File path: assets/icons/email.png
   AssetGenImage get email => const AssetGenImage('assets/icons/email.png');
+
+  /// File path: assets/icons/fuchs_logo.png
+  AssetGenImage get fuchsLogo =>
+      const AssetGenImage('assets/icons/fuchs_logo.png');
 
   /// File path: assets/icons/g1.png
   AssetGenImage get g1 => const AssetGenImage('assets/icons/g1.png');
@@ -122,9 +134,20 @@ class $AssetsIconsGen {
   /// File path: assets/icons/ic_tire_outline.svg
   String get icTireOutline => 'assets/icons/ic_tire_outline.svg';
 
+  /// File path: assets/icons/kyb_logo.png
+  AssetGenImage get kybLogo => const AssetGenImage('assets/icons/kyb_logo.png');
+
   /// File path: assets/icons/mahle-logo.png
   AssetGenImage get mahleLogo =>
       const AssetGenImage('assets/icons/mahle-logo.png');
+
+  /// File path: assets/icons/mann_logo.png
+  AssetGenImage get mannLogo =>
+      const AssetGenImage('assets/icons/mann_logo.png');
+
+  /// File path: assets/icons/motul_logo.png
+  AssetGenImage get motulLogo =>
+      const AssetGenImage('assets/icons/motul_logo.png');
 
   /// File path: assets/icons/nissens_logo.png
   AssetGenImage get nissensLogo =>
@@ -137,6 +160,10 @@ class $AssetsIconsGen {
   AssetGenImage get pwrLogo =>
       const AssetGenImage('assets/icons/pwr_logo.webp');
 
+  /// File path: assets/icons/total_logo.png
+  AssetGenImage get totalLogo =>
+      const AssetGenImage('assets/icons/total_logo.png');
+
   /// File path: assets/icons/whatsapp.png
   AssetGenImage get whatsapp =>
       const AssetGenImage('assets/icons/whatsapp.png');
@@ -144,10 +171,13 @@ class $AssetsIconsGen {
   /// List of all assets
   List<dynamic> get values => [
         boschLogo,
+        bremboLogo,
         carWashingStation,
         delphiLogo,
         densoLogo,
+        elringLogo,
         email,
+        fuchsLogo,
         g1,
         g2,
         g3,
@@ -166,10 +196,14 @@ class $AssetsIconsGen {
         icSubscriptionOutline,
         icTireFilled,
         icTireOutline,
+        kybLogo,
         mahleLogo,
+        mannLogo,
+        motulLogo,
         nissensLogo,
         phone,
         pwrLogo,
+        totalLogo,
         whatsapp
       ];
 }

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/features/Subscriptions/view/pages/service_subscription_page.dart';
+import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
+import 'package:hand_car/features/service/view/widgets/service_button_widget.dart';
 import 'package:hand_car/features/service/view/widgets/service_info_container_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:lottie/lottie.dart';
+
+final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 //Services Page
 class ServicesPage extends HookConsumerWidget {
@@ -35,20 +38,11 @@ class ServicesPage extends HookConsumerWidget {
     }
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ServicePlanScreen(),
-                ));
-          },
-          icon: Lottie.asset(
-            Assets.animations.premiumService,
-            height: 40,
-            width: 40,
-          ),
+          onPressed: () {},
+          icon: SvgPicture.asset(Assets.icons.handCarIcon),
         ),
         title: Text(
           "Our Services",
@@ -71,32 +65,42 @@ class ServicesPage extends HookConsumerWidget {
               color: context.colors.primaryTxt,
             ),
           ),
+          IconButton(
+            onPressed: () {
+              _scaffoldKey.currentState?.openDrawer();
+            },
+            icon: Icon(
+              Icons.menu,
+              color: context.colors.primaryTxt,
+            ),
+          ),
         ],
       ),
+      drawer: const DrawerWidget(),
+      endDrawerEnableOpenDragGesture: true,
       body: SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(height: context.space.space_200),
-            // SizedBox(
-            //   height: context.space.space_600,
-            //   child: ListView(
-            //     scrollDirection: Axis.horizontal,
-            //     children: List.generate(
-            //       services.length,
-            //       (index) => Padding(
-            //         padding: EdgeInsets.symmetric(
-            //             horizontal: context.space.space_100),
-            //         child: ServicesButtonWidget(
-            //           title: services[index],
-            //           selectedIndex: index,
-            //           isSelected: index == buttonIndex.value,
-            //           onSelectPlan: onItemTapped,
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-            // ),
-
+            SizedBox(
+              height: context.space.space_600,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: List.generate(
+                  services.length,
+                  (index) => Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: context.space.space_100),
+                    child: ServicesButtonWidget(
+                      title: services[index],
+                      selectedIndex: index,
+                      isSelected: index == buttonIndex.value,
+                      onSelectPlan: onItemTapped,
+                    ),
+                  ),
+                ),
+              ),
+            ),
             SizedBox(height: context.space.space_100),
             SizedBox(
               height: 600,

@@ -3,7 +3,10 @@ import 'package:flutter_svg/svg.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories_circle_avatar_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories_product_card_widget.dart';
+import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
+
+final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 class AccessoriesPage extends StatelessWidget {
   static const routeName = 'accessories';
@@ -12,15 +15,24 @@ class AccessoriesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           leading: SvgPicture.asset(Assets.icons.handCarIcon),
           title: const Text('Accessories'),
           centerTitle: true,
           actions: [
             IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
-            IconButton(onPressed: () {}, icon: const Icon(Icons.menu)),
+            IconButton(
+                onPressed: () {}, icon: const Icon(Icons.shopping_cart_sharp)),
+            IconButton(
+                onPressed: () {
+                  _scaffoldKey.currentState?.openDrawer();
+                },
+                icon: const Icon(Icons.menu)),
           ],
         ),
+        drawer: const DrawerWidget(),
+        endDrawerEnableOpenDragGesture: true,
         body: Padding(
           padding: EdgeInsets.all(context.space.space_200),
           child: Column(children: [
@@ -70,12 +82,11 @@ class AccessoriesPage extends StatelessWidget {
                   crossAxisSpacing: 1.7,
                 ),
                 itemCount: 10,
-                itemBuilder: (context, index) => const AccessoriesProductCardWidget(),
+                itemBuilder: (context, index) =>
+                    const AccessoriesProductCardWidget(),
               ),
             ),
           ]),
         ));
   }
 }
-
-
