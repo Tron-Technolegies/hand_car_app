@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Subscriptions/view/pages/service_subscription_page.dart';
-import 'package:hand_car/features/service/view/widgets/service_button_widget.dart';
 import 'package:hand_car/features/service/view/widgets/service_info_container_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -37,7 +36,6 @@ class ServicesPage extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: context.colors.primary,
         leading: IconButton(
           onPressed: () {
             Navigator.push(
@@ -54,7 +52,8 @@ class ServicesPage extends HookConsumerWidget {
         ),
         title: Text(
           "Our Services",
-          style: context.typography.h2.copyWith(color: context.colors.white),
+          style:
+              context.typography.h2.copyWith(color: context.colors.primaryTxt),
         ),
         centerTitle: true,
         actions: [
@@ -62,14 +61,14 @@ class ServicesPage extends HookConsumerWidget {
             onPressed: () {},
             icon: Icon(
               Icons.search,
-              color: context.colors.white,
+              color: context.colors.primaryTxt,
             ),
           ),
           IconButton(
             onPressed: () {},
             icon: Icon(
               Icons.filter_alt_rounded,
-              color: context.colors.white,
+              color: context.colors.primaryTxt,
             ),
           ),
         ],
@@ -78,25 +77,26 @@ class ServicesPage extends HookConsumerWidget {
         child: Column(
           children: [
             SizedBox(height: context.space.space_200),
-            SizedBox(
-              height: context.space.space_600,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: List.generate(
-                  services.length,
-                  (index) => Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: context.space.space_100),
-                    child: ServicesButtonWidget(
-                      title: services[index],
-                      selectedIndex: index,
-                      isSelected: index == buttonIndex.value,
-                      onSelectPlan: onItemTapped,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            // SizedBox(
+            //   height: context.space.space_600,
+            //   child: ListView(
+            //     scrollDirection: Axis.horizontal,
+            //     children: List.generate(
+            //       services.length,
+            //       (index) => Padding(
+            //         padding: EdgeInsets.symmetric(
+            //             horizontal: context.space.space_100),
+            //         child: ServicesButtonWidget(
+            //           title: services[index],
+            //           selectedIndex: index,
+            //           isSelected: index == buttonIndex.value,
+            //           onSelectPlan: onItemTapped,
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
+
             SizedBox(height: context.space.space_100),
             SizedBox(
               height: 600,

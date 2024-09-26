@@ -53,6 +53,9 @@ class $AssetsIconsGen {
   AssetGenImage get boschLogo =>
       const AssetGenImage('assets/icons/bosch_logo.png');
 
+  /// File path: assets/icons/car_washing_station.svg
+  String get carWashingStation => 'assets/icons/car_washing_station.svg';
+
   /// File path: assets/icons/delphi_logo.png
   AssetGenImage get delphiLogo =>
       const AssetGenImage('assets/icons/delphi_logo.png');
@@ -63,6 +66,15 @@ class $AssetsIconsGen {
 
   /// File path: assets/icons/email.png
   AssetGenImage get email => const AssetGenImage('assets/icons/email.png');
+
+  /// File path: assets/icons/g1.png
+  AssetGenImage get g1 => const AssetGenImage('assets/icons/g1.png');
+
+  /// File path: assets/icons/g2.png
+  AssetGenImage get g2 => const AssetGenImage('assets/icons/g2.png');
+
+  /// File path: assets/icons/g3.png
+  AssetGenImage get g3 => const AssetGenImage('assets/icons/g3.png');
 
   /// File path: assets/icons/hand_car_icon.svg
   String get handCarIcon => 'assets/icons/hand_car_icon.svg';
@@ -132,9 +144,13 @@ class $AssetsIconsGen {
   /// List of all assets
   List<dynamic> get values => [
         boschLogo,
+        carWashingStation,
         delphiLogo,
         densoLogo,
         email,
+        g1,
+        g2,
+        g3,
         handCarIcon,
         icCarSeatFilled,
         icCarSeatOutline,
@@ -256,6 +272,10 @@ class $AssetsImagesGen {
   AssetGenImage get spareParts =>
       const AssetGenImage('assets/images/spare_parts.png');
 
+  /// File path: assets/images/warehouse-female.jpg
+  AssetGenImage get warehouseFemale =>
+      const AssetGenImage('assets/images/warehouse-female.jpg');
+
   /// List of all assets
   List<dynamic> get values => [
         autoBodyPaintShop,
@@ -283,7 +303,8 @@ class $AssetsImagesGen {
         painting,
         person,
         pioneer,
-        spareParts
+        spareParts,
+        warehouseFemale
       ];
 }
 

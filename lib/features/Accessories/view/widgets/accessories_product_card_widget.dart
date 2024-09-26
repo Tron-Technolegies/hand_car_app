@@ -46,16 +46,14 @@ class AccessoriesProductCardWidget extends StatelessWidget {
               ),
             ),
             SizedBox(height: context.space.space_100),
-            Text(
-              'UNITOPSCI Wireless Apple',
-              style: context.typography.bodyMedium
-                  .copyWith(color: context.colors.primaryTxt),
-            ),
-            SizedBox(height: context.space.space_50),
-            Text(
-              'CarPlay Portable Car Stereo..',
-              style: context.typography.bodyMedium
-                  .copyWith(color: context.colors.primaryTxt),
+            Flexible(
+              child: Text(
+                'UNITOPSCI Wireless Apple CarPlay Portable Car Stereo..',
+                style: context.typography.bodyMedium
+                    .copyWith(color: context.colors.primaryTxt),
+                overflow: TextOverflow
+                    .ellipsis, // Prevent text overflow by using ellipsis
+              ),
             ),
             SizedBox(height: context.space.space_50),
             RatingBar.builder(
@@ -80,7 +78,7 @@ class AccessoriesProductCardWidget extends StatelessWidget {
                 ),
                 Padding(
                   padding: EdgeInsets.only(left: context.space.space_200),
-                  child: Text(
+                  child: const Text(
                     'AED 199',
                     style: TextStyle(
                         color: Colors.grey,
@@ -92,13 +90,12 @@ class AccessoriesProductCardWidget extends StatelessWidget {
               ],
             ),
             SizedBox(height: context.space.space_100),
-            Row(children: [
-              Padding(
-                padding:
-                    EdgeInsets.symmetric(horizontal: context.space.space_150),
-                child: ButtonWidget(label: 'Add To Cart', onTap: () {}),
-              ),
-            ])
+            Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: context.space.space_50,
+                  vertical: context.space.space_50),
+              child: ButtonWidget(label: 'Add To Cart', onTap: () {}),
+            )
           ],
         ),
       ),

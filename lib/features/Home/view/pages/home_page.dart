@@ -117,7 +117,7 @@ class HomePage extends StatelessWidget {
           SizedBox(
             height: context.space.space_200,
           ),
-          BrandWisedCardWidget(),
+          const BrandWisedCardWidget(),
           SizedBox(
             height: context.space.space_200,
           ),
@@ -138,7 +138,7 @@ class HomePage extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
           ),
-          Text(
+          const Text(
             "Explore Our Range of Services",
             textAlign: TextAlign.center,
           ),

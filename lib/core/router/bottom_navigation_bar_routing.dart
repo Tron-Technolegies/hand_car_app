@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hand_car/features/Accessories/view/pages/accessories_page.dart';
 import 'package:hand_car/features/Home/view/pages/home_page.dart';
 import 'package:hand_car/features/Home/view/pages/navigation_page.dart';
-import 'package:hand_car/features/Home/view/pages/spares_page.dart';
+import 'package:hand_car/features/SpareParts/view/pages/spares_page.dart';
 import 'package:hand_car/features/Subscriptions/view/pages/service_subscription_page.dart';
 import 'package:hand_car/features/service/view/pages/service_details_page.dart';
 import 'package:hand_car/features/service/view/pages/services_page.dart';

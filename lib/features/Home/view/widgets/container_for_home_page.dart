@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
-import 'package:hand_car/features/service/view/pages/services_page.dart';
 
 class ContainerForHomePage extends StatelessWidget {
   final String text1;

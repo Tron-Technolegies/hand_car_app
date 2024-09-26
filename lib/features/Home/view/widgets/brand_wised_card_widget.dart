@@ -52,7 +52,7 @@ class BrandWisedCardWidget extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: context.space.space_100),
-                    child: Text("Best Brand Selected by Customers"),
+                    child: const Text("Best Brand Selected by Customers"),
                   ))
             ],
           ),

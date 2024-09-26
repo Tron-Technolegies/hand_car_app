@@ -98,7 +98,7 @@ class AccessoriesAdsHomePageWidget extends StatelessWidget {
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: context.space.space_200),
-                      child: Text(
+                      child: const Text(
                         'AED 209',
                         style: TextStyle(
                             color: Colors.grey,
