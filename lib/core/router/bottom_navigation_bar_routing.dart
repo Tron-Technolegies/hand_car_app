@@ -5,6 +5,7 @@ import 'package:hand_car/features/Home/view/pages/home_page.dart';
 import 'package:hand_car/features/Home/view/pages/navigation_page.dart';
 import 'package:hand_car/features/SpareParts/view/pages/spares_page.dart';
 import 'package:hand_car/features/Subscriptions/view/pages/service_subscription_page.dart';
+import 'package:hand_car/features/Subscriptions/view/pages/subscription_page.dart';
 import 'package:hand_car/features/service/view/pages/service_details_page.dart';
 import 'package:hand_car/features/service/view/pages/services_page.dart';
 
@@ -68,9 +69,9 @@ import 'package:hand_car/features/service/view/pages/services_page.dart';
           StatefulShellBranch(
             routes: <RouteBase>[
               GoRoute(
-                path: '/servicePlans',
+                path: '/subscription',
                 builder: (BuildContext context, GoRouterState state) =>
-                    const ServicePlanScreen(),
+                    const SubscriptionPage(),
               ),
             ],
           ),

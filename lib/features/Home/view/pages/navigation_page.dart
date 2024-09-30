@@ -39,7 +39,7 @@ class NavigationPage extends HookConsumerWidget {
             navBarIndex.value = 2;
           } else if (location.startsWith('/services')) {
             navBarIndex.value = 3;
-          } else if (location.startsWith('/servicePlans')) {
+          } else if (location.startsWith('/subscription')) {
             navBarIndex.value = 4;
           }
         }
