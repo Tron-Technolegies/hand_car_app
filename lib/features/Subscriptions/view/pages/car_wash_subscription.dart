@@ -53,27 +53,25 @@ class CarWashPlanScreen extends HookConsumerWidget {
           child: SafeArea(
             child: Column(
               children: [
-                const Padding(
-                  padding: EdgeInsets.all(20.0),
+                Padding(
+                  padding: EdgeInsets.all(context.space.space_250),
                   child: Text(
                     'A Plan for Every Car\nWashing Need',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: context.typography.h2
+                        .copyWith(color: context.colors.white),
                     textAlign: TextAlign.center,
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.0),
+                Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: context.space.space_200),
                   child: Text(
                     'Whether it\'s a quick rinse or a detailed clean, we offer customized services to meet every car washing need. Experience the difference with our specialized care and attention to detail.',
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: context.colors.white),
                     textAlign: TextAlign.center,
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: context.space.space_250),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -88,7 +86,7 @@ class CarWashPlanScreen extends HookConsumerWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: context.space.space_250),
                 // PageView For Plans
                 SizedBox(
                   height: 500,

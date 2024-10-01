@@ -8,7 +8,7 @@ class ReviewsList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: 5,
-      itemBuilder: (context, index) => ReviewItemsWidget(
+      itemBuilder: (context, index) => const ReviewItemsWidget(
           username: "Risan",
           date: "10/10/2022",
           comment: "Nice perfume in affordable price",

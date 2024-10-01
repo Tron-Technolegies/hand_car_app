@@ -28,13 +28,13 @@ class ReviewItemsWidget extends StatelessWidget {
               CircleAvatar(child: Text(username[0])),
               SizedBox(width: context.space.space_100),
               Text(username),
-              Spacer(),
+              const Spacer(),
               SizedBox(width: context.space.space_100),
             ],
           ),
           SizedBox(height: context.space.space_100),
           Text(date),
-          
+          SizedBox(height: context.space.space_100),
           Row(
               children: List.generate(
                   5,

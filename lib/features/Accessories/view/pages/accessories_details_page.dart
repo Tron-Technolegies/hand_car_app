@@ -5,8 +5,10 @@ import 'package:hand_car/core/widgets/button_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/bullet_points_widgets.dart';
 import 'package:hand_car/features/Accessories/view/widgets/drop_down_button_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/image_carousel_widget.dart';
+import 'package:hand_car/features/Accessories/view/widgets/product_section_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/rating_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/review_list_widget.dart';
+import 'package:hand_car/features/Accessories/view/widgets/specification_item_widget.dart';
 
 class ProductDetailsPage extends HookWidget {
   const ProductDetailsPage({super.key});
@@ -25,8 +27,7 @@ class ProductDetailsPage extends HookWidget {
         ],
       ),
       body: LayoutBuilder(
-        builder: (context, constraints) => 
-        SingleChildScrollView(
+        builder: (context, constraints) => SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -102,8 +103,8 @@ class ProductDetailsPage extends HookWidget {
                                 horizontal: context.space.space_100),
                             child: Container(
                               decoration: BoxDecoration(
-                                border:
-                                    Border.all(color: context.colors.primaryTxt),
+                                border: Border.all(
+                                    color: context.colors.primaryTxt),
                                 borderRadius: BorderRadius.circular(
                                     context.space.space_100),
                               ),
@@ -146,7 +147,7 @@ class ProductDetailsPage extends HookWidget {
                 // Add more specifications
               ]),
               SizedBox(
-                  height: context.space.space_500 * 8.2,
+                  height: context.space.space_500 * 9,
                   child: const ProductRatingsWidget(
                       rating: 4.6,
                       totalReviews: 500,

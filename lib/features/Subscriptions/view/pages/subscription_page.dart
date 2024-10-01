@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
+import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
 import 'package:hand_car/features/Subscriptions/view/pages/car_wash_subscription.dart';
 import 'package:hand_car/features/Subscriptions/view/pages/service_subscription_page.dart';
 
@@ -11,7 +12,7 @@ class SubscriptionPage extends HookWidget {
   Widget build(BuildContext context) {
     final tabController = useTabController(initialLength: 2);
     // Use useState to re-render when active index changes
-    final activeIndex = useState(0); 
+    final activeIndex = useState(0);
 
     useEffect(() {
       // Listener to update active index on tab changes
@@ -27,10 +28,18 @@ class SubscriptionPage extends HookWidget {
       appBar: AppBar(
         title: const Text('Subscription'),
         centerTitle: true,
+        actions: [
+          IconButton(onPressed: () {}, icon: const Icon(Icons.favorite_border)),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.shopping_cart)),
+        ],
         bottom: TabBar(
           controller: tabController,
-          indicatorColor: activeIndex.value == 1 ? context.colors.primaryTxt : context.colors.primary,
-          labelColor: activeIndex.value == 1 ? context.colors.primaryTxt : context.colors.primary,
+          indicatorColor: activeIndex.value == 1
+              ? context.colors.primaryTxt
+              : context.colors.primary,
+          labelColor: activeIndex.value == 1
+              ? context.colors.primaryTxt
+              : context.colors.primary,
           labelStyle: context.typography.bodyLarge,
           unselectedLabelColor: context.colors.primaryTxt.withOpacity(0.5),
           unselectedLabelStyle: context.typography.bodyLarge,
@@ -41,6 +50,7 @@ class SubscriptionPage extends HookWidget {
           ],
         ),
       ),
+      drawer: const DrawerWidget(),
       body: TabBarView(
         controller: tabController,
         children: const [

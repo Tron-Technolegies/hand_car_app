@@ -26,48 +26,6 @@ class ImageCarousel extends StatelessWidget {
   }
 }
 
-class ProductSection extends StatelessWidget {
-  final String title;
-  final List<Widget> content;
 
-  const ProductSection({super.key, required this.title, required this.content});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(context.space.space_100),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title, style: context.typography.h2),
-          SizedBox(height: context.space.space_100),
-          ...content,
-        ],
-      ),
-    );
-  }
-}
-
-class SpecificationItem extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const SpecificationItem(this.label, this.value, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: context.space.space_50),
-      child: Row(
-        children: [
-          Expanded(
-              child:
-                  Text(label, style: TextStyle(fontWeight: FontWeight.bold))),
-          Expanded(child: Text(value)),
-        ],
-      ),
-    );
-  }
-}
 
 
