@@ -47,7 +47,7 @@ class ServicesPage extends HookConsumerWidget {
         title: Text(
           "Our Services",
           style:
-              context.typography.h2.copyWith(color: context.colors.primaryTxt),
+              context.typography.h3.copyWith(color: context.colors.primaryTxt),
         ),
         centerTitle: true,
         actions: [
@@ -122,7 +122,7 @@ class ServicesPage extends HookConsumerWidget {
                     ),
                     itemCount: 5,
                     itemBuilder: (context, index) => PaintSolutionCard(
-                      image: Assets.images.imgPainting1.path,
+                      image: Assets.images.imgPainting.path,
                       title: 'ICON Rocklear',
                       title2: 'Paint Solution',
                       rating: '4.0',

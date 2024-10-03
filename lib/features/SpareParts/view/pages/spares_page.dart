@@ -11,7 +11,7 @@ import 'package:hand_car/gen/assets.gen.dart';
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 class SparesPage extends HookWidget {
-  static const String routeName = 'spares';
+  static const String routeName = '/spares';
   const SparesPage({super.key});
 
   @override
@@ -61,7 +61,7 @@ class SparesPage extends HookWidget {
               ),
               SizedBox(height: context.space.space_200),
               Image.asset(
-                Assets.images.warehouseFemale.path,
+                Assets.images.imgSpareScreen.path,
               ),
               SizedBox(height: context.space.space_200),
               const ProductSearchContainerWidget(),

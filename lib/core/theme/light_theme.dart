@@ -103,6 +103,11 @@ final lightTheme = ThemeData(
             fontFamily: FontFamily.manrope,
             color: ColorPalette.black400,
             fontWeight: FontWeight.w400),
+        button2: TextStyle(
+            fontSize: 16,
+            fontFamily: FontFamily.manrope,
+            color: ColorPalette.black400,
+            fontWeight: FontWeight.w400),
       ),
       AppSpaceExtension.fromBaseSpace(8),
       

@@ -268,6 +268,10 @@ class $AssetsImagesGen {
   AssetGenImage get imgCarSpeaker =>
       const AssetGenImage('assets/images/img_car_speaker.jpg');
 
+  /// File path: assets/images/img_painting.png
+  AssetGenImage get imgPainting =>
+      const AssetGenImage('assets/images/img_painting.png');
+
   /// File path: assets/images/img_painting1.jpg
   AssetGenImage get imgPainting1 =>
       const AssetGenImage('assets/images/img_painting1.jpg');
@@ -291,6 +295,10 @@ class $AssetsImagesGen {
   /// File path: assets/images/img_painting6.jpg
   AssetGenImage get imgPainting6 =>
       const AssetGenImage('assets/images/img_painting6.jpg');
+
+  /// File path: assets/images/img_spare_screen.png
+  AssetGenImage get imgSpareScreen =>
+      const AssetGenImage('assets/images/img_spare_screen.png');
 
   /// File path: assets/images/painting.png
   AssetGenImage get painting =>
@@ -328,12 +336,14 @@ class $AssetsImagesGen {
         imgCarCareAccessories,
         imgCarInteriorAccessories,
         imgCarSpeaker,
+        imgPainting,
         imgPainting1,
         imgPainting2,
         imgPainting3,
         imgPainting4,
         imgPainting5,
         imgPainting6,
+        imgSpareScreen,
         painting,
         person,
         pioneer,

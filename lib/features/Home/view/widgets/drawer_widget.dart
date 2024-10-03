@@ -22,7 +22,7 @@ class DrawerWidget extends StatelessWidget {
                 ),
               ),
               Text(
-                'Profile',
+                'Muhammed Risan',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 24,

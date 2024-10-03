@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
 import 'package:hand_car/features/Subscriptions/view/pages/car_wash_subscription.dart';
 import 'package:hand_car/features/Subscriptions/view/pages/service_subscription_page.dart';
+import 'package:hand_car/gen/assets.gen.dart';
+
+final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 class SubscriptionPage extends HookWidget {
   const SubscriptionPage({super.key});
@@ -26,11 +30,15 @@ class SubscriptionPage extends HookWidget {
 
     return Scaffold(
       appBar: AppBar(
+        leading: SvgPicture.asset(Assets.icons.handCarIcon),
         title: const Text('Subscription'),
         centerTitle: true,
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.favorite_border)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.shopping_cart)),
+          IconButton(
+              onPressed: () {
+                _scaffoldKey.currentState?.openDrawer();
+              },
+              icon: const Icon(Icons.menu)),
         ],
         bottom: TabBar(
           controller: tabController,
@@ -51,6 +59,7 @@ class SubscriptionPage extends HookWidget {
         ),
       ),
       drawer: const DrawerWidget(),
+      endDrawerEnableOpenDragGesture: true,
       body: TabBarView(
         controller: tabController,
         children: const [

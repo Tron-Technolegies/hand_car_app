@@ -18,6 +18,7 @@ class TypographyExtention extends ThemeExtension<TypographyExtention> {
   final TextStyle bodyLargeMedium;
   final TextStyle caption;
   final TextStyle buttonTxt;
+  final TextStyle button2;
 
   TypographyExtention({
     required this.h1,
@@ -35,6 +36,7 @@ class TypographyExtention extends ThemeExtension<TypographyExtention> {
     required this.bodyLargeMedium,
     required this.caption,
     required this.buttonTxt,
+    required this.button2,
   });
 
   @override
@@ -55,6 +57,7 @@ class TypographyExtention extends ThemeExtension<TypographyExtention> {
     TextStyle? caption,
     TextStyle? buttonTxt,
     TextStyle? button2,
+
   }) {
     return TypographyExtention(
       h1: h1 ?? this.h1,
@@ -72,6 +75,7 @@ class TypographyExtention extends ThemeExtension<TypographyExtention> {
       bodyLargeMedium: bodyLargeMedium ?? this.bodyLargeMedium,
       caption: caption ?? this.caption,
       buttonTxt: buttonTxt ?? this.buttonTxt,
+      button2: button2 ?? this.button2,
     );
   }
 
@@ -101,6 +105,7 @@ class TypographyExtention extends ThemeExtension<TypographyExtention> {
           TextStyle.lerp(bodyLargeMedium, other.bodyLargeMedium, t)!,
       caption: TextStyle.lerp(caption, other.caption, t)!,
       buttonTxt: TextStyle.lerp(buttonTxt, other.buttonTxt, t)!,
+      button2: TextStyle.lerp(button2, other.button2, t)!,
     );
   }
 }
