@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/features/Accessories/view/pages/accessories_page.dart';
+import 'package:hand_car/features/Accessories/view/pages/cart_page.dart';
 import 'package:hand_car/features/Home/view/pages/home_page.dart';
 import 'package:hand_car/features/Home/view/pages/navigation_page.dart';
 import 'package:hand_car/features/SpareParts/view/pages/spares_page.dart';
@@ -74,6 +75,15 @@ import 'package:hand_car/features/service/view/pages/services_page.dart';
               ),
             ],
           ),
+           StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/cart',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const CartPage(),
+              ),
+            ],
+          ),
         ],
       ),
        GoRoute(
@@ -88,7 +98,9 @@ import 'package:hand_car/features/service/view/pages/services_page.dart';
           rating: data['rating'],
           price: data['price'],
         );
-    })],
+        
+    }),
+    ]
     
   );
 

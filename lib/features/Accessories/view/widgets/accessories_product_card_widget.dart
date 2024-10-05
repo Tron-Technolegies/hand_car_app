@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/core/widgets/button_widget.dart';
+import 'package:hand_car/core/widgets/outline_button_widget.dart';
 import 'package:hand_car/features/Accessories/view/pages/accessories_details_page.dart';
 
 class AccessoriesProductCardWidget extends StatelessWidget {
@@ -14,7 +14,7 @@ class AccessoriesProductCardWidget extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>  const ProductDetailsPage(),
+            builder: (context) => const ProductDetailsPage(),
           ),
         );
       },
@@ -104,7 +104,7 @@ class AccessoriesProductCardWidget extends StatelessWidget {
                 padding: EdgeInsets.symmetric(
                     horizontal: context.space.space_50,
                     vertical: context.space.space_50),
-                child: ButtonWidget(label: 'Add To Cart', onTap: () {}),
+                child: OutlineButtonWidget(label: 'Add To Cart', onTap: () {}),
               )
             ],
           ),

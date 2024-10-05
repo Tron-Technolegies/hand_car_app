@@ -13,8 +13,6 @@ import 'package:hand_car/features/Home/view/widgets/spare_brands_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:lottie/lottie.dart';
 
-
-
 class HomePage extends StatelessWidget {
   static const String routeName = 'home_page';
   const HomePage({super.key});
@@ -27,7 +25,10 @@ class HomePage extends StatelessWidget {
         leading: SvgPicture.asset(Assets.icons.handCarIcon),
         actions: [
           IconButton(
-              onPressed: () {}, icon: const Icon(Icons.shopping_cart_sharp)),
+              onPressed: () {
+                context.push('/cart');
+              },
+              icon: const Icon(Icons.shopping_cart_sharp)),
           IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
           IconButton(
               onPressed: () {

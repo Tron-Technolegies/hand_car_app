@@ -15,11 +15,9 @@ class SubscriptionPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final tabController = useTabController(initialLength: 2);
-    // Use useState to re-render when active index changes
     final activeIndex = useState(0);
 
     useEffect(() {
-      // Listener to update active index on tab changes
       void onTabChanged() {
         activeIndex.value = tabController.index;
       }
@@ -29,16 +27,18 @@ class SubscriptionPage extends HookWidget {
     }, [tabController]);
 
     return Scaffold(
+      key: _scaffoldKey, 
       appBar: AppBar(
         leading: SvgPicture.asset(Assets.icons.handCarIcon),
         title: const Text('Subscription'),
         centerTitle: true,
         actions: [
           IconButton(
-              onPressed: () {
-                _scaffoldKey.currentState?.openDrawer();
-              },
-              icon: const Icon(Icons.menu)),
+            onPressed: () {
+              _scaffoldKey.currentState?.openDrawer(); 
+            },
+            icon: const Icon(Icons.menu),
+          ),
         ],
         bottom: TabBar(
           controller: tabController,

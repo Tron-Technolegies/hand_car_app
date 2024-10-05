@@ -54,11 +54,7 @@ class ServiceDetailsPage extends StatelessWidget {
     //     throw Exception('Could not launch $phoneNumber');
     //   }
     // }
-     Future<void> launchWhatsApp(
-      
-    ) async {
-     
-
+    Future<void> launchWhatsApp() async {
       final whatsappUrl = Uri.parse("https://wa.me/9895499872");
 
       if (await canLaunchUrl(whatsappUrl)) {
@@ -100,7 +96,7 @@ class ServiceDetailsPage extends StatelessWidget {
                         fallbackWidth: double.infinity,
                       ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: context.space.space_200),
 
               // Other details like title, rating, price, etc.
               Row(
@@ -152,17 +148,14 @@ class ServiceDetailsPage extends StatelessWidget {
                       children: [
                         Container(
                           decoration: BoxDecoration(
-                            color: context.colors.green, 
-                            shape: BoxShape.circle, 
+                            color: context.colors.green,
+                            shape: BoxShape.circle,
                           ),
-                          padding: EdgeInsets.all(
-                              context.space.space_100), 
+                          padding: EdgeInsets.all(context.space.space_100),
                           child: Icon(
-                            Icons.check, 
-                            color:
-                                Colors.white, 
-                            size:
-                                context.space.space_100 * 3, 
+                            Icons.check,
+                            color: Colors.white,
+                            size: context.space.space_100 * 3,
                           ),
                         ),
                         SizedBox(width: context.space.space_100),
@@ -175,14 +168,13 @@ class ServiceDetailsPage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: context.space.space_200),
-              
             ],
           ),
         ),
         floatingActionButton: FloatingActionButton.small(
-            child: Image.asset(Assets.icons.whatsapp.path) ,
+            child: Image.asset(Assets.icons.whatsapp.path),
             onPressed: () {
-          launchWhatsApp();
+              launchWhatsApp();
             }));
   }
 }

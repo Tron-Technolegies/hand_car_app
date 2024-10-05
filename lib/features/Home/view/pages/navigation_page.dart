@@ -57,6 +57,7 @@ class NavigationPage extends HookConsumerWidget {
     }, []);
 
     return Scaffold(
+    
       body: navigationShell, // Display the navigation shell content
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: context.colors.primary,

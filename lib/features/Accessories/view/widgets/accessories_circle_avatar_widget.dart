@@ -19,12 +19,15 @@ class AccessoriesCircleAvatharWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        CircleAvatar(
-          radius: 50,
-          backgroundColor: context.colors.primary,
+        GestureDetector(
+          onTap: onTap,
           child: CircleAvatar(
-            radius: 48.5,
-            backgroundImage: AssetImage(image),
+            radius: 50,
+            backgroundColor: context.colors.primary,
+            child: CircleAvatar(
+              radius: 48.5,
+              backgroundImage: AssetImage(image),
+            ),
           ),
         ),
         SizedBox(height: context.space.space_100),

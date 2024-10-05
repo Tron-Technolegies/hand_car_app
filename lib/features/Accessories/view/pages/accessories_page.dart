@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories_circle_avatar_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories_product_card_widget.dart';
@@ -44,7 +45,10 @@ class AccessoriesPage extends HookWidget {
                 actions: [
                   IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
                   IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                context.push('/cart');
+
+                      },
                       icon: const Icon(Icons.shopping_cart_sharp)),
                   IconButton(
                       onPressed: () {
