@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
+import 'package:hand_car/features/Accessories/view/widgets/popular_text_container_widegr.dart';
 import 'package:hand_car/features/Subscriptions/view/widgets/button_for_plan_selection_widget.dart';
 import 'package:hand_car/features/Subscriptions/view/widgets/plans_container_widget.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -125,6 +126,7 @@ class ServicePlanScreen extends HookConsumerWidget {
                         containerColor: context.colors.background,
                         textColor1: context.colors.primaryTxt,
                         textColor2: const Color(0xff787878),
+                        child: const PopularTextConainerWidget(),
                       ),
                     ],
                   ),

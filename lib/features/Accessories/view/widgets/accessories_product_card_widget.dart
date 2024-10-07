@@ -5,7 +5,18 @@ import 'package:hand_car/core/widgets/outline_button_widget.dart';
 import 'package:hand_car/features/Accessories/view/pages/accessories_details_page.dart';
 
 class AccessoriesProductCardWidget extends StatelessWidget {
-  const AccessoriesProductCardWidget({super.key});
+  final String name;
+  final String price;
+  final String image;
+  final String discount;
+  final String off;
+  const AccessoriesProductCardWidget(
+      {super.key,
+      required this.name,
+      required this.price,
+      required this.image,
+      required this.discount,
+      required this.off});
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +51,8 @@ class AccessoriesProductCardWidget extends StatelessWidget {
                 child: Image.network(
                     height: 100,
                     width: 100,
-                    'https://www.pngplay.com/wp-content/uploads/7/Automobile-Car-Accessories-PNG-Background.png'),
+                    
+                    image),
               ),
               SizedBox(height: context.space.space_100),
               Container(
@@ -50,7 +62,7 @@ class AccessoriesProductCardWidget extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.all(context.space.space_100),
                   child: Text(
-                    "30%OFF",
+                    '$off% OFF',
                     style: context.typography.body,
                   ),
                 ),
@@ -58,7 +70,7 @@ class AccessoriesProductCardWidget extends StatelessWidget {
               SizedBox(height: context.space.space_100),
               Flexible(
                 child: Text(
-                  'UNITOPSCI Wireless Apple CarPlay Portable Car Stereo..',
+                  name,
                   style: context.typography.bodyMedium
                       .copyWith(color: context.colors.primaryTxt),
                   overflow: TextOverflow
@@ -82,15 +94,15 @@ class AccessoriesProductCardWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'AED 120',
+                    price,
                     style: context.typography.bodyLarge
                         .copyWith(color: context.colors.primaryTxt),
                   ),
                   Padding(
                     padding: EdgeInsets.only(left: context.space.space_200),
-                    child: const Text(
-                      'AED 199',
-                      style: TextStyle(
+                    child: Text(
+                      discount,
+                      style: const TextStyle(
                           color: Colors.grey,
                           decoration: TextDecoration
                               .lineThrough // Space between the letters

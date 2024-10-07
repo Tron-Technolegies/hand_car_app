@@ -18,6 +18,15 @@ class ServicesPage extends HookConsumerWidget {
     "Fitting",
     "Spare parts",
     "General Checkup",
+    "Car Wash",
+  ];
+
+  final List<String> images = [
+    Assets.icons.icPaintingService,
+    Assets.icons.icFittingService,
+    Assets.icons.icSparePartsService,
+    Assets.icons.icGeneralCheckupService,
+    Assets.icons.icWashService
   ];
 
   ServicesPage({super.key});
@@ -32,7 +41,7 @@ class ServicesPage extends HookConsumerWidget {
       buttonIndex.value = index;
       pageController.animateToPage(
         index,
-        duration: const Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
       );
     }
@@ -82,22 +91,41 @@ class ServicesPage extends HookConsumerWidget {
         child: Column(
           children: [
             SizedBox(height: context.space.space_200),
+            // SizedBox(
+            //   height: context.space.space_600,
+            //   child: ListView(
+            //     scrollDirection: Axis.horizontal,
+            //     children: List.generate(
+            //       services.length,
+            //       (index) => Padding(
+            //         padding: EdgeInsets.symmetric(
+            //             horizontal: context.space.space_100),
+            //         child: ServicesButtonWidget(
+            //           title: services[index],
+            //           selectedIndex: index,
+            //           isSelected: index == buttonIndex.value,
+            //           onSelectPlan: onItemTapped,
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
             SizedBox(
-              height: context.space.space_600,
+              height: context.space.space_600 * 2.6,
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: List.generate(
                   services.length,
                   (index) => Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: context.space.space_100),
-                    child: ServicesButtonWidget(
-                      title: services[index],
-                      selectedIndex: index,
-                      isSelected: index == buttonIndex.value,
-                      onSelectPlan: onItemTapped,
-                    ),
-                  ),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: context.space.space_100),
+                      child: ServicesIconsWidget(
+                        image: images[index],
+                        title: services[index],
+                        selectedIndex: index,
+                        isSelected: index == buttonIndex.value,
+                        onSelectService: onItemTapped,
+                      )),
                 ),
               ),
             ),
@@ -183,11 +211,107 @@ class ServicesPage extends HookConsumerWidget {
                       price: '99',
                     ),
                   ),
+                  GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 320,
+                      mainAxisSpacing: 0.2,
+                      mainAxisExtent: 400,
+                      crossAxisSpacing: 1,
+                    ),
+                    itemCount: 5,
+                    itemBuilder: (context, index) => PaintSolutionCard(
+                      image: Assets.images.imgPainting4.path,
+                      title: 'Onyxaa ',
+                      title2: 'Water Services',
+                      rating: '4.0',
+                      price: '99',
+                    ),
+                  ),
                 ],
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class ServicesIconsWidget extends StatelessWidget {
+  final String image;
+  final String title;
+  final int selectedIndex;
+  final Function(int) onSelectService;
+  final bool isSelected;
+  const ServicesIconsWidget({
+    super.key,
+    required this.image,
+    required this.title,
+    required this.selectedIndex,
+    required this.onSelectService,
+    required this.isSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => onSelectService(selectedIndex),
+      child: Column(
+        children: [
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: context.space.space_50),
+            decoration: BoxDecoration(
+                color: isSelected
+                    ? context.colors.primary
+                    : context.colors.background,
+                borderRadius: BorderRadius.circular(20)),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: context.space.space_200,
+                      vertical: context.space.space_150),
+                  child: CircleAvatar(
+                    backgroundColor: isSelected
+                        ? context.colors.background
+                        : context.colors.primary,
+                    radius: 30,
+                    child: SvgPicture.asset(
+                      image,
+                      colorFilter: ColorFilter.mode(
+                        isSelected
+                            ? context.colors.primary
+                            : context.colors.background,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: context.space.space_200),
+                  child: Text(
+                    title,
+                    style: isSelected
+                        ? context.typography.bodyMedium.copyWith(
+                            color: isSelected
+                                ? context.colors.white
+                                : context.colors.primaryTxt,
+                          )
+                        : context.typography.body.copyWith(
+                            color: isSelected
+                                ? context.colors.white
+                                : context.colors.primaryTxt,
+                          ),
+                  ),
+                ),
+                SizedBox(height: context.space.space_150),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

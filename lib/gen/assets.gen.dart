@@ -109,17 +109,33 @@ class $AssetsIconsGen {
   /// File path: assets/icons/ic_car_wash_outline.svg
   String get icCarWashOutline => 'assets/icons/ic_car_wash_outline.svg';
 
+  /// File path: assets/icons/ic_fitting_service.svg
+  String get icFittingService => 'assets/icons/ic_fitting_service.svg';
+
+  /// File path: assets/icons/ic_general_checkup_service.svg
+  String get icGeneralCheckupService =>
+      'assets/icons/ic_general_checkup_service.svg';
+
   /// File path: assets/icons/ic_home_filled.svg
   String get icHomeFilled => 'assets/icons/ic_home_filled.svg';
 
   /// File path: assets/icons/ic_home_outline.svg
   String get icHomeOutline => 'assets/icons/ic_home_outline.svg';
 
+  /// File path: assets/icons/ic_painting_service.svg
+  String get icPaintingService => 'assets/icons/ic_painting_service.svg';
+
   /// File path: assets/icons/ic_spare_filled.svg
   String get icSpareFilled => 'assets/icons/ic_spare_filled.svg';
 
   /// File path: assets/icons/ic_spare_outline.svg
   String get icSpareOutline => 'assets/icons/ic_spare_outline.svg';
+
+  /// File path: assets/icons/ic_spare_parts_service.svg
+  String get icSparePartsService => 'assets/icons/ic_spare_parts_service.svg';
+
+  /// File path: assets/icons/ic_stars.svg
+  String get icStars => 'assets/icons/ic_stars.svg';
 
   /// File path: assets/icons/ic_subscription_filled.svg
   String get icSubscriptionFilled => 'assets/icons/ic_subscription_filled.svg';
@@ -133,6 +149,9 @@ class $AssetsIconsGen {
 
   /// File path: assets/icons/ic_tire_outline.svg
   String get icTireOutline => 'assets/icons/ic_tire_outline.svg';
+
+  /// File path: assets/icons/ic_wash_service.svg
+  String get icWashService => 'assets/icons/ic_wash_service.svg';
 
   /// File path: assets/icons/kyb_logo.png
   AssetGenImage get kybLogo => const AssetGenImage('assets/icons/kyb_logo.png');
@@ -188,14 +207,20 @@ class $AssetsIconsGen {
         icCarServiceOutline,
         icCarWashFilled,
         icCarWashOutline,
+        icFittingService,
+        icGeneralCheckupService,
         icHomeFilled,
         icHomeOutline,
+        icPaintingService,
         icSpareFilled,
         icSpareOutline,
+        icSparePartsService,
+        icStars,
         icSubscriptionFilled,
         icSubscriptionOutline,
         icTireFilled,
         icTireOutline,
+        icWashService,
         kybLogo,
         mahleLogo,
         mannLogo,

@@ -18,24 +18,25 @@ class PlansContainer extends HookConsumerWidget {
   final Color textColor1;
   final Color textColor2;
   final Color containerColor;
+  final Widget? child;
 
-  const PlansContainer({
-    super.key,
-    required this.planName,
-    required this.price,
-    required this.planFeature1,
-    required this.planFeature2,
-    this.planFeature3,
-    this.planFeature4,
-    required this.color,
-    required this.textColor1,
-    required this.textColor2,
-    required this.containerColor
-  });
+  const PlansContainer(
+      {super.key,
+      required this.planName,
+      required this.price,
+      required this.planFeature1,
+      required this.planFeature2,
+      this.planFeature3,
+      this.planFeature4,
+      required this.color,
+      required this.textColor1,
+      required this.textColor2,
+      required this.containerColor,
+      this.child});
 
   @override
-  Widget build(BuildContext context,ref) {
-    final selectedIndex=useState(0);
+  Widget build(BuildContext context, ref) {
+    final selectedIndex = useState(0);
 
     return Container(
       decoration: const BoxDecoration(
@@ -50,12 +51,18 @@ class PlansContainer extends HookConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              planName,
-              style: context.typography.bodyLarge
-                  .copyWith(color: context.colors.primaryTxt),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  planName,
+                  style: context.typography.bodyLarge
+                      .copyWith(color: context.colors.primaryTxt),
+                ),
+                child ?? const SizedBox(),
+              ],
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: context.space.space_150),
             RichText(
               text: TextSpan(
                 text: 'AED $price ',
@@ -69,7 +76,7 @@ class PlansContainer extends HookConsumerWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: context.space.space_250),
             FeaturesCheckIconWidget(text: planFeature1),
             FeaturesCheckIconWidget(text: planFeature2),
             if (planFeature3 != null && planFeature3!.isNotEmpty)
@@ -83,7 +90,7 @@ class PlansContainer extends HookConsumerWidget {
                 borderRadius: BorderRadius.circular(10),
                 color: context.colors.background,
               ),
-              child:  Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -92,17 +99,30 @@ class PlansContainer extends HookConsumerWidget {
                   ),
                   SizedBox(height: context.space.space_150),
                   PlanDiscountWidget(
-                      number: '1', plan: "Car Plan", price: "Full Price",color: color,),
+                    number: '1',
+                    plan: "Car Plan",
+                    price: "Full Price",
+                    color: color,
+                  ),
                   PlanDiscountWidget(
-                      number: '2', plan: "Car Plan", price: "10%off/car",color: color,),
+                    number: '2',
+                    plan: "Car Plan",
+                    price: "10%off/car",
+                    color: color,
+                  ),
                   PlanDiscountWidget(
-                      number: '3', plan: "Car+ Plan", price: "20%off/car",color: color,),
+                    number: '3',
+                    plan: "Car+ Plan",
+                    price: "20%off/car",
+                    color: color,
+                  ),
                 ],
               ),
             ),
             const SizedBox(height: 20),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: context.space.space_200),
+              padding:
+                  EdgeInsets.symmetric(horizontal: context.space.space_200),
               child: SizedBox(
                 width: double.infinity,
                 child: ButtonWidget(label: 'Subscribe', onTap: () {}),
@@ -110,30 +130,33 @@ class PlansContainer extends HookConsumerWidget {
             ),
             const SizedBox(height: 20),
             Center(
-              child: DurationButtons(selectedIndex: selectedIndex.value, onSelectPlan: (index) {
-                selectedIndex.value = index;
-              },
-              containerColor: containerColor,
-              textColor1: textColor1,
-              textColor2: textColor2,
+              child: DurationButtons(
+                selectedIndex: selectedIndex.value,
+                onSelectPlan: (index) {
+                  selectedIndex.value = index;
+                },
+                containerColor: containerColor,
+                textColor1: textColor1,
+                textColor2: textColor2,
               ),
             ),
-             SizedBox(height: context.space.space_200,)
-            ,
-             Center(
-              child:RichText(text: TextSpan(
-                text: 'Save 10% off ',
-                style: context.typography.bodyMedium
-                    .copyWith(color: context.colors.green),
-                children: [
-                  TextSpan(
-                    text: ' on 6 months subscription',
-                    style: context.typography.bodyMedium
-                        .copyWith(color: context.colors.primaryTxt),
-                  ),
-                ],
-              ))
+            SizedBox(
+              height: context.space.space_200,
             ),
+            Center(
+                child: RichText(
+                    text: TextSpan(
+              text: 'Save 10% off ',
+              style: context.typography.bodyMedium
+                  .copyWith(color: context.colors.green),
+              children: [
+                TextSpan(
+                  text: ' on 6 months subscription',
+                  style: context.typography.bodyMedium
+                      .copyWith(color: context.colors.primaryTxt),
+                ),
+              ],
+            ))),
             const SizedBox(height: 10),
           ],
         ),
