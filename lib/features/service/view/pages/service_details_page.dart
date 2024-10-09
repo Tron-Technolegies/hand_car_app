@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hand_car/features/service/view/widgets/services_list_widget.dart';
@@ -41,19 +42,19 @@ class ServiceDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Function to make phone call
-    // Future<void> makePhoneCall(String phoneNumber) async {
-    //   final Uri launchUri = Uri(
-    //     scheme: 'tel',
-    //     path: phoneNumber,
-    //   );
+   // Function to make phone call
+    Future<void> makePhoneCall(String phoneNumber) async {
+      final Uri launchUri = Uri(
+        scheme: 'tel',
+        path: phoneNumber,
+      );
 
-    //   if (await canLaunchUrl(launchUri)) {
-    //     await launchUrl(launchUri);
-    //   } else {
-    //     throw Exception('Could not launch $phoneNumber');
-    //   }
-    // }
+      if (await canLaunchUrl(launchUri)) {
+        await launchUrl(launchUri);
+      } else {
+        throw Exception('Could not launch $phoneNumber');
+      }
+    }
     Future<void> launchWhatsApp() async {
       final whatsappUrl = Uri.parse("https://wa.me/9895499872");
 
@@ -66,6 +67,39 @@ class ServiceDetailsPage extends StatelessWidget {
       }
     }
 
+
+ void sendEmail() async {
+  // Define the Gmail-specific URI
+  final Uri gmailUri = Uri(
+    scheme: 'googlegmail',
+    path: '/co', // Opens the Gmail compose window
+    queryParameters: {
+      'to': 'example@gmail.com',  // Replace with the recipient's email
+      'subject': 'Inquiry from App',  // Pre-fill subject
+      'body': 'Hello, I would like to inquire about...',  // Pre-fill email body
+    },
+  );
+
+  // Fallback to mailto: if Gmail is not available
+  final Uri mailtoUri = Uri(
+    scheme: 'mailto',
+    path: 'example@gmail.com',  // Replace with the recipient's email
+    queryParameters: {
+      'subject': 'Inquiry from App',
+      'body': 'Hello,I would like to inquire about...',
+    },
+  );
+
+  // Attempt to launch Gmail
+  if (await canLaunchUrl(gmailUri)) {
+    await launchUrl(gmailUri);
+  } else if (await canLaunchUrl(mailtoUri)) {
+    // Fallback to mailto: if Gmail is not available
+    await launchUrl(mailtoUri);
+  } else {
+    throw 'Could not launch email client';
+  }
+}
     return Scaffold(
         appBar: AppBar(
           title: const Text(' Service Details'),
@@ -171,10 +205,44 @@ class ServiceDetailsPage extends StatelessWidget {
             ],
           ),
         ),
-        floatingActionButton: FloatingActionButton.small(
+        floatingActionButton: SpeedDial(
+        animatedIcon: AnimatedIcons.menu_close,
+        backgroundColor: context.colors.secondaryTxt,
+        children: [
+          SpeedDialChild(
+            child: Image.asset(Assets.icons.phone.path),
+            label: 'Call US',
+            onTap: () {
+              makePhoneCall('9895499872');
+            },
+          ),
+          SpeedDialChild(
             child: Image.asset(Assets.icons.whatsapp.path),
-            onPressed: () {
+            label: 'Whatsapp US',
+            onTap: () {
               launchWhatsApp();
-            }));
+            },
+          ),
+          SpeedDialChild(
+            child: Image.asset(Assets.icons.email.path),
+            label: 'Email US',
+            onTap: () async{
+            showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (BuildContext context) {
+                  return const Center(child: CircularProgressIndicator());
+                },
+              );
+              
+              sendEmail();
+              
+              // Hide loading indicator
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
+      );
   }
 }

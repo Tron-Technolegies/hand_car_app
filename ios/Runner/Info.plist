@@ -45,16 +45,21 @@
     <true/>
     <key>UIApplicationSupportsIndirectInputEvents</key>
     <true/>
+
+    <!-- Combine all LSApplicationQueriesSchemes in one array -->
     <key>LSApplicationQueriesSchemes</key>
     <array>
         <string>sms</string>
         <string>tel</string>
+        <string>googlegmail</string>
+        <string>mailto</string>
     </array>
+
     <key>NSPhotoLibraryUsageDescription</key>
-<string>Allow access to photo library to select images.</string>
-<key>NSCameraUsageDescription</key>
-<string>Allow access to the camera to take photos.</string>
-<key>NSMicrophoneUsageDescription</key>
-<string>Allow access to microphone, as it's needed if you plan to record videos.</string>
+    <string>Allow access to photo library to select images.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Allow access to the camera to take photos.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Allow access to microphone, as it's needed if you plan to record videos.</string>
 </dict>
 </plist>

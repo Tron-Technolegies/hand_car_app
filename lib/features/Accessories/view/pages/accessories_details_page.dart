@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
-import 'package:hand_car/features/Accessories/view/pages/cart_page.dart';
+
 import 'package:hand_car/features/Accessories/view/widgets/bullet_points_widgets.dart';
 import 'package:hand_car/features/Accessories/view/widgets/drop_down_button_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/image_carousel_widget.dart';
@@ -90,23 +90,15 @@ class ProductDetailsPage extends HookWidget {
                     SizedBox(height: context.space.space_200),
                     Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: context.space.space_200),
+                          horizontal: context.space.space_100),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const DropDownButtonWidget(),
                           SizedBox(
-                              width: context.space.space_500 * 6,
+                              width: context.space.space_500 * 5,
                               child: ButtonWidget(
-                                  label: "Add to Cart",
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => const CartPage(),
-                                      ),
-                                    );
-                                  })),
+                                  label: "Add to Cart", onTap: () {})),
                           Padding(
                             padding: EdgeInsets.symmetric(
                                 horizontal: context.space.space_100),

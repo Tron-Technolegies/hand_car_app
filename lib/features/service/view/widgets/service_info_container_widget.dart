@@ -3,14 +3,14 @@ import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
 
-class PaintSolutionCard extends StatelessWidget {
+class ServiceCardWidget extends StatelessWidget {
   final String image;
   final String title;
   final String title2;
   final String rating;
   final String price;
 
-  const PaintSolutionCard({
+  const ServiceCardWidget({
     super.key,
     required this.image,
     required this.title,
@@ -20,16 +20,18 @@ class PaintSolutionCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: GestureDetector(
-        onTap: () {},
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.grey.shade200,
-            borderRadius: BorderRadius.circular(15),
-          ),
+  @override
+Widget build(BuildContext context) {
+  return Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: GestureDetector(
+      onTap: () {},
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey.shade200,
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: SingleChildScrollView( // Wrap Column in SingleChildScrollView
           child: Column(
             children: [
               // Image Section
@@ -85,23 +87,25 @@ class PaintSolutionCard extends StatelessWidget {
                 ),
               ),
               ButtonWidget(
-                  label: 'View Details',
-                  onTap: () {
-                    context.push(
-                      '/serviceDetailsPage',
-                      extra: {
-                        'image': image,
-                        'title': title,
-                        'title2': title2,
-                        'rating': rating,
-                        'price': price,
-                      },
-                    );
-                  })
+                label: 'View Details',
+                onTap: () {
+                  context.push(
+                    '/serviceDetailsPage',
+                    extra: {
+                      'image': image,
+                      'title': title,
+                      'title2': title2,
+                      'rating': rating,
+                      'price': price,
+                    },
+                  );
+                }
+              ),
             ],
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

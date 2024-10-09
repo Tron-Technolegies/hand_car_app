@@ -3,16 +3,18 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
-import 'package:hand_car/features/service/view/widgets/service_info_container_widget.dart';
+import 'package:hand_car/features/service/view/widgets/grid_view_service_widget.dart';
 import 'package:hand_car/features/service/view/widgets/services_icon_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+ final GlobalKey<ScaffoldState> scaffoldKey3 = GlobalKey<ScaffoldState>();
+ 
 //Services Page
 class ServicesPage extends HookConsumerWidget {
   static const String route = '/services_page';
+  // List of services
   final List<String> services = [
     "Painting",
     "Fitting",
@@ -20,6 +22,7 @@ class ServicesPage extends HookConsumerWidget {
     "General Checkup",
     "Car Wash",
   ];
+  // List of images
 
   final List<String> images = [
     Assets.icons.icPaintingService,
@@ -35,6 +38,7 @@ class ServicesPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final pageController = usePageController();
     final buttonIndex = useState(0);
+    final controller=useScrollController();
 
     //Page changing function
     void onItemTapped(int index) {
@@ -47,7 +51,7 @@ class ServicesPage extends HookConsumerWidget {
     }
 
     return Scaffold(
-      key: _scaffoldKey,
+      key: scaffoldKey3,
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {},
@@ -76,7 +80,7 @@ class ServicesPage extends HookConsumerWidget {
           ),
           IconButton(
             onPressed: () {
-              _scaffoldKey.currentState?.openDrawer();
+              scaffoldKey3.currentState?.openDrawer();
             },
             icon: Icon(
               Icons.menu,
@@ -91,34 +95,16 @@ class ServicesPage extends HookConsumerWidget {
         child: Column(
           children: [
             SizedBox(height: context.space.space_200),
-            // SizedBox(
-            //   height: context.space.space_600,
-            //   child: ListView(
-            //     scrollDirection: Axis.horizontal,
-            //     children: List.generate(
-            //       services.length,
-            //       (index) => Padding(
-            //         padding: EdgeInsets.symmetric(
-            //             horizontal: context.space.space_100),
-            //         child: ServicesButtonWidget(
-            //           title: services[index],
-            //           selectedIndex: index,
-            //           isSelected: index == buttonIndex.value,
-            //           onSelectPlan: onItemTapped,
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-            // ),
             SizedBox(
               height: context.space.space_600 * 2.6,
               child: ListView(
+                controller: controller,
                 scrollDirection: Axis.horizontal,
                 children: List.generate(
                   services.length,
                   (index) => Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: context.space.space_100),
+                          horizontal: context.space.space_50),
                       child: ServicesIconsWidget(
                         image: images[index],
                         title: services[index],
@@ -140,93 +126,46 @@ class ServicesPage extends HookConsumerWidget {
                 },
                 children: [
                   //Painting
-                  GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 320,
-                      mainAxisSpacing: 0.2,
-                      mainAxisExtent: 380,
-                      crossAxisSpacing: 0.3,
-                    ),
-                    itemCount: 5,
-                    itemBuilder: (context, index) => PaintSolutionCard(
-                      image: Assets.images.imgPainting.path,
-                      title: 'ICON Rocklear',
-                      title2: 'Paint Solution',
-                      rating: '4.0',
-                      price: '99',
-                    ),
+                  GridViewServicesWidget(
+                    image: Assets.images.imgPainting1.path,
+                    title: 'ICON Rocklear',
+                    title2: 'Painting Solution',
+                    rating: '4.0',
+                    price: '99',
                   ),
                   //Fitting
-                  GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 320,
-                      mainAxisSpacing: 0.2,
-                      mainAxisExtent: 380,
-                      crossAxisSpacing: 1,
-                    ),
-                    itemCount: 5,
-                    itemBuilder: (context, index) => PaintSolutionCard(
-                      image: Assets.images.imgPainting2.path,
-                      title: 'ARM Fittings',
-                      title2: 'Fitting Solution',
-                      rating: '4.0',
-                      price: '109',
-                    ),
-                  ),
+                  GridViewServicesWidget(
+                      title: "ARM Fittings",
+                      title2: "Solution",
+                      rating: "4.0",
+                      price: "99",
+                      image: Assets.images.imgPainting2.path),
+
                   //Spare Parts
-                  GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 320,
-                      mainAxisSpacing: 0.2,
-                      mainAxisExtent: 380,
-                      crossAxisSpacing: 1,
-                    ),
-                    itemCount: 5,
-                    itemBuilder: (context, index) => PaintSolutionCard(
-                      image: Assets.images.imgPainting3.path,
-                      title: 'Leo Spare Parts',
-                      title2: 'Spare Solution',
-                      rating: '4.0',
-                      price: '99',
-                    ),
+                  GridViewServicesWidget(
+                    image: Assets.images.imgPainting3.path,
+                    title: 'Leo Spare Parts',
+                    title2: 'Spare Solution',
+                    rating: '4.0',
+                    price: '99',
                   ),
+
                   //General Checkup
-                  GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 320,
-                      mainAxisSpacing: 0.2,
-                      mainAxisExtent: 400,
-                      crossAxisSpacing: 1,
-                    ),
-                    itemCount: 5,
-                    itemBuilder: (context, index) => PaintSolutionCard(
-                      image: Assets.images.imgPainting4.path,
-                      title: 'General Motors',
-                      title2: 'Checkup Solution',
-                      rating: '4.0',
-                      price: '99',
-                    ),
+                  GridViewServicesWidget(
+                    image: Assets.images.imgPainting4.path,
+                    title: 'General Motors',
+                    title2: 'Checkup Solution',
+                    rating: '4.0',
+                    price: '99',
                   ),
-                  GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 320,
-                      mainAxisSpacing: 0.2,
-                      mainAxisExtent: 400,
-                      crossAxisSpacing: 1,
-                    ),
-                    itemCount: 5,
-                    itemBuilder: (context, index) => PaintSolutionCard(
-                      image: Assets.images.imgPainting4.path,
-                      title: 'Onyxaa ',
-                      title2: 'Water Services',
-                      rating: '4.0',
-                      price: '99',
-                    ),
+
+                  //Car Wash
+                  GridViewServicesWidget(
+                    image: Assets.images.imgPainting5.path,
+                    title: 'Onyxa Car wash',
+                    title2: 'Checkup Solution',
+                    rating: '4.0',
+                    price: '99',
                   ),
                 ],
               ),
@@ -237,4 +176,3 @@ class ServicesPage extends HookConsumerWidget {
     );
   }
 }
-

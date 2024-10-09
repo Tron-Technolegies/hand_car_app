@@ -3,7 +3,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class NavigationPage extends HookConsumerWidget {
@@ -14,7 +13,8 @@ class NavigationPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    final navBarIndex = useState(navigationShell.currentIndex); // Use the current index from navigationShell
+    final navBarIndex = useState(navigationShell
+        .currentIndex); // Use the current index from navigationShell
 
     // Function to handle tab switching
     void onItemTapped(int index) {
@@ -23,13 +23,13 @@ class NavigationPage extends HookConsumerWidget {
     }
 
     // useEffect hook to listen to the GoRouter's current location and update the BottomNavigationBar
-   
+
     // Listen for route changes and update the navBarIndex
     useEffect(() {
       void listener() {
         final router = GoRouter.of(context);
         final location = router.location;
-        
+
         if (location != null) {
           if (location.startsWith('/spares')) {
             navBarIndex.value = 0;
@@ -47,17 +47,16 @@ class NavigationPage extends HookConsumerWidget {
 
       final router = GoRouter.of(context);
       router.addListener(listener);
-      
+
       // Call the listener once to set the initial state
       listener();
-      
+
       return () {
         router.removeListener(listener);
       };
     }, []);
 
     return Scaffold(
-    
       body: navigationShell, // Display the navigation shell content
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: context.colors.primary,
@@ -69,21 +68,21 @@ class NavigationPage extends HookConsumerWidget {
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
               navBarIndex.value == 0
-                  ? Assets.icons.icSpareFilled
-                  : Assets.icons.icSpareOutline,
+                  ? 'assets/icons/ic_spare_filled.svg'
+                  : 'assets/icons/ic_spare_outline.svg',
               height: 30,
               colorFilter: navBarIndex.value == 0
                   ? ColorFilter.mode(context.colors.primary, BlendMode.srcIn)
                   : ColorFilter.mode(
                       context.colors.containerShadow, BlendMode.srcIn),
             ),
-            label: 'Spares',
+            label: 'Auto Parts',
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
               navBarIndex.value == 1
-                  ? Assets.icons.icCarSeatFilled
-                  : Assets.icons.icCarSeatOutline,
+                  ? 'assets/icons/ic_car_seat_filled.svg'
+                  : 'assets/icons/ic_car_seat_outline.svg',
               height: 30,
               colorFilter: navBarIndex.value == 1
                   ? ColorFilter.mode(context.colors.primary, BlendMode.srcIn)
@@ -95,8 +94,8 @@ class NavigationPage extends HookConsumerWidget {
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
               navBarIndex.value == 2
-                  ? Assets.icons.icHomeFilled
-                  : Assets.icons.icHomeOutline,
+                  ? 'assets/icons/ic_home_filled.svg'
+                  : 'assets/icons/ic_home_outline.svg',
               height: 30,
               colorFilter: navBarIndex.value == 2
                   ? ColorFilter.mode(context.colors.primary, BlendMode.srcIn)
@@ -108,8 +107,8 @@ class NavigationPage extends HookConsumerWidget {
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
               navBarIndex.value == 3
-                  ? Assets.icons.icCarServiceFilled
-                  : Assets.icons.icCarServiceOutline,
+                  ? 'assets/icons/ic_car_service_filled.svg'
+                  : 'assets/icons/ic_car_service_outline.svg',
               height: 30,
               colorFilter: navBarIndex.value == 3
                   ? ColorFilter.mode(context.colors.primary, BlendMode.srcIn)
@@ -121,8 +120,8 @@ class NavigationPage extends HookConsumerWidget {
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
               navBarIndex.value == 4
-                  ? Assets.icons.icSubscriptionFilled
-                  : Assets.icons.icSubscriptionOutline,
+                  ? 'assets/icons/ic_subscription_filled.svg'
+                  : 'assets/icons/ic_subscription_outline.svg',
               height: 30,
               colorFilter: navBarIndex.value == 4
                   ? ColorFilter.mode(context.colors.primary, BlendMode.srcIn)
@@ -138,9 +137,9 @@ class NavigationPage extends HookConsumerWidget {
 }
 
 extension on GoRouter {
-   get location => null;
+  get location => null;
 
   void addListener(void Function() listener) {}
-  
+
   removeListener(void Function() listener) {}
 }

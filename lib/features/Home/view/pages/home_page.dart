@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/core/utils/scaffold_key.dart';
 import 'package:hand_car/features/Home/view/widgets/accessories_ads_home_page_widget.dart';
 import 'package:hand_car/features/Home/view/widgets/brand_wised_card_widget.dart';
 import 'package:hand_car/features/Home/view/widgets/carousel_slider_widget.dart';
@@ -13,6 +12,8 @@ import 'package:hand_car/features/Home/view/widgets/spare_brands_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:lottie/lottie.dart';
 
+ final GlobalKey<ScaffoldState> scaffoldKey1 = GlobalKey<ScaffoldState>();
+
 class HomePage extends StatelessWidget {
   static const String routeName = 'home_page';
   const HomePage({super.key});
@@ -20,7 +21,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: scaffoldKey,
+      key: scaffoldKey1,
       appBar: AppBar(
         leading: SvgPicture.asset(Assets.icons.handCarIcon),
         actions: [
@@ -32,7 +33,7 @@ class HomePage extends StatelessWidget {
           IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
           IconButton(
               onPressed: () {
-                scaffoldKey.currentState?.openDrawer();
+                scaffoldKey1.currentState?.openDrawer();
               },
               icon: const Icon(Icons.menu)),
         ],

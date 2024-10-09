@@ -7,7 +7,8 @@ import 'package:hand_car/features/Subscriptions/view/pages/car_wash_subscription
 import 'package:hand_car/features/Subscriptions/view/pages/service_subscription_page.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 
-final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+ final GlobalKey<ScaffoldState> scaffoldKey5 = GlobalKey<ScaffoldState>();
+
 
 class SubscriptionPage extends HookWidget {
   const SubscriptionPage({super.key});
@@ -27,7 +28,7 @@ class SubscriptionPage extends HookWidget {
     }, [tabController]);
 
     return Scaffold(
-      key: _scaffoldKey, 
+      key: scaffoldKey5, 
       appBar: AppBar(
         leading: SvgPicture.asset(Assets.icons.handCarIcon),
         title: const Text('Subscription'),
@@ -35,7 +36,7 @@ class SubscriptionPage extends HookWidget {
         actions: [
           IconButton(
             onPressed: () {
-              _scaffoldKey.currentState?.openDrawer(); 
+              scaffoldKey5.currentState?.openDrawer(); 
             },
             icon: const Icon(Icons.menu),
           ),

@@ -6,6 +6,7 @@ import 'package:hand_car/features/Subscriptions/view/widgets/button_for_plan_sel
 import 'package:hand_car/features/Subscriptions/view/widgets/plans_container_widget.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+//
 class CarWashPlanScreen extends HookConsumerWidget {
   const CarWashPlanScreen({super.key});
 
@@ -92,6 +93,7 @@ class CarWashPlanScreen extends HookConsumerWidget {
                 SizedBox(
                   height: 500,
                   child: PageView(
+                    
                     controller: pageController,
                     onPageChanged: (index) => selectedIndex.value = index,
                     children: [
@@ -143,4 +145,3 @@ class CarWashPlanScreen extends HookConsumerWidget {
     );
   }
 }
-

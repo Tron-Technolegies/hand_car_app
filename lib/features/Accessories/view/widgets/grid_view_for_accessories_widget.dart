@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories_product_card_widget.dart';
 
 class GridViewBuilderAccessoriesWidget extends StatelessWidget {
-  final ScrollController controller;
+  
   final String name;
   final String price;
   final String image;
@@ -10,7 +10,7 @@ class GridViewBuilderAccessoriesWidget extends StatelessWidget {
   final String off;
   const GridViewBuilderAccessoriesWidget({
     super.key,
-    required this.controller,
+
     required this.name,
     required this.price,
     required this.image,
@@ -21,7 +21,7 @@ class GridViewBuilderAccessoriesWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-      controller: controller,
+      
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 340,
         mainAxisSpacing: 0.5,

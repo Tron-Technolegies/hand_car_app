@@ -8,7 +8,7 @@ import 'package:hand_car/features/SpareParts/view/widgets/carousel_slider_for_ge
 import 'package:hand_car/features/SpareParts/view/widgets/spare_more_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 
-final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+ final GlobalKey<ScaffoldState> scaffoldKey4 = GlobalKey<ScaffoldState>();
 
 class SparesPage extends HookWidget {
   static const String routeName = '/spares';
@@ -17,7 +17,7 @@ class SparesPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
+      key: scaffoldKey4,
       appBar: AppBar(
         leading: SvgPicture.asset(Assets.icons.handCarIcon),
         title: Text("Auto Parts", style: context.typography.h2),
@@ -26,7 +26,7 @@ class SparesPage extends HookWidget {
           IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
           IconButton(
               onPressed: () {
-                _scaffoldKey.currentState?.openDrawer();
+                scaffoldKey4.currentState?.openDrawer();
               },
               icon: const Icon(Icons.menu)),
         ],
