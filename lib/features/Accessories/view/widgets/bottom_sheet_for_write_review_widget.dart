@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hand_car/core/controller/image_picker_controller.dart';
+import 'package:hand_car/core/controller/multiple_image_picker_provider.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -46,7 +46,7 @@ class BottomSheetForWriteReview extends ConsumerWidget {
           ),
           TextButton.icon(
               onPressed: () {
-                ref.read(imagePickerProvider.notifier).pickImage();
+               ref.read(multipleImagePickerProvider.notifier).pickImages();
               },
               icon: const Icon(
                 Icons.attachment_outlined,

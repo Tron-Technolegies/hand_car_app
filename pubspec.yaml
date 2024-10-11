@@ -9,15 +9,19 @@ environment:
 dependencies:
   carousel_slider: ^5.0.0
   
+  concentric_transition: ^1.0.3
   fan_carousel_image_slider: ^1.0.1
   flutter:
     sdk: flutter
   flutter_gen: ^5.7.0
   flutter_hooks: ^0.20.5
+  flutter_onboarding_slider: ^1.0.11
   flutter_otp_text_field: ^1.2.0
   flutter_rating_bar: ^4.0.1
   flutter_speed_dial: ^7.0.0
   flutter_svg: ^2.0.10+1
+  freezed: ^2.5.7
+  freezed_annotation: ^2.4.4
   go_router: ^14.2.7
   hooks_riverpod: ^2.5.2
   image_picker: ^1.1.2

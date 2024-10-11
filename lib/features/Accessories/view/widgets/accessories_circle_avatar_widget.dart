@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 
+/// [AccessoriesCircleAvatharWidget]
+
 class AccessoriesCircleAvatharWidget extends StatelessWidget {
   final String text1;
   final String text2;

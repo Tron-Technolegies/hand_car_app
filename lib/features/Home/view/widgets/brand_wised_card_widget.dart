@@ -9,7 +9,7 @@ class BrandWisedCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return CarouselSlider.builder(
       options: CarouselOptions(
-        height: 320,
+        height: 350,
         viewportFraction: 0.8,
         autoPlay: true,
         enableInfiniteScroll: true,

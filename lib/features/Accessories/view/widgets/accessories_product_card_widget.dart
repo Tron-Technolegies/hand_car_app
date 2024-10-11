@@ -4,6 +4,7 @@ import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/widgets/outline_button_widget.dart';
 import 'package:hand_car/features/Accessories/view/pages/accessories_details_page.dart';
 
+//AccessoriesProductCardWidget For Show In GridView
 class AccessoriesProductCardWidget extends StatelessWidget {
   final String name;
   final String price;

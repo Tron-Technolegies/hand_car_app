@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ReviewItemsWidget extends StatelessWidget {
   final String username;
@@ -7,6 +10,7 @@ class ReviewItemsWidget extends StatelessWidget {
   final String date;
   final String comment;
   final String review;
+ 
 
   const ReviewItemsWidget(
       {super.key,
@@ -14,7 +18,9 @@ class ReviewItemsWidget extends StatelessWidget {
       required this.rating,
       required this.date,
       required this.comment,
-      required this.review});
+      required this.review,
+      
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +53,7 @@ class ReviewItemsWidget extends StatelessWidget {
           ),
           SizedBox(height: context.space.space_100),
           Text(review, style: context.typography.body),
+          
         ],
       ),
     );

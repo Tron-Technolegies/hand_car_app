@@ -8,13 +8,11 @@ import 'package:hand_car/features/service/view/widgets/services_icon_widget.dart
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+final GlobalKey<ScaffoldState> scaffoldKey3 = GlobalKey<ScaffoldState>();
 
- final GlobalKey<ScaffoldState> scaffoldKey3 = GlobalKey<ScaffoldState>();
- 
-//Services Page
 class ServicesPage extends HookConsumerWidget {
   static const String route = '/services_page';
-  // List of services
+  
   final List<String> services = [
     "Painting",
     "Fitting",
@@ -22,7 +20,6 @@ class ServicesPage extends HookConsumerWidget {
     "General Checkup",
     "Car Wash",
   ];
-  // List of images
 
   final List<String> images = [
     Assets.icons.icPaintingService,
@@ -38,9 +35,8 @@ class ServicesPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final pageController = usePageController();
     final buttonIndex = useState(0);
-    final controller=useScrollController();
+    final controller = useScrollController();
 
-    //Page changing function
     void onItemTapped(int index) {
       buttonIndex.value = index;
       pageController.animateToPage(
@@ -53,7 +49,8 @@ class ServicesPage extends HookConsumerWidget {
     return Scaffold(
       key: scaffoldKey3,
       appBar: AppBar(
-        leading: IconButton(
+        
+leading: IconButton(
           onPressed: () {},
           icon: SvgPicture.asset(Assets.icons.handCarIcon),
         ),
@@ -91,88 +88,80 @@ class ServicesPage extends HookConsumerWidget {
       ),
       drawer: const DrawerWidget(),
       endDrawerEnableOpenDragGesture: true,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(height: context.space.space_200),
-            SizedBox(
-              height: context.space.space_600 * 2.6,
-              child: ListView(
-                controller: controller,
-                scrollDirection: Axis.horizontal,
-                children: List.generate(
-                  services.length,
-                  (index) => Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: context.space.space_50),
-                      child: ServicesIconsWidget(
-                        image: images[index],
-                        title: services[index],
-                        selectedIndex: index,
-                        isSelected: index == buttonIndex.value,
-                        onSelectService: onItemTapped,
-                      )),
+      body: Column(
+        children: [
+          SizedBox(height: context.space.space_200),
+          SizedBox(
+            height: context.space.space_600 * 2.6,
+            child: ListView(
+            
+              controller: controller,
+              scrollDirection: Axis.horizontal,
+              children: List.generate(
+                services.length,
+                (index) => Padding(
+                  padding: EdgeInsets.symmetric(horizontal: context.space.space_50),
+                  child: ServicesIconsWidget(
+                    image: images[index],
+                    title: services[index],
+                    selectedIndex: index,
+                    isSelected: index == buttonIndex.value,
+                    onSelectService: onItemTapped,
+                  ),
                 ),
               ),
             ),
-            SizedBox(height: context.space.space_100),
-            SizedBox(
-              height: 600,
-              //PageView For Services
-              child: PageView(
-                controller: pageController,
-                onPageChanged: (value) {
-                  buttonIndex.value = value;
-                },
-                children: [
-                  //Painting
-                  GridViewServicesWidget(
-                    image: Assets.images.imgPainting1.path,
-                    title: 'ICON Rocklear',
-                    title2: 'Painting Solution',
-                    rating: '4.0',
-                    price: '99',
-                  ),
-                  //Fitting
-                  GridViewServicesWidget(
-                      title: "ARM Fittings",
-                      title2: "Solution",
-                      rating: "4.0",
-                      price: "99",
-                      image: Assets.images.imgPainting2.path),
-
-                  //Spare Parts
-                  GridViewServicesWidget(
-                    image: Assets.images.imgPainting3.path,
-                    title: 'Leo Spare Parts',
-                    title2: 'Spare Solution',
-                    rating: '4.0',
-                    price: '99',
-                  ),
-
-                  //General Checkup
-                  GridViewServicesWidget(
-                    image: Assets.images.imgPainting4.path,
-                    title: 'General Motors',
-                    title2: 'Checkup Solution',
-                    rating: '4.0',
-                    price: '99',
-                  ),
-
-                  //Car Wash
-                  GridViewServicesWidget(
-                    image: Assets.images.imgPainting5.path,
-                    title: 'Onyxa Car wash',
-                    title2: 'Checkup Solution',
-                    rating: '4.0',
-                    price: '99',
-                  ),
-                ],
-              ),
+          ),
+          SizedBox(height: context.space.space_100),
+          Expanded(
+            child: PageView(
+              controller: pageController,
+              onPageChanged: (value) {
+                buttonIndex.value = value;
+              },
+              
+              children: [
+                GridViewServicesWidget(
+                  image: Assets.images.imgPainting1.path,
+                  title: 'ICON Rocklear',
+                  title2: 'Painting Solution',
+                  rating: '4.0',
+                  price: '99',
+                ),
+                GridViewServicesWidget(
+                  title: "ARM Fittings",
+                  title2: "Solution",
+                  rating: "4.0",
+                  price: "99",
+                  image: Assets.images.imgPainting2.path,
+                ),
+                GridViewServicesWidget(
+                  image: Assets.images.imgPainting3.path,
+                  title: 'Leo Spare Parts',
+                  title2: 'Spare Solution',
+                  rating: '4.0',
+                  price: '99',
+                ),
+                GridViewServicesWidget(
+                  image: Assets.images.imgPainting4.path,
+                  title: 'General Motors',
+                  title2: 'Checkup Solution',
+                  rating: '4.0',
+                  price: '99',
+                ),
+                GridViewServicesWidget(
+                  image: Assets.images.imgPainting5.path,
+                  title: 'Onyxa Car wash',
+                  title2: 'Checkup Solution',
+                  rating: '4.0',
+                  price: '99',
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
+

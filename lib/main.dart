@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hand_car/core/router/bottom_navigation_bar_routing.dart';
+import 'package:hand_car/core/router/router.dart';
+
 import 'package:hand_car/core/theme/light_theme.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

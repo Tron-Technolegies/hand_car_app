@@ -24,11 +24,9 @@ class AccessoriesPage extends HookWidget {
 
     useEffect(() {
       void onScroll() {
-        if (controller.position.userScrollDirection ==
-            ScrollDirection.reverse) {
+        if (controller.position.userScrollDirection == ScrollDirection.reverse) {
           appBarVisible.value = false;
-        } else if (controller.position.userScrollDirection ==
-            ScrollDirection.forward) {
+        } else if (controller.position.userScrollDirection == ScrollDirection.forward) {
           appBarVisible.value = true;
         }
       }
@@ -62,102 +60,86 @@ class AccessoriesPage extends HookWidget {
           : null,
       drawer: const DrawerWidget(),
       endDrawerEnableOpenDragGesture: true,
-      body: Padding(
-        padding: EdgeInsets.all(context.space.space_200),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(
-                height: context.space.space_400 * 5,
-                child: Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: context.space.space_200),
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: [
-                      AccessoriesCircleAvatharWidget(
-                        onTap: () => pageController.animateToPage(0,
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut),
-                        image: Assets.images.imgCarCareAccessories.path,
-                        text1: 'Maintenance &',
-                        text2: 'Care',
-                      ),
-                      SizedBox(width: context.space.space_250),
-                      AccessoriesCircleAvatharWidget(
-                        onTap: () => pageController.animateToPage(1,
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut),
-                        image: Assets.images.imgCarInteriorAccessories.path,
-                        text1: 'Interior',
-                        text2: 'Accessories',
-                      ),
-                      SizedBox(width: context.space.space_250),
-                      AccessoriesCircleAvatharWidget(
-                        onTap: () => pageController.animateToPage(2,
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut),
-                        image: Assets.images.imgCarSpeaker.path,
-                        text1: 'Electronics',
-                        text2: 'Accessories',
-                      ),
-                      SizedBox(width: context.space.space_250),
-                      AccessoriesCircleAvatharWidget(
-                        onTap: () => pageController.animateToPage(3,
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut),
-                        image: Assets.images.imgCarSpeaker.path,
-                        text1: 'Other',
-                        text2: 'Accessories',
-                      ),
-                    ],
-                  ),
+      body: Column(
+        children: [
+          SizedBox(
+            height: context.space.space_400 * 5,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                AccessoriesCircleAvatharWidget(
+                  onTap: () => pageController.animateToPage(0,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut),
+                  image: Assets.images.imgCarCareAccessories.path,
+                  text1: 'Maintenance &',
+                  text2: 'Care',
                 ),
-              ),
-              SizedBox(height: context.space.space_200),
-              SizedBox(
-                height: 600, // Set a fixed height instead of Expanded
-                child: PageView(
-                
-                  controller: pageController,
-                  onPageChanged: (index) {
-                    currentPage.value = index;
-                  },
-                  children: const [
-                    GridViewBuilderAccessoriesWidget(
-                     
-                      name: "3M Car Washer",
-                      price: '190',
-                      discount: '298',
-                      off: '30',
-                      image:
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJnD1gtXHviN3Ywia6uOcoAfa1XHgCsh7Zkw&s',
-                    ),
-                    GridViewBuilderAccessoriesWidget(
-                     
-                      name: "Car Seat",
-                      price: '180',
-                      discount: '299',
-                      off: '30',
-                      image:
-                          'https://e7.pngegg.com/pngimages/372/436/png-clipart-white-and-black-vehicle-interior-car-seat-massage-chair-child-safety-seat-automotive-interior-driving-interior-design-thumbnail.png',
-                    ),
-                    GridViewBuilderAccessoriesWidget(
-                      
-                      name: "Unitopsci Wireless Bluetooth Speaker",
-                      price: '120',
-                      discount: '299',
-                      off: '30',
-                      image:
-                          'https://www.pngplay.com/wp-content/uploads/7/Automobile-Car-Accessories-PNG-Background.png',
-                    ),
-                  ],
+                SizedBox(width: context.space.space_250),
+                AccessoriesCircleAvatharWidget(
+                  onTap: () => pageController.animateToPage(1,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut),
+                  image: Assets.images.imgCarInteriorAccessories.path,
+                  text1: 'Interior',
+                  text2: 'Accessories',
                 ),
-              ),
-              SizedBox(height: context.space.space_200),
-            ],
+                SizedBox(width: context.space.space_250),
+                AccessoriesCircleAvatharWidget(
+                  onTap: () => pageController.animateToPage(2,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut),
+                  image: Assets.images.imgCarSpeaker.path,
+                  text1: 'Electronics',
+                  text2: 'Accessories',
+                ),
+                SizedBox(width: context.space.space_250),
+                AccessoriesCircleAvatharWidget(
+                  onTap: () => pageController.animateToPage(3,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut),
+                  image: Assets.images.imgCarSpeaker.path,
+                  text1: 'Other',
+                  text2: 'Accessories',
+                ),
+              ],
+            ),
           ),
-        ),
+          Expanded(
+            child: PageView(
+              controller: pageController,
+              onPageChanged: (index) {
+                currentPage.value = index;
+              },
+              children: const [
+                GridViewBuilderAccessoriesWidget(
+                  name: "3M Car Washer",
+                  price: '190',
+                  discount: '298',
+                  off: '30',
+                  image:
+                      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJnD1gtXHviN3Ywia6uOcoAfa1XHgCsh7Zkw&s',
+                ),
+                GridViewBuilderAccessoriesWidget(
+                  name: "Car Seat",
+                  price: '180',
+                  discount: '299',
+                  off: '30',
+                  image:
+                      'https://e7.pngegg.com/pngimages/372/436/png-clipart-white-and-black-vehicle-interior-car-seat-massage-chair-child-safety-seat-automotive-interior-driving-interior-design-thumbnail.png',
+                ),
+                GridViewBuilderAccessoriesWidget(
+                  name: "Unitopsci Wireless Bluetooth Speaker",
+                  price: '120',
+                  discount: '299',
+                  off: '30',
+                  image:
+                      'https://www.pngplay.com/wp-content/uploads/7/Automobile-Car-Accessories-PNG-Background.png',
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

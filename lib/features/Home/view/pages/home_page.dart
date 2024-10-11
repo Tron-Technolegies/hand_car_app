@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
+import 'package:hand_car/core/utils/bottom_nav_controller.dart';
 import 'package:hand_car/features/Home/view/widgets/accessories_ads_home_page_widget.dart';
 import 'package:hand_car/features/Home/view/widgets/brand_wised_card_widget.dart';
 import 'package:hand_car/features/Home/view/widgets/carousel_slider_widget.dart';
@@ -10,16 +11,17 @@ import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
 import 'package:hand_car/features/Home/view/widgets/home_page_services_widget.dart';
 import 'package:hand_car/features/Home/view/widgets/spare_brands_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:lottie/lottie.dart';
 
- final GlobalKey<ScaffoldState> scaffoldKey1 = GlobalKey<ScaffoldState>();
+final GlobalKey<ScaffoldState> scaffoldKey1 = GlobalKey<ScaffoldState>();
 
-class HomePage extends StatelessWidget {
+class HomePage extends ConsumerWidget {
   static const String routeName = 'home_page';
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
     return Scaffold(
       key: scaffoldKey1,
       appBar: AppBar(
@@ -61,7 +63,7 @@ class HomePage extends StatelessWidget {
             text3: "View Products",
             image: "assets/images/accessories.png",
             onTap: () {
-              context.push('/accessories');
+              ref.read(navigationProvider.notifier).changeSelectedItemIndex(1);
             },
           ),
           SizedBox(
@@ -73,7 +75,9 @@ class HomePage extends StatelessWidget {
               text3: "Find Service",
               image: 'assets/images/car.png',
               onTap: () {
-                context.push('/services');
+                ref
+                    .read(navigationProvider.notifier)
+                    .changeSelectedItemIndex(3);
               }),
           SizedBox(
             height: context.space.space_100,
@@ -84,7 +88,7 @@ class HomePage extends StatelessWidget {
             text3: "Enquire Now",
             image: 'assets/images/spare_parts.png',
             onTap: () {
-              context.go('/spares');
+              ref.read(navigationProvider.notifier).changeSelectedItemIndex(0);
             },
           ),
           SizedBox(

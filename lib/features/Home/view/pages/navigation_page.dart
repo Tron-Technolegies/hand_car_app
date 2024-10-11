@@ -1,77 +1,80 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
+import 'package:hand_car/core/utils/bottom_nav_controller.dart';
+import 'package:hand_car/features/Accessories/view/pages/accessories_page.dart';
+import 'package:hand_car/features/Home/view/pages/car_wash_page.dart';
+import 'package:hand_car/features/Home/view/pages/home_page.dart';
+import 'package:hand_car/features/SpareParts/view/pages/spares_page.dart';
+import 'package:hand_car/features/service/view/pages/services_page.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class NavigationPage extends HookConsumerWidget {
   static const String route = '/navigation';
-  final StatefulNavigationShell navigationShell;
 
-  const NavigationPage({super.key, required this.navigationShell});
+  const NavigationPage({super.key});
 
   @override
-  Widget build(BuildContext context, ref) {
-    final navBarIndex = useState(navigationShell
-        .currentIndex); // Use the current index from navigationShell
+  Widget build(BuildContext context, WidgetRef ref) {
+// Get the navigation state from the provider.
+    final navigationState = ref.watch(navigationProvider);
 
-    // Function to handle tab switching
-    void onItemTapped(int index) {
-      navBarIndex.value = index;
-      navigationShell.goBranch(index);
-    }
-
-    // useEffect hook to listen to the GoRouter's current location and update the BottomNavigationBar
-
-    // Listen for route changes and update the navBarIndex
+    // Listen for page changes and update the provider.
     useEffect(() {
-      void listener() {
-        final router = GoRouter.of(context);
-        final location = router.location;
-
-        if (location != null) {
-          if (location.startsWith('/spares')) {
-            navBarIndex.value = 0;
-          } else if (location.startsWith('/accessories')) {
-            navBarIndex.value = 1;
-          } else if (location.startsWith('/home')) {
-            navBarIndex.value = 2;
-          } else if (location.startsWith('/services')) {
-            navBarIndex.value = 3;
-          } else if (location.startsWith('/subscription')) {
-            navBarIndex.value = 4;
-          }
+      navigationState.pageController.addListener(() {
+        if (navigationState.pageController.page != null) {
+          ref.read(navigationProvider.notifier).changeSelectedItemIndex(
+              navigationState.pageController.page!.round());
         }
-      }
+      });
+      return () => navigationState.pageController.dispose();
+    }, const []);
 
-      final router = GoRouter.of(context);
-      router.addListener(listener);
-
-      // Call the listener once to set the initial state
-      listener();
-
-      return () {
-        router.removeListener(listener);
-      };
-    }, []);
+    // Ensure the controller jumps to the correct page after being built.
+    useEffect(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (navigationState.pageController.hasClients) {
+          navigationState.pageController
+              .jumpToPage(navigationState.selectedNavBarItemIndex);
+        }
+      });
+      return null;
+    }, [navigationState.selectedNavBarItemIndex]);
 
     return Scaffold(
-      body: navigationShell, // Display the navigation shell content
+      body: PageView(
+        controller: navigationState.pageController,
+        children: <Widget>[
+          const SparesPage(),
+          const AccessoriesPage(),
+          const HomePage(),
+          ServicesPage(),
+          const MyHome()
+        ],
+        onPageChanged: (index) => ref
+            .read(navigationProvider.notifier)
+            .changeSelectedItemIndex(index),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: context.colors.primary,
+        unselectedItemColor: context.colors.primaryTxt,
+        selectedLabelStyle: context.typography.bodyMedium,
+        unselectedLabelStyle: context.typography.bodyMedium,
         type: BottomNavigationBarType.fixed,
-        currentIndex: navBarIndex.value,
-        onTap: onItemTapped,
+        currentIndex: navigationState.selectedNavBarItemIndex,
+        onTap: (int index) => ref
+            .read(navigationProvider.notifier)
+            .changeSelectedItemIndex(index),
         backgroundColor: Colors.white,
         items: [
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              navBarIndex.value == 0
+              navigationState.selectedNavBarItemIndex == 0
                   ? 'assets/icons/ic_spare_filled.svg'
                   : 'assets/icons/ic_spare_outline.svg',
               height: 30,
-              colorFilter: navBarIndex.value == 0
+              colorFilter: navigationState.selectedNavBarItemIndex == 0
                   ? ColorFilter.mode(context.colors.primary, BlendMode.srcIn)
                   : ColorFilter.mode(
                       context.colors.containerShadow, BlendMode.srcIn),
@@ -80,11 +83,11 @@ class NavigationPage extends HookConsumerWidget {
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              navBarIndex.value == 1
+              navigationState.selectedNavBarItemIndex == 1
                   ? 'assets/icons/ic_car_seat_filled.svg'
                   : 'assets/icons/ic_car_seat_outline.svg',
               height: 30,
-              colorFilter: navBarIndex.value == 1
+              colorFilter: navigationState.selectedNavBarItemIndex == 1
                   ? ColorFilter.mode(context.colors.primary, BlendMode.srcIn)
                   : ColorFilter.mode(
                       context.colors.containerShadow, BlendMode.srcIn),
@@ -93,11 +96,11 @@ class NavigationPage extends HookConsumerWidget {
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              navBarIndex.value == 2
+              navigationState.selectedNavBarItemIndex == 2
                   ? 'assets/icons/ic_home_filled.svg'
                   : 'assets/icons/ic_home_outline.svg',
               height: 30,
-              colorFilter: navBarIndex.value == 2
+              colorFilter: navigationState.selectedNavBarItemIndex == 2
                   ? ColorFilter.mode(context.colors.primary, BlendMode.srcIn)
                   : ColorFilter.mode(
                       context.colors.containerShadow, BlendMode.srcIn),
@@ -106,11 +109,11 @@ class NavigationPage extends HookConsumerWidget {
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              navBarIndex.value == 3
+              navigationState.selectedNavBarItemIndex == 3
                   ? 'assets/icons/ic_car_service_filled.svg'
                   : 'assets/icons/ic_car_service_outline.svg',
               height: 30,
-              colorFilter: navBarIndex.value == 3
+              colorFilter: navigationState.selectedNavBarItemIndex == 3
                   ? ColorFilter.mode(context.colors.primary, BlendMode.srcIn)
                   : ColorFilter.mode(
                       context.colors.containerShadow, BlendMode.srcIn),
@@ -119,11 +122,11 @@ class NavigationPage extends HookConsumerWidget {
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              navBarIndex.value == 4
+              navigationState.selectedNavBarItemIndex == 4
                   ? 'assets/icons/ic_subscription_filled.svg'
                   : 'assets/icons/ic_subscription_outline.svg',
               height: 30,
-              colorFilter: navBarIndex.value == 4
+              colorFilter: navigationState.selectedNavBarItemIndex == 4
                   ? ColorFilter.mode(context.colors.primary, BlendMode.srcIn)
                   : ColorFilter.mode(
                       context.colors.containerShadow, BlendMode.srcIn),
@@ -134,12 +137,4 @@ class NavigationPage extends HookConsumerWidget {
       ),
     );
   }
-}
-
-extension on GoRouter {
-  get location => null;
-
-  void addListener(void Function() listener) {}
-
-  removeListener(void Function() listener) {}
 }
