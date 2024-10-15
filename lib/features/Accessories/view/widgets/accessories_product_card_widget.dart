@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/widgets/outline_button_widget.dart';
-import 'package:hand_car/features/Accessories/view/pages/accessories_details_page.dart';
 
 //AccessoriesProductCardWidget For Show In GridView
 class AccessoriesProductCardWidget extends StatelessWidget {
@@ -23,12 +23,7 @@ class AccessoriesProductCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const ProductDetailsPage(),
-          ),
-        );
+       context.push('/accessories_details');
       },
       child: Container(
         decoration: BoxDecoration(

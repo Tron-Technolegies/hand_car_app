@@ -10,9 +10,10 @@ import 'package:hand_car/gen/assets.gen.dart';
 
  final GlobalKey<ScaffoldState> scaffoldKey4 = GlobalKey<ScaffoldState>();
 
-class SparesPage extends HookWidget {
-  static const String routeName = '/spares';
-  const SparesPage({super.key});
+//Spares Page 
+class AutoPartsPage extends HookWidget {
+  static const String routeName = '/auto_parts_page';
+  const AutoPartsPage({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -7,6 +7,7 @@ import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 
+//login page
 class LoginPage extends HookWidget {
   const LoginPage({super.key});
 

@@ -11,8 +11,9 @@ import 'package:hand_car/features/Accessories/view/widgets/rating_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/review_list_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/specification_item_widget.dart';
 
-class ProductDetailsPage extends HookWidget {
-  const ProductDetailsPage({super.key});
+//Accessories Details Page
+class AccessoriesDetailsPage extends HookWidget {
+  const AccessoriesDetailsPage({super.key});
 
   @override
   Widget build(BuildContext context) {

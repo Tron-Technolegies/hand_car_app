@@ -4,6 +4,7 @@ import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Accessories/view/widgets/bottom_sheet_for_write_review_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/progress_indicator_bar_widget.dart';
 
+//ProductRatingsWidget For Show In Details Page
 class ProductRatingsWidget extends StatelessWidget {
   final double rating;
   final int totalReviews;
@@ -41,8 +42,7 @@ class ProductRatingsWidget extends StatelessWidget {
           ),
           context: context,
           builder: (context) =>  const BottomSheetForWriteReview(
-           
-
+          
 
           ));
               },

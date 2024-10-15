@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 
+// A list of services that can be reused
 class ServiceListWidget extends StatelessWidget {
-  // A list of services that can be reused
+
   final List<String> services;
 
   const ServiceListWidget({
@@ -13,9 +14,9 @@ class ServiceListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      shrinkWrap: true, // Allow the ListView to fit within its parent
+      shrinkWrap: true, 
       physics:
-          const NeverScrollableScrollPhysics(), // Disable scrolling since it's wrapped
+          const NeverScrollableScrollPhysics(), 
       itemCount: services.length,
       itemBuilder: (context, index) {
         return Padding(
@@ -23,7 +24,7 @@ class ServiceListWidget extends StatelessWidget {
           child: Row(
             children: [
               Icon(Icons.circle, color: context.colors.primaryTxt, size: 10),
-              const SizedBox(width: 8),
+               SizedBox(width: context.space.space_100),
               Expanded(
                 child: Text(
                   services[index],

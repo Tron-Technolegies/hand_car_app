@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 
+// ReviewItemsWidget For Show In Details Page
 class ReviewItemsWidget extends StatelessWidget {
   final String username;
   final int rating;
@@ -29,14 +30,17 @@ class ReviewItemsWidget extends StatelessWidget {
         children: [
           Row(
             children: [
+              // Circle Avatar for Username
               CircleAvatar(child: Text(username[0])),
               SizedBox(width: context.space.space_100),
+              // Username
               Text(username),
               const Spacer(),
               SizedBox(width: context.space.space_100),
             ],
           ),
           SizedBox(height: context.space.space_100),
+          // Date
           Text(date),
           SizedBox(height: context.space.space_100),
           Row(
@@ -49,11 +53,13 @@ class ReviewItemsWidget extends StatelessWidget {
             ),
           ),
           SizedBox(height: context.space.space_100),
+          // Comment
           Text(
             comment,
             style: context.typography.bodySemiBold,
           ),
           SizedBox(height: context.space.space_100),
+          // Review
           Text(review, style: context.typography.body),
           SizedBox(height: context.space.space_200),
           // Grid view for multiple images

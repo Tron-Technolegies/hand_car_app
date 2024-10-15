@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 
+//Bullet Points for Accessories Details Page
 class BulletPoints extends StatelessWidget {
   final List<String> points;
 

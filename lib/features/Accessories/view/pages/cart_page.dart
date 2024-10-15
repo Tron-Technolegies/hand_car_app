@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
 
@@ -7,11 +8,13 @@ import 'package:hand_car/features/Accessories/view/widgets/cart_summary_widget.d
 import 'package:hand_car/features/Accessories/view/widgets/address_card_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/address_form_widget.dart';
 
-class CartPage extends HookWidget {
-  const CartPage({super.key});
+//Cart Page
+class CheckOutPage extends HookWidget {
+  const CheckOutPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Hooks for showing and hiding address form
     final showAddressForm = useState(false);
 
     return Scaffold(
@@ -20,7 +23,7 @@ class CartPage extends HookWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.of(context).pop();
+            context.pop();
           },
         ),
       ),
@@ -35,22 +38,22 @@ class CartPage extends HookWidget {
               style: context.typography.h3,
             ),
             SizedBox(height: context.space.space_200),
-            const AddressCard(
+             const AddressCard(
               name: 'Ahmed Al-Farsi',
               address:
                   '123 Sheikh Zayed Road, Downtown Dubai, Dubai,\nUnited Arab Emirates',
               poBox: 'P.O. Box 12345',
               mobile: 'Mobile: +971 50 123 4567',
-              isSelected: true,
+              
             ),
             SizedBox(height: context.space.space_200),
-            const AddressCard(
+             const AddressCard(
               name: 'Ahmed Al-Farsi',
               address:
                   '123 Sheikh Zayed Road, Downtown Dubai, Dubai,\nUnited Arab Emirates',
               poBox: 'P.O. Box 12345',
               mobile: 'Mobile: +971 50 123 4567',
-              isSelected: false,
+              
             ),
             SizedBox(height: context.space.space_300),
             TextButton.icon(

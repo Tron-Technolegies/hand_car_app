@@ -8,7 +8,9 @@ part of 'image_picker_controller.dart';
 
 String _$imagePickerHash() => r'c7f90f9fe2330ca2241fba9df466a1624f944633';
 
-/// See also [ImagePicker].
+/// Image Picker Controller
+///
+/// Copied from [ImagePicker].
 @ProviderFor(ImagePicker)
 final imagePickerProvider =
     AutoDisposeNotifierProvider<ImagePicker, File?>.internal(

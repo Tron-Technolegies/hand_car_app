@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
 
+//Service Info Container Widget for Service Page
 class ServiceCardWidget extends StatelessWidget {
   final String image;
   final String title;
@@ -31,7 +32,7 @@ Widget build(BuildContext context) {
           color: Colors.grey.shade200,
           borderRadius: BorderRadius.circular(15),
         ),
-        child: SingleChildScrollView( // Wrap Column in SingleChildScrollView
+        child: SingleChildScrollView( 
           child: Column(
             children: [
               // Image Section
@@ -44,7 +45,7 @@ Widget build(BuildContext context) {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(15),
                     child: Image.asset(
-                      image, // Replace with your asset image path
+                      image, 
                       width: 150,
                       height: 150,
                       fit: BoxFit.cover,

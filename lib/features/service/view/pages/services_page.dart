@@ -10,9 +10,10 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final GlobalKey<ScaffoldState> scaffoldKey3 = GlobalKey<ScaffoldState>();
 
+// Services Page
 class ServicesPage extends HookConsumerWidget {
   static const String route = '/services_page';
-
+//List of services
   final List<String> services = [
     "Painting",
     "Fitting",
@@ -20,7 +21,7 @@ class ServicesPage extends HookConsumerWidget {
     "General Checkup",
     "Car Wash",
   ];
-
+//List of images for services
   final List<String> images = [
     Assets.icons.icPaintingService,
     Assets.icons.icFittingService,
@@ -33,12 +34,17 @@ class ServicesPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    //page controller
     final pageController = usePageController();
+    //button index
     final buttonIndex = useState(0);
+    //scroll controller
     final scrollController = useScrollController();
+    //animation controller
     final animationController =
         useAnimationController(duration: const Duration(milliseconds: 500));
 
+//scroll to index
     void scrollToIndex(int index) {
       final screenWidth = MediaQuery.of(context).size.width;
       final itemWidth = screenWidth / 3;
@@ -54,7 +60,7 @@ class ServicesPage extends HookConsumerWidget {
         curve: Curves.easeInOut,
       );
     }
-
+     //on item tapped for Page changing
     void onItemTapped(int index) {
       buttonIndex.value = index;
       pageController.animateToPage(
@@ -138,6 +144,7 @@ class ServicesPage extends HookConsumerWidget {
                         child: child,
                       );
                     },
+                    //ServicesIconsWidget for list of icons
                     child: ServicesIconsWidget(
                       image: images[index],
                       title: services[index],

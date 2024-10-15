@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 
+// Services Icon for Service Page Widget for Services Page
 class ServicesIconsWidget extends StatelessWidget {
   final String image;
   final String title;

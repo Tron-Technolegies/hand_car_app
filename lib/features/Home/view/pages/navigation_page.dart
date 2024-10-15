@@ -8,6 +8,7 @@ import 'package:hand_car/features/Home/view/pages/home_page.dart';
 import 'package:hand_car/features/SpareParts/view/pages/spares_page.dart';
 import 'package:hand_car/features/Subscriptions/view/pages/subscription_page.dart';
 import 'package:hand_car/features/service/view/pages/services_page.dart';
+import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class NavigationPage extends HookConsumerWidget {
@@ -46,7 +47,7 @@ class NavigationPage extends HookConsumerWidget {
       body: PageView(
         controller: navigationState.pageController,
         children: <Widget>[
-          const SparesPage(),
+          const AutoPartsPage(),
           const AccessoriesPage(),
           const HomePage(),
           ServicesPage(),
@@ -95,10 +96,12 @@ class NavigationPage extends HookConsumerWidget {
             label: 'Accessories',
           ),
           BottomNavigationBarItem(
-            icon: SvgPicture.asset(
+            icon: 
+
+            SvgPicture.asset(
               navigationState.selectedNavBarItemIndex == 2
-                  ? 'assets/icons/ic_home_filled.svg'
-                  : 'assets/icons/ic_home_outline.svg',
+                  ? Assets.icons.garageFilled
+                  : Assets.icons.garage,
               height: 30,
               colorFilter: navigationState.selectedNavBarItemIndex == 2
                   ? ColorFilter.mode(context.colors.primary, BlendMode.srcIn)

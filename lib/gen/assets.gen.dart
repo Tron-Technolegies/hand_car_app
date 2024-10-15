@@ -104,6 +104,12 @@ class $AssetsIconsGen {
   /// File path: assets/icons/g3.png
   AssetGenImage get g3 => const AssetGenImage('assets/icons/g3.png');
 
+  /// File path: assets/icons/garage.svg
+  String get garage => 'assets/icons/garage.svg';
+
+  /// File path: assets/icons/garage_filled.svg
+  String get garageFilled => 'assets/icons/garage_filled.svg';
+
   /// File path: assets/icons/hand_car_icon.svg
   String get handCarIcon => 'assets/icons/hand_car_icon.svg';
 
@@ -220,6 +226,8 @@ class $AssetsIconsGen {
         g1,
         g2,
         g3,
+        garage,
+        garageFilled,
         handCarIcon,
         handCarLogo,
         icCarSeatFilled,

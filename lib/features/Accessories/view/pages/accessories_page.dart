@@ -21,12 +21,17 @@ class AccessoriesPage extends HookWidget {
     final appBarVisible = useState(true);
     final pageController = usePageController();
     final currentPage = useState(0);
+    final isSearching = useState(true);
+
+    final searchTextController = useTextEditingController();
 
     useEffect(() {
       void onScroll() {
-        if (controller.position.userScrollDirection == ScrollDirection.reverse) {
+        if (controller.position.userScrollDirection ==
+            ScrollDirection.reverse) {
           appBarVisible.value = false;
-        } else if (controller.position.userScrollDirection == ScrollDirection.forward) {
+        } else if (controller.position.userScrollDirection ==
+            ScrollDirection.forward) {
           appBarVisible.value = true;
         }
       }
@@ -40,11 +45,28 @@ class AccessoriesPage extends HookWidget {
       appBar: appBarVisible.value
           ? AppBar(
               backgroundColor: context.colors.white,
-              leading: SvgPicture.asset('assets/icons/hand_car_icon.svg'),
-              title: const Text('Accessories'),
+              title: isSearching.value
+                  ? TextField(
+                      controller: searchTextController,
+                      autofocus: true,
+                      decoration: InputDecoration(
+                        suffixIcon: const Icon(Icons.search),
+                        hintText: 'Search Accessories',
+                        hintStyle: context.typography.body,
+                        border: InputBorder.none,
+                      ),
+                      onChanged: (value) {
+                        // Filter logic here
+                      },
+                    )
+                  : const Text('Accessories'),
               centerTitle: true,
               actions: [
-                IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
+                if (!isSearching.value)
+                  IconButton(
+                    icon: const Icon(Icons.search),
+                    onPressed: () => isSearching.value = true,
+                  ),
                 IconButton(
                     onPressed: () {
                       context.push('/cart');
@@ -56,6 +78,15 @@ class AccessoriesPage extends HookWidget {
                     },
                     icon: const Icon(Icons.menu)),
               ],
+              leading: isSearching.value
+                  ? IconButton(
+                      icon: const Icon(Icons.arrow_back),
+                      onPressed: () {
+                        isSearching.value = false;
+                        searchTextController.clear();
+                      },
+                    )
+                  : SvgPicture.asset('assets/icons/hand_car_icon.svg'),
             )
           : null,
       drawer: const DrawerWidget(),

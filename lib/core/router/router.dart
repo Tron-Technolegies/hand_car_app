@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/widgets/animated_page_view.dart';
+import 'package:hand_car/features/Accessories/view/pages/accessories_details_page.dart';
 import 'package:hand_car/features/Accessories/view/pages/accessories_page.dart';
 import 'package:hand_car/features/Accessories/view/pages/cart_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/login_page.dart';
@@ -16,56 +17,70 @@ import 'package:hand_car/features/service/view/pages/service_details_page.dart';
 import 'package:hand_car/features/service/view/pages/services_page.dart';
 
 final GoRouter router = GoRouter(initialLocation: '/splash', routes: [
+  //Navigation Page
   GoRoute(
     path: '/',
     pageBuilder: (context, state) {
       return customTransitionPage(child: const NavigationPage(), );
     },
   ),
+  //Onboarding Page
    GoRoute(
     path: '/onboarding',
     pageBuilder: (context, state) {
       return customTransitionPage(child: const OnbordingScreenPage(), );
     },
   ),
+  //Splash Page
   GoRoute(
     path: '/splash',
     pageBuilder: (context, state) {
       return customTransitionPage(child: const SplashScreen(), );
     },
   ),
+  //Login Page
   GoRoute(path: '/login', builder: (context, state) => const LoginPage(),),
+  //OTP Page
   GoRoute(path: '/otp', builder: (context, state) => const OtpPage(),),
-GoRoute(path: '/name_and_email', builder: (context, state) => const NameAndEmailPage(),),
+  //Name and Email Page
+  GoRoute(path: '/name_and_email', builder: (context, state) => const NameAndEmailPage(),),
+  //Accessories Details Page
+  GoRoute(path: '/accessories_details', builder: (context, state) => const AccessoriesDetailsPage(),),
+  //Home Page
   GoRoute(
     path: '/home',
     pageBuilder: (context, state) {
       return customTransitionPage(child: const HomePage(), );
     },
   ),
+  //Auto Parts Page
   GoRoute(
-    path: '/spares',
+    path: '/auto_parts',
     pageBuilder: (context, state) {
-      return customTransitionPage(child: const SparesPage(), );
+      return customTransitionPage(child: const AutoPartsPage() , );
     },
   ),
+  //Accessories Page
   GoRoute(
     path: '/accessories',
-pageBuilder: (context, state) {
+    pageBuilder: (context, state) {
       return customTransitionPage(child: const AccessoriesPage(), );
     },
   ),
+  //Services Page
   GoRoute(
     path: '/services',
     pageBuilder: (context, state) {
       return customTransitionPage(child:  ServicesPage(), );
     },
   ),
+  //Service Plans Page
   GoRoute(
       path: '/servicePlans',
       pageBuilder: (context, state) {
         return customTransitionPage(child: const ServicePlanScreen(), );
       },),
+      //Service Details Page
   GoRoute(
     path: '/serviceDetailsPage',
     builder: (context, state) {
@@ -88,73 +103,11 @@ pageBuilder: (context, state) {
       );
     },
   ),
+  //Cart Page
   GoRoute(
     path: '/cart',
     pageBuilder: (context, state) {
-      return customTransitionPage(child: const CartPage(), );
+      return customTransitionPage(child: const CheckOutPage(), );
     },
   ),
 ]);
-// import 'package:go_router/go_router.dart';
-// import 'package:flutter/material.dart';
-// import 'package:hand_car/features/Accessories/view/pages/accessories_page.dart';
-// import 'package:hand_car/features/Home/view/pages/home_page.dart';
-// import 'package:hand_car/features/Home/view/pages/navigation_page.dart';
-// import 'package:hand_car/features/Home/view/pages/spares_page.dart';
-// import 'package:hand_car/features/Subscriptions/view/pages/service_subscription_page.dart';
-// import 'package:hand_car/features/service/view/pages/service_details_page.dart';
-// import 'package:hand_car/features/service/view/pages/services_page.dart';
-
-// final GlobalKey<NavigatorState> _rootNavigatorKey =
-//     GlobalKey<NavigatorState>(debugLabel: 'root');
-// final GlobalKey<NavigatorState> _shellNavigatorKey =
-//     GlobalKey<NavigatorState>(debugLabel: 'shell');
-
-// final GoRouter router = GoRouter(
-//   navigatorKey: _rootNavigatorKey,
-
-//   // routes: [
-//   //   ShellRoute(
-//   //     navigatorKey: _shellNavigatorKey,
-//   //     builder: (context, state, child) {
-//   //       return NavigationPage(child: child);
-//   //     },
-//       routes: [
-//         GoRoute(path: '/', builder: (context, state) => const NavigationPage()),
-//         GoRoute(
-//           path: '/home',
-//           builder: (context, state) => const HomePage(),
-//         ),
-//         GoRoute(
-//           path: '/spares',
-//           builder: (context, state) => const SparesPage(),
-//         ),
-//         GoRoute(
-//           path: '/accessories',
-//           builder: (context, state) => const AccessoriesPage(),
-//         ),
-//         GoRoute(
-//           path: '/services',
-//           builder: (context, state) => ServicesPage(),
-//         ),
-//         GoRoute(
-//           path: '/servicePlans',
-//           builder: (context, state) => const ServicePlanScreen(),
-//         ),
-    
-//     GoRoute(
-//       path: '/serviceDetailsPage',
-//       parentNavigatorKey: _rootNavigatorKey,
-//       builder: (context, state) {
-//         final Map<String, dynamic> data = state.extra as Map<String, dynamic>;
-//         return ServiceDetailsPage(
-//           image: data['image'],
-//           title: data['title'],
-//           title2: data['title2'],
-//           rating: data['rating'],
-//           price: data['price'],
-//         );
-//       },
-//     ),
-//   ],
-// );

@@ -8,6 +8,8 @@ part 'multiple_image_picker_provider.freezed.dart';
 
 part 'multiple_image_picker_provider.g.dart';
 
+//MultipleImagePicker
+
 @freezed
 class MultipleImagePickerState with _$MultipleImagePickerState {
   const factory MultipleImagePickerState({

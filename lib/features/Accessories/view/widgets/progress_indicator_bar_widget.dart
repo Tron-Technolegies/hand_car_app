@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// MultiColorProgressPainter
 class MultiColorProgressPainter extends CustomPainter {
   final double percentage;
   final Color backgroundColor;
@@ -12,7 +13,8 @@ class MultiColorProgressPainter extends CustomPainter {
   });
 
   @override
-  void paint(Canvas canvas, Size size) {
+     // function to draw the progress bar
+    void paint(Canvas canvas, Size size) {
     final Paint backgroundPaint = Paint()
       ..color = backgroundColor
       ..style = PaintingStyle.fill;
