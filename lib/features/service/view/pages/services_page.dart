@@ -12,7 +12,7 @@ final GlobalKey<ScaffoldState> scaffoldKey3 = GlobalKey<ScaffoldState>();
 
 class ServicesPage extends HookConsumerWidget {
   static const String route = '/services_page';
-  
+
   final List<String> services = [
     "Painting",
     "Fitting",
@@ -35,22 +35,46 @@ class ServicesPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final pageController = usePageController();
     final buttonIndex = useState(0);
-    final controller = useScrollController();
+    final scrollController = useScrollController();
+    final animationController =
+        useAnimationController(duration: const Duration(milliseconds: 500));
+
+    void scrollToIndex(int index) {
+      final screenWidth = MediaQuery.of(context).size.width;
+      final itemWidth = screenWidth / 3;
+      final maxScroll = scrollController.position.maxScrollExtent;
+      const minScroll = 0.0;
+
+      double targetScroll = index * itemWidth - (screenWidth - itemWidth) / 2;
+      targetScroll = targetScroll.clamp(minScroll, maxScroll);
+
+      scrollController.animateTo(
+        targetScroll,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
 
     void onItemTapped(int index) {
       buttonIndex.value = index;
       pageController.animateToPage(
         index,
-        duration: const Duration(milliseconds: 200),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
+
+      if (index == 0) {
+        animationController.reset();
+        animationController.forward();
+      }
+
+      scrollToIndex(index);
     }
 
     return Scaffold(
       key: scaffoldKey3,
       appBar: AppBar(
-        
-leading: IconButton(
+        leading: IconButton(
           onPressed: () {},
           icon: SvgPicture.asset(Assets.icons.handCarIcon),
         ),
@@ -93,23 +117,37 @@ leading: IconButton(
           SizedBox(height: context.space.space_200),
           SizedBox(
             height: context.space.space_600 * 2.6,
-            child: ListView(
-            
-              controller: controller,
+            child: ListView.builder(
+              controller: scrollController,
               scrollDirection: Axis.horizontal,
-              children: List.generate(
-                services.length,
-                (index) => Padding(
-                  padding: EdgeInsets.symmetric(horizontal: context.space.space_50),
-                  child: ServicesIconsWidget(
-                    image: images[index],
-                    title: services[index],
-                    selectedIndex: index,
-                    isSelected: index == buttonIndex.value,
-                    onSelectService: onItemTapped,
+              itemCount: services.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: context.space.space_50),
+                  child: AnimatedBuilder(
+                    animation: animationController,
+                    builder: (context, child) {
+                      final bounce = index == 0
+                          ? Curves.elasticOut
+                              .transform(animationController.value)
+                          : 0.0;
+                      final scale = 1.0 + (bounce * 0.2);
+                      return Transform.scale(
+                        scale: scale,
+                        child: child,
+                      );
+                    },
+                    child: ServicesIconsWidget(
+                      image: images[index],
+                      title: services[index],
+                      selectedIndex: index,
+                      isSelected: index == buttonIndex.value,
+                      onSelectService: onItemTapped,
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ),
           SizedBox(height: context.space.space_100),
@@ -118,8 +156,8 @@ leading: IconButton(
               controller: pageController,
               onPageChanged: (value) {
                 buttonIndex.value = value;
+                scrollToIndex(value);
               },
-              
               children: [
                 GridViewServicesWidget(
                   image: Assets.images.imgPainting1.path,
@@ -164,4 +202,3 @@ leading: IconButton(
     );
   }
 }
-

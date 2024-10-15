@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
@@ -40,7 +41,6 @@ class OtpPage extends StatelessWidget {
                 //         ));
               },
             ),
-       
             SizedBox(height: context.space.space_200),
             Padding(
               padding:
@@ -48,15 +48,19 @@ class OtpPage extends StatelessWidget {
               child: SizedBox(
                   width: double.infinity,
                   height: 60,
-                  child: ButtonWidget(label: "Login", onTap: () {
-                   
-                  })),
+                  child: ButtonWidget(
+                      label: "Login",
+                      onTap: () {
+                        context.go('/name_and_email');
+                        
+                      })),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 TextButton(onPressed: () {}, child: const Text("Sign Up")),
-                TextButton(onPressed: () {}, child: const Text("Forgot Password")),
+                TextButton(
+                    onPressed: () {}, child: const Text("Forgot Password")),
               ],
             )
           ],

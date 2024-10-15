@@ -7,7 +7,7 @@ part of 'multiple_image_picker_provider.dart';
 // **************************************************************************
 
 String _$multipleImagePickerHash() =>
-    r'b6ce1465ef1b38384d808ceab741773067be7b97';
+    r'ce50378cdf84b462470f6b81911d4371e6bfdebc';
 
 /// See also [MultipleImagePicker].
 @ProviderFor(MultipleImagePicker)

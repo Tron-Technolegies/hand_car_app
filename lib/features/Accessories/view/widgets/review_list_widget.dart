@@ -8,27 +8,19 @@ class ReviewsList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final images = ref.watch(multipleImagePickerProvider).selectedImages;
-    int itemCount = images.length;  // Ensure itemCount matches the list length
+    final images = ref.watch(multipleImagePickerProvider);
 
     return ListView.builder(
-      itemCount: itemCount,  // Use the dynamic itemCount
-      itemBuilder: (context, index) {
-        // Check if index is within the list range before accessing
-        if (index < itemCount) {
-          return ReviewItemsWidget(
-            username: "Risan",
-            date: "10/10/2022",
-            comment: "Nice perfume at an affordable price",
-            review: "I found Davidoff Cool Water perfume is a timeless and refreshing fragrance...",
-            rating: 5,
-             // Safely access the image path
-          );
-        } else {
-          // Return an empty widget if index is out of range
-          return SizedBox.shrink();
-        }
-      },
+      itemCount: 5,
+      itemBuilder: (context, index) => ReviewItemsWidget(
+        username: "Risan",
+        date: "10/10/2022",
+        comment: "Nice perfume in affordable price",
+        review:
+            "I found Davidoff Cool Water perfume is a timeless and refreshing fragrance that exudes elegance and sophistication. The captivating blend of aromatic and aquatic notes creates a sense of tranquility and vitality, perfect for both casual and formal occasions.",
+        rating: 5,
+        images: images.selectedImages.map((xFile) => xFile.path).toList(),
+      ),
     );
   }
 }

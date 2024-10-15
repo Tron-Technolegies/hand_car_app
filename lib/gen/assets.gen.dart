@@ -24,6 +24,15 @@ class $AssetsAnimationsGen {
   /// File path: assets/animations/car_wash.json
   String get carWash => 'assets/animations/car_wash.json';
 
+  /// File path: assets/animations/cartAnimation.json
+  String get cartAnimation => 'assets/animations/cartAnimation.json';
+
+  /// File path: assets/animations/complete_protection.json
+  String get completeProtection => 'assets/animations/complete_protection.json';
+
+  /// File path: assets/animations/mechanic_animation.json
+  String get mechanicAnimation => 'assets/animations/mechanic_animation.json';
+
   /// File path: assets/animations/premium_membership.json
   String get premiumMembership => 'assets/animations/premium_membership.json';
 
@@ -34,15 +43,22 @@ class $AssetsAnimationsGen {
   String get premiumSubscription =>
       'assets/animations/premium_subscription.json';
 
+  /// File path: assets/animations/spare_animation.json
+  String get spareAnimation => 'assets/animations/spare_animation.json';
+
   /// List of all assets
   List<String> get values => [
         carAnimation,
         carRolling,
         carService,
         carWash,
+        cartAnimation,
+        completeProtection,
+        mechanicAnimation,
         premiumMembership,
         premiumService,
-        premiumSubscription
+        premiumSubscription,
+        spareAnimation
       ];
 }
 
@@ -90,6 +106,10 @@ class $AssetsIconsGen {
 
   /// File path: assets/icons/hand_car_icon.svg
   String get handCarIcon => 'assets/icons/hand_car_icon.svg';
+
+  /// File path: assets/icons/hand_car_logo.png
+  AssetGenImage get handCarLogo =>
+      const AssetGenImage('assets/icons/hand_car_logo.png');
 
   /// File path: assets/icons/ic_car_seat_filled.svg
   String get icCarSeatFilled => 'assets/icons/ic_car_seat_filled.svg';
@@ -201,6 +221,7 @@ class $AssetsIconsGen {
         g2,
         g3,
         handCarIcon,
+        handCarLogo,
         icCarSeatFilled,
         icCarSeatOutline,
         icCarServiceFilled,
@@ -415,7 +436,7 @@ class AssetGenImage {
     ImageRepeat repeat = ImageRepeat.noRepeat,
     Rect? centerSlice,
     bool matchTextDirection = false,
-    bool gaplessPlayback = false,
+    bool gaplessPlayback = true,
     bool isAntiAlias = false,
     String? package,
     FilterQuality filterQuality = FilterQuality.low,

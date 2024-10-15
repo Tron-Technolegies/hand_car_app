@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
-import 'package:hand_car/features/Authentication/view/pages/otp_page.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 
 class LoginPage extends HookWidget {
@@ -49,7 +49,7 @@ class LoginPage extends HookWidget {
                   height: 60,
                   child: ButtonWidget(label: "Login", onTap: () {
                     if(controller.text.isNotEmpty){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const OtpPage()));
+                    context.go('/otp');
                     }else{
                       SnackbarUtil.showsnackbar(message: "Enter Email or Mobile Number", showretry: true);
                     }

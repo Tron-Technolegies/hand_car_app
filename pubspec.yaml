@@ -7,6 +7,7 @@ environment:
   sdk: ^3.5.1
 
 dependencies:
+  animated_list_item: ^1.0.0
   carousel_slider: ^5.0.0
   
   concentric_transition: ^1.0.3
@@ -39,6 +40,18 @@ dev_dependencies:
   riverpod_generator: ^2.4.3
   custom_lint: ^0.6.5
   riverpod_lint: ^2.3.13
+  flutter_launcher_icons: ^0.14.1
+  
+
+
+flutter_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/icons/hand_car_logo.png"
+  adaptive_icon_background: "#FFFFFF"  # Example: Use a plain color or specify another image
+  adaptive_icon_foreground: "assets/icons/hand_car_logo.png"
+  min_sdk_android: 21
 
 flutter:
   uses-material-design: true

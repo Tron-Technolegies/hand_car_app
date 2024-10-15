@@ -10,6 +10,7 @@ import 'package:hand_car/core/widgets/button_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 
 class NameAndEmailPage extends HookWidget {
+  static const routeName = 'name_and_email_page';
   const NameAndEmailPage({super.key});
 
   @override

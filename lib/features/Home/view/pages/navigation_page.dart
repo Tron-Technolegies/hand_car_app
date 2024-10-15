@@ -4,9 +4,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/bottom_nav_controller.dart';
 import 'package:hand_car/features/Accessories/view/pages/accessories_page.dart';
-import 'package:hand_car/features/Home/view/pages/car_wash_page.dart';
 import 'package:hand_car/features/Home/view/pages/home_page.dart';
 import 'package:hand_car/features/SpareParts/view/pages/spares_page.dart';
+import 'package:hand_car/features/Subscriptions/view/pages/subscription_page.dart';
 import 'package:hand_car/features/service/view/pages/services_page.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -50,7 +50,7 @@ class NavigationPage extends HookConsumerWidget {
           const AccessoriesPage(),
           const HomePage(),
           ServicesPage(),
-          const MyHome()
+          const SubscriptionPage()
         ],
         onPageChanged: (index) => ref
             .read(navigationProvider.notifier)
@@ -60,7 +60,7 @@ class NavigationPage extends HookConsumerWidget {
         selectedItemColor: context.colors.primary,
         unselectedItemColor: context.colors.primaryTxt,
         selectedLabelStyle: context.typography.bodyMedium,
-        unselectedLabelStyle: context.typography.bodyMedium,
+        unselectedLabelStyle: context.typography.body,
         type: BottomNavigationBarType.fixed,
         currentIndex: navigationState.selectedNavBarItemIndex,
         onTap: (int index) => ref

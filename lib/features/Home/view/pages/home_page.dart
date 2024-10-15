@@ -31,7 +31,7 @@ class HomePage extends ConsumerWidget {
               onPressed: () {
                 context.push('/cart');
               },
-              icon: const Icon(Icons.shopping_cart_sharp)),
+              icon: const Icon(Icons.shopping_cart_outlined)),
           IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
           IconButton(
               onPressed: () {
