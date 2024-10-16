@@ -58,8 +58,8 @@ class CarWashPlanScreen extends HookConsumerWidget {
                 Padding(
                   padding: EdgeInsets.all(context.space.space_250),
                   child: Text(
-                    'A Plan for Every Car\nWashing Need',
-                    style: context.typography.h2
+                    'A Plan for Every Car Washing Need',
+                    style: context.typography.h3
                         .copyWith(color: context.colors.white),
                     textAlign: TextAlign.center,
                   ),
@@ -93,7 +93,6 @@ class CarWashPlanScreen extends HookConsumerWidget {
                 SizedBox(
                   height: 500,
                   child: PageView(
-                    
                     controller: pageController,
                     onPageChanged: (index) => selectedIndex.value = index,
                     children: [

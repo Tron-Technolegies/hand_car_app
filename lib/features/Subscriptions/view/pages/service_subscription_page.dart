@@ -45,27 +45,25 @@ class ServicePlanScreen extends HookConsumerWidget {
           child: SafeArea(
             child: Column(
               children: [
-                const Padding(
-                  padding: EdgeInsets.all(20.0),
+                Padding(
+                  padding: EdgeInsets.all(context.space.space_200),
                   child: Text(
                     'Plans for Maintainance Services',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: context.typography.h3,
                     textAlign: TextAlign.center,
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.0),
+                Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: context.space.space_250),
                   child: Text(
                     'Explore our subscription plans for additional \nservices and keep your car looking its best year-round.\n Enjoy exclusive benefits and regular\n maintenance with our comprehensive packages.',
-                    style: TextStyle(color: Colors.black),
+                    style: context.typography.bodyMedium
+                        .copyWith(color: context.colors.primaryTxt),
                     textAlign: TextAlign.center,
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: context.space.space_250),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

@@ -107,7 +107,7 @@ final GoRouter router = GoRouter(initialLocation: '/splash', routes: [
   GoRoute(
     path: '/cart',
     pageBuilder: (context, state) {
-      return customTransitionPage(child: const CheckOutPage(), );
+      return customTransitionPage(child:  const CheckOutPage(), );
     },
   ),
 ]);

@@ -21,7 +21,7 @@ class AccessoriesPage extends HookWidget {
     final appBarVisible = useState(true);
     final pageController = usePageController();
     final currentPage = useState(0);
-    final isSearching = useState(true);
+    final isSearching = useState(false);
 
     final searchTextController = useTextEditingController();
 

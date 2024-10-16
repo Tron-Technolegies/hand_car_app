@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 
+// Address Card For Selecting Address
 class AddressCard extends HookWidget {
   final String name;
   final String address;
   final String poBox;
   final String mobile;
+  final ValueNotifier<String?> selectedAddress;
 
   const AddressCard({
     super.key,
@@ -14,23 +16,20 @@ class AddressCard extends HookWidget {
     required this.address,
     required this.poBox,
     required this.mobile,
+    required this.selectedAddress,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isSelected = useState(false);
-
     return Container(
       decoration: BoxDecoration(
-        color: isSelected.value ? context.colors.white : context.colors.background,
+        color: selectedAddress.value == name ? context.colors.white : context.colors.background,
         border: Border.all(color: Colors.grey.shade300),
         borderRadius: BorderRadius.circular(8),
       ),
       child: RadioListTile(
-        value: true,
-        groupValue: isSelected.value,
         activeColor: context.colors.primaryTxt,
-        selected: isSelected.value, // Use selected instead of redundant value
+        selected: selectedAddress.value == name,
         title: Text(name),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,8 +39,12 @@ class AddressCard extends HookWidget {
             Text(mobile),
           ],
         ),
-        onChanged: (bool? value) {
-          isSelected.value = value!;
+        value: name,
+        groupValue: selectedAddress.value,
+        onChanged: (String? value) {
+          if (value != null) {
+            selectedAddress.value = value;
+          }
         },
       ),
     );

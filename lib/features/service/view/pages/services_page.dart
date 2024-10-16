@@ -60,7 +60,8 @@ class ServicesPage extends HookConsumerWidget {
         curve: Curves.easeInOut,
       );
     }
-     //on item tapped for Page changing
+
+    //on item tapped for Page changing
     void onItemTapped(int index) {
       buttonIndex.value = index;
       pageController.animateToPage(
@@ -167,7 +168,7 @@ class ServicesPage extends HookConsumerWidget {
               },
               children: [
                 GridViewServicesWidget(
-                  image: Assets.images.imgPainting1.path,
+                  image: Assets.images.imgPainting6.path,
                   title: 'ICON Rocklear',
                   title2: 'Painting Solution',
                   rating: '4.0',
