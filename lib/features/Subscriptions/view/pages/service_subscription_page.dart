@@ -82,7 +82,7 @@ class ServicePlanScreen extends HookConsumerWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: context.space.space_250),
                 // PageView For Plans
                 SizedBox(
                   height: 500,

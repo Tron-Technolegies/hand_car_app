@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/bottom_nav_controller.dart';
+import 'package:hand_car/features/Accessories/view/pages/cart_page.dart';
 import 'package:hand_car/features/Home/view/widgets/accessories_ads_home_page_widget.dart';
 import 'package:hand_car/features/Home/view/widgets/brand_wised_card_widget.dart';
 import 'package:hand_car/features/Home/view/widgets/carousel_slider_widget.dart';
@@ -29,7 +30,9 @@ class HomePage extends ConsumerWidget {
         actions: [
           IconButton(
               onPressed: () {
-                context.push('/cart');
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return  ShoppingCartScreen();
+                }));
               },
               icon: const Icon(Icons.shopping_cart_outlined)),
           IconButton(onPressed: () {}, icon: const Icon(Icons.search)),

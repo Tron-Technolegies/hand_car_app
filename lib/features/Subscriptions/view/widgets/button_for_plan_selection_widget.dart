@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Subscriptions/view/widgets/selection_button_for_subscription.dart';
 
 class PlanSelectionButtons extends StatelessWidget {
@@ -26,7 +27,7 @@ class PlanSelectionButtons extends StatelessWidget {
         color: containerColor,
         borderRadius: BorderRadius.circular(25),
       ),
-      padding: const EdgeInsets.all(3),
+      padding:  EdgeInsets.all(context.space.space_50),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: List.generate(

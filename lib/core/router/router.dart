@@ -2,7 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/widgets/animated_page_view.dart';
 import 'package:hand_car/features/Accessories/view/pages/accessories_details_page.dart';
 import 'package:hand_car/features/Accessories/view/pages/accessories_page.dart';
-import 'package:hand_car/features/Accessories/view/pages/cart_page.dart';
+import 'package:hand_car/features/Accessories/view/pages/checkout_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/login_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/name_and_email_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/otp_page.dart';
