@@ -47,7 +47,7 @@ class ShoppingCartScreen extends HookWidget {
       [cartItems.value],
     );
 
-    final delivery = 20.00;
+    const delivery = 20.00;
     final grandTotal = total + delivery;
 
     void updateQuantity(int index, int newQuantity) {
@@ -142,7 +142,7 @@ class CartItemWidget extends HookWidget {
     return Card(
       color: context.colors.background,
       child: Container(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.all(context.space.space_200),
         decoration: BoxDecoration(
           border: Border(bottom: BorderSide(color: Colors.grey[300]!)),
         ),
