@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
+import 'package:hand_car/features/Accessories/view/pages/checkout_page.dart';
 import 'package:hand_car/features/Accessories/view/widgets/cart_product_card_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/coupon_card_listview_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/coupon_input_widget.dart';
@@ -16,7 +17,7 @@ class ShoppingCartScreen extends HookWidget {
     final controller = useTextEditingController();
     return Scaffold(
         appBar: AppBar(
-          title: Text('Shopping Cart', style: context.typography.h3),
+          title: Text(' Cart', style: context.typography.h3),
         ),
         body: SafeArea(
           child: SingleChildScrollView(
@@ -48,7 +49,7 @@ class ShoppingCartScreen extends HookWidget {
                     padding: EdgeInsets.only(left: context.space.space_300),
                     child: Text("Available Coupons",
                         style: context.typography.bodyLarge
-                            .copyWith(color: Color(0xff979797))),
+                            .copyWith(color: const Color(0xff979797))),
                   ),
 
                   SizedBox(height: context.space.space_100),
@@ -79,7 +80,14 @@ class ShoppingCartScreen extends HookWidget {
             children: [
               Text('Grand Total: AED 2290',
                   style: context.typography.bodyMedium),
-              ButtonWidget(label: 'Proceed To Pay', onTap: () {})
+              ButtonWidget(
+                  label: 'Proceed To Pay',
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return const CheckOutPage();
+                    }));
+                  })
             ],
           ),
         ));

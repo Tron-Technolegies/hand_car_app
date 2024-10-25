@@ -9,6 +9,8 @@ import 'package:hand_car/features/Accessories/view/widgets/address_form_widget.d
 import 'package:hand_car/features/Accessories/view/widgets/cart_summary_widget.dart';
 
 class CheckOutPage extends HookWidget {
+    static const routeName = '/checkout-page';
+
   const CheckOutPage({super.key});
 
   @override

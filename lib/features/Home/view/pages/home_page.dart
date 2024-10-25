@@ -30,7 +30,7 @@ class HomePage extends ConsumerWidget {
           IconButton(
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return  ShoppingCartScreen();
+                  return  const ShoppingCartScreen();
                 }));
               },
               icon: const Icon(Icons.shopping_cart_outlined)),
