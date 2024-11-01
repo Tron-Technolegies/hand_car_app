@@ -72,38 +72,38 @@ class ServiceDetailsPage extends StatelessWidget {
     }
 
 // Function to send email
-    void sendEmail() async {
-      // Define the Gmail-specific URI
-      final Uri gmailUri = Uri(
-        scheme: 'googlegmail',
-        path: '/co',
-        queryParameters: {
-          'to': 'risanpt5@gmailcom',
-          'subject': 'Inquiry from App',
-          'body': 'Hello, I would like to inquire about...',
-        },
-      );
+    // void sendEmail() async {
+    //   // Define the Gmail-specific URI
+    //   final Uri gmailUri = Uri(
+    //     scheme: 'googlegmail',
+    //     path: '/co',
+    //     queryParameters: {
+    //       'to': 'risanpt5@gmailcom',
+    //       'subject': 'Inquiry from App',
+    //       'body': 'Hello, I would like to inquire about...',
+    //     },
+    //   );
 
-      // Fallback to mailto: if Gmail is not available
-      final Uri mailtoUri = Uri(
-        scheme: 'mailto',
-        path: 'risanpt5@gmailcom', // Replace with the recipient's email
-        queryParameters: {
-          'subject': 'Inquiry from App',
-          'body': 'Hello,I would like to inquire about...',
-        },
-      );
+    //   // Fallback to mailto: if Gmail is not available
+    //   final Uri mailtoUri = Uri(
+    //     scheme: 'mailto',
+    //     path: 'risanpt5@gmailcom', // Replace with the recipient's email
+    //     queryParameters: {
+    //       'subject': 'Inquiry from App',
+    //       'body': 'Hello,I would like to inquire about...',
+    //     },
+    //   );
 
-      // Attempt to launch Gmail
-      if (await canLaunchUrl(gmailUri)) {
-        await launchUrl(gmailUri);
-      } else if (await canLaunchUrl(mailtoUri)) {
-        // Fallback to mailto: if Gmail is not available
-        await launchUrl(mailtoUri);
-      } else {
-        throw 'Could not launch email client';
-      }
-    }
+    //   // Attempt to launch Gmail
+    //   if (await canLaunchUrl(gmailUri)) {
+    //     await launchUrl(gmailUri);
+    //   } else if (await canLaunchUrl(mailtoUri)) {
+    //     // Fallback to mailto: if Gmail is not available
+    //     await launchUrl(mailtoUri);
+    //   } else {
+    //     throw 'Could not launch email client';
+    //   }
+    // }
 
     return Scaffold(
       appBar: AppBar(
@@ -227,24 +227,24 @@ class ServiceDetailsPage extends StatelessWidget {
               launchWhatsApp();
             },
           ),
-          SpeedDialChild(
-            child: Image.asset(Assets.icons.email.path),
-            label: 'Email US',
-            onTap: () async {
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (BuildContext context) {
-                  return const Center(child: CircularProgressIndicator());
-                },
-              );
+          // SpeedDialChild(
+          //   child: Image.asset(Assets.icons.email.path),
+          //   label: 'Email US',
+          //   onTap: () async {
+          //     showDialog(
+          //       context: context,
+          //       barrierDismissible: false,
+          //       builder: (BuildContext context) {
+          //         return const Center(child: CircularProgressIndicator());
+          //       },
+          //     );
 
-              sendEmail();
+          //     sendEmail();
 
-              // Hide loading indicator
-              Navigator.of(context).pop();
-            },
-          ),
+          //     // Hide loading indicator
+          //     Navigator.of(context).pop();
+          //   },
+          // ),
         ],
       ),
     );

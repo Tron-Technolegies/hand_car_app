@@ -13,7 +13,9 @@ class LoginPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller=TextEditingController();
+    //controller
+    final controller = TextEditingController();
+    
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
@@ -25,21 +27,24 @@ class LoginPage extends HookWidget {
               child: SvgPicture.asset(Assets.icons.handCarIcon),
             ),
             SizedBox(height: context.space.space_200),
-            Text(
-              "Login or signup with email or\n                  mobile number",
-              style: context.typography.h3,
+            Center(
+              child: Text(
+                "Login or signup with email or\nmobile number",
+                style: context.typography.h3,
+                textAlign: TextAlign.center,
+              ),
             ),
             SizedBox(height: context.space.space_200),
             Padding(
               padding:
                   EdgeInsets.symmetric(horizontal: context.space.space_200),
-              child:  TextField(
-                controller: controller,
+              child: TextField(
+                  controller: controller,
                   decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Email or Mobile Number',
-                prefixIcon: Icon(Icons.person),
-              )),
+                    border: OutlineInputBorder(),
+                    labelText: 'Email or Mobile Number',
+                    prefixIcon: Icon(Icons.person),
+                  )),
             ),
             SizedBox(height: context.space.space_200),
             Padding(
@@ -48,20 +53,26 @@ class LoginPage extends HookWidget {
               child: SizedBox(
                   width: double.infinity,
                   height: 60,
-                  child: ButtonWidget(label: "Login", onTap: () {
-                    if(controller.text.isNotEmpty){
-                    context.go('/otp');
-                    }else{
-                      SnackbarUtil.showsnackbar(message: "Enter Email or Mobile Number", showretry: true);
-                    }
-                  })),
+                  child: ButtonWidget(
+                      label: "Generate OTP",
+                      onTap: () {
+                        if (controller.text.isNotEmpty) {
+                          context.go('/otp');
+                        } else {
+                          SnackbarUtil.showsnackbar(
+                              message: "Enter Email or Mobile Number",
+                              showretry: true);
+                        }
+                      })),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(onPressed: () {}, child: const Text("Sign Up")),
-                TextButton(onPressed: () {}, child: const Text("Forgot Password")),
-              ],
+            SizedBox(height: context.space.space_200),
+            Center(
+              child: Text(
+                textAlign: TextAlign.center,
+                "By signing in you are agreeing to handcar’s \nTerms of use and Privacy policy",
+                style: context.typography.bodySemiBold
+                    .copyWith(color: const Color(0xff7A7A7A)),
+              ),
             )
           ],
         ),

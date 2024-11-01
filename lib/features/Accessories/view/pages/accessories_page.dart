@@ -26,6 +26,10 @@ class AccessoriesPage extends HookWidget {
     final searchTextController = useTextEditingController();
 
     useEffect(() {
+  /// Changes [appBarVisible] based on the scroll direction.
+  ///
+  /// If the user is scrolling down, hides the app bar.
+  /// If the user is scrolling up, shows the app bar.
       void onScroll() {
         if (controller.position.userScrollDirection ==
             ScrollDirection.reverse) {
@@ -143,6 +147,7 @@ class AccessoriesPage extends HookWidget {
                 currentPage.value = index;
               },
               children: const [
+                // Maintenance & Care
                 GridViewBuilderAccessoriesWidget(
                   name: "3M Car Washer",
                   price: '190',
@@ -151,6 +156,7 @@ class AccessoriesPage extends HookWidget {
                   image:
                       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJnD1gtXHviN3Ywia6uOcoAfa1XHgCsh7Zkw&s',
                 ),
+                // Interior Accessories
                 GridViewBuilderAccessoriesWidget(
                   name: "Car Seat",
                   price: '180',
@@ -159,6 +165,7 @@ class AccessoriesPage extends HookWidget {
                   image:
                       'https://e7.pngegg.com/pngimages/372/436/png-clipart-white-and-black-vehicle-interior-car-seat-massage-chair-child-safety-seat-automotive-interior-driving-interior-design-thumbnail.png',
                 ),
+                // Electronics Accessories
                 GridViewBuilderAccessoriesWidget(
                   name: "Unitopsci Wireless Bluetooth Speaker",
                   price: '120',
