@@ -20,9 +20,7 @@ final GoRouter router = GoRouter(initialLocation: '/splash', routes: [
   //Navigation Page
   GoRoute(
     path: '/',
-    pageBuilder: (context, state) {
-      return customTransitionPage(child: const NavigationPage(), );
-    },
+    builder: (context, state) => const NavigationPage(),
   ),
   //Onboarding Page
    GoRoute(

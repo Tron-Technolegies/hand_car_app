@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
+import 'package:hand_car/features/Authentication/controller/login_with_otp_controller.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 
-//login page
-class LoginPage extends HookWidget {
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+class LoginPage extends HookConsumerWidget {
   const LoginPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    
     //controller
     final controller = TextEditingController();
-    
+
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
@@ -57,6 +59,9 @@ class LoginPage extends HookWidget {
                       label: "Generate OTP",
                       onTap: () {
                         if (controller.text.isNotEmpty) {
+                          ref
+                              .read(loginWithOtpControllerProvider.notifier)
+                              .sendOtp(controller.text);
                           context.go('/otp');
                         } else {
                           SnackbarUtil.showsnackbar(
