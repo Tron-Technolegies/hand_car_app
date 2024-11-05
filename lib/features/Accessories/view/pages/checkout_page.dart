@@ -4,12 +4,12 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
-import 'package:hand_car/features/Accessories/view/widgets/address_card_widget.dart';
-import 'package:hand_car/features/Accessories/view/widgets/address_form_widget.dart';
-import 'package:hand_car/features/Accessories/view/widgets/cart_summary_widget.dart';
+import 'package:hand_car/features/Accessories/view/widgets/address/address_card_widget.dart';
+import 'package:hand_car/features/Accessories/view/widgets/address/address_form_widget.dart';
+import 'package:hand_car/features/Accessories/view/widgets/cart/cart_summary_widget.dart';
 
 class CheckOutPage extends HookWidget {
-    static const routeName = '/checkout-page';
+  static const routeName = '/checkout-page';
 
   const CheckOutPage({super.key});
 

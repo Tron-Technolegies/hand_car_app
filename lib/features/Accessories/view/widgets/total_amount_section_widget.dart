@@ -69,4 +69,3 @@ class TotalAMountSectionWidget extends HookWidget {
     );
   }
 }
-

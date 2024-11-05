@@ -4,6 +4,7 @@ import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/SpareParts/view/widgets/genuine_parts_container.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 
+/// GenuinePartsSliderWidget
 class GenuinePartsSliderWidget extends StatelessWidget {
   const GenuinePartsSliderWidget({super.key});
 
@@ -11,6 +12,7 @@ class GenuinePartsSliderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return CarouselSlider(
         items: [
+          /// Genuine Spare Parts
           GenuinePartsContainer(
               digit: "1M+",
               title: "Genuine Spare Parts",
@@ -23,6 +25,7 @@ class GenuinePartsSliderWidget extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               )),
+          /// Top Brands
           GenuinePartsContainer(
               digit: "100+",
               title: "Top Brands",
@@ -35,6 +38,7 @@ class GenuinePartsSliderWidget extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomRight,
               )),
+          /// Spare Parts Shipped
           GenuinePartsContainer(
               digit: "1000+",
               title: " Spare Parts Shipped",

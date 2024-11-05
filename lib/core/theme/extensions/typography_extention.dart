@@ -57,7 +57,6 @@ class TypographyExtention extends ThemeExtension<TypographyExtention> {
     TextStyle? caption,
     TextStyle? buttonTxt,
     TextStyle? button2,
-
   }) {
     return TypographyExtention(
       h1: h1 ?? this.h1,

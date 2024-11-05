@@ -25,8 +25,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    
-
     return Scaffold(
       body: Center(
         child: Column(
@@ -34,7 +32,11 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SvgPicture.asset(Assets.icons.handCarIcon),
-           Text("HandCar", style:context.typography.h1.copyWith(color: context.colors.primary),),
+            Text(
+              "HandCar",
+              style:
+                  context.typography.h1.copyWith(color: context.colors.primary),
+            ),
           ],
         ),
       ),

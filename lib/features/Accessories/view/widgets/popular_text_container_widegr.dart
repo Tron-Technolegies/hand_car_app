@@ -15,8 +15,7 @@ class PopularTextConainerWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: context.colors.yellow,
         borderRadius: const BorderRadius.horizontal(
-            left: Radius.circular(20),
-            right: Radius.circular(20)),
+            left: Radius.circular(20), right: Radius.circular(20)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

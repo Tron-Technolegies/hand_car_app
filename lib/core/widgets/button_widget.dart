@@ -7,7 +7,7 @@ class ButtonWidget extends StatelessWidget {
   final bool isLoading;
 
   /// Callback to execute when the button is clicked
-  final VoidCallback onTap;
+  final Function() onTap;
 
   const ButtonWidget({
     super.key,

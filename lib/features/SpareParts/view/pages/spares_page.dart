@@ -8,9 +8,9 @@ import 'package:hand_car/features/SpareParts/view/widgets/carousel_slider_for_ge
 import 'package:hand_car/features/SpareParts/view/widgets/spare_more_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 
- final GlobalKey<ScaffoldState> scaffoldKey4 = GlobalKey<ScaffoldState>();
+final GlobalKey<ScaffoldState> scaffoldKey4 = GlobalKey<ScaffoldState>();
 
-//Spares Page 
+//Spares Page
 class AutoPartsPage extends HookWidget {
   static const String routeName = '/auto_parts_page';
   const AutoPartsPage({super.key});

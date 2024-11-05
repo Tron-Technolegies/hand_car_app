@@ -4,20 +4,23 @@ import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Subscriptions/view/widgets/duration_selection_button.dart';
 
 class DurationButtons extends StatelessWidget {
-  final List<String> duration = ['6 Months', '12 Months', ];
+  final List<String> duration = [
+    '6 Months',
+    '12 Months',
+  ];
   final int selectedIndex;
   final Function(int) onSelectPlan;
   final Color containerColor;
   final Color textColor1;
   final Color textColor2;
 
-   DurationButtons({
-    super.key,
-    required this.selectedIndex,
-    required this.onSelectPlan,
-    required this.containerColor
-    , required this.textColor1, required this.textColor2
-  });
+  DurationButtons(
+      {super.key,
+      required this.selectedIndex,
+      required this.onSelectPlan,
+      required this.containerColor,
+      required this.textColor1,
+      required this.textColor2});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +29,7 @@ class DurationButtons extends StatelessWidget {
         color: containerColor,
         borderRadius: BorderRadius.circular(25),
       ),
-      padding:  EdgeInsets.all(context.space.space_50),
+      padding: EdgeInsets.all(context.space.space_50),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: List.generate(
@@ -42,5 +45,4 @@ class DurationButtons extends StatelessWidget {
       ),
     );
   }
-
 }

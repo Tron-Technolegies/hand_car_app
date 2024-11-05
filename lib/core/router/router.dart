@@ -23,62 +23,89 @@ final GoRouter router = GoRouter(initialLocation: '/splash', routes: [
     builder: (context, state) => const NavigationPage(),
   ),
   //Onboarding Page
-   GoRoute(
+  GoRoute(
     path: '/onboarding',
     pageBuilder: (context, state) {
-      return customTransitionPage(child: const OnbordingScreenPage(), );
+      return customTransitionPage(
+        child: const OnbordingScreenPage(),
+      );
     },
   ),
   //Splash Page
   GoRoute(
     path: '/splash',
     pageBuilder: (context, state) {
-      return customTransitionPage(child: const SplashScreen(), );
+      return customTransitionPage(
+        child: const SplashScreen(),
+      );
     },
   ),
   //Login Page
-  GoRoute(path: '/login', builder: (context, state) => const LoginPage(),),
+  GoRoute(
+    path: '/login',
+    builder: (context, state) => const LoginPage(),
+  ),
   //OTP Page
-  GoRoute(path: '/otp', builder: (context, state) => const OtpPage(),),
+  GoRoute(
+    path: '/otp',
+    builder: (context, state) => const OtpPage(),
+  ),
   //Name and Email Page
-  GoRoute(path: '/name_and_email', builder: (context, state) => const NameAndEmailPage(),),
+  GoRoute(
+    path: '/name_and_email',
+    builder: (context, state) => const NameAndEmailPage(),
+  ),
   //Accessories Details Page
-  GoRoute(path: '/accessories_details', builder: (context, state) => const AccessoriesDetailsPage(),),
+  GoRoute(
+    path: '/accessories_details',
+    builder: (context, state) => const AccessoriesDetailsPage(),
+  ),
   //Home Page
   GoRoute(
     path: '/home',
     pageBuilder: (context, state) {
-      return customTransitionPage(child: const HomePage(), );
+      return customTransitionPage(
+        child: const HomePage(),
+      );
     },
   ),
   //Auto Parts Page
   GoRoute(
     path: '/auto_parts',
     pageBuilder: (context, state) {
-      return customTransitionPage(child: const AutoPartsPage() , );
+      return customTransitionPage(
+        child: const AutoPartsPage(),
+      );
     },
   ),
   //Accessories Page
   GoRoute(
     path: '/accessories',
     pageBuilder: (context, state) {
-      return customTransitionPage(child: const AccessoriesPage(), );
+      return customTransitionPage(
+        child: const AccessoriesPage(),
+      );
     },
   ),
   //Services Page
   GoRoute(
     path: '/services',
     pageBuilder: (context, state) {
-      return customTransitionPage(child:  ServicesPage(), );
+      return customTransitionPage(
+        child: ServicesPage(),
+      );
     },
   ),
   //Service Plans Page
   GoRoute(
-      path: '/servicePlans',
-      pageBuilder: (context, state) {
-        return customTransitionPage(child: const ServicePlanScreen(), );
-      },),
-      //Service Details Page
+    path: '/servicePlans',
+    pageBuilder: (context, state) {
+      return customTransitionPage(
+        child: const ServicePlanScreen(),
+      );
+    },
+  ),
+  //Service Details Page
   GoRoute(
     path: '/serviceDetailsPage',
     builder: (context, state) {
@@ -105,7 +132,9 @@ final GoRouter router = GoRouter(initialLocation: '/splash', routes: [
   GoRoute(
     path: '/cart',
     pageBuilder: (context, state) {
-      return customTransitionPage(child:  const CheckOutPage(), );
+      return customTransitionPage(
+        child: const CheckOutPage(),
+      );
     },
   ),
 ]);

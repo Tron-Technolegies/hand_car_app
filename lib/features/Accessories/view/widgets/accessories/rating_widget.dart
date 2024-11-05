@@ -1,8 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/features/Accessories/view/widgets/bottom_sheet_for_write_review_widget.dart';
-import 'package:hand_car/features/Accessories/view/widgets/progress_indicator_bar_widget.dart';
+import 'package:hand_car/features/Accessories/view/widgets/review/bottom_sheet_for_write_review_widget.dart';
+import 'package:hand_car/features/Accessories/view/widgets/accessories/progress_indicator_bar_widget.dart';
 
 //ProductRatingsWidget For Show In Details Page
 class ProductRatingsWidget extends StatelessWidget {
@@ -36,15 +35,13 @@ class ProductRatingsWidget extends StatelessWidget {
           TextButton(
               onPressed: () {
                 showModalBottomSheet(
-          isScrollControlled: true,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-          ),
-          context: context,
-          builder: (context) =>  const BottomSheetForWriteReview(
-          
-
-          ));
+                    isScrollControlled: true,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(20)),
+                    ),
+                    context: context,
+                    builder: (context) => const BottomSheetForWriteReview());
               },
               child: Text(
                 "Write here...",
@@ -77,10 +74,10 @@ class ProductRatingsWidget extends StatelessWidget {
             'Based on $totalReviews reviews',
             style: context.typography.subtitle,
           ),
-           SizedBox(height: context.space.space_200),
+          SizedBox(height: context.space.space_200),
           ...List.generate(
             5,
-            (index) => _buildStarBar(5 - index, starCounts[4 - index],context),
+            (index) => _buildStarBar(5 - index, starCounts[4 - index], context),
           ),
         ],
       ),
@@ -90,18 +87,18 @@ class ProductRatingsWidget extends StatelessWidget {
   Widget _buildStarBar(int stars, int count, BuildContext context) {
     final percentage = count / totalReviews;
     return Padding(
-      padding:  EdgeInsets.symmetric(vertical: context.space.space_50),
+      padding: EdgeInsets.symmetric(vertical: context.space.space_50),
       child: Row(
         children: [
           SizedBox(
             width: 16,
             child: Text('$stars', style: context.typography.bodySemiBold),
           ),
-           Icon(Icons.star, size: context.space.space_200, color: Colors.amber),
-           SizedBox(width: context.space.space_100),
+          Icon(Icons.star, size: context.space.space_200, color: Colors.amber),
+          SizedBox(width: context.space.space_100),
           Expanded(
             child: CustomPaint(
-              size:  Size(double.infinity, context.space.space_100),
+              size: Size(double.infinity, context.space.space_100),
               painter: MultiColorProgressPainter(
                 percentage: percentage,
                 backgroundColor: Colors.grey[300]!,
@@ -123,4 +120,3 @@ class ProductRatingsWidget extends StatelessWidget {
     );
   }
 }
-

@@ -117,6 +117,7 @@ class ServicesPage extends HookConsumerWidget {
           ),
         ],
       ),
+      /// Drawer Widget
       drawer: const DrawerWidget(),
       endDrawerEnableOpenDragGesture: true,
       body: Column(

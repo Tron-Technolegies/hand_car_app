@@ -10,7 +10,7 @@ import 'package:hand_car/features/Subscriptions/view/pages/subscription_page.dar
 import 'package:hand_car/features/service/view/pages/services_page.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-
+/// Navigation Page
 class NavigationPage extends HookConsumerWidget {
   static const String route = '/navigation';
 
@@ -21,7 +21,7 @@ class NavigationPage extends HookConsumerWidget {
 // Get the navigation state from the provider.
     final navigationState = ref.watch(navigationProvider);
 
-    // Listen for page changes and update the provider.
+     // Listen for page changes and update the provider.
     useEffect(() {
       navigationState.pageController.addListener(() {
         if (navigationState.pageController.page != null) {
@@ -42,12 +42,15 @@ class NavigationPage extends HookConsumerWidget {
       });
       return null;
     }, [navigationState.selectedNavBarItemIndex]);
+    
 
     return Scaffold(
       body: PageView(
         controller: navigationState.pageController,
-        children: <Widget>[
+        children: [
+          /// Auto Parts Page
           const AutoPartsPage(),
+          
           const AccessoriesPage(),
           const HomePage(),
           ServicesPage(),
@@ -96,9 +99,7 @@ class NavigationPage extends HookConsumerWidget {
             label: 'Accessories',
           ),
           BottomNavigationBarItem(
-            icon: 
-
-            SvgPicture.asset(
+            icon: SvgPicture.asset(
               navigationState.selectedNavBarItemIndex == 2
                   ? Assets.icons.garageFilled
                   : Assets.icons.garage,

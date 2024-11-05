@@ -24,9 +24,7 @@ final lightTheme = ThemeData(
           btnShadow: ColorPalette.pink,
           containerShadow: ColorPalette.pink200,
           green: ColorPalette.green,
-          yellow: ColorPalette.yellow
-
-          ),
+          yellow: ColorPalette.yellow),
       TypographyExtention(
         h1: TextStyle(
             fontSize: 34,
@@ -110,7 +108,4 @@ final lightTheme = ThemeData(
             fontWeight: FontWeight.w400),
       ),
       AppSpaceExtension.fromBaseSpace(8),
-      
     ]);
-    
-  

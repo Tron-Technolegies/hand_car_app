@@ -4,8 +4,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/features/Accessories/view/widgets/accessories_circle_avatar_widget.dart';
-import 'package:hand_car/features/Accessories/view/widgets/grid_view_for_accessories_widget.dart';
+import 'package:hand_car/features/Accessories/view/widgets/accessories/accessories_circle_avatar_widget.dart';
+import 'package:hand_car/features/Accessories/view/widgets/accessories/grid_view_for_accessories_widget.dart';
 import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 
@@ -26,10 +26,10 @@ class AccessoriesPage extends HookWidget {
     final searchTextController = useTextEditingController();
 
     useEffect(() {
-  /// Changes [appBarVisible] based on the scroll direction.
-  ///
-  /// If the user is scrolling down, hides the app bar.
-  /// If the user is scrolling up, shows the app bar.
+      /// Changes [appBarVisible] based on the scroll direction.
+      ///
+      /// If the user is scrolling down, hides the app bar.
+      /// If the user is scrolling up, shows the app bar.
       void onScroll() {
         if (controller.position.userScrollDirection ==
             ScrollDirection.reverse) {

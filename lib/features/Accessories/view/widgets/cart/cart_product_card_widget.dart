@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/features/Accessories/view/widgets/quantity_button_for_cart_widget.dart';
+import 'package:hand_car/features/Accessories/view/widgets/accessories/quantity_button_for_cart_widget.dart';
 
 class ProductCard extends HookWidget {
   final String productName;

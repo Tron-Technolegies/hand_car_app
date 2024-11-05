@@ -16,7 +16,7 @@ class GenuinePartsContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: EdgeInsets.all(context.space.space_100),
       child: Container(
         padding: EdgeInsets.all(context.space.space_200),
         decoration: BoxDecoration(

@@ -23,7 +23,9 @@ class AddressCard extends HookWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: selectedAddress.value == name ? context.colors.white : context.colors.background,
+        color: selectedAddress.value == name
+            ? context.colors.white
+            : context.colors.background,
         border: Border.all(color: Colors.grey.shade300),
         borderRadius: BorderRadius.circular(8),
       ),

@@ -172,7 +172,7 @@ class DrawerWidget extends ConsumerWidget {
 //         ).animate(controller),
 //         child: ListTile(
 //           leading: Lottie.asset(
-            
+
 //         ),
 //           title: Text(_getTitle(index)),
 //           onTap: () {

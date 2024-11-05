@@ -18,7 +18,6 @@ class AppSpaceExtension extends ThemeExtension<AppSpaceExtension> {
   final double space_700;
   final double space_800;
   final double space_900;
-  
 
   AppSpaceExtension({
     required this.space_25,
@@ -36,7 +35,6 @@ class AppSpaceExtension extends ThemeExtension<AppSpaceExtension> {
     required this.space_700,
     required this.space_800,
     required this.space_900,
-
   });
 
   AppSpaceExtension.fromBaseSpace(double baseSpace)
@@ -55,7 +53,6 @@ class AppSpaceExtension extends ThemeExtension<AppSpaceExtension> {
         space_700 = baseSpace * 7,
         space_800 = baseSpace * 8,
         space_900 = baseSpace * 9;
-    
 
   @override
   ThemeExtension<AppSpaceExtension> copyWith({

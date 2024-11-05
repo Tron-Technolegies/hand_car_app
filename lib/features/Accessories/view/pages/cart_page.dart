@@ -3,17 +3,18 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
 import 'package:hand_car/features/Accessories/view/pages/checkout_page.dart';
-import 'package:hand_car/features/Accessories/view/widgets/cart_product_card_widget.dart';
-import 'package:hand_car/features/Accessories/view/widgets/coupon_card_listview_widget.dart';
-import 'package:hand_car/features/Accessories/view/widgets/coupon_input_widget.dart';
+import 'package:hand_car/features/Accessories/view/widgets/cart/cart_product_card_widget.dart';
+import 'package:hand_car/features/Accessories/view/widgets/coupon/coupon_card_listview_widget.dart';
+import 'package:hand_car/features/Accessories/view/widgets/coupon/coupon_input_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/total_amount_section_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class ShoppingCartScreen extends HookWidget {
+class ShoppingCartScreen extends HookConsumerWidget {
   const ShoppingCartScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,ref) {
     final controller = useTextEditingController();
     return Scaffold(
         appBar: AppBar(
@@ -31,7 +32,7 @@ class ShoppingCartScreen extends HookWidget {
 
                   // Cart Items List
                   ListView.builder(
-                    itemCount: 5,
+                    itemCount: 6,
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
@@ -95,9 +96,3 @@ class ShoppingCartScreen extends HookWidget {
 }
 
 // Quantity Button Widget
-
-
-
-
-
-

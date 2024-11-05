@@ -5,14 +5,14 @@ import 'package:hand_car/core/theme/light_theme.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 void main() {
-  runApp( const ProviderScope(child: MainApp()));
+  runApp(const ProviderScope(child: MainApp()));
 }
 
 class MainApp extends StatelessWidget {
   static final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
   static final navigatorkey = GlobalKey<NavigatorState>();
-  
-   const MainApp({super.key});
+
+  const MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +22,6 @@ class MainApp extends StatelessWidget {
       theme: lightTheme,
       scaffoldMessengerKey: scaffoldMessengerKey,
       routerConfig: router,
-      
-
     );
   }
 }

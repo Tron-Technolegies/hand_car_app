@@ -1,5 +1,3 @@
-
-
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -16,10 +14,9 @@ class MultipleImagePickerState with _$MultipleImagePickerState {
     required List<XFile> selectedImages,
   }) = _MultipleImagePickerState;
 }
+
 @riverpod
-
 class MultipleImagePicker extends _$MultipleImagePicker {
-
   @override
   MultipleImagePickerState build() {
     return const MultipleImagePickerState(selectedImages: []);
@@ -31,5 +28,4 @@ class MultipleImagePicker extends _$MultipleImagePicker {
       state = MultipleImagePickerState(selectedImages: images);
     }
   }
-  
 }

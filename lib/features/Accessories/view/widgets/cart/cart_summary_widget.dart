@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/features/Accessories/view/widgets/cart_item_widget.dart';
-import 'package:hand_car/features/Accessories/view/widgets/cart_row_widget.dart';
+import 'package:hand_car/features/Accessories/view/widgets/cart/cart_item_widget.dart';
+import 'package:hand_car/features/Accessories/view/widgets/cart/cart_row_widget.dart';
 
 class CartSummaryWidget extends StatelessWidget {
   const CartSummaryWidget({super.key});
@@ -46,4 +46,3 @@ class CartSummaryWidget extends StatelessWidget {
     );
   }
 }
-

@@ -10,11 +10,7 @@ class SpareBrandsContainerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-     Future<void> launchWhatsApp(
-      
-    ) async {
-     
-
+    Future<void> launchWhatsApp() async {
       final whatsappUrl = Uri.parse("https://wa.me/9895499872");
 
       if (await canLaunchUrl(whatsappUrl)) {
@@ -46,11 +42,11 @@ class SpareBrandsContainerWidget extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: context.space.space_200),
             child: SizedBox(
                 width: double.infinity,
-                child: ButtonWidget(label: "Enquire now", onTap: () {
-                  launchWhatsApp();
-                }
-
-           )),
+                child: ButtonWidget(
+                    label: "Enquire now",
+                    onTap: () {
+                      launchWhatsApp();
+                    })),
           )
         ]),
       ),

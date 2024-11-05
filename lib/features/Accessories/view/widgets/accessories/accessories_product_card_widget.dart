@@ -23,7 +23,7 @@ class AccessoriesProductCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-       context.push('/accessories_details');
+        context.push('/accessories_details');
       },
       child: Container(
         decoration: BoxDecoration(
@@ -44,11 +44,7 @@ class AccessoriesProductCardWidget extends StatelessWidget {
                 ),
               ),
               Center(
-                child: Image.network(
-                    height: 100,
-                    width: 100,
-                    
-                    image),
+                child: Image.network(height: 100, width: 100, image),
               ),
               SizedBox(height: context.space.space_100),
               Container(

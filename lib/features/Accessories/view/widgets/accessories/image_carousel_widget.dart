@@ -25,7 +25,3 @@ class ImageCarousel extends StatelessWidget {
         imageFitMode: BoxFit.cover);
   }
 }
-
-
-
-

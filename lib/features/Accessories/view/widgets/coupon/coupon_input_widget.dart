@@ -40,4 +40,3 @@ class CouponInputSection extends HookWidget {
     );
   }
 }
-

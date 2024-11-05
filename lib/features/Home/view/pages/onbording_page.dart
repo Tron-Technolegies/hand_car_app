@@ -6,6 +6,7 @@ import 'package:hand_car/features/Authentication/view/pages/login_with_email_and
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:lottie/lottie.dart';
 
+/// Onbording Screen Page
 class OnbordingScreenPage extends StatelessWidget {
   final Color kDarkBlueColor = const Color(0xFF053149);
 

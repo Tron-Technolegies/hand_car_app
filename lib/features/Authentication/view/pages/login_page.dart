@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
-import 'package:hand_car/features/Authentication/controller/login_with_otp_controller.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -14,7 +11,6 @@ class LoginPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    
     //controller
     final controller = TextEditingController();
 
@@ -58,16 +54,16 @@ class LoginPage extends HookConsumerWidget {
                   child: ButtonWidget(
                       label: "Generate OTP",
                       onTap: () {
-                        if (controller.text.isNotEmpty) {
-                          ref
-                              .read(loginWithOtpControllerProvider.notifier)
-                              .sendOtp(controller.text);
-                          context.go('/otp');
-                        } else {
-                          SnackbarUtil.showsnackbar(
-                              message: "Enter Email or Mobile Number",
-                              showretry: true);
-                        }
+                        // if (controller.text.isNotEmpty) {
+                        //   ref
+                        //       .read(loginWithOtpControllerProvider.notifier)
+                        //       .sendOtp(controller.text);
+                        //   context.go('/otp');
+                        // } else {
+                        //   SnackbarUtil.showsnackbar(
+                        //       message: "Enter Email or Mobile Number",
+                        //       showretry: true);
+                        // }
                       })),
             ),
             SizedBox(height: context.space.space_200),

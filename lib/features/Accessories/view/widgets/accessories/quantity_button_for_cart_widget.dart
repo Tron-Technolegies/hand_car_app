@@ -4,7 +4,8 @@ class QuantityButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback? onPressed;
 
-  const QuantityButton({super.key, 
+  const QuantityButton({
+    super.key,
     required this.icon,
     this.onPressed,
   });

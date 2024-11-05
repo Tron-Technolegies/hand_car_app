@@ -13,8 +13,8 @@ class MultiColorProgressPainter extends CustomPainter {
   });
 
   @override
-     // function to draw the progress bar
-    void paint(Canvas canvas, Size size) {
+  // function to draw the progress bar
+  void paint(Canvas canvas, Size size) {
     final Paint backgroundPaint = Paint()
       ..color = backgroundColor
       ..style = PaintingStyle.fill;
