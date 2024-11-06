@@ -6,7 +6,7 @@ import 'package:hand_car/features/Accessories/view/pages/checkout_page.dart';
 import 'package:hand_car/features/Accessories/view/widgets/cart/cart_product_card_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/coupon/coupon_card_listview_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/coupon/coupon_input_widget.dart';
-import 'package:hand_car/features/Accessories/view/widgets/total_amount_section_widget.dart';
+import 'package:hand_car/features/Accessories/view/widgets/cart/total_amount_section_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

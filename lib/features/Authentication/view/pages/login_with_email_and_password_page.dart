@@ -101,10 +101,7 @@ class LoginWithEmailAndPasswordPage extends HookConsumerWidget {
 
                       final success = await ref
                           .read(loginWithOtpControllerProvider.notifier)
-                          .loginWithEmailAndPassword(
-                            phoneController.text,
-                            passwordController.text,
-                          );
+                         .loginWithPassword(phoneController.text, passwordController.text);
 
                       if (success && context.mounted) {
                         context.go('/');

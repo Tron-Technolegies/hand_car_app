@@ -6,7 +6,7 @@ import 'package:hand_car/core/widgets/button_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/bullet_points_widgets.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/drop_down_button_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/image_carousel_widget.dart';
-import 'package:hand_car/features/Accessories/view/widgets/product_section_widget.dart';
+import 'package:hand_car/features/Accessories/view/widgets/accessories/product_section_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/rating_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/review/review_list_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/specification_item_widget.dart';

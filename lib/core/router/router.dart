@@ -17,6 +17,7 @@ import 'package:hand_car/features/service/view/pages/service_details_page.dart';
 import 'package:hand_car/features/service/view/pages/services_page.dart';
 
 final GoRouter router = GoRouter(initialLocation: '/splash', routes: [
+  
   //Navigation Page
   GoRoute(
     path: '/',

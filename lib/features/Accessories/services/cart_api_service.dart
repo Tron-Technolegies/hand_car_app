@@ -1,3 +1,7 @@
+
+
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:hand_car/features/Accessories/controller/model/cart/cart_model.dart';
 
@@ -17,7 +21,7 @@ class CartApiService {
       );
       return response.statusCode == 200;
     } catch (e) {
-      print('Error adding to cart: $e');
+      log("Error adding to cart: $e");
       return false;
     }
   }
@@ -30,7 +34,7 @@ class CartApiService {
       );
       return response.statusCode == 200;
     } catch (e) {
-      print('Error removing from cart: $e');
+      log("Error removing from cart: $e");
       return false;
     }
   }
@@ -44,7 +48,7 @@ class CartApiService {
       );
       return response.statusCode == 200;
     } catch (e) {
-      print('Error updating cart quantity: $e');
+      log("Error updating cart quantity: $e");
       return false;
     }
   }
@@ -58,7 +62,7 @@ class CartApiService {
       }
       return null;
     } catch (e) {
-      print('Error getting cart: $e');
+      log("Error getting cart: $e");
       return null;
     }
   }
@@ -69,7 +73,7 @@ class CartApiService {
       final response = await _dio.delete('/cart/clear');
       return response.statusCode == 200;
     } catch (e) {
-      print('Error clearing cart: $e');
+      log("Error clearing cart: $e");
       return false;
     }
   }

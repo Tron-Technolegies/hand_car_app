@@ -10,8 +10,7 @@ class CartModel with _$CartModel {
     @Default(0) double totalPrice,
   }) = _CartModel;
 
-  factory CartModel.fromJson(Map<String, dynamic> json) =>
-      _$CartModelFromJson(json);
+  factory CartModel.fromJson(Map<String, dynamic> json) => _$CartModelFromJson(json);
 }
 
 @freezed
@@ -23,6 +22,5 @@ class CartItem with _$CartItem {
     @Default(1) int quantity,
   }) = _CartItem;
 
-  factory CartItem.fromJson(Map<String, dynamic> json) =>
-      _$CartItemFromJson(json);
+  factory CartItem.fromJson(Map<String, dynamic> json) => _$CartItemFromJson(json);
 }
