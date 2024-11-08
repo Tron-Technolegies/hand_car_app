@@ -6,7 +6,7 @@ import 'package:hand_car/core/utils/snackbar.dart';
 class ApiServicesAuthentication {
   static final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: 'http://192.168.1.56:8000',
+      baseUrl: 'http://192.168.1.41:8000',
       connectTimeout: const Duration(seconds: 5),
       receiveTimeout: const Duration(seconds: 3),
       headers: {
@@ -81,6 +81,7 @@ class ApiServicesAuthentication {
       return false;
     }
   }
+
 //Login with Phone Password
   static Future<bool> loginWithPassword(String phone, String password) async {
     try {
@@ -138,5 +139,4 @@ class ApiServicesAuthentication {
       return false;
     }
   }
-
 }

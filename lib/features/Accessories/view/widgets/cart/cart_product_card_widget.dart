@@ -5,20 +5,22 @@ import 'package:hand_car/features/Accessories/view/widgets/accessories/quantity_
 
 class ProductCard extends HookWidget {
   final String productName;
-  final String modelNumber;
-  final String image;
+  final String? modelNumber;
+  final String? image;
   final double price;
   final bool isAvailable;
+  final String quantity;
   final VoidCallback? onDelete;
   final Function(int)? onQuantityChanged;
 
   const ProductCard({
     super.key,
     required this.productName,
-    required this.modelNumber,
-    required this.image,
+    this.modelNumber,
+    this.image,
     required this.price,
     this.isAvailable = true,
+    required this.quantity,
     this.onDelete,
     this.onQuantityChanged,
   });
@@ -43,17 +45,17 @@ class ProductCard extends HookWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Product Image
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                image: DecorationImage(
-                  image: AssetImage(image),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
+            // Container(
+            //   width: 80,
+            //   height: 80,
+            //   decoration: BoxDecoration(
+            //     borderRadius: BorderRadius.circular(8),
+            //     image: DecorationImage(
+            //       image: AssetImage(image),
+            //       fit: BoxFit.cover,
+            //     ),
+            //   ),
+            // ),
             const SizedBox(width: 12),
 
             // Product Details

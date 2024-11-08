@@ -10,9 +10,9 @@ import 'package:hand_car/core/widgets/button_widget.dart';
 import 'package:hand_car/features/Authentication/controller/login_with_otp_controller.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 
-class LoginWithEmailAndPasswordPage extends HookConsumerWidget {
-  static const routeName = 'login_with_email_and_password_page';
-  const LoginWithEmailAndPasswordPage({super.key});
+class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
+  static const routeName = 'login_with_phone_and_password_page';
+  const LoginWithPhoneAndPasswordPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

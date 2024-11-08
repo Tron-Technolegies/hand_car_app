@@ -7,7 +7,7 @@ part of 'login_with_otp_controller.dart';
 // **************************************************************************
 
 String _$loginWithOtpControllerHash() =>
-    r'8ea3b436ef3baa4ea1bb8baa8b4f0438b7c6d338';
+    r'daf7cf9ac67e17cee8c5b2b34a3664210bb46388';
 
 /// See also [LoginWithOtpController].
 @ProviderFor(LoginWithOtpController)
@@ -24,4 +24,4 @@ final loginWithOtpControllerProvider =
 
 typedef _$LoginWithOtpController = AutoDisposeAsyncNotifier<bool>;
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

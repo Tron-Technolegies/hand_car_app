@@ -138,4 +138,6 @@ final GoRouter router = GoRouter(initialLocation: '/splash', routes: [
       );
     },
   ),
+  GoRoute(path: '/checkout', builder: (context, state) => const CheckOutPage()),
+  
 ]);

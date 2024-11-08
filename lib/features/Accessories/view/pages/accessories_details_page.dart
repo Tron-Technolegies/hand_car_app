@@ -48,7 +48,7 @@ class AccessoriesDetailsPage extends HookWidget {
               ),
               const ImageCarousel(),
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(context.space.space_200),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

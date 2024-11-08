@@ -7,21 +7,21 @@ part 'cart_controller.g.dart';
 @riverpod
 class CartController extends _$CartController {
   @override
-  CartModel build() {
-    return const CartModel();
+  Future<CartModel?> build() async {
+    final cart = await CartApiService.getCart();
+    return cart ?? const CartModel();
   }
 
   void getCart() async {
     final cart = await CartApiService.getCart();
-    state = cart ?? const CartModel();
+    state = AsyncValue.data(cart ?? const CartModel());
   }
 
   void removeFromCart(String itemId) {
-    final updatedItems = state.cartItems.where((item) => item.id != itemId).toList();
-    state = state.copyWith(
-      cartItems: updatedItems,
-      totalPrice: _calculateTotal(updatedItems)
-    );
+    final updatedItems =
+        state.value!.cartItems.where((item) => item.id != itemId).toList();
+    state = AsyncValue.data(state.value!.copyWith(
+        cartItems: updatedItems, totalPrice: _calculateTotal(updatedItems)));
   }
 
   void updateQuantity(String itemId, int quantity) {
@@ -30,17 +30,15 @@ class CartController extends _$CartController {
       return;
     }
 
-    final updatedItems = state.cartItems.map((item) {
+    final updatedItems = state.value!.cartItems.map((item) {
       if (item.id == itemId) {
         return item.copyWith(quantity: quantity);
       }
       return item;
     }).toList();
 
-    state = state.copyWith(
-      cartItems: updatedItems,
-      totalPrice: _calculateTotal(updatedItems)
-    );
+    state = AsyncValue.data(state.value!.copyWith(
+        cartItems: updatedItems, totalPrice: _calculateTotal(updatedItems)));
   }
 
   double _calculateTotal(List<CartItem> items) {
@@ -48,6 +46,6 @@ class CartController extends _$CartController {
   }
 
   void clearCart() {
-    state = const CartModel();
+    state = AsyncValue.data(const CartModel() );
   }
 }

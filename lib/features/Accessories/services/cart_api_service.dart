@@ -1,13 +1,13 @@
-
-
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:hand_car/features/Accessories/controller/model/cart/cart_model.dart';
 
 class CartApiService {
-  static final Dio _dio = Dio(BaseOptions(
-    baseUrl: 'http://192.168.1.50:8000', // Replace with your actual API base URL
+  static final Dio _dio = Dio(
+    BaseOptions(
+    baseUrl:
+        'http://192.168.1.56:8000', // Replace with your actual API base URL
     connectTimeout: const Duration(seconds: 5),
     receiveTimeout: const Duration(seconds: 3),
   ));
@@ -40,7 +40,8 @@ class CartApiService {
   }
 
   // Update cart item quantity
-  static Future<bool> updateCartItemQuantity(String itemId, int quantity) async {
+  static Future<bool> updateCartItemQuantity(
+      String itemId, int quantity) async {
     try {
       final response = await _dio.put(
         '/cart/update/$itemId',
@@ -56,7 +57,7 @@ class CartApiService {
   // Get cart items
   static Future<CartModel?> getCart() async {
     try {
-      final response = await _dio.get('rviewcartitems/');
+      final response = await _dio.get('/viewcartitems/');
       if (response.statusCode == 200) {
         return CartModel.fromJson(response.data);
       }

@@ -66,6 +66,7 @@ class AccessoriesPage extends HookWidget {
                   : const Text('Accessories'),
               centerTitle: true,
               actions: [
+                
                 if (!isSearching.value)
                   IconButton(
                     icon: const Icon(Icons.search),

@@ -30,6 +30,15 @@ class $AssetsAnimationsGen {
   /// File path: assets/animations/complete_protection.json
   String get completeProtection => 'assets/animations/complete_protection.json';
 
+  /// File path: assets/animations/empty_cart.json
+  String get emptyCart => 'assets/animations/empty_cart.json';
+
+  /// File path: assets/animations/error.json
+  String get error => 'assets/animations/error.json';
+
+  /// File path: assets/animations/loading.json
+  String get loading => 'assets/animations/loading.json';
+
   /// File path: assets/animations/mechanic_animation.json
   String get mechanicAnimation => 'assets/animations/mechanic_animation.json';
 
@@ -54,6 +63,9 @@ class $AssetsAnimationsGen {
         carWash,
         cartAnimation,
         completeProtection,
+        emptyCart,
+        error,
+        loading,
         mechanicAnimation,
         premiumMembership,
         premiumService,
