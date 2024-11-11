@@ -21,47 +21,57 @@ class ShoppingCartScreen extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cart', style: context.typography.h3),
+        title: Text('Your Shopping Cart', style: context.typography.h3),
+        actions: [
+          if (cartController.asData?.value.cartItems.isNotEmpty ?? false)
+            IconButton(
+              icon: Icon(Icons.delete_outline),
+              onPressed: () {
+                ref.read(cartControllerProvider.notifier).clearCart();
+              },
+            ),
+        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.all(context.space.space_200),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Check if cartController has data or is still loading
+                // Cart data or loading/error display
                 cartController.when(
                   data: (cart) {
-                    // If cart is empty
-                    if (cart?.cartItems.isEmpty ?? true) {
+                    if (cart.cartItems.isEmpty) {
                       return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 50),
                           child: Column(
-                        children: [
-                          Lottie.asset(Assets.animations.emptyCart,
-                              repeat: false),
-                          Text(
-                            "Your cart is empty",
-                            style: context.typography.h3
-                                .copyWith(color: context.colors.primaryTxt),
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Lottie.asset(Assets.animations.emptyCart, repeat: false),
+                              Text(
+                                "Your cart is empty",
+                                style: context.typography.h3.copyWith(color: context.colors.primaryTxt),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
                           ),
-                        ],
-                      ));
+                        ),
+                      );
                     }
 
-                    // Display cart items
-                    return ListView.builder(
-                      itemCount: cart?.cartItems.length ?? 0,
+                    return ListView.separated(
+                      itemCount: cart.cartItems.length,
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
+                      separatorBuilder: (context, index) => const Divider(),
                       itemBuilder: (context, index) {
-                        final item = cart?.cartItems[index];
+                        final item = cart.cartItems[index];
                         return ProductCard(
-                          productName: item?.name ?? '',
-                          price: item?.price ?? 0,
-                          quantity: item?.quantity.toString() ?? '',
-                          // Handle update or remove actions if needed
+                          productName: item.productName,
+                          price: item.productPrice,
+                          quantity: item.quantity.toString(),
                         );
                       },
                     );
@@ -72,16 +82,18 @@ class ShoppingCartScreen extends HookConsumerWidget {
                     ),
                   ),
                   error: (error, _) => Center(
-                      child: Column(
-                    children: [
-                      Lottie.asset(
-                        Assets.animations.error,
-                      ),
-                      Text("Failed to load cart",
-                          style: context.typography.h3
-                              .copyWith(color: context.colors.primaryTxt)),
-                    ],
-                  )),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Lottie.asset(Assets.animations.error),
+                        Text(
+                          "Failed to load cart",
+                          style: context.typography.h3.copyWith(color: context.colors.primaryTxt),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
 
                 SizedBox(height: context.space.space_200),
@@ -89,8 +101,7 @@ class ShoppingCartScreen extends HookConsumerWidget {
                   padding: EdgeInsets.only(left: context.space.space_300),
                   child: Text(
                     "Available Coupons",
-                    style: context.typography.bodyLarge
-                        .copyWith(color: const Color(0xff979797)),
+                    style: context.typography.bodyLarge.copyWith(color: const Color(0xff979797)),
                   ),
                 ),
                 SizedBox(height: context.space.space_100),
@@ -98,12 +109,12 @@ class ShoppingCartScreen extends HookConsumerWidget {
                 // Coupon Input Section
                 CouponInputSection(controller: controller),
 
-                // Total Summary Section (Ensure cartController has data before accessing totalPrice)
+                // Total Summary Section
                 cartController.when(
                   data: (cart) => TotalAMountSectionWidget(
-                    grandTotal: cart?.totalPrice ?? 0,
+                    grandTotal: cart.totalPrice,
                     delivery: 0,
-                    total: cart?.totalPrice ?? 0,
+                    total: cart.totalPrice,
                   ),
                   loading: () => const SizedBox.shrink(),
                   error: (_, __) => const SizedBox.shrink(),
@@ -115,15 +126,19 @@ class ShoppingCartScreen extends HookConsumerWidget {
       ),
       bottomNavigationBar: cartController.when(
         data: (cart) => Padding(
-          padding:  EdgeInsets.all(context.space.space_200),
+          padding: EdgeInsets.all(context.space.space_200),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Text('Grand Total: AED ${cart?.totalPrice ?? 0}',
-                  style: context.typography.bodyMedium),
+              Text(
+                'Total: AED ${cart.totalPrice}',
+                style: context.typography.bodyMedium,
+              ),
               ButtonWidget(
-                label: 'Proceed To Pay',
+                label: 'Proceed To Checkout',
                 onTap: () {
+                  // Navigate to checkout or display loading
+                  ref.read(cartControllerProvider.notifier).clearCart();
                   context.go('/checkout');
                 },
               ),

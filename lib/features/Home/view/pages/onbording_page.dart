@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_onboarding_slider/flutter_onboarding_slider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/features/Authentication/view/pages/login_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/login_with_phone_and_password_page.dart';
-import 'package:hand_car/features/Authentication/view/pages/signup_page.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:lottie/lottie.dart';
 
@@ -44,8 +42,7 @@ class OnbordingScreenPage extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const SignupPage(),
-          ),
+              builder: (context) => const LoginWithPhoneAndPasswordPage()),
         );
       },
       controllerColor: context.colors.primary,

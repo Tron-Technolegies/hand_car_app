@@ -2,25 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+
+import 'package:hand_car/features/Authentication/controller/auth_state.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
-import 'package:hand_car/features/Authentication/controller/login_with_otp_controller.dart';
+import 'package:hand_car/features/Authentication/controller/signup_controller.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 
 class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
-  static const routeName = 'login_with_phone_and_password_page';
+  static const route = 'LoginWithPhoneAndPasswordPage';
+
   const LoginWithPhoneAndPasswordPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final phoneController = useTextEditingController();
     final passwordController = useTextEditingController();
+    final authState = ref.watch(signupControllerProvider);
 
-    // Watch the login state
-    final loginState = ref.watch(loginWithOtpControllerProvider);
+    // Watch the authentication state
+
+    ref.listen<AuthenticationState>(signupControllerProvider, (previous, next) {
+      if (!next.isLoading && next.authenticated) {
+        context.go('/'); // Navigate to the main navigation page
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(),
@@ -82,37 +91,27 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
               Padding(
                 padding:
                     EdgeInsets.symmetric(horizontal: context.space.space_200),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 60,
-                  child: ButtonWidget(
-                    label: loginState.isLoading ? "Logging in..." : "Login",
-                    onTap: () async {
-                      if (phoneController.text.isEmpty ||
-                          passwordController.text.isEmpty) {
-                        SnackbarUtil.showsnackbar(
-                          message: "Enter a valid phone number and password",
-                          showretry: false,
-                        );
-                        return;
-                      }
+                child: ButtonWidget(
+                  label: authState.isLoading ? "Logging in..." : "Login",
+                  onTap: () async {
+                    if (phoneController.text.isEmpty ||
+                        passwordController.text.isEmpty) {
+                      SnackbarUtil.showsnackbar(
+                        message: "Enter a valid phone number and password",
+                        showretry: false,
+                      );
+                      return;
+                    }
+                    FocusScope.of(context).unfocus();
 
-                      FocusScope.of(context).unfocus();
-
-                      final success = await ref
-                          .read(loginWithOtpControllerProvider.notifier)
-                         .loginWithPassword(phoneController.text, passwordController.text);
-
-                      if (success && context.mounted) {
-                        context.go('/');
-                      } else if (context.mounted) {
-                        SnackbarUtil.showsnackbar(
-                          message: "Login failed. Please try again.",
-                          showretry: false,
-                        );
-                      }
-                    },
-                  ),
+                    // Attempt to log in
+                    ref
+                        .read(signupControllerProvider.notifier)
+                        .login(phoneController.text, passwordController.text);
+                    authState.authenticated
+                        ? phoneController.clear()
+                        : passwordController.clear();
+                  },
                 ),
               ),
             ],

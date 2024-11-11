@@ -1,81 +1,50 @@
+
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:hand_car/features/Accessories/controller/model/cart/cart_model.dart';
+import 'package:hand_car/features/Authentication/service/login_service.dart';
 
 class CartApiService {
-  static final Dio _dio = Dio(
-    BaseOptions(
-    baseUrl:
-        'http://192.168.1.56:8000', // Replace with your actual API base URL
+  static final Dio _dio = Dio(BaseOptions(
+    baseUrl: 'http://192.168.1.33:8000',
     connectTimeout: const Duration(seconds: 5),
     receiveTimeout: const Duration(seconds: 3),
+    validateStatus: (status) => status! < 500, // Accept all status codes less than 500
   ));
 
-  // Add item to cart
-  static Future<bool> addToCart(CartItem item) async {
+  /// Get the cart items for the user.
+  static Future<Map<String, dynamic>> getCart() async {
     try {
-      final response = await _dio.post(
-        '/cart/add',
-        data: item.toJson(),
-      );
-      return response.statusCode == 200;
-    } catch (e) {
-      log("Error adding to cart: $e");
-      return false;
+      // Retrieve the session ID
+    final sessionId = await ApiServiceAuthentication.getSessionId();
+    log('Session ID: $sessionId');
+    if (sessionId == null) {
+      return {'success': false, 'error': 'Not authenticated'};
+      
     }
-  }
 
-  // Remove item from cart
-  static Future<bool> removeFromCart(String itemId) async {
-    try {
-      final response = await _dio.delete(
-        '/cart/remove/$itemId',
-      );
-      return response.statusCode == 200;
-    } catch (e) {
-      log("Error removing from cart: $e");
-      return false;
-    }
-  }
+    // Set the session ID in the headers for the request
+    final response = await _dio.get(
+      '/viewcartitems/',
+      options: Options(
+        headers: {'Cookie': 'sessionid=$sessionId'},
+      ),
+    );
 
-  // Update cart item quantity
-  static Future<bool> updateCartItemQuantity(
-      String itemId, int quantity) async {
-    try {
-      final response = await _dio.put(
-        '/cart/update/$itemId',
-        data: {'quantity': quantity},
-      );
-      return response.statusCode == 200;
-    } catch (e) {
-      log("Error updating cart quantity: $e");
-      return false;
-    }
+    return {
+      'success': true,
+      'cart': response.data['cart_items'],
+      'total': response.data['total_price']
+    };
+  } on DioException catch (e) {
+    return {'success': false, 'error': _handleDioError(e)};
   }
-
-  // Get cart items
-  static Future<CartModel?> getCart() async {
-    try {
-      final response = await _dio.get('/viewcartitems/');
-      if (response.statusCode == 200) {
-        return CartModel.fromJson(response.data);
-      }
-      return null;
-    } catch (e) {
-      log("Error getting cart: $e");
-      return null;
+}
+  
+  static String _handleDioError(DioException e) {
+    if (e.response != null) {
+      return 'Error ${e.response?.statusCode}: ${e.response?.data['error'] ?? 'Unknown error'}';
     }
-  }
-
-  // Clear cart
-  static Future<bool> clearCart() async {
-    try {
-      final response = await _dio.delete('/cart/clear');
-      return response.statusCode == 200;
-    } catch (e) {
-      log("Error clearing cart: $e");
-      return false;
-    }
+    return 'Network error: ${e.message}';
   }
 }

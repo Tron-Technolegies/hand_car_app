@@ -23,16 +23,16 @@ Map<String, dynamic> _$$CartModelImplToJson(_$CartModelImpl instance) =>
 
 _$CartItemImpl _$$CartItemImplFromJson(Map<String, dynamic> json) =>
     _$CartItemImpl(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      price: (json['price'] as num).toDouble(),
-      quantity: (json['quantity'] as num?)?.toInt() ?? 1,
+      productName: json['productName'] as String,
+      productPrice: (json['productPrice'] as num).toDouble(),
+      quantity: (json['quantity'] as num).toInt(),
+      totalPrice: (json['totalPrice'] as num).toDouble(),
     );
 
 Map<String, dynamic> _$$CartItemImplToJson(_$CartItemImpl instance) =>
     <String, dynamic>{
-      'id': instance.id,
-      'name': instance.name,
-      'price': instance.price,
+      'productName': instance.productName,
+      'productPrice': instance.productPrice,
       'quantity': instance.quantity,
+      'totalPrice': instance.totalPrice,
     };

@@ -16,10 +16,10 @@ class CartModel with _$CartModel {
 @freezed
 class CartItem with _$CartItem {
   const factory CartItem({
-    required String id,
-    required String name,
-    required double price,
-    @Default(1) int quantity,
+    required String productName,
+    required double productPrice,
+    required int quantity,
+    required double totalPrice,
   }) = _CartItem;
 
   factory CartItem.fromJson(Map<String, dynamic> json) => _$CartItemFromJson(json);

@@ -1,142 +1,159 @@
+// api_service.dart
+
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:hand_car/core/utils/snackbar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class ApiServicesAuthentication {
+class ApiServiceAuthentication {
   static final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: 'http://192.168.1.41:8000',
+      baseUrl: 'http://192.168.1.33:8000',
       connectTimeout: const Duration(seconds: 5),
       receiveTimeout: const Duration(seconds: 3),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
     ),
   );
 
-  //Signup With Name Email Phone Password
-
-  static Future<bool> signUp(
-      String name, String email, String phone, String password) async {
+  Future<Map<String, dynamic>> signUp(
+    String name,
+    String email,
+    String phone,
+    String password,
+  ) async {
     try {
-      log("Sending signup request");
-      log("Payload: name=$name, email=$email, phone=$phone");
-
       final response = await _dio.post(
         '/signup/',
-        data: {
-          "name": name,
-          "email": email,
-          "phone": phone,
-          "password": password,
-        },
+        data: FormData.fromMap({
+          'name': name,
+          'email': email,
+          'phone': phone,
+          'password': password,
+        }),
       );
-
-      log("Response status: ${response.statusCode}");
-      log("Response data: ${response.data}");
 
       if (response.statusCode == 201 || response.statusCode == 200) {
-        return true;
+        // Extract token from response
+
+        return {
+          'success': true,
+          'message': 'Signup successful!',
+        };
+      } else {
+        // If signup is successful but no token (might be a 201 response)
+        return {
+          'success': true,
+          'message': 'Signup successful! Please login.',
+        };
       }
 
-      final message =
-          response.data['message'] ?? response.data['error'] ?? 'Signup failed';
-      SnackbarUtil.showsnackbar(message: message, showretry: false);
-      return false;
+      // Unexpected response
     } on DioException catch (e) {
-      log("DioError: ${e.type}");
-      log("DioError message: ${e.message}");
-      log("DioError response: ${e.response?.data}");
-
-      String errorMessage = 'Network error occurred';
-
+      // Handle specific error cases
       if (e.response != null) {
-        // Handle specific API error responses
         if (e.response?.statusCode == 400) {
-          errorMessage = e.response?.data['message'] ??
-              e.response?.data['error'] ??
-              'Invalid data provided';
-        } else if (e.response?.statusCode == 409) {
-          errorMessage = 'User already exists';
+          // Handle validation errors
+          final errorData = e.response?.data;
+          String errorMessage = 'Validation error';
+
+          if (errorData is Map<String, dynamic>) {
+            if (errorData.containsKey('error')) {
+              errorMessage = errorData['error'];
+            } else if (errorData.containsKey('message')) {
+              errorMessage = errorData['message'];
+            }
+          }
+
+          return {
+            'success': false,
+            'error': errorMessage,
+          };
         }
-      } else if (e.type == DioExceptionType.connectionTimeout) {
-        errorMessage = 'Connection timed out';
-      } else if (e.type == DioExceptionType.connectionError) {
-        errorMessage = 'No internet connection';
+
+        return {
+          'success': false,
+          'error':
+              'Server error: ${e.response?.statusCode}. ${e.response?.data}',
+        };
       }
 
-      SnackbarUtil.showsnackbar(
-        message: errorMessage,
-        showretry: true,
-      );
-      return false;
+      return {
+        'success': false,
+        'error': 'Network error: ${e.message}',
+      };
     } catch (e) {
-      log("General error during signup: $e");
-      SnackbarUtil.showsnackbar(
-        message: "An unexpected error occurred",
-        showretry: true,
-      );
-      return false;
+      return {
+        'success': false,
+        'error': 'An unexpected error occurred: $e',
+      };
     }
   }
-
-//Login with Phone Password
-  static Future<bool> loginWithPassword(String phone, String password) async {
+ Future<Map<String, dynamic>> login(String phone, String password) async {
     try {
       final response = await _dio.post(
         '/login/password/',
-        data: {
+        data: FormData.fromMap({
           'phone': phone,
           'password': password,
-        },
+        }),
       );
-
-      log("Response status: ${response.statusCode}");
-      log("Response data: ${response.data}");
 
       if (response.statusCode == 200) {
-        return true;
-      }
+        // Assuming the session ID is returned in a field called "sessionid"
+        final sessionId = response.data['sessionid'];
 
-      final message =
-          response.data['message'] ?? response.data['error'] ?? 'Login failed';
-      SnackbarUtil.showsnackbar(message: message, showretry: false);
-      return false;
-    } on DioException catch (e) {
-      log("DioError: ${e.type}");
-      log("DioError message: ${e.message}");
-      log("DioError response: ${e.response?.data}");
-
-      String errorMessage = 'Network error occurred';
-
-      if (e.response != null) {
-        if (e.response?.statusCode == 401) {
-          errorMessage = 'Invalid credentials';
-        } else if (e.response?.statusCode == 400) {
-          errorMessage = e.response?.data['message'] ??
-              e.response?.data['error'] ??
-              'Invalid data provided';
+        if (sessionId != null) {
+          // Save session ID to SharedPreferences
+          await _saveSessionId(sessionId);
         }
-      } else if (e.type == DioExceptionType.connectionTimeout) {
-        errorMessage = 'Connection timed out';
-      } else if (e.type == DioExceptionType.connectionError) {
-        errorMessage = 'No internet connection';
+
+        return {'success': true, 'message': response.data['message']};
       }
 
-      SnackbarUtil.showsnackbar(
-        message: errorMessage,
-        showretry: true,
-      );
-      return false;
-    } catch (e) {
-      log("General error during login: $e");
-      SnackbarUtil.showsnackbar(
-        message: "An unexpected error occurred",
-        showretry: true,
-      );
-      return false;
+      return {'success': false, 'error': response.data['error']};
+    } on DioException catch (e) {
+      return {'success': false, 'error': _handleDioError(e)};
     }
+  }
+
+  // Helper method to save session ID
+  Future<void> _saveSessionId(String sessionId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('session_id', sessionId);
+    log('Session ID saved successfully');
+  }
+
+  // Helper method to retrieve session ID
+  static Future<String?> getSessionId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('session_id');
+  }
+
+
+
+  // static Future<Map<String, dynamic>> getCart() async {
+  //   try {
+  //     final token = await AuthTokenService.getToken();
+  //     if (token == null) {
+  //       return {'success': false, 'error': 'Not authenticated'};
+  //     }
+
+  //     await setAuthToken(token);
+  //     final response = await _dio.get('/cart/');
+
+  //     return {
+  //       'success': true,
+  //       'cart': response.data['cart_items'],
+  //       'total': response.data['total_price']
+  //     };
+  //   } on DioException catch (e) {
+  //     return {'success': false, 'error': _handleDioError(e)};
+  //   }
+  // }
+
+  static String _handleDioError(DioException e) {
+    if (e.response != null) {
+      return 'Error ${e.response?.statusCode}: ${e.response?.data['error'] ?? 'Unknown error'}';
+    }
+    return 'Network error: ${e.message}';
   }
 }
