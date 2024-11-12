@@ -3,12 +3,13 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:hand_car/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiServiceAuthentication {
   static final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: 'http://192.168.1.33:8000',
+      baseUrl: baseUrl,
       connectTimeout: const Duration(seconds: 5),
       receiveTimeout: const Duration(seconds: 3),
     ),
@@ -87,7 +88,9 @@ class ApiServiceAuthentication {
       };
     }
   }
- Future<Map<String, dynamic>> login(String phone, String password) async {
+
+  //login with phone and password
+  Future<Map<String, dynamic>> login(String phone, String password) async {
     try {
       final response = await _dio.post(
         '/login/password/',
@@ -103,7 +106,7 @@ class ApiServiceAuthentication {
 
         if (sessionId != null) {
           // Save session ID to SharedPreferences
-          await _saveSessionId(sessionId);
+          await saveSessionId(sessionId);
         }
 
         return {'success': true, 'message': response.data['message']};
@@ -116,7 +119,7 @@ class ApiServiceAuthentication {
   }
 
   // Helper method to save session ID
-  Future<void> _saveSessionId(String sessionId) async {
+  static Future<void> saveSessionId(String sessionId) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('session_id', sessionId);
     log('Session ID saved successfully');
@@ -127,8 +130,6 @@ class ApiServiceAuthentication {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('session_id');
   }
-
-
 
   // static Future<Map<String, dynamic>> getCart() async {
   //   try {

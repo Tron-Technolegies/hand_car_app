@@ -3,7 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
-import 'package:hand_car/features/Accessories/controller/cart_controller.dart';
+import 'package:hand_car/features/Accessories/controller/cart/cart_controller.dart';
 import 'package:hand_car/features/Accessories/view/widgets/cart/cart_product_card_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/cart/total_amount_section_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/coupon/coupon_input_widget.dart';
@@ -39,6 +39,7 @@ class ShoppingCartScreen extends HookConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                
                 // Cart data or loading/error display
                 cartController.when(
                   data: (cart) {
@@ -108,6 +109,7 @@ class ShoppingCartScreen extends HookConsumerWidget {
 
                 // Coupon Input Section
                 CouponInputSection(controller: controller),
+               
 
                 // Total Summary Section
                 cartController.when(

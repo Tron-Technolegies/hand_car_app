@@ -63,6 +63,7 @@ class SignupController extends _$SignupController {
     return  AuthenticationState(isLoading: false, authenticated: false);
   }
 
+// Signup function to sign up a user
   Future<void> signUp(String name, String email, String phone, String password) async {
     state = AuthenticationState(isLoading: true, authenticated: false);
     try {
@@ -76,6 +77,8 @@ class SignupController extends _$SignupController {
       state = AuthenticationState(isLoading: false, authenticated: false);
     }
   }
+  
+  // Login function to login a user
 
     Future<void> login(String phone, String password) async {
       state = state.copyWith(isLoading: true);

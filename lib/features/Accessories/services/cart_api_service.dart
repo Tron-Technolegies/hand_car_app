@@ -2,11 +2,12 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:hand_car/config.dart';
 import 'package:hand_car/features/Authentication/service/login_service.dart';
 
 class CartApiService {
   static final Dio _dio = Dio(BaseOptions(
-    baseUrl: 'http://192.168.1.33:8000',
+    baseUrl: baseUrl,
     connectTimeout: const Duration(seconds: 5),
     receiveTimeout: const Duration(seconds: 3),
     validateStatus: (status) => status! < 500, // Accept all status codes less than 500
