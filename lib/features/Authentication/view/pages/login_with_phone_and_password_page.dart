@@ -22,6 +22,8 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
     final phoneController = useTextEditingController();
     final passwordController = useTextEditingController();
     final authState = ref.watch(signupControllerProvider);
+    final focusNode1 = useFocusNode();
+    final focusNode2 = useFocusNode();
 
     // Watch the authentication state
 
@@ -57,6 +59,7 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                     EdgeInsets.symmetric(horizontal: context.space.space_200),
                 child: TextField(
                   controller: phoneController,
+                  focusNode: focusNode1,
                   keyboardType: TextInputType.phone,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
@@ -78,9 +81,11 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                 padding:
                     EdgeInsets.symmetric(horizontal: context.space.space_200),
                 child: TextField(
+                  focusNode: focusNode2,
                   controller: passwordController,
                   obscureText: true,
                   decoration: const InputDecoration(
+                    
                     border: OutlineInputBorder(),
                     labelText: 'Enter Password',
                     prefixIcon: Icon(Icons.lock),
@@ -102,7 +107,6 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                       );
                       return;
                     }
-                    FocusScope.of(context).unfocus();
 
                     // Attempt to log in
                     ref
@@ -111,6 +115,8 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                     authState.authenticated
                         ? phoneController.clear()
                         : passwordController.clear();
+                    focusNode1.unfocus();
+                    focusNode2.unfocus();
                   },
                 ),
               ),

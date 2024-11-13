@@ -101,18 +101,10 @@ class ApiServiceAuthentication {
       );
 
       if (response.statusCode == 200) {
-        // Assuming the session ID is returned in a field called "sessionid"
-        final sessionId = response.data['sessionid'];
-
-        if (sessionId != null) {
-          // Save session ID to SharedPreferences
-          await saveSessionId(sessionId);
-        }
-
         return {'success': true, 'message': response.data['message']};
-      }
-
+      } 
       return {'success': false, 'error': response.data['error']};
+
     } on DioException catch (e) {
       return {'success': false, 'error': _handleDioError(e)};
     }
