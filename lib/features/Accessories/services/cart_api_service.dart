@@ -35,15 +35,9 @@ class CartApiService {
       return null;
     }
   }
-  
+
 
 
 
    
-  static String _handleDioError(DioException e) {
-    if (e.response != null) {
-      return 'Error ${e.response?.statusCode}: ${e.response?.data['error'] ?? 'Unknown error'}';
-    }
-    return 'Network error: ${e.message}';
-  }
 }

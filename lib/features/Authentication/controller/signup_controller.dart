@@ -1,6 +1,4 @@
-// import 'package:freezed_annotation/freezed_annotation.dart';
-// import 'package:riverpod_annotation/riverpod_annotation.dart';
-// import '../service/login_service.dart';
+
 
 import 'package:hand_car/features/Authentication/controller/auth_state.dart';
 import 'package:hand_car/features/Authentication/service/login_service.dart';
@@ -58,6 +56,7 @@ part 'signup_controller.g.dart';
 
 @riverpod
 class SignupController extends _$SignupController {
+  @override
   AuthenticationState build() {
     return  AuthenticationState(isLoading: false, authenticated: false);
   }
