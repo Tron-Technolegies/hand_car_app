@@ -13,7 +13,7 @@ import 'package:hand_car/features/Authentication/controller/signup_controller.da
 import 'package:hand_car/gen/assets.gen.dart';
 
 class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
-  static const route = 'LoginWithPhoneAndPasswordPage';
+  static const route = '/LoginWithPhoneAndPasswordPage';
 
   const LoginWithPhoneAndPasswordPage({super.key});
 

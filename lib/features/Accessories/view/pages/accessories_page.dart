@@ -12,7 +12,7 @@ import 'package:hand_car/gen/assets.gen.dart';
 final GlobalKey<ScaffoldState> scaffoldKey2 = GlobalKey<ScaffoldState>();
 
 class AccessoriesPage extends HookWidget {
-  static const routeName = 'accessories';
+  static const route = '/accessories';
   const AccessoriesPage({super.key});
 
   @override

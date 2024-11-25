@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/features/Accessories/view/pages/accessories_details_page.dart';
 import 'package:hand_car/features/Accessories/view/pages/accessories_page.dart';
+import 'package:hand_car/features/Accessories/view/pages/cart_page.dart';
 import 'package:hand_car/features/Accessories/view/pages/checkout_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/login_page.dart';
 import 'package:hand_car/features/Home/view/pages/navigation_page.dart';
@@ -27,27 +28,27 @@ Future<GoRouter> createRouter() async {
         builder: (context, state) => const NavigationPage(),
       ),
       GoRoute(
-        path: '/onboarding',
+        path: OnbordingScreenPage.route,
         builder: (context, state) => const OnbordingScreenPage(),
       ),
       GoRoute(
-        path: '/splash',
+        path: SplashScreen.route,
         builder: (context, state) => const SplashScreen(),
       ),
       GoRoute(
-        path: '/login',
+        path: LoginPage.route,
         builder: (context, state) => const LoginPage(),
       ),
       GoRoute(
-        path: '/accessories_details',
+        path: AccessoriesDetailsPage.route,
         builder: (context, state) => const AccessoriesDetailsPage(),
       ),
       GoRoute(
-        path: '/accessories',
+        path: AccessoriesPage.route,
         builder: (context, state) => const AccessoriesPage(),
       ),
       GoRoute(
-        path: '/serviceDetailsPage',
+        path: ServiceDetailsPage.route,
         builder: (context, state) {
           final data = state.extra as Map<String, dynamic>;
 
@@ -61,7 +62,11 @@ Future<GoRouter> createRouter() async {
         },
       ),
       GoRoute(
-        path: '/cart',
+        path: ShoppingCartScreen.route,
+        builder: (context, state) => const ShoppingCartScreen(),
+      ),
+      GoRoute(
+        path: CheckOutPage.route,
         builder: (context, state) => const CheckOutPage(),
       ),
     ],

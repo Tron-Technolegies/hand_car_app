@@ -7,6 +7,7 @@ import 'package:hand_car/core/widgets/button_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 
 class OtpPage extends StatelessWidget {
+  static const route = '/otp';
   const OtpPage({super.key});
 
   @override

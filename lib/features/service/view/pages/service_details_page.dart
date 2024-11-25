@@ -8,7 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 //Service Details Page
 class ServiceDetailsPage extends StatelessWidget {
-  static const routeName = '/serviceDetailsPage';
+  static const route = '/serviceDetailsPage';
   // List of services
   final List<String> services = [
     'Air and cabin filter replacement',

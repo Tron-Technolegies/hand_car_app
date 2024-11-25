@@ -17,7 +17,7 @@ import 'package:lottie/lottie.dart';
 final GlobalKey<ScaffoldState> scaffoldKey1 = GlobalKey<ScaffoldState>();
 
 class HomePage extends ConsumerWidget {
-  static const String routeName = 'home_page';
+  static const String route = '/home_page';
   const HomePage({super.key});
 
   @override

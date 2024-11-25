@@ -7,6 +7,7 @@ import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 
 class SplashScreen extends StatefulWidget {
+  static const route = '/splash_screen';
   const SplashScreen({super.key});
 
   @override

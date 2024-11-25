@@ -14,6 +14,7 @@ import 'package:lottie/lottie.dart';
 
 //Shopping Cart Screen
 class ShoppingCartScreen extends HookConsumerWidget {
+  static const route = '/cart_page';
   const ShoppingCartScreen({super.key});
 
   @override

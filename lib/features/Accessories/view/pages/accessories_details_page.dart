@@ -13,6 +13,7 @@ import 'package:hand_car/features/Accessories/view/widgets/accessories/specifica
 
 //Accessories Details Page
 class AccessoriesDetailsPage extends HookWidget {
+  static const route = '/accessories-details';
   const AccessoriesDetailsPage({super.key});
 
   @override

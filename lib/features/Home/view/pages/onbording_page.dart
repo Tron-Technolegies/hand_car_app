@@ -9,6 +9,7 @@ import 'package:lottie/lottie.dart';
 
 /// Onbording Screen Page
 class OnbordingScreenPage extends StatelessWidget {
+  static const route = '/onbording_screen_page';
   final Color kDarkBlueColor = const Color(0xFF053149);
 
   const OnbordingScreenPage({super.key});

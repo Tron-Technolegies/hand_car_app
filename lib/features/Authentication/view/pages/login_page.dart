@@ -7,6 +7,7 @@ import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class LoginPage extends HookConsumerWidget {
+  static const route = 'login_page';
   const LoginPage({super.key});
 
   @override
