@@ -16,7 +16,7 @@ dependencies:
   flutter:
     sdk: flutter
   equatable: any
-  json_annotation: any
+  json_annotation: ^4.9.0
   flutter_gen: ^5.7.0
   flutter_hooks: ^0.20.5
   flutter_onboarding_slider: ^1.0.11
@@ -41,7 +41,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  json_serializable: any
+  json_serializable: ^6.9.0
   flutter_lints: ^5.0.0
   build_runner: ^2.4.12
   flutter_gen_runner: ^5.7.0

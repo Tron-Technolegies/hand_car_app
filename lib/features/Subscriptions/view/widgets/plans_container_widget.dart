@@ -37,7 +37,8 @@ class PlansContainer extends HookConsumerWidget {
     required this.selectedDuration,
     this.child,
   });
-
+  
+//Launch Whatsapp TO Subscribe 
   String createWhatsAppUrl(String plan, String price, int duration) {
     final message = Uri.encodeComponent(
         "I would like to subscribe to the $plan plan for $duration months at a price of AED $price.");
@@ -91,7 +92,7 @@ class PlansContainer extends HookConsumerWidget {
               FeaturesCheckIconWidget(text: planFeature3!),
             if (planFeature4 != null && planFeature4!.isNotEmpty)
               FeaturesCheckIconWidget(text: planFeature4!),
-            const SizedBox(height: 20),
+            SizedBox(height: context.space.space_250),
             Container(
               padding: EdgeInsets.all(context.space.space_250),
               decoration: BoxDecoration(
@@ -106,6 +107,7 @@ class PlansContainer extends HookConsumerWidget {
                     style: context.typography.bodyLarge,
                   ),
                   SizedBox(height: context.space.space_150),
+                  // Plan Discount Widgets
                   PlanDiscountWidget(
                     number: '1',
                     plan: "Car Plan",
@@ -128,6 +130,7 @@ class PlansContainer extends HookConsumerWidget {
               ),
             ),
             const SizedBox(height: 20),
+            // Save 10% off on 6 months subscription
             Center(
               child: RichText(
                 text: TextSpan(
@@ -145,6 +148,7 @@ class PlansContainer extends HookConsumerWidget {
               ),
             ),
             SizedBox(height: context.space.space_250),
+            // Subscribe Button
             SizedBox(
               width: double.infinity,
               child: ButtonWidget(

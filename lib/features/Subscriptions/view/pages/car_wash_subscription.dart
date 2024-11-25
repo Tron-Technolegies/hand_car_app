@@ -7,6 +7,7 @@ import 'package:hand_car/features/Subscriptions/view/widgets/plans_container_wid
 import 'package:hand_car/features/Subscriptions/view/widgets/popular_text_container_widegr.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+/// This is the Car Wash Subscription Page
 class CarWashPlanScreen extends HookConsumerWidget {
   const CarWashPlanScreen({super.key});
 
@@ -15,9 +16,11 @@ class CarWashPlanScreen extends HookConsumerWidget {
     final selectedIndex = useState(0);
     final scrollController = useScrollController();
     final selectedDurationIndex = useState(0);
-
+    // Plan Names
     final planNames = ["Basic", "Premium", "Luxury"];
+    //Plan Prices
     final planPrices = ["299", "599", "749"];
+    //Plan Features
     final planFeatures = [
       ["Unlimited Exterior wash", "Interior vacuuming", "Window cleaning"],
       [
@@ -34,10 +37,11 @@ class CarWashPlanScreen extends HookConsumerWidget {
       ]
     ];
 
+    // Scroll to Plan
     void scrollToPlan(int index) {
       selectedIndex.value = index;
       scrollController.animateTo(
-        index * 500.0,
+        index * 650.0,
         duration: const Duration(milliseconds: 500),
         curve: Curves.easeInOut,
       );
@@ -55,6 +59,7 @@ class CarWashPlanScreen extends HookConsumerWidget {
               colors: [
                 Color(0xffD50104),
                 Color(0xffffffff),
+                Color(0xffD50104),
                 Color(0xffffffff),
               ],
             ),
@@ -77,6 +82,7 @@ class CarWashPlanScreen extends HookConsumerWidget {
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: context.space.space_250),
+                  // Duration Buttons
                   DurationButtons(
                     selectedIndex: selectedDurationIndex.value,
                     onSelectPlan: (index) {
@@ -90,6 +96,7 @@ class CarWashPlanScreen extends HookConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      // Plan Selection Buttons
                       PlanSelectionButtons(
                         selectedIndex: selectedIndex.value,
                         onSelectPlan: scrollToPlan,
@@ -102,18 +109,23 @@ class CarWashPlanScreen extends HookConsumerWidget {
                     ],
                   ),
                   SizedBox(height: context.space.space_250),
-                  ListView.builder(
+                  // Plans Container
+                  ListView.separated(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: planNames.length,
+                    separatorBuilder: (context, index) =>
+                        SizedBox(height: context.space.space_250),
                     itemBuilder: (context, index) {
+                      // Plans Container
                       return PlansContainer(
                         planName: planNames[index],
                         price: planPrices[index],
                         planFeature1: planFeatures[index][0],
                         planFeature2: planFeatures[index][1],
                         planFeature3: index > 0 ? planFeatures[index][2] : null,
-                        planFeature4: index == 2 ? planFeatures[index][3] : null,
+                        planFeature4:
+                            index == 2 ? planFeatures[index][3] : null,
                         color: context.colors.green,
                         containerColor: const Color(0xffF5E1E1),
                         textColor1: context.colors.primary,

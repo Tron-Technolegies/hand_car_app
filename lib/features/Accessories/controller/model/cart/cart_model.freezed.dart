@@ -14,17 +14,10 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-CartModel _$CartModelFromJson(Map<String, dynamic> json) {
-  return _CartModel.fromJson(json);
-}
-
 /// @nodoc
 mixin _$CartModel {
   List<CartItem> get cartItems => throw _privateConstructorUsedError;
-  double get totalPrice => throw _privateConstructorUsedError;
-
-  /// Serializes this CartModel to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  double get totalAmount => throw _privateConstructorUsedError;
 
   /// Create a copy of CartModel
   /// with the given fields replaced by the non-null parameter values.
@@ -38,7 +31,7 @@ abstract class $CartModelCopyWith<$Res> {
   factory $CartModelCopyWith(CartModel value, $Res Function(CartModel) then) =
       _$CartModelCopyWithImpl<$Res, CartModel>;
   @useResult
-  $Res call({List<CartItem> cartItems, double totalPrice});
+  $Res call({List<CartItem> cartItems, double totalAmount});
 }
 
 /// @nodoc
@@ -57,16 +50,16 @@ class _$CartModelCopyWithImpl<$Res, $Val extends CartModel>
   @override
   $Res call({
     Object? cartItems = null,
-    Object? totalPrice = null,
+    Object? totalAmount = null,
   }) {
     return _then(_value.copyWith(
       cartItems: null == cartItems
           ? _value.cartItems
           : cartItems // ignore: cast_nullable_to_non_nullable
               as List<CartItem>,
-      totalPrice: null == totalPrice
-          ? _value.totalPrice
-          : totalPrice // ignore: cast_nullable_to_non_nullable
+      totalAmount: null == totalAmount
+          ? _value.totalAmount
+          : totalAmount // ignore: cast_nullable_to_non_nullable
               as double,
     ) as $Val);
   }
@@ -80,7 +73,7 @@ abstract class _$$CartModelImplCopyWith<$Res>
       __$$CartModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({List<CartItem> cartItems, double totalPrice});
+  $Res call({List<CartItem> cartItems, double totalAmount});
 }
 
 /// @nodoc
@@ -97,30 +90,27 @@ class __$$CartModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? cartItems = null,
-    Object? totalPrice = null,
+    Object? totalAmount = null,
   }) {
     return _then(_$CartModelImpl(
       cartItems: null == cartItems
           ? _value._cartItems
           : cartItems // ignore: cast_nullable_to_non_nullable
               as List<CartItem>,
-      totalPrice: null == totalPrice
-          ? _value.totalPrice
-          : totalPrice // ignore: cast_nullable_to_non_nullable
+      totalAmount: null == totalAmount
+          ? _value.totalAmount
+          : totalAmount // ignore: cast_nullable_to_non_nullable
               as double,
     ));
   }
 }
 
 /// @nodoc
-@JsonSerializable()
+
 class _$CartModelImpl implements _CartModel {
   const _$CartModelImpl(
-      {final List<CartItem> cartItems = const [], this.totalPrice = 0})
+      {final List<CartItem> cartItems = const [], this.totalAmount = 0.0})
       : _cartItems = cartItems;
-
-  factory _$CartModelImpl.fromJson(Map<String, dynamic> json) =>
-      _$$CartModelImplFromJson(json);
 
   final List<CartItem> _cartItems;
   @override
@@ -133,11 +123,11 @@ class _$CartModelImpl implements _CartModel {
 
   @override
   @JsonKey()
-  final double totalPrice;
+  final double totalAmount;
 
   @override
   String toString() {
-    return 'CartModel(cartItems: $cartItems, totalPrice: $totalPrice)';
+    return 'CartModel(cartItems: $cartItems, totalAmount: $totalAmount)';
   }
 
   @override
@@ -147,14 +137,13 @@ class _$CartModelImpl implements _CartModel {
             other is _$CartModelImpl &&
             const DeepCollectionEquality()
                 .equals(other._cartItems, _cartItems) &&
-            (identical(other.totalPrice, totalPrice) ||
-                other.totalPrice == totalPrice));
+            (identical(other.totalAmount, totalAmount) ||
+                other.totalAmount == totalAmount));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, const DeepCollectionEquality().hash(_cartItems), totalPrice);
+  int get hashCode => Object.hash(runtimeType,
+      const DeepCollectionEquality().hash(_cartItems), totalAmount);
 
   /// Create a copy of CartModel
   /// with the given fields replaced by the non-null parameter values.
@@ -163,27 +152,17 @@ class _$CartModelImpl implements _CartModel {
   @pragma('vm:prefer-inline')
   _$$CartModelImplCopyWith<_$CartModelImpl> get copyWith =>
       __$$CartModelImplCopyWithImpl<_$CartModelImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$CartModelImplToJson(
-      this,
-    );
-  }
 }
 
 abstract class _CartModel implements CartModel {
   const factory _CartModel(
       {final List<CartItem> cartItems,
-      final double totalPrice}) = _$CartModelImpl;
-
-  factory _CartModel.fromJson(Map<String, dynamic> json) =
-      _$CartModelImpl.fromJson;
+      final double totalAmount}) = _$CartModelImpl;
 
   @override
   List<CartItem> get cartItems;
   @override
-  double get totalPrice;
+  double get totalAmount;
 
   /// Create a copy of CartModel
   /// with the given fields replaced by the non-null parameter values.
@@ -193,19 +172,12 @@ abstract class _CartModel implements CartModel {
       throw _privateConstructorUsedError;
 }
 
-CartItem _$CartItemFromJson(Map<String, dynamic> json) {
-  return _CartItem.fromJson(json);
-}
-
 /// @nodoc
 mixin _$CartItem {
   String get productName => throw _privateConstructorUsedError;
-  double get productPrice => throw _privateConstructorUsedError;
+  String get productPrice => throw _privateConstructorUsedError;
   int get quantity => throw _privateConstructorUsedError;
-  double get totalPrice => throw _privateConstructorUsedError;
-
-  /// Serializes this CartItem to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  String get totalPrice => throw _privateConstructorUsedError;
 
   /// Create a copy of CartItem
   /// with the given fields replaced by the non-null parameter values.
@@ -221,9 +193,9 @@ abstract class $CartItemCopyWith<$Res> {
   @useResult
   $Res call(
       {String productName,
-      double productPrice,
+      String productPrice,
       int quantity,
-      double totalPrice});
+      String totalPrice});
 }
 
 /// @nodoc
@@ -254,7 +226,7 @@ class _$CartItemCopyWithImpl<$Res, $Val extends CartItem>
       productPrice: null == productPrice
           ? _value.productPrice
           : productPrice // ignore: cast_nullable_to_non_nullable
-              as double,
+              as String,
       quantity: null == quantity
           ? _value.quantity
           : quantity // ignore: cast_nullable_to_non_nullable
@@ -262,7 +234,7 @@ class _$CartItemCopyWithImpl<$Res, $Val extends CartItem>
       totalPrice: null == totalPrice
           ? _value.totalPrice
           : totalPrice // ignore: cast_nullable_to_non_nullable
-              as double,
+              as String,
     ) as $Val);
   }
 }
@@ -277,9 +249,9 @@ abstract class _$$CartItemImplCopyWith<$Res>
   @useResult
   $Res call(
       {String productName,
-      double productPrice,
+      String productPrice,
       int quantity,
-      double totalPrice});
+      String totalPrice});
 }
 
 /// @nodoc
@@ -308,7 +280,7 @@ class __$$CartItemImplCopyWithImpl<$Res>
       productPrice: null == productPrice
           ? _value.productPrice
           : productPrice // ignore: cast_nullable_to_non_nullable
-              as double,
+              as String,
       quantity: null == quantity
           ? _value.quantity
           : quantity // ignore: cast_nullable_to_non_nullable
@@ -316,13 +288,13 @@ class __$$CartItemImplCopyWithImpl<$Res>
       totalPrice: null == totalPrice
           ? _value.totalPrice
           : totalPrice // ignore: cast_nullable_to_non_nullable
-              as double,
+              as String,
     ));
   }
 }
 
 /// @nodoc
-@JsonSerializable()
+
 class _$CartItemImpl implements _CartItem {
   const _$CartItemImpl(
       {required this.productName,
@@ -330,17 +302,14 @@ class _$CartItemImpl implements _CartItem {
       required this.quantity,
       required this.totalPrice});
 
-  factory _$CartItemImpl.fromJson(Map<String, dynamic> json) =>
-      _$$CartItemImplFromJson(json);
-
   @override
   final String productName;
   @override
-  final double productPrice;
+  final String productPrice;
   @override
   final int quantity;
   @override
-  final double totalPrice;
+  final String totalPrice;
 
   @override
   String toString() {
@@ -362,7 +331,6 @@ class _$CartItemImpl implements _CartItem {
                 other.totalPrice == totalPrice));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, productName, productPrice, quantity, totalPrice);
@@ -374,33 +342,23 @@ class _$CartItemImpl implements _CartItem {
   @pragma('vm:prefer-inline')
   _$$CartItemImplCopyWith<_$CartItemImpl> get copyWith =>
       __$$CartItemImplCopyWithImpl<_$CartItemImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$CartItemImplToJson(
-      this,
-    );
-  }
 }
 
 abstract class _CartItem implements CartItem {
   const factory _CartItem(
       {required final String productName,
-      required final double productPrice,
+      required final String productPrice,
       required final int quantity,
-      required final double totalPrice}) = _$CartItemImpl;
-
-  factory _CartItem.fromJson(Map<String, dynamic> json) =
-      _$CartItemImpl.fromJson;
+      required final String totalPrice}) = _$CartItemImpl;
 
   @override
   String get productName;
   @override
-  double get productPrice;
+  String get productPrice;
   @override
   int get quantity;
   @override
-  double get totalPrice;
+  String get totalPrice;
 
   /// Create a copy of CartItem
   /// with the given fields replaced by the non-null parameter values.

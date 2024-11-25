@@ -3,6 +3,7 @@ import 'package:flutter_onboarding_slider/flutter_onboarding_slider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Authentication/view/pages/login_with_phone_and_password_page.dart';
+import 'package:hand_car/features/Home/view/pages/navigation_page.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:lottie/lottie.dart';
 
@@ -17,7 +18,7 @@ class OnbordingScreenPage extends StatelessWidget {
     return OnBoardingSlider(
       finishButtonText: 'Get Started',
       onFinish: () {
-        context.go('/');
+        context.go(NavigationPage.route);
       },
       finishButtonStyle: FinishButtonStyle(
         backgroundColor: context.colors.primary,

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 
-class TotalAMountSectionWidget extends HookWidget {
+class TotalAmountSectionWidget extends HookWidget {
   final double total;
   final double delivery;
   final double grandTotal;
 
-  const TotalAMountSectionWidget({
+  const TotalAmountSectionWidget({
     super.key,
     required this.total,
     required this.delivery,

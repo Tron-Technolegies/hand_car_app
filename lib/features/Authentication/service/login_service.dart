@@ -1,10 +1,8 @@
 // api_service.dart
 
-import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiServiceAuthentication {
   static final Dio _dio = Dio(
@@ -110,38 +108,7 @@ class ApiServiceAuthentication {
     }
   }
 
-  // Helper method to save session ID
-  static Future<void> saveSessionId(String sessionId) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('session_id', sessionId);
-    log('Session ID saved successfully');
-  }
 
-  // Helper method to retrieve session ID
-  static Future<String?> getSessionId() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('session_id');
-  }
-
-  // static Future<Map<String, dynamic>> getCart() async {
-  //   try {
-  //     final token = await AuthTokenService.getToken();
-  //     if (token == null) {
-  //       return {'success': false, 'error': 'Not authenticated'};
-  //     }
-
-  //     await setAuthToken(token);
-  //     final response = await _dio.get('/cart/');
-
-  //     return {
-  //       'success': true,
-  //       'cart': response.data['cart_items'],
-  //       'total': response.data['total_price']
-  //     };
-  //   } on DioException catch (e) {
-  //     return {'success': false, 'error': _handleDioError(e)};
-  //   }
-  // }
 
   static String _handleDioError(DioException e) {
     if (e.response != null) {

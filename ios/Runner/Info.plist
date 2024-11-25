@@ -62,5 +62,7 @@
     <string>Allow access to the camera to take photos.</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>Allow access to microphone, as it's needed if you plan to record videos.</string>
+    <key>NSAppTransportSecurity</key>
+    <key>NSAllowsArbitraryLoads</key>
 </dict>
 </plist>

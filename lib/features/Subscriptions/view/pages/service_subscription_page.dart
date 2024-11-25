@@ -18,8 +18,11 @@ class ServicePlanScreen extends HookConsumerWidget {
         useState(0); // 0 for '6 Months', 1 for '12 Months'
     final scrollController = useScrollController();
 
+    // Plan Names
     final planNames = ["Basic", "Premium", "Luxury"];
+    // Plan Prices
     final planPrices = ["299", "599", "749"];
+    // Plan Features
     final planFeatures = [
       [
         "Unlimited synthetic oil changes",
@@ -40,10 +43,11 @@ class ServicePlanScreen extends HookConsumerWidget {
       ]
     ];
 
+    // Scroll to Plan
     void scrollToPlan(int index) {
       selectedIndex.value = index;
       scrollController.animateTo(
-        index * 300.0, // Adjust height as needed
+        index * 650.0, // Adjust height as needed
         duration: const Duration(milliseconds: 500),
         curve: Curves.easeInOut,
       );

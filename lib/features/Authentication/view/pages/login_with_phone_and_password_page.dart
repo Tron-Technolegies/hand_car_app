@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hand_car/features/Home/view/pages/navigation_page.dart';
 
-import 'package:hand_car/features/Authentication/controller/auth_state.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:hand_car/core/extension/theme_extension.dart';
@@ -27,11 +27,6 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
 
     // Watch the authentication state
 
-    ref.listen<AuthenticationState>(signupControllerProvider, (previous, next) {
-      if (!next.isLoading && next.authenticated) {
-        context.go('/'); // Navigate to the main navigation page
-      }
-    });
 
     return Scaffold(
       appBar: AppBar(),
@@ -109,12 +104,15 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                     }
 
                     // Attempt to log in
-                    ref
+             ref
                         .read(signupControllerProvider.notifier)
                         .login(phoneController.text, passwordController.text);
                     authState.authenticated
                         ? phoneController.clear()
                         : passwordController.clear();
+                        if(authState.authenticated){
+                          context.go(NavigationPage.route);
+                        }
                     focusNode1.unfocus();
                     focusNode2.unfocus();
                   },

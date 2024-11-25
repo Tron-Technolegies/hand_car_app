@@ -3,7 +3,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
-import 'package:hand_car/features/Authentication/service/login_service.dart';
+import 'package:hand_car/features/Accessories/controller/model/cart/cart_model.dart';
 
 class CartApiService {
   static final Dio _dio = Dio(BaseOptions(
@@ -13,35 +13,33 @@ class CartApiService {
     validateStatus: (status) => status! < 500, // Accept all status codes less than 500
   ));
 
-  /// Get the cart items for the user.
-  static Future<Map<String, dynamic>> getCart() async {
+  /// Get the cart items for the user.Future<CartModel?> getCart() async {
+  Future<CartModel?> getCart() async {
     try {
-      // Retrieve the session ID
-    final sessionId = await ApiServiceAuthentication.getSessionId();
-    log('Session ID: $sessionId');
-    if (sessionId == null) {
-      return {'success': false, 'error': 'Not authenticated'};
-      
+      final response = await _dio.get(
+        '/viewcartitems/',
+        options: Options(
+          headers: {'Content-Type': 'application/json'},
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        log('Cart API Response: ${response.data}'); // Add this log
+        return CartModel.fromJson(response.data);
+      } else {
+        log('Error fetching cart: ${response.data['error']}');
+        return null;
+      }
+    } catch (e) {
+      log('Exception during getCart: $e');
+      return null;
     }
-
-    // Set the session ID in the headers for the request
-    final response = await _dio.get(
-      '/viewcartitems/',
-      options: Options(
-        headers: {'Cookie': 'sessionid=$sessionId'},
-      ),
-    );
-
-    return {
-      'success': true,
-      'cart': response.data['cart_items'],
-      'total': response.data['total_price']
-    };
-  } on DioException catch (e) {
-    return {'success': false, 'error': _handleDioError(e)};
   }
-}
   
+
+
+
+   
   static String _handleDioError(DioException e) {
     if (e.response != null) {
       return 'Error ${e.response?.statusCode}: ${e.response?.data['error'] ?? 'Unknown error'}';

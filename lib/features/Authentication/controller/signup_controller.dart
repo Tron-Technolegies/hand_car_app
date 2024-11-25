@@ -58,7 +58,6 @@ part 'signup_controller.g.dart';
 
 @riverpod
 class SignupController extends _$SignupController {
-  @override
   AuthenticationState build() {
     return  AuthenticationState(isLoading: false, authenticated: false);
   }
