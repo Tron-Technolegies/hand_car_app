@@ -4,18 +4,23 @@ import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
 import 'package:hand_car/features/Accessories/controller/cart/cart_controller.dart';
+import 'package:hand_car/features/Accessories/view/widgets/cart/cart_product_card_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/cart/total_amount_section_widget.dart';
+import 'package:hand_car/features/Accessories/view/widgets/coupon/coupon_card_listview_widget.dart';
+import 'package:hand_car/features/Accessories/view/widgets/coupon/coupon_input_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:lottie/lottie.dart';
 
+//Shopping Cart Screen
 class ShoppingCartScreen extends HookConsumerWidget {
   const ShoppingCartScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Access the cart controller
     final cartController = ref.watch(cartControllerProvider);
-   
+    // Access the coupon text controller
     final couponController = useTextEditingController();
 
     return Scaffold(
@@ -25,26 +30,28 @@ class ShoppingCartScreen extends HookConsumerWidget {
           if (cartController.asData?.value.cartItems.isNotEmpty ?? false)
             IconButton(
               icon: const Icon(Icons.delete_outline),
-              onPressed: (){},
-              // onPressed: () => cartNotifier.,
+              onPressed: () {
+                // Add your clear cart logic here
+              },
             ),
         ],
       ),
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(context.space.space_200),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: cartController.when(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(context.space.space_200),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                cartController.when(
                   data: (cart) {
                     if (cart.cartItems.isEmpty) {
                       return Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Lottie.asset(Assets.animations.emptyCart, repeat: false),
+                            Lottie.asset(Assets.animations.emptyCart,
+                                repeat: false),
                             SizedBox(height: context.space.space_100),
                             Text(
                               "Your cart is empty",
@@ -59,26 +66,26 @@ class ShoppingCartScreen extends HookConsumerWidget {
                     }
 
                     return ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
                       itemCount: cart.cartItems.length,
-                      separatorBuilder: (_, __) => const Divider(),
+                      separatorBuilder: (_, __) => SizedBox(
+                        height: context.space.space_100,
+                      ),
                       itemBuilder: (context, index) {
                         final item = cart.cartItems[index];
-                        return ListTile(
-                          title: Text(
-                            item.productName,
-                            style: context.typography.bodyLarge,
-                          ),
-                          subtitle: Text('Quantity: ${item.quantity}'),
-                          trailing: Text(
-                            'AED ${item.totalPrice}',
-                            style: context.typography.bodyMedium,
-                          ),
+                        return ProductCard(
+                          productName: item.productName,
+                          price: item.productPrice,
+                          quantity: item.quantity,
+                          image:
+                              'https://e7.pngegg.com/pngimages/809/777/png-clipart-car-revathy-auto-parts-ford-motor-company-spare-part-advance-auto-parts-car-car-vehicle-thumbnail.png',
                         );
                       },
                     );
                   },
-                  loading: () => const Center(
-                    child: CircularProgressIndicator(),
+                  loading: () => Center(
+                    child: Lottie.asset(Assets.animations.loading),
                   ),
                   error: (error, _) => Center(
                     child: Column(
@@ -97,37 +104,44 @@ class ShoppingCartScreen extends HookConsumerWidget {
                     ),
                   ),
                 ),
-              ),
-              if (cartController.asData?.value.cartItems.isNotEmpty ?? false) ...[
-                const SizedBox(height: 20),
-                TotalAmountSectionWidget(
-                  grandTotal: cartController.asData!.value.totalAmount,
-                  delivery: 0,
-                  total: cartController.asData!.value.totalAmount,
-                ),
+                if (cartController.asData?.value.cartItems.isNotEmpty ?? false)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: context.space.space_200),
+                      CouponCardListView(),
+                      CouponInputSection(controller: couponController),
+                      TotalAmountSectionWidget(
+                        grandTotal: cartController.asData!.value.totalAmount,
+                        delivery: 0,
+                        total: cartController.asData!.value.totalAmount,
+                      ),
+                    ],
+                  ),
               ],
-            ],
+            ),
           ),
         ),
       ),
-      bottomNavigationBar: cartController.asData?.value.cartItems.isNotEmpty ?? false
-          ? Padding(
-              padding: EdgeInsets.all(context.space.space_200),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Total: AED ${cartController.asData!.value.totalAmount.toStringAsFixed(2)}',
-                    style: context.typography.bodyMedium,
+      bottomNavigationBar:
+          cartController.asData?.value.cartItems.isNotEmpty ?? false
+              ? Padding(
+                  padding: EdgeInsets.all(context.space.space_200),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Total: AED ${cartController.asData!.value.totalAmount.toStringAsFixed(2)}',
+                        style: context.typography.bodyMedium,
+                      ),
+                      ButtonWidget(
+                        label: 'Proceed To Checkout',
+                        onTap: () => context.go('/checkout'),
+                      ),
+                    ],
                   ),
-                  ButtonWidget(
-                    label: 'Proceed To Checkout',
-                    onTap: () => context.go('/checkout'),
-                  ),
-                ],
-              ),
-            )
-          : null,
+                )
+              : null,
     );
   }
 }

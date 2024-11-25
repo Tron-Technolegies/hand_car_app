@@ -7,10 +7,11 @@ class ProductCard extends HookWidget {
   final String productName;
   final String? modelNumber;
   final String? image;
-  final double price;
+  final String price;
   final bool isAvailable;
-  final String quantity;
+  final int quantity;
   final VoidCallback? onDelete;
+  final VoidCallback? onAdd;
   final Function(int)? onQuantityChanged;
 
   const ProductCard({
@@ -23,12 +24,11 @@ class ProductCard extends HookWidget {
     required this.quantity,
     this.onDelete,
     this.onQuantityChanged,
+    this.onAdd,
   });
 
   @override
   Widget build(BuildContext context) {
-    final quantity = useState(1);
-
     return Card(
       color: const Color(0xffF5F5F5),
       child: Container(
@@ -44,18 +44,18 @@ class ProductCard extends HookWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Product Image
-            // Container(
-            //   width: 80,
-            //   height: 80,
-            //   decoration: BoxDecoration(
-            //     borderRadius: BorderRadius.circular(8),
-            //     image: DecorationImage(
-            //       image: AssetImage(image),
-            //       fit: BoxFit.cover,
-            //     ),
-            //   ),
-            // ),
+           // Product Image
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                image: DecorationImage(
+                  image: NetworkImage(image ?? ''),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
             const SizedBox(width: 12),
 
             // Product Details
@@ -91,7 +91,7 @@ class ProductCard extends HookWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: context.space.space_150),
 
                   // Quantity Counter Row
                   Row(
@@ -102,18 +102,13 @@ class ProductCard extends HookWidget {
                         children: [
                           QuantityButton(
                             icon: Icons.remove,
-                            onPressed: () {
-                              if (quantity.value > 1) {
-                                quantity.value--;
-                                onQuantityChanged?.call(quantity.value);
-                              }
-                            },
+                            onPressed: onAdd,
                           ),
                           Container(
                             width: 40,
                             alignment: Alignment.center,
                             child: Text(
-                              quantity.value.toString(),
+                              quantity.toString(),
                               style: context.typography.bodyMedium,
                             ),
                           ),
@@ -121,10 +116,7 @@ class ProductCard extends HookWidget {
                           // Plus Button
                           QuantityButton(
                             icon: Icons.add,
-                            onPressed: () {
-                              quantity.value++;
-                              onQuantityChanged?.call(quantity.value);
-                            },
+                            onPressed: () {},
                           ),
                         ],
                       ),
@@ -133,7 +125,7 @@ class ProductCard extends HookWidget {
                       Text(
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        'AED ${price.toStringAsFixed(2)}',
+                        'AED $price',
                         style: context.typography.bodyMedium
                             .copyWith(color: context.colors.green),
                       ),
