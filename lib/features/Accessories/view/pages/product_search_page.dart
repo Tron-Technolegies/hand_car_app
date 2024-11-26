@@ -3,16 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hand_car/features/Accessories/controller/model/products/products_model.dart';
 import 'package:hand_car/features/Accessories/services/product_search_service.dart';
 
-
-
-
 class ProductSearchPage extends ConsumerWidget {
   const ProductSearchPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final productsAsync = ref.watch(productProvider);
-    final searchQueryProvider = StateProvider<String>((ref) => ""); // For managing search query
+    final searchQueryProvider =
+        StateProvider<String>((ref) => ""); // For managing search query
 
     return Scaffold(
       appBar: AppBar(
@@ -34,8 +32,10 @@ class ProductSearchPage extends ConsumerWidget {
       body: productsAsync.when(
         data: (products) {
           final searchQuery = ref.watch(searchQueryProvider).toLowerCase();
-          final filteredProducts = products.where((product) =>
-              product.name.toLowerCase().contains(searchQuery)).toList();
+          final filteredProducts = products
+              .where(
+                  (product) => product.name.toLowerCase().contains(searchQuery))
+              .toList();
 
           if (filteredProducts.isEmpty) {
             return const Center(child: Text("No products found."));
@@ -55,7 +55,7 @@ class ProductSearchPage extends ConsumerWidget {
                       )
                     : const Icon(Icons.image_not_supported),
                 title: Text(product.name),
-                subtitle: Text("Price: \$${product.price}"),
+                subtitle: Text("Price: AED ${product.price}"),
                 trailing: Text("Brand: ${product.brand}"),
                 onTap: () {
                   // Handle product click

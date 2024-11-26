@@ -5,15 +5,15 @@ class GridViewBuilderAccessoriesWidget extends StatelessWidget {
   final String name;
   final String price;
   final String image;
-  final String discount;
-  final String off;
+  final String? discount;
+  final String? off;
   const GridViewBuilderAccessoriesWidget({
     super.key,
     required this.name,
     required this.price,
     required this.image,
-    required this.discount,
-    required this.off,
+     this.discount,
+ this.off,
   });
 
   @override

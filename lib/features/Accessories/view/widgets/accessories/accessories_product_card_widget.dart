@@ -10,14 +10,14 @@ class AccessoriesProductCardWidget extends StatelessWidget {
   final String price;
   final String image;
   final String discount;
-  final String off;
+  final String? off;
   const AccessoriesProductCardWidget(
       {super.key,
       required this.name,
       required this.price,
       required this.image,
       required this.discount,
-      required this.off});
+      this.off});
 
   @override
   Widget build(BuildContext context) {
