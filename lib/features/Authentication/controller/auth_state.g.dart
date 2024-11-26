@@ -11,6 +11,7 @@ _$AuthenticationStateImpl _$$AuthenticationStateImplFromJson(
     _$AuthenticationStateImpl(
       isLoading: json['isLoading'] as bool,
       authenticated: json['authenticated'] as bool,
+      errorMessage: json['errorMessage'] as String?,
     );
 
 Map<String, dynamic> _$$AuthenticationStateImplToJson(
@@ -18,4 +19,5 @@ Map<String, dynamic> _$$AuthenticationStateImplToJson(
     <String, dynamic>{
       'isLoading': instance.isLoading,
       'authenticated': instance.authenticated,
+      'errorMessage': instance.errorMessage,
     };

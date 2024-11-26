@@ -1,8 +1,6 @@
-// api_service.dart
-
-
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
+import 'package:hand_car/core/router/user_validation.dart';
 
 class ApiServiceAuthentication {
   static final Dio _dio = Dio(
@@ -13,7 +11,37 @@ class ApiServiceAuthentication {
     ),
   );
 
-  Future<Map<String, dynamic>> signUp(
+ static Future<Map<String, dynamic>> login(String phone, String password) async {
+    try {
+      final response = await _dio.post(
+        '/login/password/',
+        data: FormData.fromMap({
+          'phone': phone,
+          'password': password,
+        }),
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      if (response.statusCode == 200) {
+        // Ensure token is saved
+        if (response.data['token'] != null) {
+          await AuthManager.saveAuthToken(response.data['token']);
+        }
+        
+        // Save user data if available
+        if (response.data['user'] != null) {
+          await AuthManager.saveUserData(response.data['user']);
+        }
+        
+        return {'success': true, 'message': response.data['message'] ?? 'Login successful'};
+      }
+      return {'success': false, 'error': response.data['error'] ?? 'Login failed'};
+    } on DioException catch (e) {
+      return {'success': false, 'error': _handleDioError(e)};
+    }
+  }
+
+  static Future<Map<String, dynamic>> signUp(
     String name,
     String email,
     String phone,
@@ -31,89 +59,34 @@ class ApiServiceAuthentication {
       );
 
       if (response.statusCode == 201 || response.statusCode == 200) {
-        // Extract token from response
-
+        // Save auth token if provided
+        if (response.data['token'] != null) {
+          await AuthManager.saveAuthToken(response.data['token']);
+        }
+        
+        // Save user data if available
+        if (response.data['user'] != null) {
+          await AuthManager.saveUserData(response.data['user']);
+        }
+        
         return {
           'success': true,
           'message': 'Signup successful!',
         };
-      } else {
-        // If signup is successful but no token (might be a 201 response)
-        return {
-          'success': true,
-          'message': 'Signup successful! Please login.',
-        };
       }
-
-      // Unexpected response
-    } on DioException catch (e) {
-      // Handle specific error cases
-      if (e.response != null) {
-        if (e.response?.statusCode == 400) {
-          // Handle validation errors
-          final errorData = e.response?.data;
-          String errorMessage = 'Validation error';
-
-          if (errorData is Map<String, dynamic>) {
-            if (errorData.containsKey('error')) {
-              errorMessage = errorData['error'];
-            } else if (errorData.containsKey('message')) {
-              errorMessage = errorData['message'];
-            }
-          }
-
-          return {
-            'success': false,
-            'error': errorMessage,
-          };
-        }
-
-        return {
-          'success': false,
-          'error':
-              'Server error: ${e.response?.statusCode}. ${e.response?.data}',
-        };
-      }
-
       return {
         'success': false,
-        'error': 'Network error: ${e.message}',
+        'error': response.data['error'] ?? 'Signup failed',
       };
-    } catch (e) {
-      return {
-        'success': false,
-        'error': 'An unexpected error occurred: $e',
-      };
-    }
-  }
-
-  //login with phone and password
-  Future<Map<String, dynamic>> login(String phone, String password) async {
-    try {
-      final response = await _dio.post(
-        '/login/password/',
-        data: FormData.fromMap({
-          'phone': phone,
-          'password': password,
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        return {'success': true, 'message': response.data['message']};
-      } 
-      return {'success': false, 'error': response.data['error']};
-
     } on DioException catch (e) {
       return {'success': false, 'error': _handleDioError(e)};
     }
   }
 
-
-
   static String _handleDioError(DioException e) {
     if (e.response != null) {
-      return 'Error ${e.response?.statusCode}: ${e.response?.data['error'] ?? 'Unknown error'}';
+      return e.response!.data['error'] ?? 'An error occurred';
     }
-    return 'Network error: ${e.message}';
+    return 'Network error';
   }
 }

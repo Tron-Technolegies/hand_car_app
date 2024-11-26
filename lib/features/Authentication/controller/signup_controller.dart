@@ -1,5 +1,6 @@
 
 
+import 'package:hand_car/core/router/user_validation.dart';
 import 'package:hand_car/features/Authentication/controller/auth_state.dart';
 import 'package:hand_car/features/Authentication/service/login_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -58,37 +59,89 @@ part 'signup_controller.g.dart';
 class SignupController extends _$SignupController {
   @override
   AuthenticationState build() {
-    return  AuthenticationState(isLoading: false, authenticated: false);
+    return AuthenticationState(
+      isLoading: false, 
+      authenticated: false,
+      errorMessage: null
+    );
   }
 
-// Signup function to sign up a user
-  Future<void> signUp(String name, String email, String phone, String password) async {
-    state = AuthenticationState(isLoading: true, authenticated: false);
+    /// Login method
+    Future<Map<String, dynamic>> login(String phone, String password) async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+
     try {
-      final result = await ApiServiceAuthentication().signUp(name, email, phone, password);
-      if (result.containsKey('error')) {
-        state = AuthenticationState(isLoading: false, authenticated: false);
+      final response = await ApiServiceAuthentication.login(phone, password);
+
+      if (response['success']) {
+        state = state.copyWith(authenticated: true, isLoading: false);
+        return response;
       } else {
-        state = AuthenticationState(isLoading: false, authenticated: true);
+        state = state.copyWith(
+          authenticated: false,
+          isLoading: false,
+          errorMessage: response['error'] ?? 'Unknown error',
+        );
+        return response;
       }
     } catch (e) {
-      state = AuthenticationState(isLoading: false, authenticated: false);
+      state = state.copyWith(
+        authenticated: false,
+        isLoading: false,
+        errorMessage: e.toString(),
+      );
+      return {'success': false, 'error': e.toString()};
     }
   }
-  
-  // Login function to login a user
 
-    Future<void> login(String phone, String password) async {
-      state = state.copyWith(isLoading: true);
-      try {
-        final result = await ApiServiceAuthentication().login(phone, password);
-        if (result.containsKey('error')) {
-          state = state.copyWith(isLoading: false, authenticated: false);
-        } else {
-          state = state.copyWith(authenticated: true, isLoading: false);
-        }
-      } catch (e) {
-        state = state.copyWith(isLoading: false, authenticated: false);
+
+  /// Signup method
+  Future<void> signUp(String name, String email, String phone, String password) async {
+    state = state.copyWith(
+      isLoading: true,
+      errorMessage: null,
+    );
+
+    try {
+      final result = await ApiServiceAuthentication.signUp(name, email, phone, password);
+
+      if (result['success'] == true) {
+        state = state.copyWith(
+          isLoading: false,
+          authenticated: true,
+          errorMessage: null,
+        );
+      } else {
+        state = state.copyWith(
+          isLoading: false,
+          authenticated: false,
+          errorMessage: result['error'] ?? 'Signup failed',
+        );
       }
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        authenticated: false,
+        errorMessage: e.toString(),
+      );
     }
+  }
+
+  /// Logout method
+  Future<void> logout() async {
+    try {
+      await AuthManager.logout();
+      state = state.copyWith(
+        authenticated: false,
+        isLoading: false,
+        errorMessage: null,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        authenticated: false,
+        isLoading: false,
+        errorMessage: e.toString(),
+      );
+    }
+  }
 }

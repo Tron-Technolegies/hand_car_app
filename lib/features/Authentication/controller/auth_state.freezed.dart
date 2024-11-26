@@ -22,6 +22,7 @@ AuthenticationState _$AuthenticationStateFromJson(Map<String, dynamic> json) {
 mixin _$AuthenticationState {
   bool get isLoading => throw _privateConstructorUsedError;
   bool get authenticated => throw _privateConstructorUsedError;
+  String? get errorMessage => throw _privateConstructorUsedError;
 
   /// Serializes this AuthenticationState to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -39,7 +40,7 @@ abstract class $AuthenticationStateCopyWith<$Res> {
           AuthenticationState value, $Res Function(AuthenticationState) then) =
       _$AuthenticationStateCopyWithImpl<$Res, AuthenticationState>;
   @useResult
-  $Res call({bool isLoading, bool authenticated});
+  $Res call({bool isLoading, bool authenticated, String? errorMessage});
 }
 
 /// @nodoc
@@ -59,6 +60,7 @@ class _$AuthenticationStateCopyWithImpl<$Res, $Val extends AuthenticationState>
   $Res call({
     Object? isLoading = null,
     Object? authenticated = null,
+    Object? errorMessage = freezed,
   }) {
     return _then(_value.copyWith(
       isLoading: null == isLoading
@@ -69,6 +71,10 @@ class _$AuthenticationStateCopyWithImpl<$Res, $Val extends AuthenticationState>
           ? _value.authenticated
           : authenticated // ignore: cast_nullable_to_non_nullable
               as bool,
+      errorMessage: freezed == errorMessage
+          ? _value.errorMessage
+          : errorMessage // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -81,7 +87,7 @@ abstract class _$$AuthenticationStateImplCopyWith<$Res>
       __$$AuthenticationStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool isLoading, bool authenticated});
+  $Res call({bool isLoading, bool authenticated, String? errorMessage});
 }
 
 /// @nodoc
@@ -99,6 +105,7 @@ class __$$AuthenticationStateImplCopyWithImpl<$Res>
   $Res call({
     Object? isLoading = null,
     Object? authenticated = null,
+    Object? errorMessage = freezed,
   }) {
     return _then(_$AuthenticationStateImpl(
       isLoading: null == isLoading
@@ -109,6 +116,10 @@ class __$$AuthenticationStateImplCopyWithImpl<$Res>
           ? _value.authenticated
           : authenticated // ignore: cast_nullable_to_non_nullable
               as bool,
+      errorMessage: freezed == errorMessage
+          ? _value.errorMessage
+          : errorMessage // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -117,7 +128,9 @@ class __$$AuthenticationStateImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AuthenticationStateImpl implements _AuthenticationState {
   _$AuthenticationStateImpl(
-      {required this.isLoading, required this.authenticated});
+      {required this.isLoading,
+      required this.authenticated,
+      this.errorMessage});
 
   factory _$AuthenticationStateImpl.fromJson(Map<String, dynamic> json) =>
       _$$AuthenticationStateImplFromJson(json);
@@ -126,10 +139,12 @@ class _$AuthenticationStateImpl implements _AuthenticationState {
   final bool isLoading;
   @override
   final bool authenticated;
+  @override
+  final String? errorMessage;
 
   @override
   String toString() {
-    return 'AuthenticationState(isLoading: $isLoading, authenticated: $authenticated)';
+    return 'AuthenticationState(isLoading: $isLoading, authenticated: $authenticated, errorMessage: $errorMessage)';
   }
 
   @override
@@ -140,12 +155,15 @@ class _$AuthenticationStateImpl implements _AuthenticationState {
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
             (identical(other.authenticated, authenticated) ||
-                other.authenticated == authenticated));
+                other.authenticated == authenticated) &&
+            (identical(other.errorMessage, errorMessage) ||
+                other.errorMessage == errorMessage));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, isLoading, authenticated);
+  int get hashCode =>
+      Object.hash(runtimeType, isLoading, authenticated, errorMessage);
 
   /// Create a copy of AuthenticationState
   /// with the given fields replaced by the non-null parameter values.
@@ -167,7 +185,8 @@ class _$AuthenticationStateImpl implements _AuthenticationState {
 abstract class _AuthenticationState implements AuthenticationState {
   factory _AuthenticationState(
       {required final bool isLoading,
-      required final bool authenticated}) = _$AuthenticationStateImpl;
+      required final bool authenticated,
+      final String? errorMessage}) = _$AuthenticationStateImpl;
 
   factory _AuthenticationState.fromJson(Map<String, dynamic> json) =
       _$AuthenticationStateImpl.fromJson;
@@ -176,6 +195,8 @@ abstract class _AuthenticationState implements AuthenticationState {
   bool get isLoading;
   @override
   bool get authenticated;
+  @override
+  String? get errorMessage;
 
   /// Create a copy of AuthenticationState
   /// with the given fields replaced by the non-null parameter values.

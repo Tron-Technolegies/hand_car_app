@@ -4,6 +4,8 @@ import 'package:hand_car/features/Accessories/view/pages/accessories_page.dart';
 import 'package:hand_car/features/Accessories/view/pages/cart_page.dart';
 import 'package:hand_car/features/Accessories/view/pages/checkout_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/login_page.dart';
+import 'package:hand_car/features/Authentication/view/pages/login_with_phone_and_password_page.dart';
+import 'package:hand_car/features/Authentication/view/pages/signup_page.dart';
 import 'package:hand_car/features/Home/view/pages/navigation_page.dart';
 import 'package:hand_car/features/Home/view/pages/onbording_page.dart';
 import 'package:hand_car/features/Home/view/pages/splash_screen_page.dart';
@@ -13,7 +15,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 // Helper function to check login state
 Future<bool> isUserLoggedIn() async {
   final prefs = await SharedPreferences.getInstance();
-  return prefs.containsKey('auth_token'); // Adjust based on your login persistence
+  return prefs
+      .containsKey('auth_token'); // Adjust based on your login persistence
 }
 
 // Custom wrapper for dynamic initialLocation
@@ -21,7 +24,8 @@ Future<GoRouter> createRouter() async {
   final bool isLoggedIn = await isUserLoggedIn();
 
   return GoRouter(
-    initialLocation: isLoggedIn ? NavigationPage.route : '/splash',
+    initialLocation:
+        isLoggedIn ? NavigationPage.route : OnbordingScreenPage.route,
     routes: [
       GoRoute(
         path: NavigationPage.route,
@@ -36,9 +40,15 @@ Future<GoRouter> createRouter() async {
         builder: (context, state) => const SplashScreen(),
       ),
       GoRoute(
+          path: SignupPage.route,
+          builder: (context, state) => const SignupPage()),
+      GoRoute(
         path: LoginPage.route,
         builder: (context, state) => const LoginPage(),
       ),
+      GoRoute(
+          path: LoginWithPhoneAndPasswordPage.route,
+          builder: (context, state) => const LoginWithPhoneAndPasswordPage()),
       GoRoute(
         path: AccessoriesDetailsPage.route,
         builder: (context, state) => const AccessoriesDetailsPage(),
