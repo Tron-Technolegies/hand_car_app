@@ -4,7 +4,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/features/Accessories/view/pages/product_search_page.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/accessories_circle_avatar_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/grid_view_for_accessories_widget.dart';
 import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
@@ -62,7 +61,7 @@ class AccessoriesPage extends HookWidget {
                       ),
                       onChanged: (value) {
                         // FiltNaver logic here
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => ProductSearchPage(),));
+                       
                       },
                     )
                   : const Text('Accessories'),
