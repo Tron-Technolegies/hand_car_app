@@ -1,34 +1,53 @@
-import 'package:hand_car/features/Accessories/controller/products_controller/products_state.dart';
+import 'package:hand_car/features/Accessories/controller/model/products/products_model.dart';
 import 'package:hand_car/features/Accessories/services/products_service.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'products_controller.g.dart';
 
 @riverpod
 class ProductsController extends _$ProductsController {
-  late final ProductsApiServices _apiService = ProductsApiServices();
-
   @override
-  FutureOr<ProductState> build() async {
-    return const ProductState.initial();
+  Future<List<ProductsModel>> build() async {
+    return fetchProducts();
   }
 
-  Future<void> fetchProducts() async {
+  Future<List<ProductsModel>> fetchProducts() async {
     try {
-      state = const AsyncValue.data(ProductState.loading());
-      final products = await _apiService.getProducts();
-      state = AsyncValue.data(ProductState.loaded(products));
+      final productsApiService = ref.read(productsApiServiceProvider);
+      return await productsApiService.getProducts();
     } catch (e) {
-      state = AsyncValue.data(ProductState.error(e.toString()));
+      throw Exception('Failed to fetch products: $e');
     }
   }
+
   Future<void> searchProducts(String query) async {
     try {
-      state =  AsyncValue.data(ProductState.searching());
-      final searchResponse = await _apiService.searchProducts(query);
-      state = AsyncValue.data(ProductState.searchResults(searchResponse));
+      // If query is empty, fetch all products
+      if (query.isEmpty) {
+        state = const AsyncValue.loading();
+        state = AsyncValue.data(await fetchProducts());
+        return;
+      }
+
+      // Set loading state
+      state = const AsyncValue.loading();
+
+      // Perform search
+      final productsApiService = ref.read(productsApiServiceProvider);
+      final searchResult = await productsApiService.searchProducts(query);
+
+      // Update state with search results
+      state = AsyncValue.data(searchResult.accessories);
     } catch (e) {
-      state = AsyncValue.data(ProductState.error(e.toString()));
+      // Handle error state
+      state = AsyncValue.error(e, StackTrace.current);
     }
   }
+}
+
+// Separate provider for ProductsApiService
+@riverpod
+ProductsApiServices productsApiService(Ref ref) {
+  return ProductsApiServices();
 }

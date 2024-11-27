@@ -3,24 +3,29 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/widgets/outline_button_widget.dart';
+import 'package:hand_car/features/Accessories/controller/cart/cart_controller.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 //AccessoriesProductCardWidget For Show In GridView
-class AccessoriesProductCardWidget extends StatelessWidget {
+class AccessoriesProductCardWidget extends ConsumerWidget {
+  final int productId;
   final String name;
   final String price;
   final String image;
   final String discount;
   final String? off;
-  const AccessoriesProductCardWidget(
+  
+  const AccessoriesProductCardWidget( 
       {super.key,
+      required this.productId,
       required this.name,
       required this.price,
       required this.image,
       required this.discount,
-      this.off});
+      this.off, });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,ref) {
     return GestureDetector(
       onTap: () {
         context.push('/accessories_details');
@@ -108,7 +113,9 @@ class AccessoriesProductCardWidget extends StatelessWidget {
                 padding: EdgeInsets.symmetric(
                     horizontal: context.space.space_50,
                     vertical: context.space.space_50),
-                child: OutlineButtonWidget(label: 'Add To Cart', onTap: () {}),
+                child: OutlineButtonWidget(label: 'Add To Cart', onTap: () {
+                  ref.read(cartControllerProvider.notifier).addToCart(productId);
+                }),
               )
             ],
           ),

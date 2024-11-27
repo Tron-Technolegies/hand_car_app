@@ -5,6 +5,7 @@ import 'package:hand_car/core/router/user_validation.dart';
 class ApiServiceAuthentication {
   static final Dio _dio = Dio(
     BaseOptions(
+      headers: {'Content-Type': 'application/json', 'Accept': 'application/json',},
       baseUrl: baseUrl,
       connectTimeout: const Duration(seconds: 5),
       receiveTimeout: const Duration(seconds: 3),

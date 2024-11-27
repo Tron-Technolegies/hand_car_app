@@ -36,7 +36,15 @@ class CartApiService {
     }
   }
 
-
+   Future<Map<String, dynamic>> addToCart(int productId) async {
+    try {
+      final response = await _dio.post('/cart/add/$productId/');
+      return response.data;
+    } catch (e) {
+      print(e);
+      throw Exception('Failed to add product to cart: ${e.toString()}');
+    }
+  }
 
 
    

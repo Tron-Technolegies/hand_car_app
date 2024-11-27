@@ -28,6 +28,23 @@ class CartController extends _$CartController {
       state = AsyncValue.error('Error refreshing cart: $e', stackTrace);
     }
   }
+Future<void> addToCart(int productId) async {
+  state = const AsyncValue.loading();
+  try {
+    final response = await CartApiService().addToCart(productId);
+    if (response['success']) {
+      // Refresh the cart to reflect updated state
+      await refreshCart();
+      state = AsyncValue.data(CartModel.fromJson(response)); // Assume CartModel can be parsed from response
+    } else {
+      state = AsyncValue.error(response['message'], StackTrace.current);
+    }
+  } catch (e, stackTrace) {
+    state = AsyncValue.error('Error adding to cart: $e', stackTrace);
+  }
+}
+
+
 
   // Updated total calculation
   double get cartTotal {
