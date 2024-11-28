@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hand_car/features/Accessories/controller/products_controller/products_controller.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/accessories_product_card_widget.dart';
+import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:lottie/lottie.dart';
 
 class GridViewBuilderAccessoriesWidget extends ConsumerWidget {
   const GridViewBuilderAccessoriesWidget({super.key});
@@ -13,7 +15,7 @@ class GridViewBuilderAccessoriesWidget extends ConsumerWidget {
     // Using the AsyncValue to handle the loading, error, and data states
     return productsState.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => Center(child: Text('Error: $error')),
+      error: (error, _) => Center(child: Lottie.asset(Assets.animations.error)),
       data: (products) => GridView.builder(
         shrinkWrap: true,
         physics:
@@ -35,7 +37,6 @@ class GridViewBuilderAccessoriesWidget extends ConsumerWidget {
             discount: '',
             off: '',
             productId: product.id,
-            
           );
         },
       ),

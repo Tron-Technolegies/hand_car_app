@@ -4,11 +4,15 @@ import 'package:hand_car/features/Accessories/controller/model/products/products
 import 'package:hand_car/features/Accessories/controller/model/serach_products/search_response_model.dart';
 
 class ProductsApiServices {
-  final Dio _dio = Dio(
-    BaseOptions(
-      baseUrl: baseUrl,
-    )
-  );
+  final Dio _dio = Dio(BaseOptions(
+    connectTimeout: const Duration(seconds: 5),
+    receiveTimeout: const Duration(seconds: 3),
+    validateStatus: (status) => status! < 500,
+    baseUrl: baseUrl,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  ));
 
   Future<List<ProductsModel>> getProducts() async {
     try {
@@ -22,10 +26,8 @@ class ProductsApiServices {
 
   Future<SearchResponse> searchProducts(String query) async {
     try {
-      final response = await _dio.get(
-        '/searchproducts/',
-        queryParameters: {'search': query}
-      );
+      final response = await _dio
+          .get('/searchproducts/', queryParameters: {'search': query});
       return SearchResponse.fromJson(response.data);
     } on DioException catch (e) {
       throw Exception('Search failed: ${e.message}');

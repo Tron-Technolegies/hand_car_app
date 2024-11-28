@@ -4,11 +4,13 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
+import 'package:hand_car/features/Accessories/controller/products_controller/category_controller.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/accessories_circle_avatar_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/grid_view_for_accessories_widget.dart';
 import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:lottie/lottie.dart';
 
 final GlobalKey<ScaffoldState> scaffoldKey2 = GlobalKey<ScaffoldState>();
 
@@ -18,6 +20,12 @@ class AccessoriesPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
+    final List<String> images = [
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1gGXMTCuE-ZlTuR6tXgLvAxBqfyVw-_2hSQ&s',
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnAKFsUZa2dWJ4Lym_512IUED-ICJmOydQ7w&s',
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcST_jdzAn0TttNbib1DGe119FjY-Wi_L5zc8g&s',
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvOX4aF0GarSWiEFx7EP3sixmcfagZRL6zPg&s'
+    ];
     final controller = useScrollController();
     final appBarVisible = useState(true);
     final pageController = usePageController();
@@ -25,7 +33,7 @@ class AccessoriesPage extends HookConsumerWidget {
     final isSearching = useState(false);
 
     final searchTextController = useTextEditingController();
-    
+    final category = ref.watch(categoryControllerProvider);
 
     useEffect(() {
       /// Changes [appBarVisible] based on the scroll direction.
@@ -101,45 +109,25 @@ class AccessoriesPage extends HookConsumerWidget {
         children: [
           SizedBox(
             height: context.space.space_400 * 5,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                AccessoriesCircleAvatharWidget(
-                  onTap: () => pageController.animateToPage(0,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut),
-                  image: Assets.images.imgCarCareAccessories.path,
-                  text1: 'Maintenance &',
-                  text2: 'Care',
+            child: category.when(
+              data: (categories) => ListView.separated(
+                separatorBuilder: (context, index) => const SizedBox(
+                  width: 10,
                 ),
-                SizedBox(width: context.space.space_250),
-                AccessoriesCircleAvatharWidget(
-                  onTap: () => pageController.animateToPage(1,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut),
-                  image: Assets.images.imgCarInteriorAccessories.path,
-                  text1: 'Interior',
-                  text2: 'Accessories',
-                ),
-                SizedBox(width: context.space.space_250),
-                AccessoriesCircleAvatharWidget(
-                  onTap: () => pageController.animateToPage(2,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut),
-                  image: Assets.images.imgCarSpeaker.path,
-                  text1: 'Electronics',
-                  text2: 'Accessories',
-                ),
-                SizedBox(width: context.space.space_250),
-                AccessoriesCircleAvatharWidget(
-                  onTap: () => pageController.animateToPage(3,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut),
-                  image: Assets.images.imgCarSpeaker.path,
-                  text1: 'Other',
-                  text2: 'Accessories',
-                ),
-              ],
+                scrollDirection: Axis.horizontal,
+                itemCount: categories.length,
+                itemBuilder: (context, index) {
+                  final category = categories[index];
+                  return AccessoriesCircleAvatharWidget(
+                    text1: category.name,
+                    image: images[index],
+                    onTap: () {},
+                  );
+                },
+              ),
+              error: (error, _) =>
+                  Center(child: Lottie.asset(Assets.animations.error)),
+              loading: () => const Center(child: CircularProgressIndicator()),
             ),
           ),
           Expanded(

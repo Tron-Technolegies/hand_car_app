@@ -5,15 +5,14 @@ import 'package:hand_car/core/extension/theme_extension.dart';
 
 class AccessoriesCircleAvatharWidget extends StatelessWidget {
   final String text1;
-  final String text2;
-  final String image;
+
+  final String? image;
   final VoidCallback onTap;
 
   const AccessoriesCircleAvatharWidget({
     super.key,
     required this.text1,
-    required this.text2,
-    required this.image,
+    this.image,
     required this.onTap,
   });
 
@@ -28,7 +27,7 @@ class AccessoriesCircleAvatharWidget extends StatelessWidget {
             backgroundColor: context.colors.primary,
             child: CircleAvatar(
               radius: 48.5,
-              backgroundImage: AssetImage(image),
+              backgroundImage: NetworkImage(image ?? ''),
             ),
           ),
         ),
@@ -38,11 +37,11 @@ class AccessoriesCircleAvatharWidget extends StatelessWidget {
           style: context.typography.bodyMedium
               .copyWith(color: context.colors.primaryTxt),
         ),
-        Text(
-          text2,
-          style: context.typography.bodyMedium
-              .copyWith(color: context.colors.primaryTxt),
-        )
+        // Text(
+        //   text2,
+        //   style: context.typography.bodyMedium
+        //       .copyWith(color: context.colors.primaryTxt),
+        // )
       ],
     );
   }

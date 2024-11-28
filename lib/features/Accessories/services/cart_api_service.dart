@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
 import 'package:hand_car/features/Accessories/controller/model/cart/cart_model.dart';
 
+//Cart Api Service for Cart Page Fetching and Adding Ca
 class CartApiService {
   static final Dio _dio = Dio(BaseOptions(
     baseUrl: baseUrl,
@@ -13,7 +14,7 @@ class CartApiService {
     validateStatus: (status) => status! < 500, // Accept all status codes less than 500
   ));
 
-  /// Get the cart items for the user.Future<CartModel?> getCart() async {
+  /// Get the cart items for the user.
   Future<CartModel?> getCart() async {
     try {
       final response = await _dio.get(
@@ -36,12 +37,13 @@ class CartApiService {
     }
   }
 
+/// Add a product to the cart
    Future<Map<String, dynamic>> addToCart(int productId) async {
     try {
       final response = await _dio.post('/cart/add/$productId/');
       return response.data;
     } catch (e) {
-      print(e);
+   
       throw Exception('Failed to add product to cart: ${e.toString()}');
     }
   }
