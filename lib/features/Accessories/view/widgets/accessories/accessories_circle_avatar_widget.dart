@@ -3,6 +3,7 @@ import 'package:hand_car/core/extension/theme_extension.dart';
 
 /// [AccessoriesCircleAvatharWidget]
 
+//TO Show the circle avathar for accessories category
 class AccessoriesCircleAvatharWidget extends StatelessWidget {
   final String text1;
 
