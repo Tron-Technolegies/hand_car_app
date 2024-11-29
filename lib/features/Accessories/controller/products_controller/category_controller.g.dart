@@ -7,7 +7,7 @@ part of 'category_controller.dart';
 // **************************************************************************
 
 String _$categoryControllerHash() =>
-    r'02f42a5b95973c5a50513608fc326feff050e8ee';
+    r'e1c7496222729dbe229589b2984b81920bd1d7ab';
 
 /// See also [CategoryController].
 @ProviderFor(CategoryController)

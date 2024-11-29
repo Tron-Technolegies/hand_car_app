@@ -1,0 +1,21 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'review_model.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+_$ReviewModelImpl _$$ReviewModelImplFromJson(Map<String, dynamic> json) =>
+    _$ReviewModelImpl(
+      id: (json['id'] as num?)?.toInt(),
+      rating: (json['rating'] as num).toInt(),
+      comment: json['comment'] as String?,
+    );
+
+Map<String, dynamic> _$$ReviewModelImplToJson(_$ReviewModelImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'rating': instance.rating,
+      'comment': instance.comment,
+    };

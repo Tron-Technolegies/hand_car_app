@@ -1,4 +1,3 @@
-
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
@@ -11,7 +10,8 @@ class CartApiService {
     baseUrl: baseUrl,
     connectTimeout: const Duration(seconds: 5),
     receiveTimeout: const Duration(seconds: 3),
-    validateStatus: (status) => status! < 500, // Accept all status codes less than 500
+    validateStatus: (status) =>
+        status! < 500, // Accept all status codes less than 500
   ));
 
   /// Get the cart items for the user.
@@ -37,17 +37,15 @@ class CartApiService {
     }
   }
 
-/// Add a product to the cart
-   Future<Map<String, dynamic>> addToCart(int productId) async {
+  /// Add a product to the cart
+  Future<Map<String, dynamic>> addToCart(int productId) async {
     try {
-      final response = await _dio.post('/cart/add/$productId/');
+      final response = await _dio.post('/cart/add/', data: {
+        'product_id': productId,
+      });
       return response.data;
     } catch (e) {
-   
       throw Exception('Failed to add product to cart: ${e.toString()}');
     }
   }
-
-
-   
 }
