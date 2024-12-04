@@ -164,7 +164,7 @@ class AccessoriesPage extends HookConsumerWidget {
                 //   image:
                 //       'https://www.pngplay.com/wp-content/uploads/7/Automobile-Car-Accessories-PNG-Background.png',
                 // ),
-                Expanded(child: GridViewBuilderAccessoriesWidget())
+                GridViewBuilderAccessoriesWidget()
               ],
             ),
           ),
