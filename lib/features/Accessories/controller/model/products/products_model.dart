@@ -13,6 +13,7 @@ class ProductsModel with _$ProductsModel {
     required String price,
     String? image,
     @Default('') String description,
+    
     @Default(false) bool isBestseller,
   }) = _ProductModel;
 

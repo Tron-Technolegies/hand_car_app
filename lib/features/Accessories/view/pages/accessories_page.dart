@@ -5,6 +5,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Accessories/controller/products_controller/category_controller.dart';
+import 'package:hand_car/features/Accessories/controller/products_controller/products_controller.dart';
+import 'package:hand_car/features/Accessories/view/pages/accessories_details_page.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/accessories_circle_avatar_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/grid_view_for_accessories_widget.dart';
 import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
@@ -22,14 +24,14 @@ class AccessoriesPage extends HookConsumerWidget {
   const AccessoriesPage({super.key});
 
   @override
-  Widget build(BuildContext context, ref) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final List<String> images = [
       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1gGXMTCuE-ZlTuR6tXgLvAxBqfyVw-_2hSQ&s',
       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnAKFsUZa2dWJ4Lym_512IUED-ICJmOydQ7w&s',
       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcST_jdzAn0TttNbib1DGe119FjY-Wi_L5zc8g&s',
       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvOX4aF0GarSWiEFx7EP3sixmcfagZRL6zPg&s'
     ];
-    
+
     final controller = useScrollController();
     final appBarVisible = useState(true);
     final pageController = usePageController();
@@ -37,12 +39,15 @@ class AccessoriesPage extends HookConsumerWidget {
     final isSearching = useState(false);
     final searchTextController = useTextEditingController();
     final category = ref.watch(categoryControllerProvider);
+    final products = ref.watch(productsControllerProvider);
 
     useEffect(() {
       void onScroll() {
-        if (controller.position.userScrollDirection == ScrollDirection.reverse) {
+        if (controller.position.userScrollDirection ==
+            ScrollDirection.reverse) {
           appBarVisible.value = false;
-        } else if (controller.position.userScrollDirection == ScrollDirection.forward) {
+        } else if (controller.position.userScrollDirection ==
+            ScrollDirection.forward) {
           appBarVisible.value = true;
         }
       }
@@ -100,31 +105,37 @@ class AccessoriesPage extends HookConsumerWidget {
       endDrawerEnableOpenDragGesture: true,
       body: Column(
         children: [
-          SizedBox(
-            height: context.space.space_400 * 5,
-            child: category.when(
-              data: (categories) => ListView.separated(
-                separatorBuilder: (context, index) => const SizedBox(width: 10),
-                scrollDirection: Axis.horizontal,
-                itemCount: categories.length,
-                itemBuilder: (context, index) {
-                  final category = categories[index];
-                  return AccessoriesCircleAvatharWidget(
-                    text1: category.name,
-                    image: images[index],
-                    onTap: () {
-                      pageController.animateToPage(
-                        index,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                      );
-                      ref.read(selectedCategoryNameProvider.notifier).state = category.name;
-                    },
-                  );
-                },
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              height: context.space.space_400 * 5,
+              child: category.when(
+                data: (categories) => ListView.separated(
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(width: 10),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: categories.length,
+                  itemBuilder: (context, index) {
+                    final category = categories[index];
+                    return AccessoriesCircleAvatharWidget(
+                      text1: category.name,
+                      image: images[index],
+                      onTap: () {
+                        pageController.animateToPage(
+                          index,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                        ref.read(selectedCategoryNameProvider.notifier).state =
+                            category.name;
+                      },
+                    );
+                  },
+                ),
+                error: (error, _) =>
+                    Center(child: Lottie.asset(Assets.animations.error)),
+                loading: () => const Center(child: CircularProgressIndicator()),
               ),
-              error: (error, _) => Center(child: Lottie.asset(Assets.animations.error)),
-              loading: () => const Center(child: CircularProgressIndicator()),
             ),
           ),
           Expanded(
@@ -134,22 +145,44 @@ class AccessoriesPage extends HookConsumerWidget {
                 currentPage.value = index;
                 category.whenOrNull(
                   data: (categories) {
-                    ref.read(selectedCategoryNameProvider.notifier).state = 
+                    ref.read(selectedCategoryNameProvider.notifier).state =
                         categories[index].name;
                   },
                 );
               },
               itemCount: category.whenOrNull(
-                data: (categories) => categories.length,
-              ) ?? 0,
+                    data: (categories) => categories.length,
+                  ) ??
+                  0,
               itemBuilder: (context, index) {
                 return category.when(
                   data: (categories) {
-                    return GridViewBuilderAccessoriesWidget(
-                      categoryName: categories[index].name,
+                    final selectedCategory = categories[index];
+                    return products.when(
+                      data: (productsList) {
+                        productsList
+                            .where(
+                                (product) => product.id == selectedCategory.id)
+                            .toList();
+                        return GridViewBuilderAccessoriesWidget(
+                          categoryName: selectedCategory.name,
+                          onProductTap: (product) {
+                            context.push(
+                              '${AccessoriesDetailsPage.route}/${product.id}',
+                              extra: product,
+                            );
+                          },
+                        );
+                      },
+                      loading: () =>
+                          const Center(child: CircularProgressIndicator()),
+                      error: (error, _) => Center(
+                        child: Lottie.asset(Assets.animations.error),
+                      ),
                     );
                   },
-                  loading: () => const Center(child: CircularProgressIndicator()),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
                   error: (error, _) => Center(
                     child: Lottie.asset(Assets.animations.error),
                   ),

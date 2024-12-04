@@ -1,10 +1,10 @@
 import 'package:go_router/go_router.dart';
+import 'package:hand_car/features/Accessories/controller/model/products/products_model.dart';
 import 'package:hand_car/features/Accessories/view/pages/accessories_details_page.dart';
 import 'package:hand_car/features/Accessories/view/pages/accessories_page.dart';
 import 'package:hand_car/features/Accessories/view/pages/cart_page.dart';
 import 'package:hand_car/features/Accessories/view/pages/checkout_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/login_page.dart';
-import 'package:hand_car/features/Authentication/view/pages/login_with_phone_and_password_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/signup_page.dart';
 import 'package:hand_car/features/Home/view/pages/navigation_page.dart';
 import 'package:hand_car/features/Home/view/pages/onbording_page.dart';
@@ -40,19 +40,24 @@ Future<GoRouter> createRouter() async {
         builder: (context, state) => const SplashScreen(),
       ),
       GoRoute(
-          path: SignupPage.route,
-          builder: (context, state) => const SignupPage()),
+        path: SignupPage.route,
+        builder: (context, state) => const SignupPage(),
+      ),
       GoRoute(
         path: LoginPage.route,
         builder: (context, state) => const LoginPage(),
       ),
-      GoRoute(
-          path: LoginWithPhoneAndPasswordPage.route,
-          builder: (context, state) => const LoginWithPhoneAndPasswordPage()),
-      GoRoute(
-        path: AccessoriesDetailsPage.route,
-        builder: (context, state) => const AccessoriesDetailsPage(),
-      ),
+        GoRoute(
+          path: '${AccessoriesDetailsPage.route}/:id',
+          builder: (context, state) {
+            // Here you fetch the product by ID or pass the product directly
+            final product = state.extra as ProductsModel?;
+            if (product == null) {
+              throw Exception('Product data must be of type ProductsModel');
+            }
+            return AccessoriesDetailsPage(product: product);
+          },
+        ),
       GoRoute(
         path: AccessoriesPage.route,
         builder: (context, state) => const AccessoriesPage(),
@@ -60,14 +65,21 @@ Future<GoRouter> createRouter() async {
       GoRoute(
         path: ServiceDetailsPage.route,
         builder: (context, state) {
-          final data = state.extra as Map<String, dynamic>;
-
+          final data = state.extra;
+          if (data is! Map<String, dynamic> ||
+              !data.containsKey('image') ||
+              !data.containsKey('title') ||
+              !data.containsKey('title2') ||
+              !data.containsKey('rating') ||
+              !data.containsKey('price')) {
+            throw Exception('Invalid arguments passed to ServiceDetailsPage');
+          }
           return ServiceDetailsPage(
-            image: data['image'],
-            title: data['title'],
-            title2: data['title2'],
-            rating: data['rating'],
-            price: data['price'],
+            image: data['image'] as String,
+            title: data['title'] as String,
+            title2: data['title2'] as String,
+            rating: data['rating'] as String,
+            price: data['price'] as String,
           );
         },
       ),

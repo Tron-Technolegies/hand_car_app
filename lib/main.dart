@@ -5,6 +5,7 @@ import 'package:hand_car/core/theme/light_theme.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 void main() async {
+ 
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize the router
