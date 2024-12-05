@@ -50,7 +50,7 @@ class NavigationPage extends HookConsumerWidget {
         children: [
           /// Auto Parts Page
           const AutoPartsPage(),
-
+         
           const AccessoriesPage(),
           const HomePage(),
           ServicesPage(),
