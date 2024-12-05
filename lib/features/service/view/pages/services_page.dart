@@ -83,7 +83,9 @@ class ServicesPage extends HookConsumerWidget {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {},
-          icon: SvgPicture.asset(Assets.icons.handCarIcon),
+          icon: SvgPicture.asset(
+            Assets.icons.handCarIcon,
+          ),
         ),
         title: Text(
           "Our Services",
@@ -117,7 +119,7 @@ class ServicesPage extends HookConsumerWidget {
           ),
         ],
       ),
-      /// Drawer Widget
+      // Drawer Widget
       drawer: const DrawerWidget(),
       endDrawerEnableOpenDragGesture: true,
       body: Column(

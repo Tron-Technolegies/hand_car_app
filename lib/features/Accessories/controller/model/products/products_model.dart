@@ -12,7 +12,8 @@ class ProductsModel with _$ProductsModel {
     required String brand,
     required String price,
     String? image,
-    double? discount_percentage,
+    @JsonKey(name: "discount_percentage")
+        required int discountPercentage,
     @Default('') String description,
     @Default(false) bool isBestseller,
   }) = _ProductModel;

@@ -25,7 +25,10 @@ class HomePage extends ConsumerWidget {
     return Scaffold(
       key: scaffoldKey1,
       appBar: AppBar(
-        leading: SvgPicture.asset(Assets.icons.handCarIcon),
+        leading: Padding(
+          padding: EdgeInsets.all(context.space.space_100),
+          child: SvgPicture.asset(Assets.icons.handCarIcon),
+        ),
         actions: [
           IconButton(
               onPressed: () {

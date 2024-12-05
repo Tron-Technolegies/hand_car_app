@@ -5,6 +5,7 @@ import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/bottom_nav_controller.dart';
 import 'package:hand_car/features/Accessories/view/pages/accessories_page.dart';
 import 'package:hand_car/features/Home/view/pages/home_page.dart';
+import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
 import 'package:hand_car/features/SpareParts/view/pages/spares_page.dart';
 import 'package:hand_car/features/Subscriptions/view/pages/subscription_page.dart';
 import 'package:hand_car/features/service/view/pages/services_page.dart';
@@ -45,12 +46,13 @@ class NavigationPage extends HookConsumerWidget {
     }, [navigationState.selectedNavBarItemIndex]);
 
     return Scaffold(
+      drawer: const DrawerWidget(),
       body: PageView(
         controller: navigationState.pageController,
         children: [
           /// Auto Parts Page
           const AutoPartsPage(),
-         
+
           const AccessoriesPage(),
           const HomePage(),
           ServicesPage(),

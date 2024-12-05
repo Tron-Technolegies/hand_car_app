@@ -62,20 +62,19 @@ class AccessoriesProductCardWidget extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: context.space.space_100),
-                if (product.discount_percentage != null)
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: context.colors.yellow,
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.all(context.space.space_100),
-                      child: Text(
-                        '${product.discount_percentage?.toString()}% OFF',
-                        style: context.typography.bodySemiBold,
-                      ),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: context.colors.yellow,
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(context.space.space_100),
+                    child: Text(
+                      '${product.discountPercentage.toStringAsFixed(0)}% OFF',
+                      style: context.typography.bodySemiBold,
                     ),
                   ),
+                ),
                 SizedBox(height: context.space.space_100),
                 Text(
                   product.name,
@@ -106,17 +105,16 @@ class AccessoriesProductCardWidget extends StatelessWidget {
                       style: context.typography.bodyLarge
                           .copyWith(color: context.colors.primaryTxt),
                     ),
-                    if (product.discount_percentage != null)
-                      Padding(
-                        padding: EdgeInsets.only(left: context.space.space_200),
-                        child: Text(
-                          "AED ${product.price}",
-                          style: const TextStyle(
-                            color: Colors.grey,
-                            decoration: TextDecoration.lineThrough,
-                          ),
+                    Padding(
+                      padding: EdgeInsets.only(left: context.space.space_200),
+                      child: Text(
+                        "AED ${product.price}",
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          decoration: TextDecoration.lineThrough,
                         ),
                       ),
+                    ),
                   ],
                 ),
                 SizedBox(height: context.space.space_100),

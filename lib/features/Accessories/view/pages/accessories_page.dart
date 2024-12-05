@@ -7,6 +7,7 @@ import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Accessories/controller/products_controller/category_controller.dart';
 import 'package:hand_car/features/Accessories/controller/products_controller/products_controller.dart';
 import 'package:hand_car/features/Accessories/view/pages/accessories_details_page.dart';
+import 'package:hand_car/features/Accessories/view/pages/cart_page.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/accessories_circle_avatar_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/grid_view_for_accessories_widget.dart';
 import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
@@ -84,7 +85,7 @@ class AccessoriesPage extends HookConsumerWidget {
                     onPressed: () => isSearching.value = true,
                   ),
                 IconButton(
-                    onPressed: () => context.push('/cart'),
+                    onPressed: () => context.push(ShoppingCartScreen.route),
                     icon: const Icon(Icons.shopping_cart_sharp)),
                 IconButton(
                     onPressed: () => scaffoldKey2.currentState?.openDrawer(),
@@ -98,9 +99,13 @@ class AccessoriesPage extends HookConsumerWidget {
                         searchTextController.clear();
                       },
                     )
-                  : SvgPicture.asset('assets/icons/hand_car_icon.svg'),
+                  : Padding(
+                      padding: EdgeInsets.all(context.space.space_100),
+                      child: SvgPicture.asset('assets/icons/hand_car_icon.svg'),
+                    ),
             )
           : null,
+      // appBar: CustomAppBar(title: 'Accessories'),
       drawer: const DrawerWidget(),
       endDrawerEnableOpenDragGesture: true,
       body: Column(

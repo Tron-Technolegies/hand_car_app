@@ -20,8 +20,11 @@ class AutoPartsPage extends HookWidget {
     return Scaffold(
       key: scaffoldKey4,
       appBar: AppBar(
-        leading: SvgPicture.asset(Assets.icons.handCarIcon),
-        title: Text("Auto Parts", style: context.typography.h2),
+        leading: Padding(
+          padding: EdgeInsets.all(context.space.space_100),
+          child: SvgPicture.asset(Assets.icons.handCarIcon),
+        ),
+        title: Text("Auto Parts", style: context.typography.h3),
         centerTitle: true,
         actions: [
           IconButton(onPressed: () {}, icon: const Icon(Icons.search)),

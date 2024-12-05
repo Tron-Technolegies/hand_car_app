@@ -33,8 +33,15 @@ class SubscriptionPage extends HookWidget {
     return Scaffold(
       key: scaffoldKey5,
       appBar: AppBar(
-        leading: SvgPicture.asset(Assets.icons.handCarIcon),
-        title: const Text('Subscription'),
+        leading: Padding(
+          padding: EdgeInsets.all(context.space.space_100),
+          child: SvgPicture.asset(
+            Assets.icons.handCarIcon,
+            height: 30,
+            width: 30,
+          ),
+        ),
+        title: const Text('Subscriptions'),
         centerTitle: true,
         actions: [
           IconButton(
