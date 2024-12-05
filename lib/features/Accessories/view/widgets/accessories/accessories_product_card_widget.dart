@@ -17,124 +17,129 @@ class AccessoriesProductCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: context.colors.white,
-          border: Border.all(color: context.colors.background),
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: context.space.space_100),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: IconButton(
-                  onPressed: () {
-                    // Optional: Toggle favorite functionality
-                  },
-                  icon: const Icon(Icons.favorite_border),
+      child: Stack(children: [
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: context.colors.white,
+            border: Border.all(color: context.colors.background),
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: context.space.space_100),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Align(
+                  alignment: Alignment.topRight,
+                  child: IconButton(
+                    onPressed: () {
+                      // Optional: Toggle favorite functionality
+                    },
+                    icon: const Icon(Icons.favorite_border),
+                  ),
                 ),
-              ),
-              if (product.isBestseller == true)
-                Container(
-                  decoration: BoxDecoration(
+                if (product.isBestseller == true)
+                  Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: context.colors.yellow),
+                    child: Padding(
+                      padding: EdgeInsets.all(context.space.space_100),
+                      child: Text(
+                        'Bestseller',
+                        style: context.typography.body,
+                      ),
+                    ),
+                  ),
+                Center(
+                  child: Image.network(
+                    product.image ??
+                        'https://img.freepik.com/premium-photo/car-parts-repair-concept_127657-10165.jpg?uid=P91385388&ga=GA1.1.934021275.1724508943&semt=ais_hybrid',
+                    height: 100,
+                    width: 100,
+                    errorBuilder: (context, error, stackTrace) =>
+                        const Icon(Icons.image_not_supported),
+                  ),
+                ),
+                SizedBox(height: context.space.space_100),
+                if (product.discount_percentage != null)
+                  Container(
+                    decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      color: context.colors.yellow),
+                      color: context.colors.yellow,
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.all(context.space.space_100),
+                      child: Text(
+                        '${product.discount_percentage?.toString()}% OFF',
+                        style: context.typography.bodySemiBold,
+                      ),
+                    ),
+                  ),
+                SizedBox(height: context.space.space_100),
+                Text(
+                  product.name,
+                  style: context.typography.bodyLargeMedium
+                      .copyWith(color: context.colors.primaryTxt),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                ),
+                SizedBox(height: context.space.space_50),
+                // RatingBar.builder(
+                //   itemBuilder: (context, index) => const Icon(
+                //     Icons.star,
+                //     color: Colors.amber,
+                //   ),
+                //   onRatingUpdate: (rating) {
+                //     // Optional: Implement rating logic
+                //   },
+                //   itemCount: 5,
+                //   initialRating: product.rating ?? 3.5,
+                //   itemSize: 15,
+                // ),
+                SizedBox(height: context.space.space_150),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "AED ${product.price}",
+                      style: context.typography.bodyLarge
+                          .copyWith(color: context.colors.primaryTxt),
+                    ),
+                    if (product.discount_percentage != null)
+                      Padding(
+                        padding: EdgeInsets.only(left: context.space.space_200),
+                        child: Text(
+                          "AED ${product.price}",
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            decoration: TextDecoration.lineThrough,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+                SizedBox(height: context.space.space_100),
+                Positioned(
+                  bottom: 0,
                   child: Padding(
-                    padding: EdgeInsets.all(context.space.space_100),
-                    child: Text(
-                      'Bestseller',
-                      style: context.typography.body,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: context.space.space_50,
+                      vertical: context.space.space_50,
+                    ),
+                    child: OutlineButtonWidget(
+                      label: 'Add To Cart',
+                      onTap: () {
+                        // Optional: Implement Add to Cart functionality
+                      },
                     ),
                   ),
                 ),
-              Center(
-                child: Image.network(
-                  product.image ??
-                      'https://img.freepik.com/premium-photo/car-parts-repair-concept_127657-10165.jpg?uid=P91385388&ga=GA1.1.934021275.1724508943&semt=ais_hybrid',
-                  height: 100,
-                  width: 100,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Icons.image_not_supported),
-                ),
-              ),
-              SizedBox(height: context.space.space_100),
-              if (product.discount_percentage != null)
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: context.colors.yellow,
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(context.space.space_100),
-                    child: Text(
-                      '${product.discount_percentage?.toString()}% OFF',
-                      style: context.typography.body,
-                    ),
-                  ),
-                ),
-              SizedBox(height: context.space.space_100),
-              Text(
-                product.name,
-                style: context.typography.bodyMedium
-                    .copyWith(color: context.colors.primaryTxt),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 2,
-              ),
-              SizedBox(height: context.space.space_50),
-              // RatingBar.builder(
-              //   itemBuilder: (context, index) => const Icon(
-              //     Icons.star,
-              //     color: Colors.amber,
-              //   ),
-              //   onRatingUpdate: (rating) {
-              //     // Optional: Implement rating logic
-              //   },
-              //   itemCount: 5,
-              //   initialRating: product.rating ?? 3.5,
-              //   itemSize: 15,
-              // ),
-              SizedBox(height: context.space.space_150),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "AED ${product.price}",
-                    style: context.typography.bodyLarge
-                        .copyWith(color: context.colors.primaryTxt),
-                  ),
-                  // if (product.discount != null && product.discount!.isNotEmpty)
-                  //   Padding(
-                  //     padding: EdgeInsets.only(left: context.space.space_200),
-                  //     child: Text(
-                  //       "AED ${product.discount}",
-                  //       style: const TextStyle(
-                  //         color: Colors.grey,
-                  //         decoration: TextDecoration.lineThrough,
-                  //       ),
-                  //     ),
-                  //   ),
-                ],
-              ),
-              SizedBox(height: context.space.space_100),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: context.space.space_50,
-                  vertical: context.space.space_50,
-                ),
-                child: OutlineButtonWidget(
-                  label: 'Add To Cart',
-                  onTap: () {
-                    // Optional: Implement Add to Cart functionality
-                  },
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
+      ]),
     );
   }
 }

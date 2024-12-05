@@ -24,7 +24,7 @@ class AccessoriesDetailsPage extends HookConsumerWidget {
 
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Product Details'),
+          title: const Text("Accessories Details"),
           actions: [
             IconButton(
                 icon: const Icon(Icons.favorite_border), onPressed: () {}),

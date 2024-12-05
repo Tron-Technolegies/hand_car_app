@@ -158,6 +158,7 @@ class AccessoriesPage extends HookConsumerWidget {
                 return category.when(
                   data: (categories) {
                     final selectedCategory = categories[index];
+                    // Access the products for the selected category
                     return products.when(
                       data: (productsList) {
                         productsList
