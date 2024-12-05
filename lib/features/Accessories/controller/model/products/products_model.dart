@@ -3,6 +3,8 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'products_model.freezed.dart';
 part 'products_model.g.dart';
 
+//Products Model class to get the data from the API
+
 @freezed
 class ProductsModel with _$ProductsModel {
   const factory ProductsModel({
