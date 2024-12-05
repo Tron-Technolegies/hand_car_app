@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 
+/// Coupon Card Widget for Coupons
 class CouponCardWidget extends HookWidget {
   const CouponCardWidget({super.key});
 
