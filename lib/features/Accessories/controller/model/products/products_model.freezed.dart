@@ -26,6 +26,7 @@ mixin _$ProductsModel {
   String get brand => throw _privateConstructorUsedError;
   String get price => throw _privateConstructorUsedError;
   String? get image => throw _privateConstructorUsedError;
+  double? get discount_percentage => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
   bool get isBestseller => throw _privateConstructorUsedError;
 
@@ -52,6 +53,7 @@ abstract class $ProductsModelCopyWith<$Res> {
       String brand,
       String price,
       String? image,
+      double? discount_percentage,
       String description,
       bool isBestseller});
 }
@@ -77,6 +79,7 @@ class _$ProductsModelCopyWithImpl<$Res, $Val extends ProductsModel>
     Object? brand = null,
     Object? price = null,
     Object? image = freezed,
+    Object? discount_percentage = freezed,
     Object? description = null,
     Object? isBestseller = null,
   }) {
@@ -105,6 +108,10 @@ class _$ProductsModelCopyWithImpl<$Res, $Val extends ProductsModel>
           ? _value.image
           : image // ignore: cast_nullable_to_non_nullable
               as String?,
+      discount_percentage: freezed == discount_percentage
+          ? _value.discount_percentage
+          : discount_percentage // ignore: cast_nullable_to_non_nullable
+              as double?,
       description: null == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
@@ -132,6 +139,7 @@ abstract class _$$ProductModelImplCopyWith<$Res>
       String brand,
       String price,
       String? image,
+      double? discount_percentage,
       String description,
       bool isBestseller});
 }
@@ -155,6 +163,7 @@ class __$$ProductModelImplCopyWithImpl<$Res>
     Object? brand = null,
     Object? price = null,
     Object? image = freezed,
+    Object? discount_percentage = freezed,
     Object? description = null,
     Object? isBestseller = null,
   }) {
@@ -183,6 +192,10 @@ class __$$ProductModelImplCopyWithImpl<$Res>
           ? _value.image
           : image // ignore: cast_nullable_to_non_nullable
               as String?,
+      discount_percentage: freezed == discount_percentage
+          ? _value.discount_percentage
+          : discount_percentage // ignore: cast_nullable_to_non_nullable
+              as double?,
       description: null == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
@@ -205,6 +218,7 @@ class _$ProductModelImpl implements _ProductModel {
       required this.brand,
       required this.price,
       this.image,
+      this.discount_percentage,
       this.description = '',
       this.isBestseller = false});
 
@@ -224,6 +238,8 @@ class _$ProductModelImpl implements _ProductModel {
   @override
   final String? image;
   @override
+  final double? discount_percentage;
+  @override
   @JsonKey()
   final String description;
   @override
@@ -232,7 +248,7 @@ class _$ProductModelImpl implements _ProductModel {
 
   @override
   String toString() {
-    return 'ProductsModel(id: $id, name: $name, category: $category, brand: $brand, price: $price, image: $image, description: $description, isBestseller: $isBestseller)';
+    return 'ProductsModel(id: $id, name: $name, category: $category, brand: $brand, price: $price, image: $image, discount_percentage: $discount_percentage, description: $description, isBestseller: $isBestseller)';
   }
 
   @override
@@ -247,6 +263,8 @@ class _$ProductModelImpl implements _ProductModel {
             (identical(other.brand, brand) || other.brand == brand) &&
             (identical(other.price, price) || other.price == price) &&
             (identical(other.image, image) || other.image == image) &&
+            (identical(other.discount_percentage, discount_percentage) ||
+                other.discount_percentage == discount_percentage) &&
             (identical(other.description, description) ||
                 other.description == description) &&
             (identical(other.isBestseller, isBestseller) ||
@@ -256,7 +274,7 @@ class _$ProductModelImpl implements _ProductModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, name, category, brand, price,
-      image, description, isBestseller);
+      image, discount_percentage, description, isBestseller);
 
   /// Create a copy of ProductsModel
   /// with the given fields replaced by the non-null parameter values.
@@ -282,6 +300,7 @@ abstract class _ProductModel implements ProductsModel {
       required final String brand,
       required final String price,
       final String? image,
+      final double? discount_percentage,
       final String description,
       final bool isBestseller}) = _$ProductModelImpl;
 
@@ -300,6 +319,8 @@ abstract class _ProductModel implements ProductsModel {
   String get price;
   @override
   String? get image;
+  @override
+  double? get discount_percentage;
   @override
   String get description;
   @override

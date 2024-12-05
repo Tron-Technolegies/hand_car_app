@@ -37,9 +37,23 @@ class AccessoriesProductCardWidget extends StatelessWidget {
                   icon: const Icon(Icons.favorite_border),
                 ),
               ),
+              if (product.isBestseller == true)
+                Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: context.colors.yellow),
+                  child: Padding(
+                    padding: EdgeInsets.all(context.space.space_100),
+                    child: Text(
+                      'Bestseller',
+                      style: context.typography.body,
+                    ),
+                  ),
+                ),
               Center(
                 child: Image.network(
-                  product.image ?? 'https://via.placeholder.com/150',
+                  product.image ??
+                      'https://img.freepik.com/premium-photo/car-parts-repair-concept_127657-10165.jpg?uid=P91385388&ga=GA1.1.934021275.1724508943&semt=ais_hybrid',
                   height: 100,
                   width: 100,
                   errorBuilder: (context, error, stackTrace) =>
@@ -47,20 +61,20 @@ class AccessoriesProductCardWidget extends StatelessWidget {
                 ),
               ),
               SizedBox(height: context.space.space_100),
-              // if (product.off != null && product.off!.isNotEmpty)
-              //   Container(
-              //     decoration: BoxDecoration(
-              //       borderRadius: BorderRadius.circular(5),
-              //       color: context.colors.yellow,
-              //     ),
-              //     child: Padding(
-              //       padding: EdgeInsets.all(context.space.space_100),
-              //       child: Text(
-              //         '${product.off}% OFF',
-              //         style: context.typography.body,
-              //       ),
-              //     ),
-              //   ),
+              if (product.discount_percentage != null)
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: context.colors.yellow,
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(context.space.space_100),
+                    child: Text(
+                      '${product.discount_percentage?.toString()}% OFF',
+                      style: context.typography.body,
+                    ),
+                  ),
+                ),
               SizedBox(height: context.space.space_100),
               Text(
                 product.name,

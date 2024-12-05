@@ -6,7 +6,7 @@ part of 'review_controller.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$reviewControllerHash() => r'ec79fd4fb924096274ae95275734887806612d61';
+String _$reviewControllerHash() => r'b28bf4c8a6dffd7b6473e5dd3e3d708c18eb94ec';
 
 /// See also [ReviewController].
 @ProviderFor(ReviewController)
