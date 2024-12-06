@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Subscriptions/controller/subscription_controller.dart';
+import 'package:hand_car/features/Subscriptions/view/widgets/button_for_plan_selection_widget.dart';
+import 'package:hand_car/features/Subscriptions/view/widgets/duration_button_widget.dart';
 import 'package:hand_car/features/Subscriptions/view/widgets/plans_container_widget.dart';
 import 'package:hand_car/features/Subscriptions/view/widgets/popular_text_container_widegr.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -21,16 +23,30 @@ abstract class BasePlanScreen extends HookConsumerWidget {
   Color get secondaryColor;
   Color get containerColor;
 
+  // Duration button colors (override these in subclasses)
+  Color get durationButtonColor;
+  Color get durationButtonTextColor1;
+  Color get durationButtonTextColor2;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    print(
-        'Building BasePlanScreen for service type: $serviceType'); // Debug log
+    print('Building BasePlanScreen for service type: $serviceType'); // Debug log
 
     final selectedIndex = useState(0);
     final selectedDurationIndex = useState(0);
     final scrollController = useScrollController();
 
     final plansAsyncValue = ref.watch(planNotifierProvider(serviceType));
+
+    // Scroll to Plan
+    void scrollToPlan(int index) {
+      selectedIndex.value = index;
+      scrollController.animateTo(
+        index * 650.0,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    }
 
     return Scaffold(
       extendBody: true,
@@ -59,12 +75,6 @@ abstract class BasePlanScreen extends HookConsumerWidget {
                 const SizedBox(height: 16),
                 Text('Error: ${error.toString()}'),
                 const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    ref.refresh(planNotifierProvider(serviceType));
-                  },
-                  child: const Text('Retry'),
-                ),
               ],
             ),
           );
@@ -84,27 +94,49 @@ abstract class BasePlanScreen extends HookConsumerWidget {
               decoration: BoxDecoration(gradient: backgroundGradient),
               child: SafeArea(
                 child: Padding(
-                  padding: EdgeInsets.all(context.space.space_250),
+                  padding: const EdgeInsets.all(16.0), // Adjust padding as needed
                   child: Column(
                     children: [
                       Text(
                         screenTitle,
-                        style: context.typography.h3,
+                        style: context.typography.h2.copyWith(
+                              color: Colors.white,
+                            ),
                         textAlign: TextAlign.center,
                       ),
-                      SizedBox(height: context.space.space_150),
+                      const SizedBox(height: 16),
                       Text(
                         screenDescription,
-                        style: context.typography.bodyMedium,
+                        style: context.typography.body.copyWith(
+                              color: Colors.white,
+                            ),
                         textAlign: TextAlign.center,
                       ),
-                      SizedBox(height: context.space.space_250),
+                      const SizedBox(height: 32),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Plan Selection Buttons
+              
+                          // Duration Selection Buttons
+                          DurationButtons(
+                            selectedIndex: selectedDurationIndex.value,
+                            onSelectPlan: (index) {
+                              selectedDurationIndex.value = index;
+                            },
+                            containerColor: durationButtonColor,
+                            textColor1: durationButtonTextColor1,
+                            textColor2: durationButtonTextColor2,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 32),
                       ListView.separated(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: plans.length,
                         separatorBuilder: (context, index) =>
-                            SizedBox(height: context.space.space_250),
+                            const SizedBox(height: 16),
                         itemBuilder: (context, index) {
                           final plan = plans[index];
                           print(

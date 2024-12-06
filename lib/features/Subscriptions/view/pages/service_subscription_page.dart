@@ -128,8 +128,6 @@
 //     );
 //   }
 // }
-
-
 import 'package:flutter/material.dart';
 import 'package:hand_car/features/Subscriptions/view/pages/base_plan_screen.dart';
 
@@ -145,7 +143,7 @@ class MaintenancePlanScreen extends BasePlanScreen {
 
   @override
   LinearGradient get backgroundGradient => const LinearGradient(
-        colors: [Colors.white, Colors.white],
+        colors: [Color(0xff000000), Color(0xff787878)],
       );
 
   @override
@@ -156,4 +154,16 @@ class MaintenancePlanScreen extends BasePlanScreen {
 
   @override
   Color get containerColor => const Color(0xffF5F5F5);
+
+  @override
+  ///  implement durationButtonColor
+  Color get durationButtonColor => Color(0xffEEEEEE);
+
+  @override
+  //implement durationButtonTextColor1
+  Color get durationButtonTextColor1 => Colors.black;
+
+  @override
+  //  implement durationButtonTextColor2
+  Color get durationButtonTextColor2 => const Color(0xff787878);
 }

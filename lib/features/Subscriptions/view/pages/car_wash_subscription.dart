@@ -16,7 +16,7 @@
 //     final selectedIndex = useState(0);
 //     final scrollController = useScrollController();
 //     final selectedDurationIndex = useState(0);
-    
+
 //     // Plan Names
 //     final planNames = ["Basic", "Premium", "Luxury"];
 //     //Plan Prices
@@ -158,26 +158,25 @@ class CarWashPlanScreen extends BasePlanScreen {
 
   @override
   String get screenDescription =>
-      'Customized services to meet every car washing need with our specialized care.';
+      'Whether its a quick rinse or a detailed clean, we offer customized services to meet every car washing need. Experience the difference with our specialized care and attention to detail.';
 
   @override
   LinearGradient get backgroundGradient => const LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          Color(0xffD50104),
-          Color(0xffffffff),
-          Color(0xffD50104),
-          Color(0xffffffff),
-        ],
+        colors: [Color(0xFFDA1E21), Color(0xFFF77577)],
       );
 
   @override
-  Color get primaryColor => const Color(0xffDA1E21);
+  Color get primaryColor => const Color(0xFFDA1E21);
 
   @override
-  Color get secondaryColor => const Color(0xffE7696B);
+  Color get secondaryColor => const Color(0xFFF77577);
 
   @override
-  Color get containerColor => const Color(0xffFFD9D9);
+  Color get containerColor => const Color(0xFFF5E1E1);
+
+  // Override for duration button
+  @override
+  Color get durationButtonColor => const Color(0xffFFD9D9); // Light Blue
+  Color get durationButtonTextColor1 => const Color(0xffDA1E21); // Dark Blue
+  Color get durationButtonTextColor2 => const Color(0xffE7696B); // Medium Blue
 }
