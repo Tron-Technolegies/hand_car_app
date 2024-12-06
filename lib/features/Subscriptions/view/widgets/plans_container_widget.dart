@@ -6,15 +6,10 @@ import 'package:hand_car/core/widgets/button_widget.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// This widget is used to display the plans container in the subscription page
-
 class PlansContainer extends HookConsumerWidget {
   final String planName;
   final String price;
-  final String planFeature1;
-  final String planFeature2;
-  final String? planFeature3;
-  final String? planFeature4;
+  final String description; // Updated: single description field
   final String duration;
   final Color color;
   final Color textColor1;
@@ -27,10 +22,7 @@ class PlansContainer extends HookConsumerWidget {
     super.key,
     required this.planName,
     required this.price,
-    required this.planFeature1,
-    required this.planFeature2,
-    this.planFeature3,
-    this.planFeature4,
+    required this.description,
     required this.duration,
     required this.color,
     required this.textColor1,
@@ -39,16 +31,23 @@ class PlansContainer extends HookConsumerWidget {
     required this.selectedDuration,
     this.child,
   });
-  
-//Launch Whatsapp TO Subscribe 
+
+  // Launch WhatsApp to Subscribe
   String createWhatsAppUrl(String plan, String price, int duration) {
     final message = Uri.encodeComponent(
         "I would like to subscribe to the $plan plan for $duration months at a price of AED $price.");
     return "https://wa.me/917025791186?text=$message";
   }
 
+  // Split description into features
+  List<String> parseFeatures(String description) {
+    return description.split(',').map((feature) => feature.trim()).toList();
+  }
+
   @override
   Widget build(BuildContext context, ref) {
+    final features = parseFeatures(description);
+
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -80,7 +79,7 @@ class PlansContainer extends HookConsumerWidget {
                 style: context.typography.h2,
                 children: [
                   TextSpan(
-                    text: '/month',
+                    text: '/$duration months',
                     style: context.typography.bodyMedium
                         .copyWith(color: context.colors.primaryTxt),
                   ),
@@ -88,12 +87,8 @@ class PlansContainer extends HookConsumerWidget {
               ),
             ),
             SizedBox(height: context.space.space_250),
-            FeaturesCheckIconWidget(text: planFeature1),
-            FeaturesCheckIconWidget(text: planFeature2),
-            if (planFeature3 != null && planFeature3!.isNotEmpty)
-              FeaturesCheckIconWidget(text: planFeature3!),
-            if (planFeature4 != null && planFeature4!.isNotEmpty)
-              FeaturesCheckIconWidget(text: planFeature4!),
+            // Display parsed features
+            ...features.map((feature) => FeaturesCheckIconWidget(text: feature)),
             SizedBox(height: context.space.space_250),
             Container(
               padding: EdgeInsets.all(context.space.space_250),
@@ -119,13 +114,13 @@ class PlansContainer extends HookConsumerWidget {
                   PlanDiscountWidget(
                     number: '2',
                     plan: "Car Plan",
-                    price: "10%off/car",
+                    price: "10% off/car",
                     color: color,
                   ),
                   PlanDiscountWidget(
                     number: '3',
                     plan: "Car+ Plan",
-                    price: "20%off/car",
+                    price: "20% off/car",
                     color: color,
                   ),
                 ],

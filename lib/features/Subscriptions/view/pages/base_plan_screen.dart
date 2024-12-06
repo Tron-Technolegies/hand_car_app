@@ -23,7 +23,8 @@ abstract class BasePlanScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    print('Building BasePlanScreen for service type: $serviceType'); // Debug log
+    print(
+        'Building BasePlanScreen for service type: $serviceType'); // Debug log
 
     final selectedIndex = useState(0);
     final selectedDurationIndex = useState(0);
@@ -106,20 +107,22 @@ abstract class BasePlanScreen extends HookConsumerWidget {
                             SizedBox(height: context.space.space_250),
                         itemBuilder: (context, index) {
                           final plan = plans[index];
-                          print('Building plan card for: ${plan.name}'); // Debug log
+                          print(
+                              'Building plan card for: ${plan.name}'); // Debug log
 
                           return PlansContainer(
                             planName: plan.name,
                             price: plan.price,
                             duration: plan.duration,
-                            planFeature1: plan.description,
+                            description: plan.description,
                             color: primaryColor,
                             containerColor: containerColor,
                             textColor1: primaryColor,
                             textColor2: secondaryColor,
                             selectedDuration: selectedDurationIndex.value,
-                            planFeature2: '',
-                            child: index == 1 ? const PopularTextConainerWidget() : null,
+                            child: index == 1
+                                ? const PopularTextConainerWidget()
+                                : null,
                           );
                         },
                       ),
