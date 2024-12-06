@@ -15,6 +15,7 @@ class PlansContainer extends HookConsumerWidget {
   final String planFeature2;
   final String? planFeature3;
   final String? planFeature4;
+  final String duration;
   final Color color;
   final Color textColor1;
   final Color textColor2;
@@ -30,6 +31,7 @@ class PlansContainer extends HookConsumerWidget {
     required this.planFeature2,
     this.planFeature3,
     this.planFeature4,
+    required this.duration,
     required this.color,
     required this.textColor1,
     required this.textColor2,

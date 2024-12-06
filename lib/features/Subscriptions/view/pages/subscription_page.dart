@@ -75,7 +75,7 @@ class SubscriptionPage extends HookWidget {
         controller: tabController,
         children: const [
           CarWashPlanScreen(),
-          ServicePlanScreen(),
+          MaintenancePlanScreen(),
         ],
       ),
     );

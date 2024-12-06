@@ -14,6 +14,163 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
+PlanResponse _$PlanResponseFromJson(Map<String, dynamic> json) {
+  return _PlanResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$PlanResponse {
+  List<PlanModel> get plan => throw _privateConstructorUsedError;
+
+  /// Serializes this PlanResponse to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of PlanResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $PlanResponseCopyWith<PlanResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $PlanResponseCopyWith<$Res> {
+  factory $PlanResponseCopyWith(
+          PlanResponse value, $Res Function(PlanResponse) then) =
+      _$PlanResponseCopyWithImpl<$Res, PlanResponse>;
+  @useResult
+  $Res call({List<PlanModel> plan});
+}
+
+/// @nodoc
+class _$PlanResponseCopyWithImpl<$Res, $Val extends PlanResponse>
+    implements $PlanResponseCopyWith<$Res> {
+  _$PlanResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of PlanResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? plan = null,
+  }) {
+    return _then(_value.copyWith(
+      plan: null == plan
+          ? _value.plan
+          : plan // ignore: cast_nullable_to_non_nullable
+              as List<PlanModel>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$PlanResponseImplCopyWith<$Res>
+    implements $PlanResponseCopyWith<$Res> {
+  factory _$$PlanResponseImplCopyWith(
+          _$PlanResponseImpl value, $Res Function(_$PlanResponseImpl) then) =
+      __$$PlanResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<PlanModel> plan});
+}
+
+/// @nodoc
+class __$$PlanResponseImplCopyWithImpl<$Res>
+    extends _$PlanResponseCopyWithImpl<$Res, _$PlanResponseImpl>
+    implements _$$PlanResponseImplCopyWith<$Res> {
+  __$$PlanResponseImplCopyWithImpl(
+      _$PlanResponseImpl _value, $Res Function(_$PlanResponseImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of PlanResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? plan = null,
+  }) {
+    return _then(_$PlanResponseImpl(
+      plan: null == plan
+          ? _value._plan
+          : plan // ignore: cast_nullable_to_non_nullable
+              as List<PlanModel>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$PlanResponseImpl implements _PlanResponse {
+  const _$PlanResponseImpl({required final List<PlanModel> plan})
+      : _plan = plan;
+
+  factory _$PlanResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$PlanResponseImplFromJson(json);
+
+  final List<PlanModel> _plan;
+  @override
+  List<PlanModel> get plan {
+    if (_plan is EqualUnmodifiableListView) return _plan;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_plan);
+  }
+
+  @override
+  String toString() {
+    return 'PlanResponse(plan: $plan)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$PlanResponseImpl &&
+            const DeepCollectionEquality().equals(other._plan, _plan));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_plan));
+
+  /// Create a copy of PlanResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$PlanResponseImplCopyWith<_$PlanResponseImpl> get copyWith =>
+      __$$PlanResponseImplCopyWithImpl<_$PlanResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$PlanResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _PlanResponse implements PlanResponse {
+  const factory _PlanResponse({required final List<PlanModel> plan}) =
+      _$PlanResponseImpl;
+
+  factory _PlanResponse.fromJson(Map<String, dynamic> json) =
+      _$PlanResponseImpl.fromJson;
+
+  @override
+  List<PlanModel> get plan;
+
+  /// Create a copy of PlanResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$PlanResponseImplCopyWith<_$PlanResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
 PlanModel _$PlanModelFromJson(Map<String, dynamic> json) {
   return _PlanModel.fromJson(json);
 }
@@ -22,6 +179,7 @@ PlanModel _$PlanModelFromJson(Map<String, dynamic> json) {
 mixin _$PlanModel {
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
+  @JsonKey(name: 'service_type')
   String get serviceType => throw _privateConstructorUsedError;
   String get duration => throw _privateConstructorUsedError;
   String get price => throw _privateConstructorUsedError;
@@ -45,7 +203,7 @@ abstract class $PlanModelCopyWith<$Res> {
   $Res call(
       {int id,
       String name,
-      String serviceType,
+      @JsonKey(name: 'service_type') String serviceType,
       String duration,
       String price,
       String description});
@@ -113,7 +271,7 @@ abstract class _$$PlanModelImplCopyWith<$Res>
   $Res call(
       {int id,
       String name,
-      String serviceType,
+      @JsonKey(name: 'service_type') String serviceType,
       String duration,
       String price,
       String description});
@@ -174,7 +332,7 @@ class _$PlanModelImpl implements _PlanModel {
   const _$PlanModelImpl(
       {required this.id,
       required this.name,
-      required this.serviceType,
+      @JsonKey(name: 'service_type') required this.serviceType,
       required this.duration,
       required this.price,
       required this.description});
@@ -187,6 +345,7 @@ class _$PlanModelImpl implements _PlanModel {
   @override
   final String name;
   @override
+  @JsonKey(name: 'service_type')
   final String serviceType;
   @override
   final String duration;
@@ -241,7 +400,7 @@ abstract class _PlanModel implements PlanModel {
   const factory _PlanModel(
       {required final int id,
       required final String name,
-      required final String serviceType,
+      @JsonKey(name: 'service_type') required final String serviceType,
       required final String duration,
       required final String price,
       required final String description}) = _$PlanModelImpl;
@@ -254,6 +413,7 @@ abstract class _PlanModel implements PlanModel {
   @override
   String get name;
   @override
+  @JsonKey(name: 'service_type')
   String get serviceType;
   @override
   String get duration;

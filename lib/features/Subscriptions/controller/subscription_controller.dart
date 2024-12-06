@@ -7,30 +7,20 @@ part 'subscription_controller.g.dart';
 
 @riverpod
 class PlanNotifier extends _$PlanNotifier {
-  Future<PlanModel> build() async {
-    // Initial loading of plans
-    return await _fetchPlans();
+  @override
+  Future<List<PlanModel>> build(String serviceType) async {
+    print('Building PlanNotifier for service type: $serviceType'); // Debug log
+    return await _fetchPlans(serviceType);
   }
 
-  Future<PlanModel> _fetchPlans() async {
+  Future<List<PlanModel>> _fetchPlans(String serviceType) async {
     try {
-      return await PlanServices.getSubscription();
+      final plans = await PlanServices.getPlans(serviceType);
+      print('Fetched ${plans.length} plans'); // Debug log
+      return plans;
     } catch (e) {
-      // Handle error - you might want to log this or handle more specifically
+      print('Error in _fetchPlans: $e'); // Debug log
       throw Exception('Failed to fetch plans: $e');
-    }
-  }
-
-  // Method to manually refresh plans
-  Future<void> refreshPlans() async {
-    // Set state to loading
-    state = const AsyncValue.loading();
-
-    try {
-      final plans = await _fetchPlans();
-      state = AsyncValue.data(plans);
-    } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
     }
   }
 }
