@@ -14,7 +14,7 @@ class PlanServices {
 
   static Future<PlanModel> getSubscription() async {
     try {
-      final response = await _dio.get('/subscribe/');
+      final response = await _dio.get('/view_plans');
       return PlanModel.fromJson(response.data);
     } on DioException catch (e) {
       throw Exception('Failed to fetch products: ${e.message}');
