@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // For Clipboard
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -107,7 +106,7 @@ class CouponCardWidget extends HookConsumerWidget {
                   color: isCopied.value ? Colors.green : Colors.black87,
                 ),
               ),
-              const SizedBox(width: 16),
+               SizedBox(width: context.space.space_200),
               // Apply Button
               GestureDetector(
                 onTap: onApply,
@@ -120,7 +119,7 @@ class CouponCardWidget extends HookConsumerWidget {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(width: 4),
+                    SizedBox(width: context.space.space_50),
                     const Icon(
                       Icons.arrow_forward,
                       size: 20,
@@ -148,7 +147,7 @@ class CouponCardWidget extends HookConsumerWidget {
                     Expanded(
                       child: Text(
                         item,
-                        style: context.typography.bodySmall.copyWith(
+                        style: context.typography.body.copyWith(
                           color: Colors.black87,
                           height: 0.8, // Line height for readability
                         ),

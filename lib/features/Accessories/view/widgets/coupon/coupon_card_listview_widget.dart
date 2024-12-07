@@ -7,7 +7,6 @@ import 'package:hand_car/features/Accessories/controller/model/coupon/coupon_mod
 import 'package:hand_car/features/Accessories/view/widgets/coupon/coupon_card_widget.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-
 class CouponCardListView extends ConsumerWidget {
   final void Function(CouponModel coupon) onCouponApply;
 
@@ -29,13 +28,13 @@ class CouponCardListView extends ConsumerWidget {
         }
 
         return SizedBox(
-          height: 230, // Define a fixed height for the card view
+          height: 210, // Define a fixed height for the card view
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: coupons.length,
             itemBuilder: (context, index) {
               return SizedBox(
-                width: 300, // Constrain each card to a fixed width
+                width: 320, // Constrain each card to a fixed width
                 child: CouponCardWidget(
                   coupon: coupons[index],
                   onApply: () => onCouponApply(coupons[index]),
