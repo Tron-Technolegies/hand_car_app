@@ -1,6 +1,9 @@
+// 
+
 import 'package:hand_car/features/Accessories/services/cart_api_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:hand_car/features/Accessories/controller/model/cart/cart_model.dart';
+import 'package:hand_car/features/Accessories/controller/model/coupon/coupon_model.dart';
 
 part 'cart_controller.g.dart';
 
@@ -12,6 +15,7 @@ class CartController extends _$CartController {
     return cartResponse ?? const CartModel();
   }
 
+  /// Refresh Cart
   Future<void> refreshCart() async {
     state = const AsyncValue.loading();
     try {
@@ -28,30 +32,53 @@ class CartController extends _$CartController {
       state = AsyncValue.error('Error refreshing cart: $e', stackTrace);
     }
   }
-Future<void> addToCart(int productId) async {
-  state = const AsyncValue.loading();
-  try {
-    final response = await CartApiService().addToCart(productId);
-    if (response['success']) {
-      // Refresh the cart to reflect updated state
-      await refreshCart();
-      state = AsyncValue.data(CartModel.fromJson(response)); // Assume CartModel can be parsed from response
-    } else {
-      state = AsyncValue.error(response['message'], StackTrace.current);
+
+  /// Add to Cart
+  Future<void> addToCart(int productId) async {
+    try {
+      final response = await CartApiService().addToCart(productId);
+      if (response['success']) {
+        await refreshCart();
+      } else {
+        state = AsyncValue.error(response['message'], StackTrace.current);
+      }
+    } catch (e, stackTrace) {
+      state = AsyncValue.error('Error adding to cart: $e', stackTrace);
     }
-  } catch (e, stackTrace) {
-    state = AsyncValue.error('Error adding to cart: $e', stackTrace);
   }
-}
 
+  /// Remove from Cart
+  // Future<void> removeFromCart(int productId) async {
+  //   try {
+  //     final response = await CartApiService().removeFromCart(productId);
+  //     if (response['success']) {
+  //       await refreshCart();
+  //     } else {
+  //       state = AsyncValue.error(response['message'], StackTrace.current);
+  //     }
+  //   } catch (e, stackTrace) {
+  //     state = AsyncValue.error('Error removing item from cart: $e', stackTrace);
+  //   }
+  // }
 
+  /// Apply a Coupon
+  void applyCoupon(CouponModel coupon) {
+    if (state.value != null) {
+      final currentCart = state.value!;
+      state = AsyncValue.data(
+        CartModel(
+          cartItems: currentCart.cartItems,
+          totalAmount: currentCart.totalAmount,
+          appliedCoupon: coupon,
+        ),
+      );
+    }
+  }
 
-  // Updated total calculation
+  /// Calculate Total Amount
   double get cartTotal {
     return state.whenOrNull(
-      data: (cart) => cart.totalAmount,
+      data: (cart) => cart.discountedTotal,
     ) ?? 0.0;
   }
-  //remove item
-  
 }

@@ -18,6 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$CartModel {
   List<CartItem> get cartItems => throw _privateConstructorUsedError;
   double get totalAmount => throw _privateConstructorUsedError;
+  CouponModel? get appliedCoupon => throw _privateConstructorUsedError;
 
   /// Create a copy of CartModel
   /// with the given fields replaced by the non-null parameter values.
@@ -31,7 +32,10 @@ abstract class $CartModelCopyWith<$Res> {
   factory $CartModelCopyWith(CartModel value, $Res Function(CartModel) then) =
       _$CartModelCopyWithImpl<$Res, CartModel>;
   @useResult
-  $Res call({List<CartItem> cartItems, double totalAmount});
+  $Res call(
+      {List<CartItem> cartItems,
+      double totalAmount,
+      CouponModel? appliedCoupon});
 }
 
 /// @nodoc
@@ -51,6 +55,7 @@ class _$CartModelCopyWithImpl<$Res, $Val extends CartModel>
   $Res call({
     Object? cartItems = null,
     Object? totalAmount = null,
+    Object? appliedCoupon = freezed,
   }) {
     return _then(_value.copyWith(
       cartItems: null == cartItems
@@ -61,6 +66,10 @@ class _$CartModelCopyWithImpl<$Res, $Val extends CartModel>
           ? _value.totalAmount
           : totalAmount // ignore: cast_nullable_to_non_nullable
               as double,
+      appliedCoupon: freezed == appliedCoupon
+          ? _value.appliedCoupon
+          : appliedCoupon // ignore: cast_nullable_to_non_nullable
+              as CouponModel?,
     ) as $Val);
   }
 }
@@ -73,7 +82,10 @@ abstract class _$$CartModelImplCopyWith<$Res>
       __$$CartModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({List<CartItem> cartItems, double totalAmount});
+  $Res call(
+      {List<CartItem> cartItems,
+      double totalAmount,
+      CouponModel? appliedCoupon});
 }
 
 /// @nodoc
@@ -91,6 +103,7 @@ class __$$CartModelImplCopyWithImpl<$Res>
   $Res call({
     Object? cartItems = null,
     Object? totalAmount = null,
+    Object? appliedCoupon = freezed,
   }) {
     return _then(_$CartModelImpl(
       cartItems: null == cartItems
@@ -101,16 +114,23 @@ class __$$CartModelImplCopyWithImpl<$Res>
           ? _value.totalAmount
           : totalAmount // ignore: cast_nullable_to_non_nullable
               as double,
+      appliedCoupon: freezed == appliedCoupon
+          ? _value.appliedCoupon
+          : appliedCoupon // ignore: cast_nullable_to_non_nullable
+              as CouponModel?,
     ));
   }
 }
 
 /// @nodoc
 
-class _$CartModelImpl implements _CartModel {
+class _$CartModelImpl extends _CartModel {
   const _$CartModelImpl(
-      {final List<CartItem> cartItems = const [], this.totalAmount = 0.0})
-      : _cartItems = cartItems;
+      {final List<CartItem> cartItems = const [],
+      this.totalAmount = 0.0,
+      this.appliedCoupon})
+      : _cartItems = cartItems,
+        super._();
 
   final List<CartItem> _cartItems;
   @override
@@ -124,10 +144,12 @@ class _$CartModelImpl implements _CartModel {
   @override
   @JsonKey()
   final double totalAmount;
+  @override
+  final CouponModel? appliedCoupon;
 
   @override
   String toString() {
-    return 'CartModel(cartItems: $cartItems, totalAmount: $totalAmount)';
+    return 'CartModel(cartItems: $cartItems, totalAmount: $totalAmount, appliedCoupon: $appliedCoupon)';
   }
 
   @override
@@ -138,12 +160,17 @@ class _$CartModelImpl implements _CartModel {
             const DeepCollectionEquality()
                 .equals(other._cartItems, _cartItems) &&
             (identical(other.totalAmount, totalAmount) ||
-                other.totalAmount == totalAmount));
+                other.totalAmount == totalAmount) &&
+            const DeepCollectionEquality()
+                .equals(other.appliedCoupon, appliedCoupon));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType,
-      const DeepCollectionEquality().hash(_cartItems), totalAmount);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(_cartItems),
+      totalAmount,
+      const DeepCollectionEquality().hash(appliedCoupon));
 
   /// Create a copy of CartModel
   /// with the given fields replaced by the non-null parameter values.
@@ -154,15 +181,19 @@ class _$CartModelImpl implements _CartModel {
       __$$CartModelImplCopyWithImpl<_$CartModelImpl>(this, _$identity);
 }
 
-abstract class _CartModel implements CartModel {
+abstract class _CartModel extends CartModel {
   const factory _CartModel(
       {final List<CartItem> cartItems,
-      final double totalAmount}) = _$CartModelImpl;
+      final double totalAmount,
+      final CouponModel? appliedCoupon}) = _$CartModelImpl;
+  const _CartModel._() : super._();
 
   @override
   List<CartItem> get cartItems;
   @override
   double get totalAmount;
+  @override
+  CouponModel? get appliedCoupon;
 
   /// Create a copy of CartModel
   /// with the given fields replaced by the non-null parameter values.

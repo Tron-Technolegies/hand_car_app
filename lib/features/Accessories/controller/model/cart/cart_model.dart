@@ -1,25 +1,34 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-
+import 'package:hand_car/features/Accessories/controller/model/coupon/coupon_model.dart';
 part 'cart_model.freezed.dart';
 
 
 @freezed
 class CartModel with _$CartModel {
+  const CartModel._(); // Add a private constructor to enable custom getters
+
   const factory CartModel({
     @Default([]) List<CartItem> cartItems,
     @Default(0.0) double totalAmount,
+    CouponModel? appliedCoupon, // Added applied coupon field
   }) = _CartModel;
+
+  /// Custom getter to calculate the discounted total
+  double get discountedTotal {
+    if (appliedCoupon == null) return totalAmount;
+    final discount = totalAmount * (appliedCoupon!.discountPercentage / 100);
+    return totalAmount - discount;
+  }
 
   factory CartModel.fromJson(Map<String, dynamic> json) {
     // Handle the specific structure of your API response
     if (json['cart_items'] is List) {
+      final items = (json['cart_items'] as List)
+          .map((item) => CartItem.fromJson(item))
+          .toList();
       return CartModel(
-        cartItems: (json['cart_items'] as List)
-            .map((item) => CartItem.fromJson(item))
-            .toList(),
-        totalAmount: _calculateTotal((json['cart_items'] as List)
-            .map((item) => CartItem.fromJson(item))
-            .toList()),
+        cartItems: items,
+        totalAmount: _calculateTotal(items),
       );
     }
     return const CartModel();
@@ -45,7 +54,9 @@ class CartItem with _$CartItem {
   }
 }
 
+/// Helper function to calculate the total amount
 double _calculateTotal(List<CartItem> items) {
-  return items.fold(0.0, (total, item) => 
-    total + (double.tryParse(item.totalPrice) ?? 0.0));
+  return items.fold(0.0, (total, item) {
+    return total + (double.tryParse(item.totalPrice) ?? 0.0);
+  });
 }
