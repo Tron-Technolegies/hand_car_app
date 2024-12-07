@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
 import 'package:hand_car/features/Accessories/controller/model/coupon/coupon_model.dart';
@@ -11,13 +13,14 @@ class CouponServices {
       },
     ),
   );
-   Future<List<CouponModel>> getCoupons() async {
+  static Future<List<CouponModel>> getCoupons() async {
     try {
-      final response = await _dio.get('/your-coupon-endpoint');
-      
+      final response = await _dio.get('/view_coupons');
+
       // Assuming the response has a 'coupon' key with a list
       final List<dynamic> couponData = response.data['coupon'];
-      
+      log('Coupon data: $couponData');
+
       return couponData.map((json) => CouponModel.fromJson(json)).toList();
     } on DioException catch (e) {
       // Handle network errors

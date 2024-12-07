@@ -37,6 +37,7 @@ dependencies:
   flutter_secure_storage: ^4.2.1
   get_storage: ^2.1.1
   shared_preferences: ^2.3.3
+  html: ^0.15.5
 
 dev_dependencies:
   flutter_test:

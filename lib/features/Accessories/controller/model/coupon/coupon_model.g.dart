@@ -11,7 +11,7 @@ _$CouponModelImpl _$$CouponModelImplFromJson(Map<String, dynamic> json) =>
       id: (json['id'] as num).toInt(),
       name: json['name'] as String,
       couponCode: json['coupon_code'] as String,
-      discountPercentage: (json['discount_percentage'] as num).toDouble(),
+      discountPercentage: _parseDiscountPercentage(json['discount_percentage']),
       startDate: DateTime.parse(json['start_date'] as String),
       endDate: DateTime.parse(json['end_date'] as String),
       description: json['description'] as String,

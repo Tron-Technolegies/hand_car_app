@@ -24,7 +24,7 @@ mixin _$CouponModel {
   String get name => throw _privateConstructorUsedError;
   @JsonKey(name: 'coupon_code')
   String get couponCode => throw _privateConstructorUsedError;
-  @JsonKey(name: 'discount_percentage')
+  @JsonKey(name: 'discount_percentage', fromJson: _parseDiscountPercentage)
   double get discountPercentage => throw _privateConstructorUsedError;
   @JsonKey(name: 'start_date')
   DateTime get startDate => throw _privateConstructorUsedError;
@@ -52,7 +52,8 @@ abstract class $CouponModelCopyWith<$Res> {
       {int id,
       String name,
       @JsonKey(name: 'coupon_code') String couponCode,
-      @JsonKey(name: 'discount_percentage') double discountPercentage,
+      @JsonKey(name: 'discount_percentage', fromJson: _parseDiscountPercentage)
+      double discountPercentage,
       @JsonKey(name: 'start_date') DateTime startDate,
       @JsonKey(name: 'end_date') DateTime endDate,
       String description});
@@ -126,7 +127,8 @@ abstract class _$$CouponModelImplCopyWith<$Res>
       {int id,
       String name,
       @JsonKey(name: 'coupon_code') String couponCode,
-      @JsonKey(name: 'discount_percentage') double discountPercentage,
+      @JsonKey(name: 'discount_percentage', fromJson: _parseDiscountPercentage)
+      double discountPercentage,
       @JsonKey(name: 'start_date') DateTime startDate,
       @JsonKey(name: 'end_date') DateTime endDate,
       String description});
@@ -188,15 +190,17 @@ class __$$CouponModelImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$CouponModelImpl implements _CouponModel {
+class _$CouponModelImpl extends _CouponModel {
   const _$CouponModelImpl(
       {required this.id,
       required this.name,
       @JsonKey(name: 'coupon_code') required this.couponCode,
-      @JsonKey(name: 'discount_percentage') required this.discountPercentage,
+      @JsonKey(name: 'discount_percentage', fromJson: _parseDiscountPercentage)
+      required this.discountPercentage,
       @JsonKey(name: 'start_date') required this.startDate,
       @JsonKey(name: 'end_date') required this.endDate,
-      required this.description});
+      required this.description})
+      : super._();
 
   factory _$CouponModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$CouponModelImplFromJson(json);
@@ -209,7 +213,7 @@ class _$CouponModelImpl implements _CouponModel {
   @JsonKey(name: 'coupon_code')
   final String couponCode;
   @override
-  @JsonKey(name: 'discount_percentage')
+  @JsonKey(name: 'discount_percentage', fromJson: _parseDiscountPercentage)
   final double discountPercentage;
   @override
   @JsonKey(name: 'start_date')
@@ -264,16 +268,17 @@ class _$CouponModelImpl implements _CouponModel {
   }
 }
 
-abstract class _CouponModel implements CouponModel {
+abstract class _CouponModel extends CouponModel {
   const factory _CouponModel(
       {required final int id,
       required final String name,
       @JsonKey(name: 'coupon_code') required final String couponCode,
-      @JsonKey(name: 'discount_percentage')
+      @JsonKey(name: 'discount_percentage', fromJson: _parseDiscountPercentage)
       required final double discountPercentage,
       @JsonKey(name: 'start_date') required final DateTime startDate,
       @JsonKey(name: 'end_date') required final DateTime endDate,
       required final String description}) = _$CouponModelImpl;
+  const _CouponModel._() : super._();
 
   factory _CouponModel.fromJson(Map<String, dynamic> json) =
       _$CouponModelImpl.fromJson;
@@ -286,7 +291,7 @@ abstract class _CouponModel implements CouponModel {
   @JsonKey(name: 'coupon_code')
   String get couponCode;
   @override
-  @JsonKey(name: 'discount_percentage')
+  @JsonKey(name: 'discount_percentage', fromJson: _parseDiscountPercentage)
   double get discountPercentage;
   @override
   @JsonKey(name: 'start_date')
