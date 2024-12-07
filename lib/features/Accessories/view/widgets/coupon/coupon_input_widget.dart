@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class CouponInputSection extends HookWidget {
+class CouponInputSection extends HookConsumerWidget {
   final TextEditingController controller;
 
   const CouponInputSection({super.key, required this.controller});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,ref) {
     return Padding(
       padding: EdgeInsets.all(context.space.space_200),
       child: Column(

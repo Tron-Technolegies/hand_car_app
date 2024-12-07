@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
 import 'package:hand_car/features/Subscriptions/controller/model/plan_model.dart';
@@ -14,12 +16,12 @@ class PlanServices {
 
   static Future<List<PlanModel>> getPlans(String serviceType) async {
     try {
-      print('Fetching plans for service type: $serviceType'); // Debug log
+      log('Fetching plans for service type: $serviceType'); // Debug log
       final response = await _dio.get(
         '/view_plans',
         queryParameters: {'service_type': serviceType},
       );
-      print('API Response: ${response.data}'); // Debug log
+      log('API Response: ${response.data}'); // Debug log
 
       final planResponse = PlanResponse.fromJson(response.data);
 
@@ -29,11 +31,11 @@ class PlanServices {
         return normalizedServiceType == normalizedInput;
       }).toList();
 
-      print('Filtered Plans: $filteredPlans'); // Debug log
+      log('Filtered Plans: $filteredPlans'); // Debug log
       return filteredPlans;
     } on DioException catch (e) {
-      print('Dio Error: ${e.message}'); // Debug log
-      print('Error Response: ${e.response?.data}'); // Debug log
+      log('Dio Error: ${e.message}'); // Debug log
+      log('Error Response: ${e.response?.data}'); // Debug log
       throw Exception('Failed to fetch plans: ${e.message}');
     }
   }

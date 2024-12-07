@@ -1,8 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Subscriptions/controller/subscription_controller.dart';
-import 'package:hand_car/features/Subscriptions/view/widgets/button_for_plan_selection_widget.dart';
 import 'package:hand_car/features/Subscriptions/view/widgets/duration_button_widget.dart';
 import 'package:hand_car/features/Subscriptions/view/widgets/plans_container_widget.dart';
 import 'package:hand_car/features/Subscriptions/view/widgets/popular_text_container_widegr.dart';
@@ -30,29 +31,29 @@ abstract class BasePlanScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    print('Building BasePlanScreen for service type: $serviceType'); // Debug log
+    log('Building BasePlanScreen for service type: $serviceType'); // Debug log
 
-    final selectedIndex = useState(0);
+    // final selectedIndex = useState(0);
     final selectedDurationIndex = useState(0);
     final scrollController = useScrollController();
 
     final plansAsyncValue = ref.watch(planNotifierProvider(serviceType));
 
     // Scroll to Plan
-    void scrollToPlan(int index) {
-      selectedIndex.value = index;
-      scrollController.animateTo(
-        index * 650.0,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeInOut,
-      );
-    }
+    // void scrollToPlan(int index) {
+    //   selectedIndex.value = index;
+    //   scrollController.animateTo(
+    //     index * 650.0,
+    //     duration: const Duration(milliseconds: 500),
+    //     curve: Curves.easeInOut,
+    //   );
+    // }
 
     return Scaffold(
       extendBody: true,
       body: plansAsyncValue.when(
         loading: () {
-          print('Loading plans...'); // Debug log
+          log('Loading plans...'); // Debug log
           return const Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -65,8 +66,8 @@ abstract class BasePlanScreen extends HookConsumerWidget {
           );
         },
         error: (error, stackTrace) {
-          print('Error loading plans: $error'); // Debug log
-          print('Stack trace: $stackTrace'); // Debug log
+          log('Error loading plans: $error'); // Debug log
+          log('Stack trace: $stackTrace'); // Debug log
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -80,9 +81,9 @@ abstract class BasePlanScreen extends HookConsumerWidget {
           );
         },
         data: (plans) {
-          print('Received ${plans.length} plans'); // Debug log
+          log('Received ${plans.length} plans'); // Debug log
           if (plans.isEmpty) {
-            print('No plans available for $serviceType'); // Debug log
+            log('No plans available for $serviceType'); // Debug log
             return const Center(
               child: Text('No plans available for this service type'),
             );
@@ -139,7 +140,7 @@ abstract class BasePlanScreen extends HookConsumerWidget {
                             const SizedBox(height: 16),
                         itemBuilder: (context, index) {
                           final plan = plans[index];
-                          print(
+                          log(
                               'Building plan card for: ${plan.name}'); // Debug log
 
                           return PlansContainer(

@@ -177,6 +177,8 @@ class CarWashPlanScreen extends BasePlanScreen {
   // Override for duration button
   @override
   Color get durationButtonColor => const Color(0xffFFD9D9); // Light Blue
+  @override
   Color get durationButtonTextColor1 => const Color(0xffDA1E21); // Dark Blue
+  @override
   Color get durationButtonTextColor2 => const Color(0xffE7696B); // Medium Blue
 }
