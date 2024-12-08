@@ -3,6 +3,7 @@ import 'package:hand_car/features/Accessories/controller/model/products/products
 import 'package:hand_car/features/Accessories/controller/model/serach_products/search_response_model.dart';
 part 'products_state.freezed.dart';
 
+//product state
 @freezed
 class ProductState with _$ProductState {
   const factory ProductState.initial() = _Initial;

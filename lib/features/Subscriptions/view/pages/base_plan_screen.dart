@@ -58,7 +58,7 @@ abstract class BasePlanScreen extends HookConsumerWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircularProgressIndicator(),
+               
                 SizedBox(height: 16),
                 Text('Loading plans...'),
               ],
