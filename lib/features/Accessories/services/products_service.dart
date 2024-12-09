@@ -41,15 +41,15 @@ class ProductsApiServices {
   }
 
   //Promoted Brands
-  // Future<List<PromotedProduct>> getPromotedProducts() async {
-  //   try {
-  //     final response =
-  //         await _dio.get('/view_promoted_brands'); // Adjust endpoint as needed
-  //     final List<dynamic> data = response.data['promoted_brands'];
-  //     log('Promoted products data: $data');
-  //     return data.map((json) => PromotedProduct.fromJson(json)).toList();
-  //   } catch (e) {
-  //     throw Exception('Failed to fetch promoted products: $e');
-  //   }
-  // }
+  Future<List<PromotedBrandsModel>> getPromotedProducts() async {
+    try {
+      final response =
+          await _dio.get('/view_promoted_brands'); // Adjust endpoint as needed
+      final List<dynamic> data = response.data['promoted_products'];
+      log('Promoted products data: $data');
+      return data.map((json) => PromotedBrandsModel.fromJson(json)).toList();
+    } catch (e) {
+      throw Exception('Failed to fetch promoted products: $e');
+    }
+  }
 }

@@ -2,16 +2,15 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Accessories/controller/products_controller/products_controller.dart';
+import 'package:hand_car/features/Accessories/controller/products_controller/promoted_brands/promoted_brand_controller.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class BrandWisedCardWidget extends ConsumerWidget {
   const BrandWisedCardWidget({super.key});
-  
- 
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final promotedProductsAsync = ref.watch(productsControllerProvider);
+    final promotedProductsAsync = ref.watch(promotedBrandControllerProvider);
 
     return promotedProductsAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -39,7 +38,7 @@ class BrandWisedCardWidget extends ConsumerWidget {
                 children: [
                   SizedBox(height: context.space.space_200),
                   Image.asset(
-                    'assets/images/${product.name.toLowerCase()}.png',
+                    'assets/images/pioneer.png',
                     height: 150,
                   ),
                   SizedBox(height: context.space.space_200),
