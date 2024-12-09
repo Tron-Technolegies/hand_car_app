@@ -1,4 +1,5 @@
 import 'package:hand_car/features/Accessories/controller/model/products/products_model.dart';
+import 'package:hand_car/features/Accessories/controller/model/promoted_brands/promoted_brands_model.dart';
 import 'package:hand_car/features/Accessories/services/products_service.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -42,6 +43,14 @@ class ProductsController extends _$ProductsController {
     } catch (e) {
       // Handle error state
       state = AsyncValue.error(e, StackTrace.current);
+    }
+  }
+  Future<List<PromotedProduct>> getPromotedProducts() async {
+    try {
+      final productsApiService = ref.read(productsApiServiceProvider);
+      return await productsApiService.getPromotedProducts();
+    } catch (e) {
+      throw Exception('Failed to fetch products: $e');
     }
   }
 }
