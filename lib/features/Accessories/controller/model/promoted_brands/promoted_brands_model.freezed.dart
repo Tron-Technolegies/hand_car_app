@@ -14,45 +14,45 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-PromotedProduct _$PromotedProductFromJson(Map<String, dynamic> json) {
-  return _PromotedProduct.fromJson(json);
+PromotedBrandsModel _$PromotedBrandsModelFromJson(Map<String, dynamic> json) {
+  return _PromotedBrandsModel.fromJson(json);
 }
 
 /// @nodoc
-mixin _$PromotedProduct {
+mixin _$PromotedBrandsModel {
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
 
-  /// Serializes this PromotedProduct to a JSON map.
+  /// Serializes this PromotedBrandsModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
-  /// Create a copy of PromotedProduct
+  /// Create a copy of PromotedBrandsModel
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $PromotedProductCopyWith<PromotedProduct> get copyWith =>
+  $PromotedBrandsModelCopyWith<PromotedBrandsModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $PromotedProductCopyWith<$Res> {
-  factory $PromotedProductCopyWith(
-          PromotedProduct value, $Res Function(PromotedProduct) then) =
-      _$PromotedProductCopyWithImpl<$Res, PromotedProduct>;
+abstract class $PromotedBrandsModelCopyWith<$Res> {
+  factory $PromotedBrandsModelCopyWith(
+          PromotedBrandsModel value, $Res Function(PromotedBrandsModel) then) =
+      _$PromotedBrandsModelCopyWithImpl<$Res, PromotedBrandsModel>;
   @useResult
   $Res call({int id, String name});
 }
 
 /// @nodoc
-class _$PromotedProductCopyWithImpl<$Res, $Val extends PromotedProduct>
-    implements $PromotedProductCopyWith<$Res> {
-  _$PromotedProductCopyWithImpl(this._value, this._then);
+class _$PromotedBrandsModelCopyWithImpl<$Res, $Val extends PromotedBrandsModel>
+    implements $PromotedBrandsModelCopyWith<$Res> {
+  _$PromotedBrandsModelCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of PromotedProduct
+  /// Create a copy of PromotedBrandsModel
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -74,25 +74,25 @@ class _$PromotedProductCopyWithImpl<$Res, $Val extends PromotedProduct>
 }
 
 /// @nodoc
-abstract class _$$PromotedProductImplCopyWith<$Res>
-    implements $PromotedProductCopyWith<$Res> {
-  factory _$$PromotedProductImplCopyWith(_$PromotedProductImpl value,
-          $Res Function(_$PromotedProductImpl) then) =
-      __$$PromotedProductImplCopyWithImpl<$Res>;
+abstract class _$$PromotedBrandsModelImplCopyWith<$Res>
+    implements $PromotedBrandsModelCopyWith<$Res> {
+  factory _$$PromotedBrandsModelImplCopyWith(_$PromotedBrandsModelImpl value,
+          $Res Function(_$PromotedBrandsModelImpl) then) =
+      __$$PromotedBrandsModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({int id, String name});
 }
 
 /// @nodoc
-class __$$PromotedProductImplCopyWithImpl<$Res>
-    extends _$PromotedProductCopyWithImpl<$Res, _$PromotedProductImpl>
-    implements _$$PromotedProductImplCopyWith<$Res> {
-  __$$PromotedProductImplCopyWithImpl(
-      _$PromotedProductImpl _value, $Res Function(_$PromotedProductImpl) _then)
+class __$$PromotedBrandsModelImplCopyWithImpl<$Res>
+    extends _$PromotedBrandsModelCopyWithImpl<$Res, _$PromotedBrandsModelImpl>
+    implements _$$PromotedBrandsModelImplCopyWith<$Res> {
+  __$$PromotedBrandsModelImplCopyWithImpl(_$PromotedBrandsModelImpl _value,
+      $Res Function(_$PromotedBrandsModelImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of PromotedProduct
+  /// Create a copy of PromotedBrandsModel
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -100,7 +100,7 @@ class __$$PromotedProductImplCopyWithImpl<$Res>
     Object? id = null,
     Object? name = null,
   }) {
-    return _then(_$PromotedProductImpl(
+    return _then(_$PromotedBrandsModelImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -115,11 +115,11 @@ class __$$PromotedProductImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$PromotedProductImpl implements _PromotedProduct {
-  const _$PromotedProductImpl({required this.id, required this.name});
+class _$PromotedBrandsModelImpl implements _PromotedBrandsModel {
+  const _$PromotedBrandsModelImpl({required this.id, required this.name});
 
-  factory _$PromotedProductImpl.fromJson(Map<String, dynamic> json) =>
-      _$$PromotedProductImplFromJson(json);
+  factory _$PromotedBrandsModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$PromotedBrandsModelImplFromJson(json);
 
   @override
   final int id;
@@ -128,14 +128,14 @@ class _$PromotedProductImpl implements _PromotedProduct {
 
   @override
   String toString() {
-    return 'PromotedProduct(id: $id, name: $name)';
+    return 'PromotedBrandsModel(id: $id, name: $name)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$PromotedProductImpl &&
+            other is _$PromotedBrandsModelImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name));
   }
@@ -144,40 +144,40 @@ class _$PromotedProductImpl implements _PromotedProduct {
   @override
   int get hashCode => Object.hash(runtimeType, id, name);
 
-  /// Create a copy of PromotedProduct
+  /// Create a copy of PromotedBrandsModel
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$PromotedProductImplCopyWith<_$PromotedProductImpl> get copyWith =>
-      __$$PromotedProductImplCopyWithImpl<_$PromotedProductImpl>(
+  _$$PromotedBrandsModelImplCopyWith<_$PromotedBrandsModelImpl> get copyWith =>
+      __$$PromotedBrandsModelImplCopyWithImpl<_$PromotedBrandsModelImpl>(
           this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$PromotedProductImplToJson(
+    return _$$PromotedBrandsModelImplToJson(
       this,
     );
   }
 }
 
-abstract class _PromotedProduct implements PromotedProduct {
-  const factory _PromotedProduct(
+abstract class _PromotedBrandsModel implements PromotedBrandsModel {
+  const factory _PromotedBrandsModel(
       {required final int id,
-      required final String name}) = _$PromotedProductImpl;
+      required final String name}) = _$PromotedBrandsModelImpl;
 
-  factory _PromotedProduct.fromJson(Map<String, dynamic> json) =
-      _$PromotedProductImpl.fromJson;
+  factory _PromotedBrandsModel.fromJson(Map<String, dynamic> json) =
+      _$PromotedBrandsModelImpl.fromJson;
 
   @override
   int get id;
   @override
   String get name;
 
-  /// Create a copy of PromotedProduct
+  /// Create a copy of PromotedBrandsModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$PromotedProductImplCopyWith<_$PromotedProductImpl> get copyWith =>
+  _$$PromotedBrandsModelImplCopyWith<_$PromotedBrandsModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

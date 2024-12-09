@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
 import 'package:hand_car/features/Accessories/controller/model/products/products_model.dart';
@@ -25,6 +27,7 @@ class ProductsApiServices {
       throw Exception('Failed to fetch products: ${e.message}');
     }
   }
+
   /// Search products
 
   Future<SearchResponse> searchProducts(String query) async {
@@ -36,15 +39,17 @@ class ProductsApiServices {
       throw Exception('Search failed: ${e.message}');
     }
   }
-  //Promoted Brands
-  Future<List<PromotedProduct>> getPromotedProducts() async {
-    try {
-      final response = await _dio.get('/promoted-products'); // Adjust endpoint as needed
-      final List<dynamic> data = response.data['promoted_products'];
-      return data.map((json) => PromotedProduct.fromJson(json)).toList();
-    } catch (e) {
-      throw Exception('Failed to fetch promoted products: $e');
-    }
-  }
-}
 
+  //Promoted Brands
+  // Future<List<PromotedProduct>> getPromotedProducts() async {
+  //   try {
+  //     final response =
+  //         await _dio.get('/view_promoted_brands'); // Adjust endpoint as needed
+  //     final List<dynamic> data = response.data['promoted_brands'];
+  //     log('Promoted products data: $data');
+  //     return data.map((json) => PromotedProduct.fromJson(json)).toList();
+  //   } catch (e) {
+  //     throw Exception('Failed to fetch promoted products: $e');
+  //   }
+  // }
+}

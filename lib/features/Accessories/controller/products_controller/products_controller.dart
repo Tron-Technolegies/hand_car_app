@@ -45,14 +45,7 @@ class ProductsController extends _$ProductsController {
       state = AsyncValue.error(e, StackTrace.current);
     }
   }
-  Future<List<PromotedProduct>> getPromotedProducts() async {
-    try {
-      final productsApiService = ref.read(productsApiServiceProvider);
-      return await productsApiService.getPromotedProducts();
-    } catch (e) {
-      throw Exception('Failed to fetch products: $e');
-    }
-  }
+  
 }
 
 // Separate provider for ProductsApiService

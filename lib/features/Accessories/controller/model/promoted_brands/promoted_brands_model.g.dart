@@ -6,15 +6,15 @@ part of 'promoted_brands_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$PromotedProductImpl _$$PromotedProductImplFromJson(
+_$PromotedBrandsModelImpl _$$PromotedBrandsModelImplFromJson(
         Map<String, dynamic> json) =>
-    _$PromotedProductImpl(
+    _$PromotedBrandsModelImpl(
       id: (json['id'] as num).toInt(),
       name: json['name'] as String,
     );
 
-Map<String, dynamic> _$$PromotedProductImplToJson(
-        _$PromotedProductImpl instance) =>
+Map<String, dynamic> _$$PromotedBrandsModelImplToJson(
+        _$PromotedBrandsModelImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
