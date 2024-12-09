@@ -5,11 +5,35 @@ import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Accessories/controller/products_controller/promoted_brands/promoted_products_controller.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+
 class AccessoriesAdsHomePageWidget extends ConsumerWidget {
   const AccessoriesAdsHomePageWidget({super.key});
 
   @override
+  /// Builds a carousel slider that shows the promoted products.
+  ///
+  /// The slider auto-plays and has a viewport fraction of 0.6.
+  ///
+  /// Each item in the slider is a [Container] with a
+  /// [BorderRadius.circular] of 10 and a white background.
+  /// Inside the container is a [Column] with the following widgets:
+  ///
+  /// - An [Image] with a height of 100 and a width of 100.
+  /// - A [Row] with a discount percentage and a best-seller label if
+  ///   applicable.
+  /// - A [Text] with the product name.
+  /// - A [Text] with the product description.
+  /// - A [RatingBar] with an initial rating of 3.5 and 5 items.
+  /// - A [Row] with the discounted price and the original price if
+  ///   applicable.
+  ///
+  /// If the product is not found, a [Center] widget is returned with a
+  /// [CircularProgressIndicator].
+  ///
+  /// If there is an error, a [Center] widget is returned with a
+  /// [Text] widget containing the error message.
   Widget build(BuildContext context, ref) {
+    // Watch the promoted products state
     final products = ref.watch(promotedProductsControllerProvider);
     
     return products.when(

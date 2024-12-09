@@ -21,6 +21,11 @@ class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
+  /// The Home Page of the app.
+  ///
+  /// Contains a carousel with top brands, a section for spare parts, and a section for services.
+  /// The user can navigate to the shopping cart, the drawer, and the different sections of the app.
+  ///
   Widget build(BuildContext context, ref) {
     return Scaffold(
       key: scaffoldKey1,
