@@ -36,6 +36,8 @@ abstract class $CartModelCopyWith<$Res> {
       {List<CartItem> cartItems,
       double totalAmount,
       CouponModel? appliedCoupon});
+
+  $CouponModelCopyWith<$Res>? get appliedCoupon;
 }
 
 /// @nodoc
@@ -72,6 +74,20 @@ class _$CartModelCopyWithImpl<$Res, $Val extends CartModel>
               as CouponModel?,
     ) as $Val);
   }
+
+  /// Create a copy of CartModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $CouponModelCopyWith<$Res>? get appliedCoupon {
+    if (_value.appliedCoupon == null) {
+      return null;
+    }
+
+    return $CouponModelCopyWith<$Res>(_value.appliedCoupon!, (value) {
+      return _then(_value.copyWith(appliedCoupon: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -86,6 +102,9 @@ abstract class _$$CartModelImplCopyWith<$Res>
       {List<CartItem> cartItems,
       double totalAmount,
       CouponModel? appliedCoupon});
+
+  @override
+  $CouponModelCopyWith<$Res>? get appliedCoupon;
 }
 
 /// @nodoc
@@ -161,8 +180,8 @@ class _$CartModelImpl extends _CartModel {
                 .equals(other._cartItems, _cartItems) &&
             (identical(other.totalAmount, totalAmount) ||
                 other.totalAmount == totalAmount) &&
-            const DeepCollectionEquality()
-                .equals(other.appliedCoupon, appliedCoupon));
+            (identical(other.appliedCoupon, appliedCoupon) ||
+                other.appliedCoupon == appliedCoupon));
   }
 
   @override
@@ -170,7 +189,7 @@ class _$CartModelImpl extends _CartModel {
       runtimeType,
       const DeepCollectionEquality().hash(_cartItems),
       totalAmount,
-      const DeepCollectionEquality().hash(appliedCoupon));
+      appliedCoupon);
 
   /// Create a copy of CartModel
   /// with the given fields replaced by the non-null parameter values.

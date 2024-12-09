@@ -6,7 +6,7 @@ part of 'subscription_controller.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$planNotifierHash() => r'eaefafbc500fd57bc2ac29dae1060a3a50bfb3bb';
+String _$planNotifierHash() => r'ad6c3a98fa9583151185419d54e59cb7a34baa36';
 
 /// Copied from Dart SDK
 class _SystemHash {
