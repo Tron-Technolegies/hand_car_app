@@ -1,7 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/features/Accessories/controller/products_controller/products_controller.dart';
 import 'package:hand_car/features/Accessories/controller/products_controller/promoted_brands/promoted_brand_controller.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -43,7 +42,7 @@ class BrandWisedCardWidget extends ConsumerWidget {
                   ),
                   SizedBox(height: context.space.space_200),
                   Text(
-                    'Explore Products from ${product.name} Audio',
+                    'Explore Products from ${product.name} ',
                     style: context.typography.bodyLarge
                         .copyWith(color: context.colors.primaryTxt),
                     textAlign: TextAlign.center,

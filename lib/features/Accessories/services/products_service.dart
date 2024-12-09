@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
 import 'package:hand_car/features/Accessories/controller/model/products/products_model.dart';
-import 'package:hand_car/features/Accessories/controller/model/promoted_brands/promoted_brands_model.dart';
+import 'package:hand_car/features/Accessories/controller/model/products/promoted_brands/promoted_brands_model.dart';
 import 'package:hand_car/features/Accessories/controller/model/serach_products/search_response_model.dart';
 
 class ProductsApiServices {
@@ -41,7 +41,7 @@ class ProductsApiServices {
   }
 
   //Promoted Brands
-  Future<List<PromotedBrandsModel>> getPromotedProducts() async {
+  Future<List<PromotedBrandsModel>> getPromotedBrands() async {
     try {
       final response =
           await _dio.get('/view_promoted_brands'); // Adjust endpoint as needed
