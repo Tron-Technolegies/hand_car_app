@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
 import 'package:hand_car/features/Accessories/controller/cart/cart_controller.dart';
+import 'package:hand_car/features/Accessories/view/pages/checkout_page.dart';
 import 'package:hand_car/features/Accessories/view/widgets/cart/cart_product_card_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/cart/total_amount_section_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/coupon/coupon_card_listview_widget.dart';
@@ -31,9 +32,7 @@ class ShoppingCartScreen extends HookConsumerWidget {
           if (cartController.asData?.value.cartItems.isNotEmpty ?? false)
             IconButton(
               icon: const Icon(Icons.delete_outline),
-              onPressed: () {
-           
-              },
+              onPressed: () {},
             ),
         ],
       ),
@@ -175,7 +174,7 @@ class ShoppingCartScreen extends HookConsumerWidget {
                       ),
                       ButtonWidget(
                         label: 'Proceed To Checkout',
-                        onTap: () => context.go('/checkout'),
+                        onTap: () => context.push(CheckOutPage.route),
                       ),
                     ],
                   ),
