@@ -165,7 +165,9 @@ class ShoppingCartScreen extends HookConsumerWidget {
                     children: [
                       Consumer(
                         builder: (_, ref, __) {
+                          /// Cart Total
                           final cart = ref.watch(cartControllerProvider).value;
+                          //
                           return Text(
                             'Total: AED ${cart!.discountedTotal.toStringAsFixed(2)}',
                             style: context.typography.bodyMedium,

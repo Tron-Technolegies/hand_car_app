@@ -4,21 +4,23 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
+import 'package:hand_car/features/Accessories/controller/cart/cart_controller.dart';
 import 'package:hand_car/features/Accessories/view/widgets/address/address_card_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/address/address_form_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/cart/cart_summary_widget.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class CheckOutPage extends HookWidget {
+class CheckOutPage extends HookConsumerWidget {
   static const route = '/checkout-page';
-
+  
   const CheckOutPage({super.key});
-
+  
   @override
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final showAddressForm = useState(false);
     final selectedAddress = useState<String?>(null);
-
+    final cartController = ref.watch(cartControllerProvider);
+    
     return Scaffold(
       appBar: AppBar(
         title: Text('Checkout', style: context.typography.h3),
@@ -32,7 +34,11 @@ class CheckOutPage extends HookWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const CartSummaryWidget(),
+            cartController.when(
+              data: (cart) => CartSummaryWidget(cart: cart),
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, _) => Text('Error loading cart: $error'),
+            ),
             Text(
               'Select a shipping address',
               style: context.typography.h3,
@@ -40,8 +46,7 @@ class CheckOutPage extends HookWidget {
             SizedBox(height: context.space.space_200),
             AddressCard(
               name: 'Muhammed Risan',
-              address:
-                  '123 Sheikh Zayed Road, Downtown Dubai, Dubai,\nUnited Arab Emirates',
+              address: '123 Sheikh Zayed Road, Downtown Dubai, Dubai,\nUnited Arab Emirates',
               poBox: 'P.O. Box 12345',
               mobile: 'Mobile: +971 50 123 4567',
               selectedAddress: selectedAddress,
@@ -49,8 +54,7 @@ class CheckOutPage extends HookWidget {
             SizedBox(height: context.space.space_200),
             AddressCard(
               name: 'Kollam Shafi',
-              address:
-                  '123 Sheikh Zayed Road, Downtown Dubai, Dubai,\nUnited Arab Emirates',
+              address: '123 Sheikh Zayed Road, Downtown Dubai, Dubai,\nUnited Arab Emirates',
               poBox: 'P.O. Box 12345',
               mobile: 'Mobile: +971 50 123 4567',
               selectedAddress: selectedAddress,
@@ -73,8 +77,7 @@ class CheckOutPage extends HookWidget {
             SizedBox(
               width: double.infinity,
               child: ButtonWidget(
-                label:
-                    showAddressForm.value ? "Add & Choose Address" : "Continue",
+                label: showAddressForm.value ? "Add & Choose Address" : "Continue",
                 onTap: () => {},
               ),
             ),
