@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/widgets/outline_button_widget.dart';
-import 'package:hand_car/features/Accessories/controller/model/products/products_model.dart';
+import 'package:hand_car/features/Accessories/model/products/products_model.dart';
 
 class AccessoriesProductCardWidget extends StatelessWidget {
   final ProductsModel product;

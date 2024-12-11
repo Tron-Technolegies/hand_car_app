@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
-import 'package:hand_car/features/Accessories/controller/model/cart/cart_model.dart';
+import 'package:hand_car/features/Accessories/model/cart/cart_model.dart';
 
 //Cart Api Service for Cart Page Fetching and Adding Ca
 class CartApiService {

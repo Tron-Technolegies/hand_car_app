@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:hand_car/features/Accessories/controller/model/coupon/coupon_model.dart';
+import 'package:hand_car/features/Accessories/model/coupon/coupon_model.dart';
 import 'package:hand_car/features/Accessories/services/coupon_services.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

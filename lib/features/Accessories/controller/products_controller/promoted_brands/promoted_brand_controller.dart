@@ -1,4 +1,4 @@
-import 'package:hand_car/features/Accessories/controller/model/products/promoted_brands/promoted_brands_model.dart';
+import 'package:hand_car/features/Accessories/model/products/promoted_brands/promoted_brands_model.dart';
 import 'package:hand_car/features/Accessories/controller/products_controller/products_controller.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

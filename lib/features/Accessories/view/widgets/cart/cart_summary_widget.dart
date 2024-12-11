@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/features/Accessories/controller/model/cart/cart_model.dart';
+import 'package:hand_car/features/Accessories/model/cart/cart_model.dart';
 import 'package:hand_car/features/Accessories/view/widgets/cart/cart_item_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/cart/cart_row_widget.dart';
 

@@ -2,10 +2,10 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
-import 'package:hand_car/features/Accessories/controller/model/products/products_model.dart';
-import 'package:hand_car/features/Accessories/controller/model/products/promoted_brands/promoted_brands_model.dart';
-import 'package:hand_car/features/Accessories/controller/model/products/promoted_products/promoted_products_model.dart';
-import 'package:hand_car/features/Accessories/controller/model/serach_products/search_response_model.dart';
+import 'package:hand_car/features/Accessories/model/products/products_model.dart';
+import 'package:hand_car/features/Accessories/model/products/promoted_brands/promoted_brands_model.dart';
+import 'package:hand_car/features/Accessories/model/products/promoted_products/promoted_products_model.dart';
+import 'package:hand_car/features/Accessories/model/serach_products/search_response_model.dart';
 
 class ProductsApiServices {
   final Dio _dio = Dio(BaseOptions(

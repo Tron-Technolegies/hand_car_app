@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hand_car/features/Accessories/controller/model/products/products_model.dart';
+import 'package:hand_car/features/Accessories/model/products/products_model.dart';
 import 'package:hand_car/features/Accessories/controller/products_controller/products_controller.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/accessories_product_card_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';

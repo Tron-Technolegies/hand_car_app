@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
-import 'package:hand_car/features/Accessories/controller/model/coupon/coupon_model.dart';
+import 'package:hand_car/features/Accessories/model/coupon/coupon_model.dart';
 
 class CouponServices {
   static final Dio _dio = Dio(

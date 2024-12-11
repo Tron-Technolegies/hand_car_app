@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:hand_car/features/Accessories/controller/model/coupon/coupon_model.dart';
+import 'package:hand_car/features/Accessories/model/coupon/coupon_model.dart';
 part 'cart_model.freezed.dart';
 
 

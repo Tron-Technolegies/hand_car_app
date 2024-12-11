@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
-import 'package:hand_car/features/Accessories/controller/model/review/review_model.dart';
+import 'package:hand_car/features/Accessories/model/review/review_model.dart';
 
 class ReviewApiServices {
   static final Dio _dio = Dio(

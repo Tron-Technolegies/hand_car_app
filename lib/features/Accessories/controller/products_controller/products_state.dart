@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:hand_car/features/Accessories/controller/model/products/products_model.dart';
-import 'package:hand_car/features/Accessories/controller/model/serach_products/search_response_model.dart';
+import 'package:hand_car/features/Accessories/model/products/products_model.dart';
+import 'package:hand_car/features/Accessories/model/serach_products/search_response_model.dart';
 part 'products_state.freezed.dart';
 
 //product state

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Accessories/controller/coupon/coupon_controller.dart';
-import 'package:hand_car/features/Accessories/controller/model/coupon/coupon_model.dart';
+import 'package:hand_car/features/Accessories/model/coupon/coupon_model.dart';
 
 import 'package:hand_car/features/Accessories/view/widgets/coupon/coupon_card_widget.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

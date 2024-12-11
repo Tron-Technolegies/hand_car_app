@@ -2,8 +2,8 @@
 
 import 'package:hand_car/features/Accessories/services/cart_api_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:hand_car/features/Accessories/controller/model/cart/cart_model.dart';
-import 'package:hand_car/features/Accessories/controller/model/coupon/coupon_model.dart';
+import 'package:hand_car/features/Accessories/model/cart/cart_model.dart';
+import 'package:hand_car/features/Accessories/model/coupon/coupon_model.dart';
 
 part 'cart_controller.g.dart';
 
