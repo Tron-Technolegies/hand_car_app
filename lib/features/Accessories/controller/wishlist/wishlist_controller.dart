@@ -16,7 +16,11 @@ class WishlistNotifier extends _$WishlistNotifier {
     state = const AsyncValue.loading();
     
     try {
-      final repository = WishlistServices.addToWishlist(productId);
+      final response = await WishlistServices.addToWishlist(productId);
+      if (response == null) {
+        state = AsyncValue.error('Failed to add to wishlist', StackTrace.current);
+        return;
+      }
      
       
       // Update state by adding new item to map
