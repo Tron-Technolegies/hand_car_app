@@ -12,6 +12,7 @@ class PlanResponse with _$PlanResponse {
   factory PlanResponse.fromJson(Map<String, dynamic> json) => _$PlanResponseFromJson(json);
 }
 
+/// Serializes this PlanModel to a JSON map.
 @freezed
 class PlanModel with _$PlanModel {
   const factory PlanModel({

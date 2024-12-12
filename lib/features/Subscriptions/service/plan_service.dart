@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
-import 'package:hand_car/features/Subscriptions/controller/model/plan_model.dart';
+import 'package:hand_car/features/Subscriptions/model/plan_model.dart';
 
 class PlanServices {
   static final Dio _dio = Dio(

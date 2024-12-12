@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:hand_car/features/Subscriptions/controller/model/plan_model.dart';
+import 'package:hand_car/features/Subscriptions/model/plan_model.dart';
 import 'package:hand_car/features/Subscriptions/service/plan_service.dart';
 
 part 'subscription_controller.g.dart';

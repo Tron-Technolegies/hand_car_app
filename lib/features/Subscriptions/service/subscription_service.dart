@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
-import 'package:hand_car/features/Subscriptions/controller/model/subscription_model.dart';
+import 'package:hand_car/features/Subscriptions/model/subscription_model.dart';
 
 class SubscriptionService {
   final Dio dio = Dio(BaseOptions(

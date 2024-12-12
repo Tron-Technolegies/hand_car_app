@@ -4,6 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'subscription_model.freezed.dart';
 part 'subscription_model.g.dart';
 
+/// SubscriptionModel class to get the data from the API
 @freezed
 class SubscriptionModel with _$SubscriptionModel {
   const factory SubscriptionModel({
