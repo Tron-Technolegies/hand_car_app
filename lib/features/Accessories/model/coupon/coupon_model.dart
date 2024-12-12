@@ -9,6 +9,7 @@ class CouponModel with _$CouponModel {
   const CouponModel._(); // Added private constructor for custom getters
 
   const factory CouponModel({
+    
     required int id,
     required String name,
     @JsonKey(name: 'coupon_code') required String couponCode,

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hand_car/features/Accessories/controller/wishlist/wishlist_controller.dart';
 import 'package:hand_car/features/Accessories/model/wishlist/wishlist_response_model.dart';
 
 
 class WishlistScreen extends ConsumerWidget {
-  const WishlistScreen({Key? key}) : super(key: key);
+  const WishlistScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -38,7 +39,7 @@ class WishlistScreen extends ConsumerWidget {
 }
 
 class _EmptyWishlist extends StatelessWidget {
-  const _EmptyWishlist({Key? key}) : super(key: key);
+  const _EmptyWishlist();
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +82,6 @@ class _WishlistContent extends ConsumerWidget {
   final Map<String, WishlistResponse> items;
 
   const _WishlistContent({
-    super.key,
     required this.items,
   });
 
@@ -119,9 +119,8 @@ class _WishlistItem extends ConsumerWidget {
   final WishlistResponse item;
 
   const _WishlistItem({
-    Key? key,
     required this.item,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
