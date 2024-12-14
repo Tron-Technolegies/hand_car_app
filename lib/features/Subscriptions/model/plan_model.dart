@@ -4,6 +4,7 @@ part 'plan_model.freezed.dart';
 part 'plan_model.g.dart';
 
 @freezed
+/// PlanResponse class to get the data from the API
 class PlanResponse with _$PlanResponse {
   const factory PlanResponse({
     required List<PlanModel> plan, // Note: matches the "plan" key from backend

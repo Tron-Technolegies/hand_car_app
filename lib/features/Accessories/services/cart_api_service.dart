@@ -48,4 +48,15 @@ class CartApiService {
       throw Exception('Failed to add product to cart: ${e.toString()}');
     }
   }
+  /// Remove a product from the cart
+  Future<Map<String, dynamic>> removeFromCart(int productId) async {
+    try {
+      final response = await _dio.post('/cart/remove/', data: {
+        'product_id': productId,
+      });
+      return response.data;
+    } catch (e) {
+      throw Exception('Failed to remove product from cart: ${e.toString()}');
+    }
+  }
 }
