@@ -16,6 +16,7 @@ class MultipleImagePickerState with _$MultipleImagePickerState {
 }
 
 @riverpod
+//multiple image picker
 class MultipleImagePicker extends _$MultipleImagePicker {
   @override
   MultipleImagePickerState build() {

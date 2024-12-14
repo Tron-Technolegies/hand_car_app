@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
-import 'package:hand_car/features/Accessories/model/products/category_model.dart';
+import 'package:hand_car/features/Accessories/model/products/category/category_model.dart';
 
 class CategoryApiService {
   static final Dio _dio = Dio(

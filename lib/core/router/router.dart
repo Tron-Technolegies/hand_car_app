@@ -62,6 +62,7 @@ Future<GoRouter> createRouter() async {
         path: AccessoriesPage.route,
         builder: (context, state) => const AccessoriesPage(),
       ),
+      //Service page
       GoRoute(
         path: ServiceDetailsPage.route,
         builder: (context, state) {
@@ -83,10 +84,12 @@ Future<GoRouter> createRouter() async {
           );
         },
       ),
+      //Cart page
       GoRoute(
         path: ShoppingCartScreen.route,
         builder: (context, state) => const ShoppingCartScreen(),
       ),
+      //Checkout page
       GoRoute(
         path: CheckOutPage.route,
         builder: (context, state) => const CheckOutPage(),
