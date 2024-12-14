@@ -13,6 +13,7 @@ class CouponServices {
       },
     ),
   );
+  // Function to fetch coupons
   static Future<List<CouponModel>> getCoupons() async {
     try {
       final response = await _dio.get('/view_coupons');
