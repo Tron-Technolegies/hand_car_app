@@ -20,7 +20,9 @@ AuthModel _$AuthModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$AuthModel {
+  @JsonKey(name: 'access_token')
   String get accessToken => throw _privateConstructorUsedError;
+  @JsonKey(name: 'refresh_token')
   String get refreshToken => throw _privateConstructorUsedError;
   String get message => throw _privateConstructorUsedError;
 
@@ -39,7 +41,10 @@ abstract class $AuthModelCopyWith<$Res> {
   factory $AuthModelCopyWith(AuthModel value, $Res Function(AuthModel) then) =
       _$AuthModelCopyWithImpl<$Res, AuthModel>;
   @useResult
-  $Res call({String accessToken, String refreshToken, String message});
+  $Res call(
+      {@JsonKey(name: 'access_token') String accessToken,
+      @JsonKey(name: 'refresh_token') String refreshToken,
+      String message});
 }
 
 /// @nodoc
@@ -86,7 +91,10 @@ abstract class _$$AuthModelImplCopyWith<$Res>
       __$$AuthModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String accessToken, String refreshToken, String message});
+  $Res call(
+      {@JsonKey(name: 'access_token') String accessToken,
+      @JsonKey(name: 'refresh_token') String refreshToken,
+      String message});
 }
 
 /// @nodoc
@@ -127,16 +135,18 @@ class __$$AuthModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AuthModelImpl implements _AuthModel {
   const _$AuthModelImpl(
-      {required this.accessToken,
-      required this.refreshToken,
+      {@JsonKey(name: 'access_token') required this.accessToken,
+      @JsonKey(name: 'refresh_token') required this.refreshToken,
       required this.message});
 
   factory _$AuthModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$AuthModelImplFromJson(json);
 
   @override
+  @JsonKey(name: 'access_token')
   final String accessToken;
   @override
+  @JsonKey(name: 'refresh_token')
   final String refreshToken;
   @override
   final String message;
@@ -181,16 +191,18 @@ class _$AuthModelImpl implements _AuthModel {
 
 abstract class _AuthModel implements AuthModel {
   const factory _AuthModel(
-      {required final String accessToken,
-      required final String refreshToken,
+      {@JsonKey(name: 'access_token') required final String accessToken,
+      @JsonKey(name: 'refresh_token') required final String refreshToken,
       required final String message}) = _$AuthModelImpl;
 
   factory _AuthModel.fromJson(Map<String, dynamic> json) =
       _$AuthModelImpl.fromJson;
 
   @override
+  @JsonKey(name: 'access_token')
   String get accessToken;
   @override
+  @JsonKey(name: 'refresh_token')
   String get refreshToken;
   @override
   String get message;

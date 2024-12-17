@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
-import 'package:hand_car/core/router/user_validation.dart';
 import 'package:hand_car/features/Authentication/model/auth_model.dart';
+import 'package:hand_car/core/router/user_validation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -33,23 +33,45 @@ class ApiServiceAuthentication {
           }
           return handler.next(options);
         },
-        onError: (error, handler) {
+        onError: (error, handler) async {
           if (error.response?.statusCode == 401) {
-            // Handle token expiration
-            _handleTokenExpiration(error);
+            // Token expired, handle token refresh
+            try {
+              await _handleTokenExpiration();
+
+              // Retry the failed request with the new token
+              final refreshedRequest = await _dio.request(
+                error.requestOptions.path,
+                options: Options(
+                  method: error.requestOptions.method,
+                  headers: {
+                    ...error.requestOptions.headers,
+                    'Authorization': 'Bearer ${_tokenStorage.getAccessToken()}',
+                  },
+                ),
+                data: error.requestOptions.data,
+                queryParameters: error.requestOptions.queryParameters,
+              );
+
+              return handler.resolve(refreshedRequest);
+            } catch (e) {
+              // Logout and propagate the error
+              await logout();
+              return handler.reject(error);
+            }
           }
-          return handler.next(error);
+          return handler.next(error); // Forward other errors
         },
       ),
     );
   }
 
-  Future<void> _handleTokenExpiration(DioException error) async {
-    // Get refresh token
+  /// Handles token expiration by refreshing the access token.
+  Future<void> _handleTokenExpiration() async {
     final refreshToken = _tokenStorage.getRefreshToken();
-    if (refreshToken == null) {
-      await logout();
-      throw 'Session expired. Please login again.';
+
+    if (refreshToken == null || refreshToken.isEmpty) {
+      throw Exception('No refresh token available.');
     }
 
     try {
@@ -58,38 +80,47 @@ class ApiServiceAuthentication {
         data: {'refresh_token': refreshToken},
       );
 
-      final newAuthModel = AuthModel.fromJson(response.data);
-      await _tokenStorage.saveTokens(
-        accessToken: newAuthModel.accessToken,
-        refreshToken: newAuthModel.refreshToken,
-      );
+      if (response.statusCode == 200) {
+        final newAuthModel = AuthModel.fromJson(response.data);
+
+        await _tokenStorage.saveTokens(
+          accessToken: newAuthModel.accessToken,
+          refreshToken: newAuthModel.refreshToken,
+        );
+      } else {
+        throw Exception('Failed to refresh token.');
+      }
     } catch (e) {
-      await logout();
-      throw 'Session expired. Please login again.';
+      throw Exception('Session expired. Please login again.');
     }
   }
 
-  Future<AuthModel> login(String username, String password) async {
-    try {
-      final response = await _dio.post(
-        '/login/',
-        data: {
-          'username': username,
-          'password': password,
-        },
-      );
+  Future<Map<String, dynamic>> login(String username, String password) async {
+  try {
+    final response = await _dio.post('/UserLogin',
+        data: FormData.fromMap(
+          {'username': username, 'password': password},
+        ));
 
+    print('Login Response Status Code: ${response.statusCode}');
+    print('Login Response Data: ${response.data}');
+
+    if (response.statusCode == 200) {
       final authModel = AuthModel.fromJson(response.data);
       await _tokenStorage.saveTokens(
         accessToken: authModel.accessToken,
         refreshToken: authModel.refreshToken,
       );
-
-      return authModel;
-    } on DioException catch (e) {
-      throw _handleDioError(e);
+      return authModel.toJson();
     }
+
+    throw Exception('Login failed. Please check your credentials.');
+  } on DioException catch (e) {
+    print('Dio Error: ${e.response?.statusCode}');
+    print('Dio Error Data: ${e.response?.data}');
+    throw Exception(_handleDioError(e));
   }
+}
 
   Future<AuthModel> signUp({
     required String name,
@@ -108,7 +139,7 @@ class ApiServiceAuthentication {
         },
       );
 
-      if (response.statusCode == 201 || response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final authModel = AuthModel.fromJson(response.data);
         await _tokenStorage.saveTokens(
           accessToken: authModel.accessToken,
@@ -116,41 +147,42 @@ class ApiServiceAuthentication {
         );
         return authModel;
       }
-
-      throw 'Signup failed: ${response.data['error'] ?? 'Unknown error'}';
+      throw Exception('Signup failed.');
     } on DioException catch (e) {
-      throw _handleDioError(e);
+      throw Exception(_handleDioError(e));
     }
   }
 
   Future<void> logout() async {
     try {
-      // Call logout endpoint if your API has one
       await _dio.post('/logout/');
     } catch (e) {
-      // Ignore errors during logout
+      // Ignore logout errors
     } finally {
       await _tokenStorage.clearTokens();
     }
   }
 
+  /// Handles Dio errors and provides human-readable messages
   String _handleDioError(DioException e) {
     if (e.response != null) {
-      if (e.response?.statusCode == 401) {
-        return 'Invalid credentials';
+      switch (e.response?.statusCode) {
+        case 401:
+          return 'Invalid credentials';
+        case 422:
+          return 'Invalid input data';
+        default:
+          return e.response?.data['error'] ?? 'An unknown error occurred';
       }
-      if (e.response?.statusCode == 422) {
-        return 'Invalid input data';
-      }
-      return e.response?.data['error'] ?? 'An error occurred';
     }
-    if (e.type == DioExceptionType.connectionTimeout) {
-      return 'Connection timeout. Please check your internet connection.';
+    switch (e.type) {
+      case DioExceptionType.connectionTimeout:
+        return 'Connection timeout. Please check your internet.';
+      case DioExceptionType.receiveTimeout:
+        return 'Server not responding. Please try again later.';
+      default:
+        return 'Network error. Please try again.';
     }
-    if (e.type == DioExceptionType.receiveTimeout) {
-      return 'Server is not responding. Please try again.';
-    }
-    return 'Network error occurred. Please try again.';
   }
 
   bool get isAuthenticated => _tokenStorage.hasTokens;

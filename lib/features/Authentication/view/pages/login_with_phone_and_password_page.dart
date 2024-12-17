@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/widgets/outline_button_widget.dart';
+import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
 import 'package:hand_car/features/Authentication/view/pages/signup_page.dart';
 import 'package:hand_car/features/Home/view/pages/navigation_page.dart';
 
@@ -11,7 +14,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
-import 'package:hand_car/features/Authentication/controller/signup_controller.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 
 class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
@@ -23,11 +25,11 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final phoneController = useTextEditingController();
     final passwordController = useTextEditingController();
-    // final authState = ref.watch(signupControllerProvider);
     final focusNode1 = useFocusNode();
     final focusNode2 = useFocusNode();
 
-    // Watch the authentication state
+    // Watch the login state
+    final loginState = ref.watch(authControllerProvider);
 
     return Scaffold(
       appBar: AppBar(),
@@ -100,32 +102,39 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                         onTap: () {},
                       ),
                       ButtonWidget(
-                        // label: authState.isLoading ? "Logging in..." : "Login",
-                        label: "Login",
-                        onTap: () async {
-                          if (phoneController.text.isEmpty ||
-                              passwordController.text.isEmpty) {
-                            SnackbarUtil.showsnackbar(
-                              message:
-                                  "Enter a valid phone number and password",
-                              showretry: false,
-                            );
-                            return;
-                          }
+                          label:
+                              loginState.isLoading ? "Logging in..." : "Login",
+                          onTap: () async {
+                            if (phoneController.text.isEmpty ||
+                                passwordController.text.isEmpty) {
+                              SnackbarUtil.showsnackbar(
+                                message:
+                                    "Enter a valid phone number and password",
+                                showretry: false,
+                              );
+                              return;
+                            }
 
-                          // Attempt to log in
-                          // ref.read(signupControllerProvider.notifier).login(
-                          //     phoneController.text, passwordController.text);
-                          // authState.authenticated
-                          //     ? phoneController.clear()
-                          //     : passwordController.clear();
-                          // if (authState.authenticated) {
-                          //   context.go(NavigationPage.route);
-                          // }
-                          // focusNode1.unfocus();
-                          // focusNode2.unfocus();
-                        },
-                      ),
+                            // Trigger the login function
+                            await ref
+                                .read(authControllerProvider.notifier)
+                                .login(
+                                  phoneController.text,
+                                  passwordController.text,
+                                );
+
+// Check for specific error states
+                            final authState = ref.read(authControllerProvider);
+                            authState.whenOrNull(
+                              error: (error, stackTrace) {
+                                SnackbarUtil.showsnackbar(
+                                  message: error.toString(),
+                                  showretry: false,
+                                );
+                                log('Login error: $error');
+                              },
+                            );
+                          }),
                     ],
                   ),
                 ),

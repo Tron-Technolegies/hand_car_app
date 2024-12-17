@@ -6,18 +6,16 @@ part 'auth_model.g.dart';
 @freezed
 class AuthModel with _$AuthModel {
   const factory AuthModel({
-    required String accessToken,
-    required String refreshToken,
+    @JsonKey(name: 'access_token') required String accessToken,
+    @JsonKey(name: 'refresh_token') required String refreshToken,
     required String message,
   }) = _AuthModel;
 
-  /// JSON serialization
-  factory AuthModel.fromJson(Map<String, dynamic> json) =>
+  factory AuthModel.fromJson(Map<String, dynamic> json) => 
       _$AuthModelFromJson(json);
 }
 
-/// Extension to add custom getters or methods to AuthModel
 extension AuthModelX on AuthModel {
-  bool get isAuthenticated =>
+  bool get isAuthenticated => 
       accessToken.isNotEmpty && refreshToken.isNotEmpty;
 }

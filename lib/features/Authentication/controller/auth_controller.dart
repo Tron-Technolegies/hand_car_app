@@ -16,17 +16,20 @@ class AuthController extends _$AuthController {
   }
 
   Future<void> login(String username, String password) async {
-    state = const AsyncValue.loading();
-    try {
-      final authModel = await ref.read(apiServiceProvider).login(
-            username,
-            password,
-          );
-      state = AsyncValue.data(authModel);
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
-    }
+  state = const AsyncValue.loading();
+  try {
+    final Map<String, dynamic> loginResponse = await ref
+        .read(apiServiceProvider)
+        .login(username, password);
+
+    // Directly use fromJson as the keys now match
+    final AuthModel authModel = AuthModel.fromJson(loginResponse);
+    
+    state = AsyncValue.data(authModel);
+  } catch (e, st) {
+    state = AsyncValue.error(e, st);
   }
+}
 
   Future<void> signUp({
     required String name,
