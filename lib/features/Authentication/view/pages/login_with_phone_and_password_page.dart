@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/widgets/outline_button_widget.dart';
 import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
 import 'package:hand_car/features/Authentication/view/pages/signup_page.dart';
-import 'package:hand_car/features/Home/view/pages/navigation_page.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

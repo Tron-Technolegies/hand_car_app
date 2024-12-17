@@ -10,6 +10,7 @@ import 'package:hand_car/features/Accessories/view/pages/accessories_details_pag
 import 'package:hand_car/features/Accessories/view/pages/cart_page.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/accessories_circle_avatar_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/grid_view_for_accessories_widget.dart';
+import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
 import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -41,6 +42,7 @@ class AccessoriesPage extends HookConsumerWidget {
     final searchTextController = useTextEditingController();
     final category = ref.watch(categoryControllerProvider);
     final products = ref.watch(productsControllerProvider);
+    final authState = ref.watch(authControllerProvider);
 
     useEffect(() {
       void onScroll() {
@@ -109,7 +111,9 @@ class AccessoriesPage extends HookConsumerWidget {
       drawer: const DrawerWidget(),
       endDrawerEnableOpenDragGesture: true,
       body: Column(
+        
         children: [
+          
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: SizedBox(
