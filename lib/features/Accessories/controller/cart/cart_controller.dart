@@ -35,15 +35,19 @@ class CartController extends _$CartController {
 
   /// Add to Cart
   Future<void> addToCart(int productId) async {
+    state = const AsyncValue.loading(); // Set loading state
     try {
       final response = await CartApiService().addToCart(productId);
-      if (response['success']) {
-        await refreshCart();
+
+      // Extract cart quantity or display success message
+      if (response['cart_quantity'] != null) {
+        state = AsyncValue.data(response['cart_quantity']);
       } else {
-        state = AsyncValue.error(response['message'], StackTrace.current);
+        throw Exception('Failed to update cart: ${response['message']}');
       }
     } catch (e, stackTrace) {
-      state = AsyncValue.error('Error adding to cart: $e', stackTrace);
+      // Handle errors
+      state = AsyncValue.error(e, stackTrace);
     }
   }
 

@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
+import 'package:hand_car/features/Authentication/service/authentication_service.dart';
 import 'package:hand_car/features/Home/view/pages/navigation_page.dart';
 import 'package:hand_car/features/Home/view/pages/onbording_page.dart';
 import 'package:hand_car/gen/assets.gen.dart';
@@ -21,27 +22,16 @@ class SplashScreen extends ConsumerStatefulWidget {
 
 class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
-  void initState() {
+ void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Delay navigation to ensure GoRouter is ready
+    Future.microtask(() async {
+      final authService = ref.read(apiServiceProvider);
+      final isAuthenticated = authService.isAuthenticated;
+
       Timer(const Duration(seconds: 2), () {
         if (mounted) {
-          // Check if the user is logged in
-          final authState = ref.read(authControllerProvider);
-
-          final isAuthenticated = authState.maybeWhen(
-            data: (auth) => auth != null, // User is logged in
-            orElse: () => false,
-          );
-
-          // Navigate based on authentication state
-          if (isAuthenticated) {
-            context.go(NavigationPage.route); // Go to NavigationPage
-          } else {
-            context.go(OnbordingScreenPage.route); // Go to Onboarding
-          }
+          context.go(isAuthenticated ? NavigationPage.route : OnbordingScreenPage.route);
         }
       });
     });

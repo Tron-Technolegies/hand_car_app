@@ -38,14 +38,20 @@ class CartApiService {
   }
 
   /// Add a product to the cart
-  Future<Map<String, dynamic>> addToCart(int productId) async {
+Future<Map<String, dynamic>> addToCart(int productId) async {
     try {
-      final response = await _dio.post('/cart/add/', data: {
-        'product_id': productId,
-      });
-      return response.data;
+      final response = await _dio.post(
+        '/cart/add/$productId/', // Append product_id to the endpoint
+      );
+      return response.data; // Response should be a JSON Map
+    } on DioException catch (e) {
+      // Handle Dio-specific errors
+      if (e.response != null) {
+        throw Exception('Failed: ${e.response?.data['error'] ?? 'Unknown error'}');
+      }
+      throw Exception('Network Error: ${e.message}');
     } catch (e) {
-      throw Exception('Failed to add product to cart: ${e.toString()}');
+      throw Exception('Unexpected Error: ${e.toString()}');
     }
   }
   /// Remove a product from the cart
