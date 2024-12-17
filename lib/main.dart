@@ -6,36 +6,27 @@ import 'package:hand_car/core/theme/light_theme.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 void main() async {
-   
   WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-// Set the orientation to portrait
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    
-  ]);
-
-  // Initialize the router
-  final appRouter = await createRouter();
-
-  runApp(ProviderScope(child: MainApp(router: appRouter)));
+  runApp(const ProviderScope(child: MainApp()));
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends ConsumerWidget {
   static final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
-  static final navigatorKey = GlobalKey<NavigatorState>();
-  final GoRouter router;
 
-  const MainApp({required this.router, super.key});
+  const MainApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final router = ref.watch(routerProvider);
+
     return MaterialApp.router(
       title: 'Hand Car',
       debugShowCheckedModeBanner: false,
       theme: lightTheme,
       scaffoldMessengerKey: scaffoldMessengerKey,
-      routerConfig: router, // Use the initialized router here
+      routerConfig: router,
     );
   }
 }

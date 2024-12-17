@@ -23,7 +23,7 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final phoneController = useTextEditingController();
     final passwordController = useTextEditingController();
-    final authState = ref.watch(signupControllerProvider);
+    // final authState = ref.watch(signupControllerProvider);
     final focusNode1 = useFocusNode();
     final focusNode2 = useFocusNode();
 
@@ -100,7 +100,8 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                         onTap: () {},
                       ),
                       ButtonWidget(
-                        label: authState.isLoading ? "Logging in..." : "Login",
+                        // label: authState.isLoading ? "Logging in..." : "Login",
+                        label: "Login",
                         onTap: () async {
                           if (phoneController.text.isEmpty ||
                               passwordController.text.isEmpty) {
@@ -113,16 +114,16 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                           }
 
                           // Attempt to log in
-                          ref.read(signupControllerProvider.notifier).login(
-                              phoneController.text, passwordController.text);
-                          authState.authenticated
-                              ? phoneController.clear()
-                              : passwordController.clear();
-                          if (authState.authenticated) {
-                            context.go(NavigationPage.route);
-                          }
-                          focusNode1.unfocus();
-                          focusNode2.unfocus();
+                          // ref.read(signupControllerProvider.notifier).login(
+                          //     phoneController.text, passwordController.text);
+                          // authState.authenticated
+                          //     ? phoneController.clear()
+                          //     : passwordController.clear();
+                          // if (authState.authenticated) {
+                          //   context.go(NavigationPage.route);
+                          // }
+                          // focusNode1.unfocus();
+                          // focusNode2.unfocus();
                         },
                       ),
                     ],

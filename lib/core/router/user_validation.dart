@@ -1,46 +1,28 @@
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
+import 'package:get_storage/get_storage.dart';
 
-class AuthManager {
-  static const String _authTokenKey = 'auth_token';
-  static const String _userDataKey = 'user_data';
-
-  // Save authentication token
-  static Future<void> saveAuthToken(String token) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_authTokenKey, token);
+class TokenStorage {
+  static const String _accessTokenKey = 'access_token';
+  static const String _refreshTokenKey = 'refresh_token';
+  
+  final GetStorage _storage;
+  
+  TokenStorage(): _storage = GetStorage();
+  
+  Future<void> saveTokens({
+    required String accessToken,
+    required String refreshToken,
+  }) async {
+    await _storage.write(_accessTokenKey, accessToken);
+    await _storage.write(_refreshTokenKey, refreshToken);
   }
-
-  // Save user data
-  static Future<void> saveUserData(Map<String, dynamic> userData) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_userDataKey, json.encode(userData));
+  
+  Future<void> clearTokens() async {
+    await _storage.remove(_accessTokenKey);
+    await _storage.remove(_refreshTokenKey);
   }
-
-  // Get authentication token
-  static Future<String?> getAuthToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_authTokenKey);
-  }
-
-  // Get user data
-  static Future<Map<String, dynamic>?> getUserData() async {
-    final prefs = await SharedPreferences.getInstance();
-    final userDataString = prefs.getString(_userDataKey);
-    return userDataString != null ? json.decode(userDataString) : null;
-  }
-
-  // Logout method
-  static Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_authTokenKey);
-    await prefs.remove(_userDataKey);
-  }
-
-  // Check if user is logged in
-  static Future<bool> isLoggedIn() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.containsKey(_authTokenKey) && 
-           (prefs.getString(_authTokenKey)?.isNotEmpty ?? false);
-  }
+  
+  String? getAccessToken() => _storage.read(_accessTokenKey);
+  String? getRefreshToken() => _storage.read(_refreshTokenKey);
+  
+  bool get hasTokens => getAccessToken() != null && getRefreshToken() != null;
 }

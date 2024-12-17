@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
-import 'package:hand_car/features/Authentication/controller/signup_controller.dart';
 import 'package:hand_car/features/Home/view/pages/navigation_page.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -73,38 +72,38 @@ class SignupPage extends HookConsumerWidget {
                 child: ButtonWidget(
                   label: isLoading.value ? "Signing up..." : "Sign Up",
                   onTap: () async {
-                    if (!_validateInputs(
-                      context,
-                      nameController.text,
-                      emailController.text,
-                      phoneController.text,
-                      passwordController.text,
-                    )) return;
+                //     if (!_validateInputs(
+                //       context,
+                //       nameController.text,
+                //       emailController.text,
+                //       phoneController.text,
+                //       passwordController.text,
+                //     )) return;
 
-                    isLoading.value = true;
-                    FocusScope.of(context).unfocus();
+                //     isLoading.value = true;
+                //     FocusScope.of(context).unfocus();
 
-                    try {
-                 ref
-                          .read(signupControllerProvider.notifier)
-                          .signUp(
-                            nameController.text.trim(),
-                            emailController.text.trim(),
-                            phoneController.text.trim(),
-                            passwordController.text.trim(),
-                          );
+                //     try {
+                //  ref
+                //           .read(signupControllerProvider.notifier)
+                //           .signUp(
+                //             nameController.text.trim(),
+                //             emailController.text.trim(),
+                //             phoneController.text.trim(),
+                //             passwordController.text.trim(),
+                //           );
 
-                      if (context.mounted) {
-                        context.go(NavigationPage.route);
-                      }
-                    } catch (error) {
-                      SnackbarUtil.showsnackbar(
-                        message: "Signup failed: $error",
-                        showretry: false,
-                      );
-                    } finally {
-                      isLoading.value = false;
-                    }
+                //       if (context.mounted) {
+                //         context.go(NavigationPage.route);
+                //       }
+                //     } catch (error) {
+                //       SnackbarUtil.showsnackbar(
+                //         message: "Signup failed: $error",
+                //         showretry: false,
+                //       );
+                //     } finally {
+                //       isLoading.value = false;
+                //     }
                   },
                 ),
               ),
