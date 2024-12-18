@@ -2,7 +2,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hand_car/features/Accessories/model/coupon/coupon_model.dart';
 part 'cart_model.freezed.dart';
 
-
 @freezed
 class CartModel with _$CartModel {
   const CartModel._(); // Add a private constructor to enable custom getters

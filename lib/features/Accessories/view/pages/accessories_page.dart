@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
+import 'package:hand_car/features/Accessories/controller/cart/cart_controller.dart';
 import 'package:hand_car/features/Accessories/controller/products_controller/category_controller.dart';
 import 'package:hand_car/features/Accessories/controller/products_controller/products_controller.dart';
 import 'package:hand_car/features/Accessories/view/pages/accessories_details_page.dart';
@@ -11,10 +12,12 @@ import 'package:hand_car/features/Accessories/view/pages/cart_page.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/accessories_circle_avatar_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/grid_view_for_accessories_widget.dart';
 import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
+import 'package:hand_car/features/Authentication/model/auth_model.dart';
 import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:lottie/lottie.dart';
+import 'package:badges/badges.dart' as badges;
 
 final GlobalKey<ScaffoldState> scaffoldKey2 = GlobalKey<ScaffoldState>();
 
@@ -24,6 +27,31 @@ final selectedCategoryNameProvider = StateProvider<String?>((ref) => null);
 class AccessoriesPage extends HookConsumerWidget {
   static const route = '/accessories';
   const AccessoriesPage({super.key});
+  void _showLoginDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Login Required'),
+          content: const Text('Please login to access the shopping cart'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                // Navigate to login page - replace with your login route
+                // context.push('/login');
+              },
+              child: const Text('Login'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -42,7 +70,9 @@ class AccessoriesPage extends HookConsumerWidget {
     final searchTextController = useTextEditingController();
     final category = ref.watch(categoryControllerProvider);
     final products = ref.watch(productsControllerProvider);
-    final authState = ref.watch(authControllerProvider);
+
+    final cartItems = ref.watch(cartControllerProvider);
+    // final authState = ref.watch(authControllerProvider);
 
     useEffect(() {
       void onScroll() {
@@ -59,26 +89,17 @@ class AccessoriesPage extends HookConsumerWidget {
       return () => controller.removeListener(onScroll);
     }, [controller]);
 
+    final authState = ref.watch(authControllerProvider);
+    final isAuthenticated = authState.whenOrNull(
+          data: (auth) => auth?.isAuthenticated ?? false,
+        ) ??
+        false;
+
     return Scaffold(
-      key: scaffoldKey2,
       appBar: appBarVisible.value
           ? AppBar(
-              backgroundColor: context.colors.white,
-              title: isSearching.value
-                  ? TextField(
-                      controller: searchTextController,
-                      autofocus: true,
-                      decoration: InputDecoration(
-                        suffixIcon: const Icon(Icons.search),
-                        hintText: 'Search Accessories',
-                        hintStyle: context.typography.body,
-                        border: InputBorder.none,
-                      ),
-                      onChanged: (value) {
-                        // Search logic here
-                      },
-                    )
-                  : const Text('Accessories'),
+              // ... other AppBar properties ...
+              title: const Text('Accessories'),
               centerTitle: true,
               actions: [
                 if (!isSearching.value)
@@ -86,12 +107,49 @@ class AccessoriesPage extends HookConsumerWidget {
                     icon: const Icon(Icons.search),
                     onPressed: () => isSearching.value = true,
                   ),
+                // Show cart button based on authentication state
+                if (isAuthenticated)
+                  badges.Badge(
+                    position: badges.BadgePosition.topEnd(end: 0, top: 0),
+                    badgeContent: Text(
+                      cartItems.when(
+                        data: (cart) {
+                          // Calculate total quantity of items in the cart
+                          final totalQuantity = cart.cartItems.fold<int>(
+                            0,
+                            (sum, item) => sum + item.quantity,
+                          );
+                          return totalQuantity.toString();
+                        },
+                        loading: () => '...',
+                        error: (_, __) => '0',
+                      ),
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                    ),
+                    badgeStyle: badges.BadgeStyle(
+                      badgeColor: Colors.orange,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 4),
+                      elevation: 2,
+                    ),
+                    child: IconButton(
+                      onPressed: () => context.push(ShoppingCartScreen.route),
+                      icon: const Icon(Icons.shopping_cart),
+                    ),
+                  ),
+                if (!isAuthenticated)
+                  IconButton(
+                    onPressed: () =>
+                        _showLoginDialog(context), // Show login dialog
+                    icon: const Icon(Icons.shopping_cart_sharp),
+                  ),
                 IconButton(
-                    onPressed: () => context.push(ShoppingCartScreen.route),
-                    icon: const Icon(Icons.shopping_cart_sharp)),
-                IconButton(
-                    onPressed: () => scaffoldKey2.currentState?.openDrawer(),
-                    icon: const Icon(Icons.menu)),
+                    onPressed: () {},
+                    icon: Icon(Icons.favorite_border_outlined))
               ],
               leading: isSearching.value
                   ? IconButton(
@@ -111,9 +169,7 @@ class AccessoriesPage extends HookConsumerWidget {
       drawer: const DrawerWidget(),
       endDrawerEnableOpenDragGesture: true,
       body: Column(
-        
         children: [
-          
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: SizedBox(
