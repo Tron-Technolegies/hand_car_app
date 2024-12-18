@@ -8,6 +8,7 @@ class DrawerWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
+    
     final image = ref.watch(imagePickerProvider);
     return Drawer(
       child: ListView(

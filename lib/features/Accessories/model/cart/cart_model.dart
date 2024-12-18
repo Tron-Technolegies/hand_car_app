@@ -34,6 +34,7 @@ class CartModel with _$CartModel {
   }
 }
 
+/// Cart item model
 @freezed
 class CartItem with _$CartItem {
   const factory CartItem({
@@ -42,7 +43,7 @@ class CartItem with _$CartItem {
     required int quantity,
     required String totalPrice,
   }) = _CartItem;
-
+   /// Factory constructor to create a CartItem from JSON
   factory CartItem.fromJson(Map<String, dynamic> json) {
     return CartItem(
       productName: json['product_name'] as String,
@@ -53,7 +54,7 @@ class CartItem with _$CartItem {
   }
 }
 
-/// Helper function to calculate the total amount
+///  function to calculate the total amount
 double _calculateTotal(List<CartItem> items) {
   return items.fold(0.0, (total, item) {
     return total + (double.tryParse(item.totalPrice) ?? 0.0);

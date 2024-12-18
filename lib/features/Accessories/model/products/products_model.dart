@@ -19,7 +19,7 @@ class ProductsModel with _$ProductsModel {
     @Default('') String description,
     @Default(false) bool isBestseller,
   }) = _ProductModel;
-
+   //Products Model from json method
   factory ProductsModel.fromJson(Map<String, dynamic> json) =>
       _$ProductsModelFromJson(json);
 }

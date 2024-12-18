@@ -5,6 +5,7 @@ part 'promoted_products_model.freezed.dart';
 part 'promoted_products_model.g.dart';
 
 @freezed
+//PromotedProductsModel
 class PromotedProductsModel with _$PromotedProductsModel {
   const factory PromotedProductsModel({
     required int id,
