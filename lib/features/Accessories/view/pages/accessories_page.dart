@@ -9,6 +9,7 @@ import 'package:hand_car/features/Accessories/controller/products_controller/cat
 import 'package:hand_car/features/Accessories/controller/products_controller/products_controller.dart';
 import 'package:hand_car/features/Accessories/view/pages/accessories_details_page.dart';
 import 'package:hand_car/features/Accessories/view/pages/cart_page.dart';
+import 'package:hand_car/features/Accessories/view/pages/wishlist_page.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/accessories_circle_avatar_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/grid_view_for_accessories_widget.dart';
 import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
@@ -148,7 +149,9 @@ class AccessoriesPage extends HookConsumerWidget {
                     icon: const Icon(Icons.shopping_cart_sharp),
                   ),
                 IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      context.push(WishlistScreen.route);
+                    },
                     icon: Icon(Icons.favorite_border_outlined))
               ],
               leading: isSearching.value

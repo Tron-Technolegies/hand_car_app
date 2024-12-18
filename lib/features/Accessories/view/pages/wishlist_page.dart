@@ -6,6 +6,7 @@ import 'package:hand_car/features/Accessories/model/wishlist/wishlist_response_m
 
 
 class WishlistScreen extends ConsumerWidget {
+  static const route = '/wishlist';
   const WishlistScreen({super.key});
 
   @override

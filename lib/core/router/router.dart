@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hand_car/features/Accessories/view/pages/wishlist_page.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Import necessary page routes
@@ -31,7 +32,8 @@ final routerProvider = Provider<GoRouter>((ref) {
     // Redirect logic based on authentication state
     redirect: (context, state) {
       final isAuthenticated = authState.maybeWhen(
-        data: (auth) => auth != null, // If `auth` is not null, user is logged in
+        data: (auth) =>
+            auth != null, // If `auth` is not null, user is logged in
         orElse: () => false,
       );
 
@@ -50,7 +52,6 @@ final routerProvider = Provider<GoRouter>((ref) {
       }
 
       // Redirect unauthenticated users to LoginPage
-      
 
       // Redirect authenticated users to NavigationPage
       if (isAuthenticated && authExemptRoutes.contains(currentPath)) {
@@ -119,6 +120,9 @@ final _routes = [
     path: CheckOutPage.route,
     builder: (context, state) => const CheckOutPage(),
   ),
+  GoRoute(
+      path: WishlistScreen.route,
+      builder: (context, state) => const WishlistScreen()),
 ];
 
 /// Custom refresh notifier
