@@ -89,8 +89,9 @@ class AccessoriesPage extends HookConsumerWidget {
       controller.addListener(onScroll);
       return () => controller.removeListener(onScroll);
     }, [controller]);
-
+    // Auth state provider
     final authState = ref.watch(authControllerProvider);
+    // Check if the user is authenticated
     final isAuthenticated = authState.whenOrNull(
           data: (auth) => auth?.isAuthenticated ?? false,
         ) ??
@@ -99,7 +100,6 @@ class AccessoriesPage extends HookConsumerWidget {
     return Scaffold(
       appBar: appBarVisible.value
           ? AppBar(
-              // ... other AppBar properties ...
               title: const Text('Accessories'),
               centerTitle: true,
               actions: [
@@ -126,7 +126,7 @@ class AccessoriesPage extends HookConsumerWidget {
                         error: (_, __) => '0',
                       ),
                       style: const TextStyle(
-                        color: Colors.black,
+                        color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 12,
                       ),
