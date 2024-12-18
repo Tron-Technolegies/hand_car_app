@@ -206,6 +206,7 @@ class AccessoriesPage extends HookConsumerWidget {
               ),
             ),
           ),
+          // Show the page view
           Expanded(
             child: PageView.builder(
               controller: pageController,
