@@ -94,7 +94,7 @@ class ShoppingCartScreen extends HookConsumerWidget {
                         Lottie.asset(Assets.animations.error, height: 150),
                         SizedBox(height: context.space.space_100),
                         Text(
-                          "Failed to load cart: $error",
+                          error.toString(),
                           style: context.typography.h3.copyWith(
                             color: context.colors.primaryTxt,
                           ),

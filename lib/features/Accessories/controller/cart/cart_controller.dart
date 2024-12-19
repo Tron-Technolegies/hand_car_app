@@ -1,5 +1,6 @@
 // 
 
+import 'package:hand_car/core/router/user_validation.dart';
 import 'package:hand_car/features/Accessories/services/cart_api_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:hand_car/features/Accessories/model/cart/cart_model.dart';
@@ -11,25 +12,35 @@ part 'cart_controller.g.dart';
 class CartController extends _$CartController {
   @override
   Future<CartModel> build() async {
-    final cartResponse = await CartApiService().getCart();
-    return cartResponse ?? const CartModel();
+    if (!TokenStorage().hasTokens) {
+      throw Exception('Please login to view your cart');
+    }
+    return _fetchCart();
   }
 
-  /// Refresh Cart
+  Future<CartModel> _fetchCart() async {
+    try {
+      final cartService = CartApiService();
+      final cart = await cartService.getCart();
+      if (cart == null) {
+        throw Exception('Failed to fetch cart');
+      }
+      return cart;
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
   Future<void> refreshCart() async {
     state = const AsyncValue.loading();
     try {
-      final cartResponse = await CartApiService().getCart();
-      if (cartResponse != null) {
-        state = AsyncValue.data(cartResponse);
-      } else {
-        state = AsyncValue.error(
-          'Failed to fetch cart data',
-          StackTrace.current,
-        );
+      if (!TokenStorage().hasTokens) {
+        throw Exception('Please login to view your cart');
       }
+      final cartResponse = await _fetchCart();
+      state = AsyncValue.data(cartResponse);
     } catch (e, stackTrace) {
-      state = AsyncValue.error('Error refreshing cart: $e', stackTrace);
+      state = AsyncValue.error(e.toString(), stackTrace);
     }
   }
 
