@@ -14,10 +14,12 @@ class SignupPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    //name, email, phone, password
     final nameController = useTextEditingController();
     final emailController = useTextEditingController();
     final phoneController = useTextEditingController();
     final passwordController = useTextEditingController();
+    //loafing state
     final isLoading = useState(false);
 
     return Scaffold(
