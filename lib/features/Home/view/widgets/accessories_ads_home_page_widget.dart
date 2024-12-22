@@ -46,6 +46,7 @@ class AccessoriesAdsHomePageWidget extends ConsumerWidget {
           autoPlay: true,
         ),
         itemCount: data.length,
+        // Build each item in the slider
         itemBuilder: (context, index, realIndex) {
           final product = data[index];
           final originalPrice = double.parse(product.price);
@@ -83,6 +84,7 @@ class AccessoriesAdsHomePageWidget extends ConsumerWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
+                        // Discount Percentage
                         if (product.discountPercentage > 0)
                           Container(
                             decoration: BoxDecoration(
