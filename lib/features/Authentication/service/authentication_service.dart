@@ -143,15 +143,31 @@ class ApiServiceAuthentication {
   
   }
 
-  Future<void> logout() async {
+ Future<void> logout() async {
     try {
-      await _dio.post('/logout/');
-    } catch (e) {
-      // Ignore logout errors
-    } finally {
+      // Add access token to the request if available
+      final accessToken = _tokenStorage.getAccessToken();
+      if (accessToken != null) {
+        _dio.options.headers['Authorization'] = 'Bearer $accessToken';
+      }
+
+      await _dio.post('/Logout');
+      
+      // Clear stored tokens
       await _tokenStorage.clearTokens();
+      
+      // Clear auth header from dio instance
+      _dio.options.headers.remove('Authorization');
+      
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw Exception(e.response?.data['error'] ?? 'Logout failed');
+      }
+      throw Exception('Failed to connect to server');
     }
-  }
+  
+}
+
 
   /// Handles Dio errors and provides human-readable messages
   String _handleDioError(DioException e) {

@@ -72,7 +72,8 @@ class SignupPage extends HookConsumerWidget {
               ),
               SizedBox(height: context.space.space_200),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: context.space.space_200),
+                padding:
+                    EdgeInsets.symmetric(horizontal: context.space.space_200),
                 child: ButtonWidget(
                   label: isLoading.value ? "Signing up..." : "Sign Up",
                   onTap: () async {
