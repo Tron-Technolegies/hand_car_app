@@ -31,12 +31,16 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
     final loginState = ref.watch(authControllerProvider);
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: const Text("Login"),
+        centerTitle: true,
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(context.space.space_200),
           child: Center(
             child: Column(
+              spacing: context.space.space_100,
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -153,7 +157,7 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                           )),
                       TextButton(
                           onPressed: () {
-                            context.go(SignupPage.route);
+                            context.push(SignupPage.route);
                           },
                           child: Text(
                             "Sign Up",
