@@ -1,4 +1,5 @@
 import 'package:hand_car/core/router/user_validation.dart';
+import 'package:hand_car/features/Authentication/controller/user_controller.dart';
 import 'package:hand_car/features/Authentication/model/auth_model.dart';
 import 'package:hand_car/features/Authentication/model/user_model.dart';
 import 'package:hand_car/features/Authentication/service/authentication_service.dart';
@@ -43,6 +44,7 @@ class AuthController extends _$AuthController {
         accessToken: authModel.accessToken,
         refreshToken: authModel.refreshToken,
       );
+           
       
       state = AsyncValue.data(authModel);
     } catch (e, st) {

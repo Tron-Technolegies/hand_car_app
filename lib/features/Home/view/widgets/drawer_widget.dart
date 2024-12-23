@@ -7,12 +7,15 @@ import 'package:hand_car/features/Authentication/view/pages/login_with_phone_and
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class DrawerWidget extends ConsumerWidget {
+  
   const DrawerWidget({super.key});
 
   @override
   Widget build(BuildContext context, ref) {
     final image = ref.watch(imagePickerProvider);
     final authState = ref.watch(authControllerProvider);
+    
+ 
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
