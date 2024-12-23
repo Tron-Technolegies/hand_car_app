@@ -1,5 +1,6 @@
 import 'package:hand_car/core/router/user_validation.dart';
 import 'package:hand_car/features/Authentication/model/auth_model.dart';
+import 'package:hand_car/features/Authentication/model/user_model.dart';
 import 'package:hand_car/features/Authentication/service/authentication_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -49,32 +50,19 @@ class AuthController extends _$AuthController {
     }
   }
 
-  Future<void> signUp({
-    required String name,
-    required String email,
-    required String phone,
-    required String password,
-  }) async {
+  
+  Future<void> signup(UserModel user) async {
     state = const AsyncValue.loading();
+    
     try {
-      final authModel = await ref.read(apiServiceProvider).signUp(
-            name: name,
-            email: email,
-            phone: phone,
-            password: password,
-          );
-      
-      // Save tokens after successful signup
-      await ref.read(tokenStorageProvider).saveTokens(
-        accessToken: authModel.accessToken,
-        refreshToken: authModel.refreshToken,
-      );
-      
-      state = AsyncValue.data(authModel);
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
+      final message = await ref.read(apiServiceProvider).signUp(user);
+      state = const AsyncValue.data(null);
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
     }
   }
+
+
 
   Future<void> logout() async {
     state = const AsyncValue.loading();

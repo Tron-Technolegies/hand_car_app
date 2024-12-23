@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
 import 'package:hand_car/features/Authentication/model/auth_model.dart';
 import 'package:hand_car/core/router/user_validation.dart';
+import 'package:hand_car/features/Authentication/model/user_model.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -102,8 +105,8 @@ class ApiServiceAuthentication {
           {'username': username, 'password': password},
         ));
 
-    print('Login Response Status Code: ${response.statusCode}');
-    print('Login Response Data: ${response.data}');
+    log('Login Response Status Code: ${response.statusCode}');
+    log('Login Response Data: ${response.data}');
 
     if (response.statusCode == 200) {
       final authModel = AuthModel.fromJson(response.data);
@@ -116,41 +119,28 @@ class ApiServiceAuthentication {
 
     throw Exception('Login failed. Please check your credentials.');
   } on DioException catch (e) {
-    print('Dio Error: ${e.response?.statusCode}');
-    print('Dio Error Data: ${e.response?.data}');
+    log('Dio Error: ${e.response?.statusCode}');
+    log('Dio Error Data: ${e.response?.data}');
     throw Exception(_handleDioError(e));
   }
 }
 
-  Future<AuthModel> signUp({
-    required String name,
-    required String email,
-    required String phone,
-    required String password,
-  }) async {
+  Future<String> signUp(
+  UserModel user
+  ) async {
     try {
       final response = await _dio.post(
-        '/signup/',
-        data: {
-          'name': name,
-          'email': email,
-          'phone': phone,
-          'password': password,
-        },
+        '/signup',
+        data: user.toJson(),
       );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final authModel = AuthModel.fromJson(response.data);
-        await _tokenStorage.saveTokens(
-          accessToken: authModel.accessToken,
-          refreshToken: authModel.refreshToken,
-        );
-        return authModel;
-      }
-      throw Exception('Signup failed.');
+      return response.data['message'];
     } on DioException catch (e) {
-      throw Exception(_handleDioError(e));
+      if (e.response != null) {
+        throw Exception(e.response?.data['error'] ?? 'Signup failed');
+      }
+      throw Exception('Failed to connect to server');
     }
+  
   }
 
   Future<void> logout() async {
