@@ -2,24 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter_onboarding_slider/flutter_onboarding_slider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
+import 'package:hand_car/core/router/router.dart';
 import 'package:hand_car/features/Authentication/view/pages/login_with_phone_and_password_page.dart';
-import 'package:hand_car/features/Home/view/pages/navigation_page.dart';
 import 'package:hand_car/gen/assets.gen.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:lottie/lottie.dart';
 
 /// Onbording Screen Page
-class OnbordingScreenPage extends StatelessWidget {
+class OnbordingScreenPage extends ConsumerWidget {
   static const route = '/onbording_screen_page';
   final Color kDarkBlueColor = const Color(0xFF053149);
 
   const OnbordingScreenPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return OnBoardingSlider(
       finishButtonText: 'Get Started',
-      onFinish: () {
-        context.go(NavigationPage.route);
+      onFinish: () async {
+        // Handle onboarding completion
+        final onboardingCompleted = ref.read(onboardingCompletedProvider.notifier);
+        final storage = ref.read(storageProvider);
+        
+        await storage.write('onboardingCompleted', true);
+        onboardingCompleted.state = true;
+        
+        if (context.mounted) {
+          context.go(LoginWithPhoneAndPasswordPage.route);
+        }
       },
       finishButtonStyle: FinishButtonStyle(
         backgroundColor: context.colors.primary,
@@ -40,12 +50,17 @@ class OnbordingScreenPage extends StatelessWidget {
           fontWeight: FontWeight.w600,
         ),
       ),
-      trailingFunction: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const LoginWithPhoneAndPasswordPage()),
-        );
+      trailingFunction: () async {
+        // Also mark as completed when skipping to login
+        final onboardingCompleted = ref.read(onboardingCompletedProvider.notifier);
+        final storage = ref.read(storageProvider);
+        
+        await storage.write('onboardingCompleted', true);
+        onboardingCompleted.state = true;
+        
+        if (context.mounted) {
+          context.go(LoginWithPhoneAndPasswordPage.route);
+        }
       },
       controllerColor: context.colors.primary,
       totalPage: 4,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/features/Accessories/view/pages/wishlist_page.dart';
+import 'package:hand_car/features/Authentication/view/pages/login_with_phone_and_password_page.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Import necessary page routes
@@ -17,52 +19,65 @@ import 'package:hand_car/features/Home/view/pages/onbording_page.dart';
 import 'package:hand_car/features/Home/view/pages/splash_screen_page.dart';
 import 'package:hand_car/features/service/view/pages/service_details_page.dart';
 
-/// Global navigator key
-final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
+final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
-/// GoRouter provider
+// Provider for GetStorage instance
+final storageProvider = Provider<GetStorage>((ref) => GetStorage());
+
+// Provider to track if onboarding is completed
+final onboardingCompletedProvider = StateProvider<bool>((ref) {
+  final storage = ref.watch(storageProvider);
+  return storage.read('onboardingCompleted') ?? false;
+});
+
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authControllerProvider);
+  final onboardingCompleted = ref.watch(onboardingCompletedProvider);
 
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: SplashScreen.route, // Start at the splash screen
+    initialLocation: SplashScreen.route,
     routes: _routes,
-
-    // Redirect logic based on authentication state
     redirect: (context, state) {
       final isAuthenticated = authState.maybeWhen(
-        data: (auth) =>
-            auth != null, // If `auth` is not null, user is logged in
+        data: (auth) => auth != null,
         orElse: () => false,
       );
 
-      const authExemptRoutes = [
-        SplashScreen.route,
-        OnbordingScreenPage.route,
-        LoginPage.route,
-        SignupPage.route,
-      ];
+      final isOnboardingRoute = state.matchedLocation == OnbordingScreenPage.route;
+      final isLoginRoute = state.matchedLocation == LoginWithPhoneAndPasswordPage.route;
+      final isSignupRoute = state.matchedLocation == SignupPage.route;
+      final isSplashRoute = state.matchedLocation == SplashScreen.route;
 
-      final currentPath = state.matchedLocation;
+      // Allow splash screen to show
+      if (isSplashRoute) return null;
 
-      // Allow SplashScreen to show while loading auth state
-      if (currentPath == SplashScreen.route) {
+      // If user is not authenticated and onboarding is not completed
+      if (!onboardingCompleted && !isAuthenticated) {
+        return OnbordingScreenPage.route;
+      }
+
+      // If onboarding is completed but user is not authenticated
+      if (onboardingCompleted && !isAuthenticated) {
+        // Allow access to login and signup pages
+        if (isLoginRoute || isSignupRoute) return null;
+        // Redirect to login for all other routes
+        return LoginWithPhoneAndPasswordPage.route;
+      }
+
+      // If user is authenticated
+      if (isAuthenticated) {
+        // Redirect from auth pages to home
+        if (isLoginRoute || isSignupRoute || isOnboardingRoute) {
+          return NavigationPage.route;
+        }
         return null;
       }
 
-      // Redirect unauthenticated users to LoginPage
-
-      // Redirect authenticated users to NavigationPage
-      if (isAuthenticated && authExemptRoutes.contains(currentPath)) {
-        return NavigationPage.route;
-      }
-
-      return null; // No redirect needed
+      return null;
     },
-
     refreshListenable: RouterRefreshNotifier(ref),
-    debugLogDiagnostics: true, // Enable logs for debugging
+    debugLogDiagnostics: true,
   );
 });
 
@@ -72,6 +87,7 @@ final _routes = [
     path: SplashScreen.route,
     builder: (context, state) => const SplashScreen(),
   ),
+  GoRoute(path: LoginWithPhoneAndPasswordPage.route, builder: (context, state) => const LoginWithPhoneAndPasswordPage()),
   GoRoute(
     path: OnbordingScreenPage.route,
     builder: (context, state) => const OnbordingScreenPage(),
