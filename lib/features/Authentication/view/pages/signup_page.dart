@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
+import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
+import 'package:hand_car/features/Authentication/model/user_model.dart';
+import 'package:hand_car/features/Authentication/view/pages/login_with_phone_and_password_page.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -72,38 +76,40 @@ class SignupPage extends HookConsumerWidget {
                 child: ButtonWidget(
                   label: isLoading.value ? "Signing up..." : "Sign Up",
                   onTap: () async {
-                //     if (!_validateInputs(
-                //       context,
-                //       nameController.text,
-                //       emailController.text,
-                //       phoneController.text,
-                //       passwordController.text,
-                //     )) return;
+                    if (!_validateInputs(
+                      context,
+                      nameController.text,
+                      emailController.text,
+                      phoneController.text,
+                      passwordController.text,
+                    )) {
+                      return;
+                    }
 
-                //     isLoading.value = true;
-                //     FocusScope.of(context).unfocus();
+                    isLoading.value = true;
+                    FocusScope.of(context).unfocus();
 
-                //     try {
-                //  ref
-                //           .read(signupControllerProvider.notifier)
-                //           .signUp(
-                //             nameController.text.trim(),
-                //             emailController.text.trim(),
-                //             phoneController.text.trim(),
-                //             passwordController.text.trim(),
-                //           );
+                    try {
+                      await ref
+                          .read(authControllerProvider.notifier)
+                          .signup(UserModel(
+                            name: nameController.text.trim(),
+                            email: emailController.text.trim(),
+                            phone: phoneController.text.trim(),
+                            password: passwordController.text.trim(),
+                          ));
 
-                //       if (context.mounted) {
-                //         context.go(NavigationPage.route);
-                //       }
-                //     } catch (error) {
-                //       SnackbarUtil.showsnackbar(
-                //         message: "Signup failed: $error",
-                //         showretry: false,
-                //       );
-                //     } finally {
-                //       isLoading.value = false;
-                //     }
+                      if (context.mounted) {
+                        context.push(LoginWithPhoneAndPasswordPage.route);
+                      }
+                    } catch (error) {
+                      SnackbarUtil.showsnackbar(
+                        message: "Signup failed: $error",
+                        showretry: false,
+                      );
+                    } finally {
+                      isLoading.value = false;
+                    }
                   },
                 ),
               ),
