@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/controller/image_picker_controller.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
+import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
+import 'package:hand_car/features/Authentication/view/pages/login_with_phone_and_password_page.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class DrawerWidget extends ConsumerWidget {
@@ -8,8 +11,8 @@ class DrawerWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    
     final image = ref.watch(imagePickerProvider);
+    final authState = ref.watch(authControllerProvider);
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -80,8 +83,49 @@ class DrawerWidget extends ConsumerWidget {
           ListTile(
             leading: const Icon(Icons.logout_outlined),
             title: const Text('Logout'),
-            onTap: () {
+            onTap: () async {
               // Handle logout logic here
+              final shouldLogout = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Logout'),
+                  content: const Text('Are you sure you want to logout?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      child: const Text('Logout'),
+                    ),
+                  ],
+                ),
+              );
+
+              if (shouldLogout == true) {
+                await ref.read(authControllerProvider.notifier).logout();
+
+                if (context.mounted) {
+                  if (authState.error != null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(authState.error.toString()),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  } else {
+                    // Navigate to login screen
+                    context.go(LoginWithPhoneAndPasswordPage.route);
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Successfully logged out'),
+                      ),
+                    );
+                  }
+                }
+              }
             },
           ),
         ],
