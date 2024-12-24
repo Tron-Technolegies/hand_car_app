@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/widgets/outline_button_widget.dart';
 import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
 import 'package:hand_car/features/Authentication/view/pages/signup_page.dart';
+import 'package:hand_car/features/Home/view/pages/navigation_page.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -35,76 +36,77 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
         title: const Text("Login"),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(context.space.space_200),
-          child: Center(
-            child: Column(
-              spacing: context.space.space_100,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: SvgPicture.asset(Assets.icons.handCarIcon),
-                ),
-                SizedBox(height: context.space.space_200),
-                Padding(
-                  padding: EdgeInsets.only(left: context.space.space_200),
-                  child: Text(
-                    "Enter Your Phone Number",
-                    style: context.typography.h3,
+      body: Center(
+        child: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: Padding(
+              padding: EdgeInsets.all(context.space.space_200),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: SvgPicture.asset(Assets.icons.handCarIcon),
                   ),
-                ),
-                SizedBox(height: context.space.space_200),
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: context.space.space_200),
-                  child: TextField(
-                    controller: phoneController,
-                    focusNode: focusNode1,
-                    keyboardType: TextInputType.phone,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Enter Number',
-                      prefixIcon: Icon(Icons.phone),
+                  SizedBox(height: context.space.space_200),
+                  Padding(
+                    padding: EdgeInsets.only(left: context.space.space_200),
+                    child: Text(
+                      "Enter Your Phone Number",
+                      style: context.typography.h3,
                     ),
                   ),
-                ),
-                SizedBox(height: context.space.space_200),
-                Padding(
-                  padding: EdgeInsets.only(left: context.space.space_200),
-                  child: Text(
-                    "Enter Password",
-                    style: context.typography.h3,
-                  ),
-                ),
-                SizedBox(height: context.space.space_200),
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: context.space.space_200),
-                  child: TextField(
-                    focusNode: focusNode2,
-                    controller: passwordController,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Enter Password',
-                      prefixIcon: Icon(Icons.lock),
-                    ),
-                  ),
-                ),
-                SizedBox(height: context.space.space_200),
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: context.space.space_200),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      OutlineButtonWidget(
-                        label: 'Cancel',
-                        onTap: () {},
+                  SizedBox(height: context.space.space_200),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: context.space.space_200),
+                    child: TextField(
+                      controller: phoneController,
+                      focusNode: focusNode1,
+                      keyboardType: TextInputType.phone,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Enter Number',
+                        prefixIcon: Icon(Icons.phone),
                       ),
-                      ButtonWidget(
+                    ),
+                  ),
+                  SizedBox(height: context.space.space_200),
+                  Padding(
+                    padding: EdgeInsets.only(left: context.space.space_200),
+                    child: Text(
+                      "Enter Password",
+                      style: context.typography.h3,
+                    ),
+                  ),
+                  SizedBox(height: context.space.space_200),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: context.space.space_200),
+                    child: TextField(
+                      focusNode: focusNode2,
+                      controller: passwordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Enter Password',
+                        prefixIcon: Icon(Icons.lock),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: context.space.space_200),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: context.space.space_200),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        OutlineButtonWidget(
+                          label: 'Cancel',
+                          onTap: () {},
+                        ),
+                        ButtonWidget(
                           label:
                               loginState.isLoading ? "Logging in..." : "Login",
                           onTap: () async {
@@ -126,7 +128,7 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                                   passwordController.text,
                                 );
 
-// Check for specific error states
+                            // Check for specific error states
                             final authState = ref.read(authControllerProvider);
                             authState.whenOrNull(
                               error: (error, stackTrace) {
@@ -137,25 +139,27 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                                 log('Login error: $error');
                               },
                             );
-                          }),
-                    ],
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(height: context.space.space_200),
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: context.space.space_200),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      TextButton(
+                  SizedBox(height: context.space.space_200),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: context.space.space_200),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        TextButton(
                           onPressed: () {},
                           child: Text(
                             "Forgot Password?",
                             style: context.typography.bodyMedium
                                 .copyWith(color: context.colors.primaryTxt),
-                          )),
-                      TextButton(
+                          ),
+                        ),
+                        TextButton(
                           onPressed: () {
                             context.push(SignupPage.route);
                           },
@@ -163,11 +167,13 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                             "Sign Up",
                             style: context.typography.bodyMedium
                                 .copyWith(color: context.colors.primaryTxt),
-                          )),
-                    ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
