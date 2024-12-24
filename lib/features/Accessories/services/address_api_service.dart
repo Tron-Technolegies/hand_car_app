@@ -49,6 +49,7 @@ class AddressApiService {
     required String city,
     required String state,
     required String zipCode,
+    required bool isDefault,
   }) async {
     final token = await _getToken();
     if (token == null) {
@@ -64,6 +65,7 @@ class AddressApiService {
           'city': city,
           'state': state,
           'zip_code': zipCode,
+          'is_default': isDefault,
         },
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
