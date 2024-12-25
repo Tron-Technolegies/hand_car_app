@@ -15,7 +15,7 @@ class AddressApiService {
   Future<String?> _getToken() async {
     return TokenStorage().getAccessToken();
   }
-
+//get address
   Future<List<Map<String, dynamic>>> getAddresses() async {
     final token = await _getToken();
     if (token == null) {
@@ -42,6 +42,7 @@ class AddressApiService {
       throw Exception('Failed to connect to server');
     }
   }
+  //add address
 
   Future<Map<String, dynamic>> addAddress({
     required String street,
