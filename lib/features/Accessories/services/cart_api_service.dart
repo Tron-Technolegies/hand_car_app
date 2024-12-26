@@ -6,7 +6,6 @@ import 'package:hand_car/core/router/user_validation.dart';
 import 'package:hand_car/features/Accessories/model/cart/cart_model.dart';
 import 'package:hand_car/core/exception/cart/cart_exception.dart';
 import 'package:hand_car/features/Accessories/model/cart/cart_response.dart';
-import 'package:hand_car/features/Accessories/model/coupon/coupon_model.dart';
 
 class CartApiService {
 static final Dio _dio = Dio(
@@ -151,24 +150,37 @@ static final Dio _dio = Dio(
     });
   }
 
- Future<CartResponse> removeFromCart(int productId) async {
-     return _makeAuthenticatedRequest((token) async {
-       final response = await _dio.delete(
-         '/removecart/$productId/', // Include productId in the URL path
-         options: Options(headers: _createAuthHeaders(token)),
-       );
+Future<CartResponse> removeFromCart(int productId) async {
+  return _makeAuthenticatedRequest((token) async {
+    try {
+      final response = await _dio.delete(
+        '/removecart/$productId/', // Include productId in the URL path
+        options: Options(
+          headers: _createAuthHeaders(token),
+          validateStatus: (status) => status != null && (status == 200 || status == 404),
+        ),
+      );
         
-       if (response.statusCode == 200) {
-         return CartResponse(
-           message: response.data['message'] as String,
-           isSuccess: true,
-         );
-       }
+      if (response.statusCode == 200) {
+        return CartResponse(
+          message: response.data['message'] as String,
+          isSuccess: true,
+        );
+      } else if (response.statusCode == 404) {
+        // Handle case where item is not found (maybe already removed)
+        return CartResponse(
+          message: 'Item not found in cart',
+          isSuccess: true,
+        );
+      }
         
-       throw CartException(
-         response.data['error']?.toString() ?? 'Failed to remove item'
-       );
-     });
+      throw CartException(
+        response.data['error']?.toString() ?? 'Failed to remove item'
+      );
+    } catch (e) {
+      throw CartException('Network error: ${e.toString()}');
+    }
+  });
 }
   Future<CartResponse> updateQuantity(int productId, int quantity) async {
     return _makeAuthenticatedRequest((token) async {

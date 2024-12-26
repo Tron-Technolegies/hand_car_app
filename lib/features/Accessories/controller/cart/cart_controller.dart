@@ -103,7 +103,7 @@ class CartController extends _$CartController {
         state = AsyncValue.data(currentCart.copyWith(
           cartItems: updatedItems,
           isLoading: true,
-        ));gf
+        ));
       });
 
       await _cartService.removeFromCart(productId);
