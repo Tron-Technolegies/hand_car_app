@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/quantity_button_for_cart_widget.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class ProductCard extends HookWidget {
+class ProductCard extends HookConsumerWidget {
   final String productName;
   final String? modelNumber;
   final String? image;
   final String price;
   final bool isAvailable;
   final int quantity;
-  final VoidCallback? onDelete;
-  final VoidCallback? onAdd;
-  final Function(int)? onQuantityChanged;
+  final int productId;
+  final VoidCallback? onDelete; // Added onDelete callback
+  final Function(int)? onQuantityChanged; // Added onQuantityChanged callback
 
   const ProductCard({
     super.key,
@@ -22,13 +23,16 @@ class ProductCard extends HookWidget {
     required this.price,
     this.isAvailable = true,
     required this.quantity,
+    required this.productId,
     this.onDelete,
     this.onQuantityChanged,
-    this.onAdd,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // State for handling loading during quantity updates
+    final isUpdating = useState(false);
+
     return Card(
       color: const Color(0xffF5F5F5),
       child: Container(
@@ -44,7 +48,7 @@ class ProductCard extends HookWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-           // Product Image
+            // Product Image
             Container(
               width: 80,
               height: 80,
@@ -72,62 +76,75 @@ class ProductCard extends HookWidget {
                   ),
                   SizedBox(height: context.space.space_100),
 
-                  // Model Number
+                  // Model Number & Delete Button
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        "Model Number:$modelNumber",
-                        style: context.typography.body,
-                      ),
+                      if (modelNumber != null)
+                        Text(
+                          "Model: $modelNumber",
+                          style: context.typography.body,
+                        ),
                       IconButton(
                         onPressed: onDelete,
                         icon: Icon(
                           Icons.delete,
                           color: context.colors.primaryTxt,
                         ),
-                        color: context.colors.primaryTxt,
                         padding: EdgeInsets.zero,
                       ),
                     ],
                   ),
                   SizedBox(height: context.space.space_150),
 
-                  // Quantity Counter Row
+                  // Quantity Controls & Price
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Minus Button
+                      // Quantity Controls
                       Row(
                         children: [
                           QuantityButton(
                             icon: Icons.remove,
-                            onPressed: onAdd,
+                            onPressed: isUpdating.value || quantity <= 1
+                                ? null
+                                : () => onQuantityChanged?.call(quantity - 1),
                           ),
                           Container(
                             width: 40,
                             alignment: Alignment.center,
-                            child: Text(
-                              quantity.toString(),
-                              style: context.typography.bodyMedium,
-                            ),
+                            child: isUpdating.value
+                                ? SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: context.colors.primary,
+                                    ),
+                                  )
+                                : Text(
+                                    quantity.toString(),
+                                    style: context.typography.bodyMedium,
+                                  ),
                           ),
-
-                          // Plus Button
                           QuantityButton(
                             icon: Icons.add,
-                            onPressed: () {},
+                            onPressed: isUpdating.value
+                                ? null
+                                : () => onQuantityChanged?.call(quantity + 1),
                           ),
                         ],
                       ),
 
-                      // Quantity Display
+                      // Price
                       Text(
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
                         'AED $price',
-                        style: context.typography.bodyMedium
-                            .copyWith(color: context.colors.green),
+                        style: context.typography.bodyMedium.copyWith(
+                          color: context.colors.green,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),

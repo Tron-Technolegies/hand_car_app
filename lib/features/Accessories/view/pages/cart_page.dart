@@ -32,7 +32,28 @@ class ShoppingCartScreen extends HookConsumerWidget {
           if (cartController.asData?.value.cartItems.isNotEmpty ?? false)
             IconButton(
               icon: const Icon(Icons.delete_outline),
-              onPressed: () {},
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Clear Cart'),
+                    content: const Text('Are you sure you want to clear your cart?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          // Clear cart functionality
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Clear'),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
         ],
       ),
@@ -50,8 +71,7 @@ class ShoppingCartScreen extends HookConsumerWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Lottie.asset(Assets.animations.emptyCart,
-                                repeat: false),
+                            Lottie.asset(Assets.animations.emptyCart, repeat: false),
                             SizedBox(height: context.space.space_100),
                             Text(
                               "Your cart is empty",
@@ -75,11 +95,19 @@ class ShoppingCartScreen extends HookConsumerWidget {
                       itemBuilder: (context, index) {
                         final item = cart.cartItems[index];
                         return ProductCard(
+                          productId: item.productId,
                           productName: item.productName,
                           price: item.productPrice,
                           quantity: item.quantity,
-                          image:
-                              'https://e7.pngegg.com/pngimages/809/777/png-clipart-car-revathy-auto-parts-ford-motor-company-spare-part-advance-auto-parts-car-car-vehicle-thumbnail.png',
+                          image: item.imageUrl ?? 'https://e7.pngegg.com/pngimages/809/777/png-clipart-car-revathy-auto-parts-ford-motor-company-spare-part-advance-auto-parts-car-car-vehicle-thumbnail.png',
+                          onDelete: () {
+                            ref.read(cartControllerProvider.notifier)
+                               .removeFromCart(item.productId);
+                          },
+                          onQuantityChanged: (newQuantity) {
+                            ref.read(cartControllerProvider.notifier)
+                               .updateQuantity(item.productId, newQuantity);
+                          },
                         );
                       },
                     );
@@ -112,29 +140,26 @@ class ShoppingCartScreen extends HookConsumerWidget {
                       CouponCardListView(
                         onCouponApply: (coupon) {
                           couponController.text = coupon.couponCode;
-                          ref
-                              .read(cartControllerProvider.notifier)
-                              .applyCoupon(coupon);
+                          ref.read(cartControllerProvider.notifier)
+                             .applyCoupon(coupon);
                         },
                       ),
                       CouponInputSection(
                         controller: couponController,
                         onApply: (code) {
-                          final validCoupon = ref
-                              .read(couponControllerProvider)
-                              .asData
-                              ?.value
-                              .where((coupon) => coupon.couponCode == code)
-                              .firstOrNull;
+                          final validCoupon = ref.read(couponControllerProvider)
+                                               .asData?.value
+                                               .where((coupon) => coupon.couponCode == code)
+                                               .firstOrNull;
                           if (validCoupon != null) {
-                            ref
-                                .read(cartControllerProvider.notifier)
-                                .applyCoupon(validCoupon);
+                            ref.read(cartControllerProvider.notifier)
+                               .applyCoupon(validCoupon);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Coupon applied successfully!')),
+                            );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Invalid Coupon Code!'),
-                              ),
+                              const SnackBar(content: Text('Invalid Coupon Code!')),
                             );
                           }
                         },
@@ -142,10 +167,12 @@ class ShoppingCartScreen extends HookConsumerWidget {
                       Consumer(
                         builder: (_, ref, __) {
                           final cart = ref.watch(cartControllerProvider).value;
+                          if (cart == null) return const SizedBox.shrink();
+                          
                           return TotalAmountSectionWidget(
-                            grandTotal: cart!.discountedTotal,
+                            grandTotal: cart.discountedTotal,
                             delivery: 0,
-                            total: cart.discountedTotal,
+                            total: cart.totalAmount,
                           );
                         },
                       ),
@@ -165,11 +192,11 @@ class ShoppingCartScreen extends HookConsumerWidget {
                     children: [
                       Consumer(
                         builder: (_, ref, __) {
-                          /// Cart Total
                           final cart = ref.watch(cartControllerProvider).value;
-                          //
+                          if (cart == null) return const SizedBox.shrink();
+                          
                           return Text(
-                            'Total: AED ${cart!.discountedTotal.toStringAsFixed(2)}',
+                            'Total: AED ${cart.discountedTotal.toStringAsFixed(2)}',
                             style: context.typography.bodyMedium,
                           );
                         },

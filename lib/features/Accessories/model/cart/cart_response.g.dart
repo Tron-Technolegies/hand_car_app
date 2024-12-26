@@ -11,6 +11,10 @@ _$CartResponseImpl _$$CartResponseImplFromJson(Map<String, dynamic> json) =>
       message: json['message'] as String?,
       cartQuantity: (json['cartQuantity'] as num?)?.toInt(),
       error: json['error'] as String?,
+      isSuccess: json['isSuccess'] as bool? ?? false,
+      appliedCoupon: json['appliedCoupon'] == null
+          ? null
+          : CouponModel.fromJson(json['appliedCoupon'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$CartResponseImplToJson(_$CartResponseImpl instance) =>
@@ -18,4 +22,6 @@ Map<String, dynamic> _$$CartResponseImplToJson(_$CartResponseImpl instance) =>
       'message': instance.message,
       'cartQuantity': instance.cartQuantity,
       'error': instance.error,
+      'isSuccess': instance.isSuccess,
+      'appliedCoupon': instance.appliedCoupon,
     };

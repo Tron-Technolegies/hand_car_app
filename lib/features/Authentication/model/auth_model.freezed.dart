@@ -25,6 +25,7 @@ mixin _$AuthModel {
   @JsonKey(name: 'refresh_token')
   String get refreshToken => throw _privateConstructorUsedError;
   String get message => throw _privateConstructorUsedError;
+  bool get isLoading => throw _privateConstructorUsedError;
 
   /// Serializes this AuthModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -44,7 +45,8 @@ abstract class $AuthModelCopyWith<$Res> {
   $Res call(
       {@JsonKey(name: 'access_token') String accessToken,
       @JsonKey(name: 'refresh_token') String refreshToken,
-      String message});
+      String message,
+      bool isLoading});
 }
 
 /// @nodoc
@@ -65,6 +67,7 @@ class _$AuthModelCopyWithImpl<$Res, $Val extends AuthModel>
     Object? accessToken = null,
     Object? refreshToken = null,
     Object? message = null,
+    Object? isLoading = null,
   }) {
     return _then(_value.copyWith(
       accessToken: null == accessToken
@@ -79,6 +82,10 @@ class _$AuthModelCopyWithImpl<$Res, $Val extends AuthModel>
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String,
+      isLoading: null == isLoading
+          ? _value.isLoading
+          : isLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -94,7 +101,8 @@ abstract class _$$AuthModelImplCopyWith<$Res>
   $Res call(
       {@JsonKey(name: 'access_token') String accessToken,
       @JsonKey(name: 'refresh_token') String refreshToken,
-      String message});
+      String message,
+      bool isLoading});
 }
 
 /// @nodoc
@@ -113,6 +121,7 @@ class __$$AuthModelImplCopyWithImpl<$Res>
     Object? accessToken = null,
     Object? refreshToken = null,
     Object? message = null,
+    Object? isLoading = null,
   }) {
     return _then(_$AuthModelImpl(
       accessToken: null == accessToken
@@ -127,17 +136,23 @@ class __$$AuthModelImplCopyWithImpl<$Res>
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String,
+      isLoading: null == isLoading
+          ? _value.isLoading
+          : isLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$AuthModelImpl implements _AuthModel {
+class _$AuthModelImpl extends _AuthModel {
   const _$AuthModelImpl(
       {@JsonKey(name: 'access_token') required this.accessToken,
       @JsonKey(name: 'refresh_token') required this.refreshToken,
-      required this.message});
+      required this.message,
+      this.isLoading = false})
+      : super._();
 
   factory _$AuthModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$AuthModelImplFromJson(json);
@@ -150,10 +165,13 @@ class _$AuthModelImpl implements _AuthModel {
   final String refreshToken;
   @override
   final String message;
+  @override
+  @JsonKey()
+  final bool isLoading;
 
   @override
   String toString() {
-    return 'AuthModel(accessToken: $accessToken, refreshToken: $refreshToken, message: $message)';
+    return 'AuthModel(accessToken: $accessToken, refreshToken: $refreshToken, message: $message, isLoading: $isLoading)';
   }
 
   @override
@@ -165,13 +183,15 @@ class _$AuthModelImpl implements _AuthModel {
                 other.accessToken == accessToken) &&
             (identical(other.refreshToken, refreshToken) ||
                 other.refreshToken == refreshToken) &&
-            (identical(other.message, message) || other.message == message));
+            (identical(other.message, message) || other.message == message) &&
+            (identical(other.isLoading, isLoading) ||
+                other.isLoading == isLoading));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, accessToken, refreshToken, message);
+      Object.hash(runtimeType, accessToken, refreshToken, message, isLoading);
 
   /// Create a copy of AuthModel
   /// with the given fields replaced by the non-null parameter values.
@@ -189,11 +209,13 @@ class _$AuthModelImpl implements _AuthModel {
   }
 }
 
-abstract class _AuthModel implements AuthModel {
+abstract class _AuthModel extends AuthModel {
   const factory _AuthModel(
       {@JsonKey(name: 'access_token') required final String accessToken,
       @JsonKey(name: 'refresh_token') required final String refreshToken,
-      required final String message}) = _$AuthModelImpl;
+      required final String message,
+      final bool isLoading}) = _$AuthModelImpl;
+  const _AuthModel._() : super._();
 
   factory _AuthModel.fromJson(Map<String, dynamic> json) =
       _$AuthModelImpl.fromJson;
@@ -206,6 +228,8 @@ abstract class _AuthModel implements AuthModel {
   String get refreshToken;
   @override
   String get message;
+  @override
+  bool get isLoading;
 
   /// Create a copy of AuthModel
   /// with the given fields replaced by the non-null parameter values.

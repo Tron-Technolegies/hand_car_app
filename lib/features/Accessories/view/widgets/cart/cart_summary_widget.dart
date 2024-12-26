@@ -50,7 +50,7 @@ class CartSummaryWidget extends StatelessWidget {
                     name: item.productName,
                     // Fixed the toString syntax
                     price: 'AED ${item.productPrice.toString()}',
-                    quantity: item.quantity,
+                    quantity: item.quantity, productId: item.productId,
                   );
                 },
               ),

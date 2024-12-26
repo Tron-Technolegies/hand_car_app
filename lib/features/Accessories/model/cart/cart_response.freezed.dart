@@ -23,6 +23,8 @@ mixin _$CartResponse {
   String? get message => throw _privateConstructorUsedError;
   int? get cartQuantity => throw _privateConstructorUsedError;
   String? get error => throw _privateConstructorUsedError;
+  bool get isSuccess => throw _privateConstructorUsedError;
+  CouponModel? get appliedCoupon => throw _privateConstructorUsedError;
 
   /// Serializes this CartResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -40,7 +42,14 @@ abstract class $CartResponseCopyWith<$Res> {
           CartResponse value, $Res Function(CartResponse) then) =
       _$CartResponseCopyWithImpl<$Res, CartResponse>;
   @useResult
-  $Res call({String? message, int? cartQuantity, String? error});
+  $Res call(
+      {String? message,
+      int? cartQuantity,
+      String? error,
+      bool isSuccess,
+      CouponModel? appliedCoupon});
+
+  $CouponModelCopyWith<$Res>? get appliedCoupon;
 }
 
 /// @nodoc
@@ -61,6 +70,8 @@ class _$CartResponseCopyWithImpl<$Res, $Val extends CartResponse>
     Object? message = freezed,
     Object? cartQuantity = freezed,
     Object? error = freezed,
+    Object? isSuccess = null,
+    Object? appliedCoupon = freezed,
   }) {
     return _then(_value.copyWith(
       message: freezed == message
@@ -75,7 +86,29 @@ class _$CartResponseCopyWithImpl<$Res, $Val extends CartResponse>
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
               as String?,
+      isSuccess: null == isSuccess
+          ? _value.isSuccess
+          : isSuccess // ignore: cast_nullable_to_non_nullable
+              as bool,
+      appliedCoupon: freezed == appliedCoupon
+          ? _value.appliedCoupon
+          : appliedCoupon // ignore: cast_nullable_to_non_nullable
+              as CouponModel?,
     ) as $Val);
+  }
+
+  /// Create a copy of CartResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $CouponModelCopyWith<$Res>? get appliedCoupon {
+    if (_value.appliedCoupon == null) {
+      return null;
+    }
+
+    return $CouponModelCopyWith<$Res>(_value.appliedCoupon!, (value) {
+      return _then(_value.copyWith(appliedCoupon: value) as $Val);
+    });
   }
 }
 
@@ -87,7 +120,15 @@ abstract class _$$CartResponseImplCopyWith<$Res>
       __$$CartResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String? message, int? cartQuantity, String? error});
+  $Res call(
+      {String? message,
+      int? cartQuantity,
+      String? error,
+      bool isSuccess,
+      CouponModel? appliedCoupon});
+
+  @override
+  $CouponModelCopyWith<$Res>? get appliedCoupon;
 }
 
 /// @nodoc
@@ -106,6 +147,8 @@ class __$$CartResponseImplCopyWithImpl<$Res>
     Object? message = freezed,
     Object? cartQuantity = freezed,
     Object? error = freezed,
+    Object? isSuccess = null,
+    Object? appliedCoupon = freezed,
   }) {
     return _then(_$CartResponseImpl(
       message: freezed == message
@@ -120,14 +163,28 @@ class __$$CartResponseImplCopyWithImpl<$Res>
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
               as String?,
+      isSuccess: null == isSuccess
+          ? _value.isSuccess
+          : isSuccess // ignore: cast_nullable_to_non_nullable
+              as bool,
+      appliedCoupon: freezed == appliedCoupon
+          ? _value.appliedCoupon
+          : appliedCoupon // ignore: cast_nullable_to_non_nullable
+              as CouponModel?,
     ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$CartResponseImpl implements _CartResponse {
-  const _$CartResponseImpl({this.message, this.cartQuantity, this.error});
+class _$CartResponseImpl extends _CartResponse {
+  const _$CartResponseImpl(
+      {this.message,
+      this.cartQuantity,
+      this.error,
+      this.isSuccess = false,
+      this.appliedCoupon})
+      : super._();
 
   factory _$CartResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$CartResponseImplFromJson(json);
@@ -138,10 +195,15 @@ class _$CartResponseImpl implements _CartResponse {
   final int? cartQuantity;
   @override
   final String? error;
+  @override
+  @JsonKey()
+  final bool isSuccess;
+  @override
+  final CouponModel? appliedCoupon;
 
   @override
   String toString() {
-    return 'CartResponse(message: $message, cartQuantity: $cartQuantity, error: $error)';
+    return 'CartResponse(message: $message, cartQuantity: $cartQuantity, error: $error, isSuccess: $isSuccess, appliedCoupon: $appliedCoupon)';
   }
 
   @override
@@ -152,12 +214,17 @@ class _$CartResponseImpl implements _CartResponse {
             (identical(other.message, message) || other.message == message) &&
             (identical(other.cartQuantity, cartQuantity) ||
                 other.cartQuantity == cartQuantity) &&
-            (identical(other.error, error) || other.error == error));
+            (identical(other.error, error) || other.error == error) &&
+            (identical(other.isSuccess, isSuccess) ||
+                other.isSuccess == isSuccess) &&
+            (identical(other.appliedCoupon, appliedCoupon) ||
+                other.appliedCoupon == appliedCoupon));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, message, cartQuantity, error);
+  int get hashCode => Object.hash(
+      runtimeType, message, cartQuantity, error, isSuccess, appliedCoupon);
 
   /// Create a copy of CartResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -175,11 +242,14 @@ class _$CartResponseImpl implements _CartResponse {
   }
 }
 
-abstract class _CartResponse implements CartResponse {
+abstract class _CartResponse extends CartResponse {
   const factory _CartResponse(
       {final String? message,
       final int? cartQuantity,
-      final String? error}) = _$CartResponseImpl;
+      final String? error,
+      final bool isSuccess,
+      final CouponModel? appliedCoupon}) = _$CartResponseImpl;
+  const _CartResponse._() : super._();
 
   factory _CartResponse.fromJson(Map<String, dynamic> json) =
       _$CartResponseImpl.fromJson;
@@ -190,6 +260,10 @@ abstract class _CartResponse implements CartResponse {
   int? get cartQuantity;
   @override
   String? get error;
+  @override
+  bool get isSuccess;
+  @override
+  CouponModel? get appliedCoupon;
 
   /// Create a copy of CartResponse
   /// with the given fields replaced by the non-null parameter values.
