@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/widgets/outline_button_widget.dart';
 import 'package:hand_car/features/Accessories/controller/cart/cart_controller.dart';
+import 'package:hand_car/features/Accessories/controller/wishlist/wishlist_controller.dart';
 import 'package:hand_car/features/Accessories/model/products/products_model.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -168,6 +169,8 @@ class AccessoriesProductCardWidget extends ConsumerWidget {
                 child: IconButton(
                   onPressed: () {
                     // Optional: Toggle favorite functionality
+                    ref.read(wishlistNotifierProvider.notifier).addToWishlist(
+                        int.parse(product.id.toString()));
                   },
                   icon: const Icon(Icons.favorite_border),
                 ),
