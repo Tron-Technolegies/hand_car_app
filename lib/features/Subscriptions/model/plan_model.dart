@@ -1,19 +1,20 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import 'package:html/parser.dart' show parse;
+
 part 'plan_model.freezed.dart';
 part 'plan_model.g.dart';
 
 @freezed
-/// PlanResponse class to get the data from the API
 class PlanResponse with _$PlanResponse {
   const factory PlanResponse({
-    required List<PlanModel> plan, // Note: matches the "plan" key from backend
+    required List<PlanModel> plan,
   }) = _PlanResponse;
 
-  factory PlanResponse.fromJson(Map<String, dynamic> json) => _$PlanResponseFromJson(json);
+  factory PlanResponse.fromJson(Map<String, dynamic> json) =>
+      _$PlanResponseFromJson(json);
 }
 
-/// Serializes this PlanModel to a JSON map.
 @freezed
 class PlanModel with _$PlanModel {
   const factory PlanModel({
@@ -25,5 +26,23 @@ class PlanModel with _$PlanModel {
     required String description,
   }) = _PlanModel;
 
-  factory PlanModel.fromJson(Map<String, dynamic> json) => _$PlanModelFromJson(json);
+  factory PlanModel.fromJson(Map<String, dynamic> json) {
+    String cleanDescription = json['description'] as String;
+    
+    // Parse HTML and extract list items
+    final document = parse(cleanDescription);
+    final listItems = document.querySelectorAll('li');
+    
+    if (listItems.isNotEmpty) {
+      // Join list items with bullet points
+      cleanDescription = listItems
+          .map((item) => '• ${item.text.trim()}')
+          .join('\n');
+    }
+    
+    return _$PlanModelFromJson({
+      ...json,
+      'description': cleanDescription,
+    });
+  }
 }

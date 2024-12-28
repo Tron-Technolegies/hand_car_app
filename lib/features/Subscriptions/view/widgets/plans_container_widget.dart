@@ -9,7 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 class PlansContainer extends HookConsumerWidget {
   final String planName;
   final String price;
-  final String description; // Updated: single description field
+  final String description;
   final String duration;
   final Color color;
   final Color textColor1;
@@ -32,16 +32,19 @@ class PlansContainer extends HookConsumerWidget {
     this.child,
   });
 
-  // Launch WhatsApp to Subscribe
   String createWhatsAppUrl(String plan, String price, int duration) {
     final message = Uri.encodeComponent(
         "I would like to subscribe to the $plan plan for $duration months at a price of AED $price.");
     return "https://wa.me/917025791186?text=$message";
   }
 
-  // Split description into features
   List<String> parseFeatures(String description) {
-    return description.split(',').map((feature) => feature.trim()).toList();
+    // Split by newlines since the HTML has already been processed into bullet points
+    return description
+        .split('\n')
+        .map((feature) => feature.trim())
+        .where((feature) => feature.isNotEmpty)
+        .toList();
   }
 
   @override
@@ -87,8 +90,24 @@ class PlansContainer extends HookConsumerWidget {
               ),
             ),
             SizedBox(height: context.space.space_250),
-            // Display parsed features
-            ...features.map((feature) => FeaturesCheckIconWidget(text: feature)),
+            // Features list with proper spacing
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: features.length,
+              itemBuilder: (context, index) {
+                final feature = features[index];
+                // Remove bullet point if it exists as we're using FeaturesCheckIconWidget
+                final cleanFeature = feature.startsWith('• ') 
+                    ? feature.substring(2) 
+                    : feature;
+                    
+                return Padding(
+                  padding: EdgeInsets.only(bottom: context.space.space_150),
+                  child: FeaturesCheckIconWidget(text: cleanFeature),
+                );
+              },
+            ),
             SizedBox(height: context.space.space_250),
             Container(
               padding: EdgeInsets.all(context.space.space_250),
@@ -104,7 +123,6 @@ class PlansContainer extends HookConsumerWidget {
                     style: context.typography.bodyLarge,
                   ),
                   SizedBox(height: context.space.space_150),
-                  // Plan Discount Widgets
                   PlanDiscountWidget(
                     number: '1',
                     plan: "Car Plan",
@@ -127,7 +145,6 @@ class PlansContainer extends HookConsumerWidget {
               ),
             ),
             const SizedBox(height: 20),
-            // Save 10% off on 6 months subscription
             Center(
               child: RichText(
                 text: TextSpan(
@@ -145,7 +162,6 @@ class PlansContainer extends HookConsumerWidget {
               ),
             ),
             SizedBox(height: context.space.space_250),
-            // Subscribe Button
             SizedBox(
               width: double.infinity,
               child: ButtonWidget(

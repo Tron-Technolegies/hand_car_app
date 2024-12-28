@@ -15,7 +15,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 class SignupPage extends HookConsumerWidget {
   static const route = '/signup_page';
   const SignupPage({super.key});
-
+ /// Function to validate phone number
   String? validatePhoneNumber(String? value, String countryCode) {
     if (value == null || value.isEmpty) {
       return 'Phone number is required';
@@ -46,6 +46,7 @@ class SignupPage extends HookConsumerWidget {
     }
     return null;
   }
+  /// Function to validate email
 
   String? validateEmail(String? value) {
     if (value == null || value.isEmpty) {
