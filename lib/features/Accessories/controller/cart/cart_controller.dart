@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:hand_car/core/exception/cart/cart_exception.dart';
 import 'package:hand_car/features/Accessories/model/coupon/coupon_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -20,10 +22,41 @@ class CartController extends _$CartController {
     return _fetchCart();
   }
 
+  Future<void> addToCart(int productId) async {
+    final previousState = state;
+    try {
+      // Check authentication first
+      if (!TokenStorage().hasTokens) {
+        throw const CartException('Please login to continue');
+      }
+
+      log('Adding product to cart: $productId');
+
+      // Make API call first
+      final response = await _cartService.addToCart(productId);
+      
+      if (!response.isSuccess) {
+        throw CartException(response.error ?? 'Failed to add item to cart');
+      }
+
+      log('Product added successfully, refreshing cart');
+
+      // Only update UI after successful API call
+      await refreshCart();
+
+    } catch (e) {
+      log('Error adding to cart: $e');
+      // Restore previous state on error
+      state = previousState;
+      rethrow; // Rethrow to handle in UI
+    }
+  }
+
   Future<CartModel> _fetchCart() async {
     try {
       return await _cartService.getCart();
     } catch (e) {
+      log('Error fetching cart: $e');
       if (e is CartException) rethrow;
       throw CartException('Failed to fetch cart: ${e.toString()}');
     }
@@ -36,58 +69,9 @@ class CartController extends _$CartController {
         throw const CartException('Please login to view your cart');
       }
       final cartResponse = await _fetchCart();
-      if (!state.isLoading) return;
       state = AsyncValue.data(cartResponse);
     } catch (e, stackTrace) {
-      if (!state.isLoading) return;
       state = AsyncValue.error(e, stackTrace);
-    }
-  }
-
-  Future<void> addToCart(int productId) async {
-    final previousState = state;
-    try {
-      // Optimistically update the UI
-      state.whenData((currentCart) {
-        // Find if product already exists
-        final existingItemIndex = currentCart.cartItems.indexWhere(
-          (item) => item.productId == productId
-        );
-
-        if (existingItemIndex != -1) {
-          // Update existing item
-          final updatedItems = List<CartItem>.from(currentCart.cartItems);
-          final existingItem = updatedItems[existingItemIndex];
-          updatedItems[existingItemIndex] = existingItem.copyWith(
-            quantity: existingItem.quantity + 1
-          );
-
-          state = AsyncValue.data(currentCart.copyWith(
-            cartItems: updatedItems,
-            isLoading: true,
-          ));
-        } else {
-          // Add new item
-          state = AsyncValue.data(currentCart.copyWith(isLoading: true));
-        }
-      });
-
-      // Make API call
-      
-      // Check state validity
-      if (!state.isLoading) {
-        state = previousState;
-        return;
-      }
-
-      // Force refresh to get updated cart from server
-      await refreshCart();
-    } catch (e) {
-      if (!state.isLoading) return;
-      // Restore previous state on error
-      state = previousState;
-      if (e is CartException) rethrow;
-      throw CartException('Failed to add item to cart: ${e.toString()}');
     }
   }
 
