@@ -8,6 +8,7 @@ import 'package:hand_car/features/Accessories/view/widgets/accessories/drop_down
 import 'package:hand_car/features/Accessories/view/widgets/accessories/image_carousel_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/product_section_widget.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+//Accessories Details page 
 
 class AccessoriesDetailsPage extends HookConsumerWidget {
   static const route = '/accessories-details';

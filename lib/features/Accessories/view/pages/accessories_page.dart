@@ -13,7 +13,6 @@ import 'package:hand_car/features/Accessories/view/pages/wishlist_page.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/accessories_circle_avatar_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/grid_view_for_accessories_widget.dart';
 import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
-import 'package:hand_car/features/Authentication/model/auth_model.dart';
 import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -28,7 +27,8 @@ final selectedCategoryNameProvider = StateProvider<String?>((ref) => null);
 class AccessoriesPage extends HookConsumerWidget {
   static const route = '/accessories';
   const AccessoriesPage({super.key});
-  void _showLoginDialog(BuildContext context) {
+  // Function to show the login dialog
+    void _showLoginDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -56,6 +56,7 @@ class AccessoriesPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // List of image URLs
     final List<String> images = [
       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1gGXMTCuE-ZlTuR6tXgLvAxBqfyVw-_2hSQ&s',
       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnAKFsUZa2dWJ4Lym_512IUED-ICJmOydQ7w&s',
