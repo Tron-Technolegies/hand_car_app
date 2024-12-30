@@ -1,7 +1,8 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
-class UserInfoEditField extends StatelessWidget {
+class UserInfoEditField extends HookWidget {
   const UserInfoEditField({
     super.key,
     required this.text,

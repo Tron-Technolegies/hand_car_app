@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/controller/image_picker_controller.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
@@ -6,11 +7,12 @@ import 'package:hand_car/features/Authentication/view/widgets/profile_pic.dart';
 import 'package:hand_car/features/Authentication/view/widgets/user_info_edit_field.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class EditProfileScreen extends ConsumerWidget {
+class EditProfileScreen extends HookConsumerWidget {
   const EditProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context, ref) {
+    final isVisible = useState(false);
     final image = ref.watch(imagePickerProvider);
     return Scaffold(
       backgroundColor: Colors.white,
@@ -108,12 +110,16 @@ class EditProfileScreen extends ConsumerWidget {
                   UserInfoEditField(
                     text: "Old Password",
                     child: TextFormField(
-                      obscureText: true,
+                      obscureText: isVisible.value,
                       initialValue: "demopass",
                       decoration: InputDecoration(
-                        suffixIcon: const Icon(
-                          Icons.visibility_off,
-                          size: 20,
+                        suffixIcon: IconButton(
+                          icon: Icon(isVisible.value
+                              ? Icons.visibility
+                              : Icons.visibility_off),
+                          onPressed: () {
+                            isVisible.value = !isVisible.value;
+                          },
                         ),
                         filled: true,
                         fillColor:
