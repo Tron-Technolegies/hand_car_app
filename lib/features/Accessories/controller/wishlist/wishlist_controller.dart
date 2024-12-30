@@ -53,6 +53,7 @@ class WishlistNotifier extends _$WishlistNotifier {
         wishlistMap[item.id.toString()] = item;
       }
       state = AsyncValue.data(wishlistMap);
+      log(wishlistMap.toString());
     } catch (error, stackTrace) {
       log('Error fetching wishlist: $error');
       state = AsyncValue.error(error, stackTrace);

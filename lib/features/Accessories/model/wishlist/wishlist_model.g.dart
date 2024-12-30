@@ -11,7 +11,7 @@ _$WishlistResponseImpl _$$WishlistResponseImplFromJson(
     _$WishlistResponseImpl(
       id: (json['id'] as num).toInt(),
       productName: json['product_name'] as String,
-      productPrice: (json['product_price'] as num).toDouble(),
+      productPrice: WishlistResponse._priceFromJson(json['product_price']),
       productImage: json['product_image'] as String?,
       productDescription: json['product_description'] as String?,
     );

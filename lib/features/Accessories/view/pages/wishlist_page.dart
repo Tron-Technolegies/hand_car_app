@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hand_car/core/extension/theme_extension.dart';
+import 'package:hand_car/core/utils/snackbar.dart';
+import 'package:hand_car/core/widgets/button_widget.dart';
+import 'package:hand_car/core/widgets/snack_bar_widget.dart';
+import 'package:hand_car/features/Accessories/controller/cart/cart_controller.dart';
 import 'package:hand_car/features/Accessories/controller/wishlist/wishlist_controller.dart';
 import 'package:hand_car/features/Accessories/model/wishlist/wishlist_model.dart';
-
 
 class WishlistScreen extends ConsumerStatefulWidget {
   static const route = '/wishlist';
@@ -154,94 +158,160 @@ class _WishlistItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Dismissible(
-      key: Key(item.id.toString()),
-      // ... rest of the Dismissible widget code ...
-      child: Card(
-        // ... card styling ...
-        child: Column(
-          children: [
-            Row(
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          bottom: BorderSide(
+            color: Colors.grey.shade200,
+            width: 1,
+          ),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Product Image
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.network(
+              item.productImage ??
+                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMp75PkGCYT5R6vVl0EKoQyLGQ30wPljYsew&s',
+              width: 100,
+              height: 100,
+              fit: BoxFit.cover,
+            ),
+          ),
+          const SizedBox(width: 16),
+
+          // Product Details
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
-                    item.productImage ?? 'https://via.placeholder.com/100',
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
+                Text(
+                  item.productName,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item.productName,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '\$${item.productPrice.toStringAsFixed(2)}',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      if (item.productDescription != null) ...[
-                        const SizedBox(height: 4),
-                        Text(
-                          item.productDescription!,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ],
+                const SizedBox(height: 4),
+                Text(
+                  'Model Number: ${item.id}', // You might want to add a modelNumber field to your model
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'AED ${item.productPrice.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.green,
                   ),
                 ),
               ],
             ),
-            // ... rest of the widget ...
-          ],
-        ),
-      ),
-    );
-  }
-
-
-  Widget _buildMoreOptionsSheet(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            leading: const Icon(Icons.remove_circle_outline),
-            title: const Text('Remove from Wishlist'),
-            onTap: () {
-              Navigator.pop(context);
-              // Remove logic here
-            },
           ),
-          ListTile(
-            leading: const Icon(Icons.save_alt),
-            title: const Text('Save for Later'),
-            onTap: () {
-              Navigator.pop(context);
-              // Save for later logic here
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.list),
-            title: const Text('Add to another list'),
-            onTap: () {
-              Navigator.pop(context);
-              // Add to another list logic here
-            },
+
+          // Right Side Actions
+          Column(
+            children: [
+              // Quantity Selector
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '01',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[800],
+                      ),
+                    ),
+                    const Icon(
+                      Icons.arrow_drop_down,
+                      size: 20,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // Move to Cart Button
+              Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: context.space.space_200,
+                    vertical: context.space.space_100),
+                child: ButtonWidget(
+                    label: "Move to Cart",
+                    onTap: () {
+                      ref
+                          .read(cartControllerProvider.notifier)
+                          .addToCart(item.id);
+                      SnackbarUtil.showsnackbar(message: "Item added to cart");
+                    }),
+              ),
+
+              // Delete Button
+              IconButton(
+                onPressed: () {
+                  // Delete logic here
+                },
+                icon: const Icon(
+                  Icons.delete_outline,
+                  color: Colors.grey,
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
+}
+
+Widget _buildMoreOptionsSheet(BuildContext context) {
+  return Container(
+    padding: const EdgeInsets.symmetric(vertical: 16),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ListTile(
+          leading: const Icon(Icons.remove_circle_outline),
+          title: const Text('Remove from Wishlist'),
+          onTap: () {
+            Navigator.pop(context);
+            // Remove logic here
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.save_alt),
+          title: const Text('Save for Later'),
+          onTap: () {
+            Navigator.pop(context);
+            // Save for later logic here
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.list),
+          title: const Text('Add to another list'),
+          onTap: () {
+            Navigator.pop(context);
+            // Add to another list logic here
+          },
+        ),
+      ],
+    ),
+  );
 }

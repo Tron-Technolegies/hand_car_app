@@ -20,11 +20,10 @@ WishlistResponse _$WishlistResponseFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$WishlistResponse {
-  int get id =>
-      throw _privateConstructorUsedError; // Changed from productId to id
+  int get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'product_name')
   String get productName => throw _privateConstructorUsedError;
-  @JsonKey(name: 'product_price')
+  @JsonKey(name: 'product_price', fromJson: WishlistResponse._priceFromJson)
   double get productPrice => throw _privateConstructorUsedError;
   @JsonKey(name: 'product_image')
   String? get productImage => throw _privateConstructorUsedError;
@@ -50,7 +49,8 @@ abstract class $WishlistResponseCopyWith<$Res> {
   $Res call(
       {int id,
       @JsonKey(name: 'product_name') String productName,
-      @JsonKey(name: 'product_price') double productPrice,
+      @JsonKey(name: 'product_price', fromJson: WishlistResponse._priceFromJson)
+      double productPrice,
       @JsonKey(name: 'product_image') String? productImage,
       @JsonKey(name: 'product_description') String? productDescription});
 }
@@ -112,7 +112,8 @@ abstract class _$$WishlistResponseImplCopyWith<$Res>
   $Res call(
       {int id,
       @JsonKey(name: 'product_name') String productName,
-      @JsonKey(name: 'product_price') double productPrice,
+      @JsonKey(name: 'product_price', fromJson: WishlistResponse._priceFromJson)
+      double productPrice,
       @JsonKey(name: 'product_image') String? productImage,
       @JsonKey(name: 'product_description') String? productDescription});
 }
@@ -167,7 +168,8 @@ class _$WishlistResponseImpl implements _WishlistResponse {
   const _$WishlistResponseImpl(
       {required this.id,
       @JsonKey(name: 'product_name') required this.productName,
-      @JsonKey(name: 'product_price') required this.productPrice,
+      @JsonKey(name: 'product_price', fromJson: WishlistResponse._priceFromJson)
+      required this.productPrice,
       @JsonKey(name: 'product_image') this.productImage,
       @JsonKey(name: 'product_description') this.productDescription});
 
@@ -176,12 +178,11 @@ class _$WishlistResponseImpl implements _WishlistResponse {
 
   @override
   final int id;
-// Changed from productId to id
   @override
   @JsonKey(name: 'product_name')
   final String productName;
   @override
-  @JsonKey(name: 'product_price')
+  @JsonKey(name: 'product_price', fromJson: WishlistResponse._priceFromJson)
   final double productPrice;
   @override
   @JsonKey(name: 'product_image')
@@ -237,7 +238,8 @@ abstract class _WishlistResponse implements WishlistResponse {
   const factory _WishlistResponse(
       {required final int id,
       @JsonKey(name: 'product_name') required final String productName,
-      @JsonKey(name: 'product_price') required final double productPrice,
+      @JsonKey(name: 'product_price', fromJson: WishlistResponse._priceFromJson)
+      required final double productPrice,
       @JsonKey(name: 'product_image') final String? productImage,
       @JsonKey(name: 'product_description')
       final String? productDescription}) = _$WishlistResponseImpl;
@@ -246,12 +248,12 @@ abstract class _WishlistResponse implements WishlistResponse {
       _$WishlistResponseImpl.fromJson;
 
   @override
-  int get id; // Changed from productId to id
+  int get id;
   @override
   @JsonKey(name: 'product_name')
   String get productName;
   @override
-  @JsonKey(name: 'product_price')
+  @JsonKey(name: 'product_price', fromJson: WishlistResponse._priceFromJson)
   double get productPrice;
   @override
   @JsonKey(name: 'product_image')
