@@ -92,7 +92,7 @@ class __$$MultipleImagePickerStateImplCopyWithImpl<$Res>
   }) {
     return _then(_$MultipleImagePickerStateImpl(
       selectedImages: null == selectedImages
-          ? _value._selectedImages
+          ? _value.selectedImages
           : selectedImages // ignore: cast_nullable_to_non_nullable
               as List<XFile>,
     ));
@@ -102,17 +102,10 @@ class __$$MultipleImagePickerStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$MultipleImagePickerStateImpl implements _MultipleImagePickerState {
-  const _$MultipleImagePickerStateImpl(
-      {required final List<XFile> selectedImages})
-      : _selectedImages = selectedImages;
+  const _$MultipleImagePickerStateImpl({required this.selectedImages});
 
-  final List<XFile> _selectedImages;
   @override
-  List<XFile> get selectedImages {
-    if (_selectedImages is EqualUnmodifiableListView) return _selectedImages;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_selectedImages);
-  }
+  final List<XFile> selectedImages;
 
   @override
   String toString() {
@@ -125,12 +118,12 @@ class _$MultipleImagePickerStateImpl implements _MultipleImagePickerState {
         (other.runtimeType == runtimeType &&
             other is _$MultipleImagePickerStateImpl &&
             const DeepCollectionEquality()
-                .equals(other._selectedImages, _selectedImages));
+                .equals(other.selectedImages, selectedImages));
   }
 
   @override
   int get hashCode => Object.hash(
-      runtimeType, const DeepCollectionEquality().hash(_selectedImages));
+      runtimeType, const DeepCollectionEquality().hash(selectedImages));
 
   /// Create a copy of MultipleImagePickerState
   /// with the given fields replaced by the non-null parameter values.

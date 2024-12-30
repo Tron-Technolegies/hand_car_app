@@ -11,7 +11,7 @@ _$AuthModelImpl _$$AuthModelImplFromJson(Map<String, dynamic> json) =>
       accessToken: json['access_token'] as String,
       refreshToken: json['refresh_token'] as String,
       message: json['message'] as String,
-      isLoading: json['isLoading'] as bool? ?? false,
+      isLoading: json['is_loading'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$$AuthModelImplToJson(_$AuthModelImpl instance) =>
@@ -19,5 +19,5 @@ Map<String, dynamic> _$$AuthModelImplToJson(_$AuthModelImpl instance) =>
       'access_token': instance.accessToken,
       'refresh_token': instance.refreshToken,
       'message': instance.message,
-      'isLoading': instance.isLoading,
+      'is_loading': instance.isLoading,
     };

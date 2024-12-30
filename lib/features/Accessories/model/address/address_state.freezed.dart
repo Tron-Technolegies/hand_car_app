@@ -102,7 +102,7 @@ class __$$AddressStateImplCopyWithImpl<$Res>
   }) {
     return _then(_$AddressStateImpl(
       addresses: null == addresses
-          ? _value._addresses
+          ? _value.addresses
           : addresses // ignore: cast_nullable_to_non_nullable
               as List<AddressModel>,
       isLoading: null == isLoading
@@ -121,20 +121,11 @@ class __$$AddressStateImplCopyWithImpl<$Res>
 
 class _$AddressStateImpl implements _AddressState {
   const _$AddressStateImpl(
-      {final List<AddressModel> addresses = const [],
-      this.isLoading = false,
-      this.error})
-      : _addresses = addresses;
+      {this.addresses = const [], this.isLoading = false, this.error});
 
-  final List<AddressModel> _addresses;
   @override
   @JsonKey()
-  List<AddressModel> get addresses {
-    if (_addresses is EqualUnmodifiableListView) return _addresses;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_addresses);
-  }
-
+  final List<AddressModel> addresses;
   @override
   @JsonKey()
   final bool isLoading;
@@ -151,8 +142,7 @@ class _$AddressStateImpl implements _AddressState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AddressStateImpl &&
-            const DeepCollectionEquality()
-                .equals(other._addresses, _addresses) &&
+            const DeepCollectionEquality().equals(other.addresses, addresses) &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
             (identical(other.error, error) || other.error == error));
@@ -160,7 +150,7 @@ class _$AddressStateImpl implements _AddressState {
 
   @override
   int get hashCode => Object.hash(runtimeType,
-      const DeepCollectionEquality().hash(_addresses), isLoading, error);
+      const DeepCollectionEquality().hash(addresses), isLoading, error);
 
   /// Create a copy of AddressState
   /// with the given fields replaced by the non-null parameter values.

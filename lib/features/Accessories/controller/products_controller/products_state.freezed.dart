@@ -385,7 +385,7 @@ class __$$LoadedImplCopyWithImpl<$Res>
   }) {
     return _then(_$LoadedImpl(
       null == products
-          ? _value._products
+          ? _value.products
           : products // ignore: cast_nullable_to_non_nullable
               as List<ProductsModel>,
     ));
@@ -395,15 +395,10 @@ class __$$LoadedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LoadedImpl implements _Loaded {
-  const _$LoadedImpl(final List<ProductsModel> products) : _products = products;
+  const _$LoadedImpl(this.products);
 
-  final List<ProductsModel> _products;
   @override
-  List<ProductsModel> get products {
-    if (_products is EqualUnmodifiableListView) return _products;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_products);
-  }
+  final List<ProductsModel> products;
 
   @override
   String toString() {
@@ -415,12 +410,12 @@ class _$LoadedImpl implements _Loaded {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$LoadedImpl &&
-            const DeepCollectionEquality().equals(other._products, _products));
+            const DeepCollectionEquality().equals(other.products, products));
   }
 
   @override
   int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(_products));
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(products));
 
   /// Create a copy of ProductState
   /// with the given fields replaced by the non-null parameter values.

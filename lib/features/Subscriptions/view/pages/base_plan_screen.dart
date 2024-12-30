@@ -147,7 +147,7 @@ abstract class BasePlanScreen extends HookConsumerWidget {
                             planName: plan.name,
                             price: plan.price,
                             duration: plan.duration,
-                            description: plan.description,
+                            description: plan.description??'',
                             color: primaryColor,
                             containerColor: containerColor,
                             textColor1: primaryColor,

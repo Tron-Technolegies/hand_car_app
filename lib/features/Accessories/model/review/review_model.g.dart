@@ -15,7 +15,7 @@ _$ReviewModelImpl _$$ReviewModelImplFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$$ReviewModelImplToJson(_$ReviewModelImpl instance) =>
     <String, dynamic>{
-      'id': instance.id,
+      if (instance.id case final value?) 'id': value,
       'rating': instance.rating,
-      'comment': instance.comment,
+      if (instance.comment case final value?) 'comment': value,
     };

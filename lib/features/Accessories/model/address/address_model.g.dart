@@ -11,9 +11,9 @@ _$AddressModelImpl _$$AddressModelImplFromJson(Map<String, dynamic> json) =>
       street: json['street'] as String,
       city: json['city'] as String,
       state: json['state'] as String,
-      zipCode: json['zipCode'] as String,
+      zipCode: json['zip_code'] as String,
       country: json['country'] as String,
-      isDefault: json['isDefault'] as bool? ?? false,
+      isDefault: json['is_default'] as bool? ?? false,
       id: json['id'] as String?,
     );
 
@@ -22,8 +22,8 @@ Map<String, dynamic> _$$AddressModelImplToJson(_$AddressModelImpl instance) =>
       'street': instance.street,
       'city': instance.city,
       'state': instance.state,
-      'zipCode': instance.zipCode,
+      'zip_code': instance.zipCode,
       'country': instance.country,
-      'isDefault': instance.isDefault,
-      'id': instance.id,
+      'is_default': instance.isDefault,
+      if (instance.id case final value?) 'id': value,
     };

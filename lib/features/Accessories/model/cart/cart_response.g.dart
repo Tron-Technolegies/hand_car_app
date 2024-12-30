@@ -9,19 +9,21 @@ part of 'cart_response.dart';
 _$CartResponseImpl _$$CartResponseImplFromJson(Map<String, dynamic> json) =>
     _$CartResponseImpl(
       message: json['message'] as String?,
-      cartQuantity: (json['cartQuantity'] as num?)?.toInt(),
+      cartQuantity: (json['cart_quantity'] as num?)?.toInt(),
       error: json['error'] as String?,
-      isSuccess: json['isSuccess'] as bool? ?? false,
-      appliedCoupon: json['appliedCoupon'] == null
+      isSuccess: json['is_success'] as bool? ?? false,
+      appliedCoupon: json['applied_coupon'] == null
           ? null
-          : CouponModel.fromJson(json['appliedCoupon'] as Map<String, dynamic>),
+          : CouponModel.fromJson(
+              json['applied_coupon'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$CartResponseImplToJson(_$CartResponseImpl instance) =>
     <String, dynamic>{
-      'message': instance.message,
-      'cartQuantity': instance.cartQuantity,
-      'error': instance.error,
-      'isSuccess': instance.isSuccess,
-      'appliedCoupon': instance.appliedCoupon,
+      if (instance.message case final value?) 'message': value,
+      if (instance.cartQuantity case final value?) 'cart_quantity': value,
+      if (instance.error case final value?) 'error': value,
+      'is_success': instance.isSuccess,
+      if (instance.appliedCoupon?.toJson() case final value?)
+        'applied_coupon': value,
     };

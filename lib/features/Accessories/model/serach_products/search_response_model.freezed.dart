@@ -102,7 +102,7 @@ class __$$SearchResponseImplCopyWithImpl<$Res>
   }) {
     return _then(_$SearchResponseImpl(
       accessories: null == accessories
-          ? _value._accessories
+          ? _value.accessories
           : accessories // ignore: cast_nullable_to_non_nullable
               as List<ProductsModel>,
       query: null == query
@@ -116,21 +116,13 @@ class __$$SearchResponseImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$SearchResponseImpl implements _SearchResponse {
-  const _$SearchResponseImpl(
-      {required final List<ProductsModel> accessories, required this.query})
-      : _accessories = accessories;
+  const _$SearchResponseImpl({required this.accessories, required this.query});
 
   factory _$SearchResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$SearchResponseImplFromJson(json);
 
-  final List<ProductsModel> _accessories;
   @override
-  List<ProductsModel> get accessories {
-    if (_accessories is EqualUnmodifiableListView) return _accessories;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_accessories);
-  }
-
+  final List<ProductsModel> accessories;
   @override
   final String query;
 
@@ -145,14 +137,14 @@ class _$SearchResponseImpl implements _SearchResponse {
         (other.runtimeType == runtimeType &&
             other is _$SearchResponseImpl &&
             const DeepCollectionEquality()
-                .equals(other._accessories, _accessories) &&
+                .equals(other.accessories, accessories) &&
             (identical(other.query, query) || other.query == query));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType, const DeepCollectionEquality().hash(_accessories), query);
+      runtimeType, const DeepCollectionEquality().hash(accessories), query);
 
   /// Create a copy of SearchResponse
   /// with the given fields replaced by the non-null parameter values.

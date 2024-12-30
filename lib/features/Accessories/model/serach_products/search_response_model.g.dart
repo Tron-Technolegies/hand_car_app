@@ -17,6 +17,6 @@ _$SearchResponseImpl _$$SearchResponseImplFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$$SearchResponseImplToJson(
         _$SearchResponseImpl instance) =>
     <String, dynamic>{
-      'accessories': instance.accessories,
+      'accessories': instance.accessories.map((e) => e.toJson()).toList(),
       'query': instance.query,
     };

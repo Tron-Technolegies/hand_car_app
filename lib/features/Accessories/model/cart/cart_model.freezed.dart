@@ -135,7 +135,7 @@ class __$$CartModelImplCopyWithImpl<$Res>
   }) {
     return _then(_$CartModelImpl(
       cartItems: null == cartItems
-          ? _value._cartItems
+          ? _value.cartItems
           : cartItems // ignore: cast_nullable_to_non_nullable
               as List<CartItem>,
       totalAmount: null == totalAmount
@@ -158,22 +158,15 @@ class __$$CartModelImplCopyWithImpl<$Res>
 
 class _$CartModelImpl extends _CartModel {
   const _$CartModelImpl(
-      {final List<CartItem> cartItems = const [],
+      {this.cartItems = const [],
       this.totalAmount = 0.0,
       this.appliedCoupon,
       this.isLoading = false})
-      : _cartItems = cartItems,
-        super._();
+      : super._();
 
-  final List<CartItem> _cartItems;
   @override
   @JsonKey()
-  List<CartItem> get cartItems {
-    if (_cartItems is EqualUnmodifiableListView) return _cartItems;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_cartItems);
-  }
-
+  final List<CartItem> cartItems;
   @override
   @JsonKey()
   final double totalAmount;
@@ -193,8 +186,7 @@ class _$CartModelImpl extends _CartModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$CartModelImpl &&
-            const DeepCollectionEquality()
-                .equals(other._cartItems, _cartItems) &&
+            const DeepCollectionEquality().equals(other.cartItems, cartItems) &&
             (identical(other.totalAmount, totalAmount) ||
                 other.totalAmount == totalAmount) &&
             (identical(other.appliedCoupon, appliedCoupon) ||
@@ -206,7 +198,7 @@ class _$CartModelImpl extends _CartModel {
   @override
   int get hashCode => Object.hash(
       runtimeType,
-      const DeepCollectionEquality().hash(_cartItems),
+      const DeepCollectionEquality().hash(cartItems),
       totalAmount,
       appliedCoupon,
       isLoading);

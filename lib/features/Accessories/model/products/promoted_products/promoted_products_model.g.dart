@@ -32,6 +32,6 @@ Map<String, dynamic> _$$PromotedProductsModelImplToJson(
       'description': instance.description,
       'is_bestseller': instance.isBestseller,
       'discount_percentage': instance.discountPercentage,
-      'image': instance.image,
+      if (instance.image case final value?) 'image': value,
       'created_at': instance.createdAt,
     };

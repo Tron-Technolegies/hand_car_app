@@ -9,15 +9,15 @@ part of 'auth_state.dart';
 _$AuthenticationStateImpl _$$AuthenticationStateImplFromJson(
         Map<String, dynamic> json) =>
     _$AuthenticationStateImpl(
-      isLoading: json['isLoading'] as bool,
+      isLoading: json['is_loading'] as bool,
       authenticated: json['authenticated'] as bool,
-      errorMessage: json['errorMessage'] as String?,
+      errorMessage: json['error_message'] as String?,
     );
 
 Map<String, dynamic> _$$AuthenticationStateImplToJson(
         _$AuthenticationStateImpl instance) =>
     <String, dynamic>{
-      'isLoading': instance.isLoading,
+      'is_loading': instance.isLoading,
       'authenticated': instance.authenticated,
-      'errorMessage': instance.errorMessage,
+      if (instance.errorMessage case final value?) 'error_message': value,
     };

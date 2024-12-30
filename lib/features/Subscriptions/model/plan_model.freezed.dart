@@ -14,16 +14,9 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-PlanResponse _$PlanResponseFromJson(Map<String, dynamic> json) {
-  return _PlanResponse.fromJson(json);
-}
-
 /// @nodoc
 mixin _$PlanResponse {
   List<PlanModel> get plan => throw _privateConstructorUsedError;
-
-  /// Serializes this PlanResponse to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
   /// Create a copy of PlanResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -95,7 +88,7 @@ class __$$PlanResponseImplCopyWithImpl<$Res>
   }) {
     return _then(_$PlanResponseImpl(
       plan: null == plan
-          ? _value._plan
+          ? _value.plan
           : plan // ignore: cast_nullable_to_non_nullable
               as List<PlanModel>,
     ));
@@ -103,21 +96,13 @@ class __$$PlanResponseImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-@JsonSerializable()
+
 class _$PlanResponseImpl implements _PlanResponse {
-  const _$PlanResponseImpl({required final List<PlanModel> plan})
-      : _plan = plan;
+  const _$PlanResponseImpl({this.plan = const []});
 
-  factory _$PlanResponseImpl.fromJson(Map<String, dynamic> json) =>
-      _$$PlanResponseImplFromJson(json);
-
-  final List<PlanModel> _plan;
   @override
-  List<PlanModel> get plan {
-    if (_plan is EqualUnmodifiableListView) return _plan;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_plan);
-  }
+  @JsonKey()
+  final List<PlanModel> plan;
 
   @override
   String toString() {
@@ -129,13 +114,12 @@ class _$PlanResponseImpl implements _PlanResponse {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$PlanResponseImpl &&
-            const DeepCollectionEquality().equals(other._plan, _plan));
+            const DeepCollectionEquality().equals(other.plan, plan));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(_plan));
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(plan));
 
   /// Create a copy of PlanResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -144,21 +128,11 @@ class _$PlanResponseImpl implements _PlanResponse {
   @pragma('vm:prefer-inline')
   _$$PlanResponseImplCopyWith<_$PlanResponseImpl> get copyWith =>
       __$$PlanResponseImplCopyWithImpl<_$PlanResponseImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$PlanResponseImplToJson(
-      this,
-    );
-  }
 }
 
 abstract class _PlanResponse implements PlanResponse {
-  const factory _PlanResponse({required final List<PlanModel> plan}) =
+  const factory _PlanResponse({final List<PlanModel> plan}) =
       _$PlanResponseImpl;
-
-  factory _PlanResponse.fromJson(Map<String, dynamic> json) =
-      _$PlanResponseImpl.fromJson;
 
   @override
   List<PlanModel> get plan;
@@ -171,10 +145,6 @@ abstract class _PlanResponse implements PlanResponse {
       throw _privateConstructorUsedError;
 }
 
-PlanModel _$PlanModelFromJson(Map<String, dynamic> json) {
-  return _PlanModel.fromJson(json);
-}
-
 /// @nodoc
 mixin _$PlanModel {
   int get id => throw _privateConstructorUsedError;
@@ -183,10 +153,7 @@ mixin _$PlanModel {
   String get serviceType => throw _privateConstructorUsedError;
   String get duration => throw _privateConstructorUsedError;
   String get price => throw _privateConstructorUsedError;
-  String get description => throw _privateConstructorUsedError;
-
-  /// Serializes this PlanModel to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  String? get description => throw _privateConstructorUsedError;
 
   /// Create a copy of PlanModel
   /// with the given fields replaced by the non-null parameter values.
@@ -206,7 +173,7 @@ abstract class $PlanModelCopyWith<$Res> {
       @JsonKey(name: 'service_type') String serviceType,
       String duration,
       String price,
-      String description});
+      String? description});
 }
 
 /// @nodoc
@@ -229,7 +196,7 @@ class _$PlanModelCopyWithImpl<$Res, $Val extends PlanModel>
     Object? serviceType = null,
     Object? duration = null,
     Object? price = null,
-    Object? description = null,
+    Object? description = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -252,10 +219,10 @@ class _$PlanModelCopyWithImpl<$Res, $Val extends PlanModel>
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
               as String,
-      description: null == description
+      description: freezed == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ) as $Val);
   }
 }
@@ -274,7 +241,7 @@ abstract class _$$PlanModelImplCopyWith<$Res>
       @JsonKey(name: 'service_type') String serviceType,
       String duration,
       String price,
-      String description});
+      String? description});
 }
 
 /// @nodoc
@@ -295,7 +262,7 @@ class __$$PlanModelImplCopyWithImpl<$Res>
     Object? serviceType = null,
     Object? duration = null,
     Object? price = null,
-    Object? description = null,
+    Object? description = freezed,
   }) {
     return _then(_$PlanModelImpl(
       id: null == id
@@ -318,27 +285,24 @@ class __$$PlanModelImplCopyWithImpl<$Res>
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
               as String,
-      description: null == description
+      description: freezed == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
 
 /// @nodoc
-@JsonSerializable()
+
 class _$PlanModelImpl implements _PlanModel {
-  const _$PlanModelImpl(
+  _$PlanModelImpl(
       {required this.id,
       required this.name,
       @JsonKey(name: 'service_type') required this.serviceType,
       required this.duration,
       required this.price,
-      required this.description});
-
-  factory _$PlanModelImpl.fromJson(Map<String, dynamic> json) =>
-      _$$PlanModelImplFromJson(json);
+      this.description});
 
   @override
   final int id;
@@ -352,7 +316,7 @@ class _$PlanModelImpl implements _PlanModel {
   @override
   final String price;
   @override
-  final String description;
+  final String? description;
 
   @override
   String toString() {
@@ -375,7 +339,6 @@ class _$PlanModelImpl implements _PlanModel {
                 other.description == description));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, id, name, serviceType, duration, price, description);
@@ -387,26 +350,16 @@ class _$PlanModelImpl implements _PlanModel {
   @pragma('vm:prefer-inline')
   _$$PlanModelImplCopyWith<_$PlanModelImpl> get copyWith =>
       __$$PlanModelImplCopyWithImpl<_$PlanModelImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$PlanModelImplToJson(
-      this,
-    );
-  }
 }
 
 abstract class _PlanModel implements PlanModel {
-  const factory _PlanModel(
+  factory _PlanModel(
       {required final int id,
       required final String name,
       @JsonKey(name: 'service_type') required final String serviceType,
       required final String duration,
       required final String price,
-      required final String description}) = _$PlanModelImpl;
-
-  factory _PlanModel.fromJson(Map<String, dynamic> json) =
-      _$PlanModelImpl.fromJson;
+      final String? description}) = _$PlanModelImpl;
 
   @override
   int get id;
@@ -420,7 +373,7 @@ abstract class _PlanModel implements PlanModel {
   @override
   String get price;
   @override
-  String get description;
+  String? get description;
 
   /// Create a copy of PlanModel
   /// with the given fields replaced by the non-null parameter values.

@@ -1,16 +1,29 @@
 import 'package:flutter/material.dart';
-// ignore: depend_on_referenced_packages
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hand_car/features/Accessories/controller/wishlist/wishlist_controller.dart';
-import 'package:hand_car/features/Accessories/model/wishlist/wishlist_response_model.dart';
+import 'package:hand_car/features/Accessories/model/wishlist/wishlist_model.dart';
 
 
-class WishlistScreen extends ConsumerWidget {
+class WishlistScreen extends ConsumerStatefulWidget {
   static const route = '/wishlist';
   const WishlistScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<WishlistScreen> createState() => _WishlistScreenState();
+}
+
+class _WishlistScreenState extends ConsumerState<WishlistScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Fetch wishlist data when screen initializes
+    Future.microtask(() {
+      ref.read(wishlistNotifierProvider.notifier).fetchWishlist();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final wishlistState = ref.watch(wishlistNotifierProvider);
 
     return Scaffold(
@@ -18,9 +31,9 @@ class WishlistScreen extends ConsumerWidget {
         title: const Text('Wishlist'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.share),
+            icon: const Icon(Icons.refresh),
             onPressed: () {
-             
+              ref.read(wishlistNotifierProvider.notifier).fetchWishlist();
             },
           ),
         ],
@@ -33,7 +46,23 @@ class WishlistScreen extends ConsumerWidget {
           return _WishlistContent(items: wishlistItems);
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('Error: $error')),
+        error: (error, stack) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline, size: 48, color: Colors.red),
+              const SizedBox(height: 16),
+              Text('Error: ${error.toString()}'),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  // ref.read(wishlistNotifierProvider.notifier).();
+                },
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -126,124 +155,60 @@ class _WishlistItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Dismissible(
-      key: Key(item.productId),
-      direction: DismissDirection.endToStart,
-      background: Container(
-        color: Colors.red,
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 16),
-        child: const Icon(
-          Icons.delete,
-          color: Colors.white,
-        ),
-      ),
-      onDismissed: (direction) {
-        ref.read(wishlistNotifierProvider.notifier)
-            .removeFromWishlist(item.productId);
-        
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Item removed from wishlist'),
-            action: SnackBarAction(
-              label: 'Undo',
-              onPressed: () {
-                ref.read(wishlistNotifierProvider.notifier)
-                    .addToWishlist(int.parse(item.productId));
-              },
-            ),
-          ),
-        );
-      },
+      key: Key(item.id.toString()),
+      // ... rest of the Dismissible widget code ...
       child: Card(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Product Image
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                      'https://via.placeholder.com/100',
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover,
-                    ),
+        // ... card styling ...
+        child: Column(
+          children: [
+            Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    item.productImage ?? 'https://via.placeholder.com/100',
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
                   ),
-                  const SizedBox(width: 16),
-                  // Product Details
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Product Name',
-                          style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.productName,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '\$${item.productPrice.toStringAsFixed(2)}',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.bold,
                         ),
+                      ),
+                      if (item.productDescription != null) ...[
                         const SizedBox(height: 4),
                         Text(
-                          '\$99.99',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                color: Theme.of(context).primaryColor,
-                                fontWeight: FontWeight.bold,
-                              ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'In Stock',
-                          style: TextStyle(
-                            color: Colors.green[700],
-                            fontWeight: FontWeight.w500,
-                          ),
+                          item.productDescription!,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
-                    ),
+                    ],
                   ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              // Action Buttons
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Add to cart logic
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).primaryColor,
-                      ),
-                      child: const Text('Add to Cart'),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  IconButton(
-                    icon: const Icon(Icons.share_outlined),
-                    onPressed: () {
-                 
-                    },
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.more_vert),
-                    onPressed: () {
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (context) => _buildMoreOptionsSheet(context),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+            // ... rest of the widget ...
+          ],
         ),
       ),
     );
   }
+
 
   Widget _buildMoreOptionsSheet(BuildContext context) {
     return Container(

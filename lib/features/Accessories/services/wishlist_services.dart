@@ -2,7 +2,10 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
 import 'package:hand_car/core/router/user_validation.dart';
-import 'package:hand_car/features/Accessories/model/wishlist/wishlist_response_model.dart';
+import 'package:hand_car/features/Accessories/controller/wishlist/wishlist_controller.dart';
+import 'package:hand_car/features/Accessories/model/wishlist/wishlist_model.dart';
+
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 class WishlistServices {
   static final Dio _dio = Dio(
@@ -24,7 +27,7 @@ class WishlistServices {
     };
   }
 
-  static Future<WishlistResponse> addToWishlist(int productId) async {
+   Future<WishlistResponse> addToWishlist(int productId) async {
     try {
       final token = TokenStorage().getAccessToken();
       if (token == null) {
@@ -58,7 +61,7 @@ class WishlistServices {
     }
   }
 
-  static Future<bool> removeFromWishlist(String productId) async {
+   Future<bool> removeFromWishlist(String productId) async {
     try {
       final token = TokenStorage().getAccessToken();
       if (token == null) {
@@ -86,4 +89,48 @@ class WishlistServices {
       throw Exception(e.toString());
     }
   }
+  Future<Map<String, WishlistResponse>> getWishlist() async {
+  try {
+    final token = TokenStorage().getAccessToken();
+    if (token == null) {
+      throw Exception('Please login to continue');
+    }
+
+    final response = await _dio.get(
+      '/wishlist_items',
+      options: Options(
+        headers: _createAuthHeaders(token),
+      ),
+    );
+
+    log('Raw wishlist response: ${response.data}'); // Add this log
+
+    if (response.statusCode == 200) {
+      final wishlistData = response.data['wishlist_items'] as List;
+      log('Wishlist items: $wishlistData'); // Add this log
+      
+      final Map<String, WishlistResponse> wishlistMap = {};
+      
+      for (var item in wishlistData) {
+        try {
+          final wishlistItem = WishlistResponse.fromJson(item);
+          wishlistMap[wishlistItem.id.toString()] = wishlistItem;
+        } catch (e) {
+          log('Error parsing item: $item, Error: $e');
+        }
+      }
+      
+      return wishlistMap;
+    }
+
+    throw Exception(response.data['error'] ?? 'Failed to fetch wishlist');
+  } on DioException {
+    // ...
+  } catch (e) {
+    // ...
+  }
+  throw Exception('Failed to fetch wishlist');  
+  }
 }
+
+
