@@ -5,23 +5,26 @@ class ButtonWidget extends StatelessWidget {
   final bool isDanger;
   final String label;
   final bool isLoading;
+  final Icon? icon;
 
   /// Callback to execute when the button is clicked
   final Function() onTap;
 
-  const ButtonWidget({
-    super.key,
-    required this.label,
-    required this.onTap,
-    this.isLoading = false,
-  }) : isDanger = false;
+  const ButtonWidget(
+      {super.key,
+      required this.label,
+      required this.onTap,
+      this.isLoading = false,
+      this.icon})
+      : isDanger = false;
 
-  const ButtonWidget.danger({
-    super.key,
-    required this.label,
-    required this.onTap,
-    this.isLoading = false,
-  }) : isDanger = true;
+  const ButtonWidget.danger(
+      {super.key,
+      required this.label,
+      required this.onTap,
+      this.isLoading = false,
+      this.icon})
+      : isDanger = true;
 
   @override
   Widget build(BuildContext context) {
@@ -47,10 +50,16 @@ class ButtonWidget extends StatelessWidget {
           ? CircularProgressIndicator(
               color: context.colors.backgroundSubtle,
             )
-          : Text(
-              label,
-              style: context.typography.bodyLarge
-                  .copyWith(color: context.colors.white),
+          : Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (icon != null) Icon(icon!.icon, color: context.colors.white),
+                Text(
+                  label,
+                  style: context.typography.bodyLarge
+                      .copyWith(color: context.colors.white),
+                ),
+              ],
             ),
     );
   }

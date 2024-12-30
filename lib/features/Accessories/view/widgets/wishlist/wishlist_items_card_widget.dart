@@ -1,140 +1,146 @@
-                   import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
+import 'package:hand_car/core/widgets/custome_chip.dart';
 import 'package:hand_car/features/Accessories/controller/cart/cart_controller.dart';
-import 'package:hand_car/features/Accessories/model/wishlist/wishlist_model.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:hand_car/features/Accessories/model/wishlist/wishlist_model.dart';
 
-class WishlistItem extends ConsumerWidget {
+class WishlistItem extends HookConsumerWidget {
   final WishlistResponse item;
 
-  const WishlistItem({super.key, 
+  const WishlistItem({
+    super.key,
     required this.item,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
+    return Card(
+      color: context.colors.white,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: context.space.space_300),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: Colors.grey.shade200,
+              width: 2,
+            ),
           ),
         ),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Product Image
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.network(
-              item.productImage ??
-                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMp75PkGCYT5R6vVl0EKoQyLGQ30wPljYsew&s',
-              width: 100,
-              height: 100,
-              fit: BoxFit.cover,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Product Image
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                image: DecorationImage(
+                  image: NetworkImage(item.productImage ??
+                      'https://e7.pngegg.com/pngimages/809/777/png-clipart-car-revathy-auto-parts-ford-motor-company-spare-part-advance-auto-parts-car-car-vehicle-thumbnail.png'),
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
-          ),
-          const SizedBox(width: 16),
+            const SizedBox(width: 12),
 
-          // Product Details
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  item.productName,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+            // Product Details
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Product Name
+                  Text(
+                    item.productName,
+                    style: context.typography.bodySemiBold,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Model Number: ${item.id}', // You might want to add a modelNumber field to your model
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'AED ${item.productPrice.toStringAsFixed(2)}',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.green,
-                  ),
-                ),
-              ],
-            ),
-          ),
+                  SizedBox(height: context.space.space_100),
 
-          // Right Side Actions
-          Column(
-            children: [
-              // Quantity Selector
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      '01',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[800],
+                  // Model Number & Remove Button
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Model: ${item.id}",
+                        style: context.typography.body,
                       ),
-                    ),
-                    const Icon(
-                      Icons.arrow_drop_down,
-                      size: 20,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 12),
+                      IconButton(
+                        onPressed: () {
+                          // Implement remove from wishlist
+                          // ref.read(wishlistNotifierProvider.notifier).removeFromWishlist(item.id);
+                          SnackbarUtil.showsnackbar(
+                            message: "Item removed from wishlist",
+                            showretry: false,
+                          );
+                        },
+                        icon: Icon(
+                          Icons.delete,
+                          color: context.colors.primaryTxt,
+                        ),
+                        padding: EdgeInsets.zero,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: context.space.space_150),
 
-              // Move to Cart Button
-              Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: context.space.space_200,
-                    vertical: context.space.space_100),
-                child: ButtonWidget(
-                    label: "Move to Cart",
-                    onTap: () {
-                      ref
-                          .read(cartControllerProvider.notifier)
-                          .addToCart(item.id);
-                      SnackbarUtil.showsnackbar(message: "Item Moved to cart");
-                    }),
-              ),
+                  // Price & Move to Cart Button
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Price
+                      Text(
+                        'AED ${item.productPrice}',
+                        style: context.typography.bodyMedium.copyWith(
+                          color: context.colors.green,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
 
-              // Delete Button
-              IconButton(
-                onPressed: () {
-                  // Delete logic here
-                  SnackbarUtil.showsnackbar(
-                      message: "Item Removed from Wishlist");
-                },
-                icon: const Icon(
-                  Icons.delete_outline,
-                  color: Colors.grey,
-                ),
+                      //Move to Cart Icon Button
+                      // ButtonWidget(
+                      //     icon: Icon(Icons.shopping_bag_outlined),
+                      //     label: "Move to Cart",
+                      //     onTap: () {
+                      //       ref
+                      //           .read(cartControllerProvider.notifier)
+                      //           .addToCart(item.id);
+                      //     })
+                      ButtonWidget(
+                          icon: const Icon(Icons.add_shopping_cart_outlined),
+                          label: 'Move to Cart',
+                          onTap: () {
+                            ref
+                                .read(cartControllerProvider.notifier)
+                                .addToCart(item.id);
+                          })
+                      // TextButton.icon(
+                      //     iconAlignment: IconAlignment.start,
+                      //     onPressed: () {
+                      //       ref
+                      //           .read(cartControllerProvider.notifier)
+                      //           .addToCart(item.id);
+                      //     },
+                      //     icon: const Icon(Icons.add_shopping_cart_outlined),
+                      //     label: Text(
+                      //       "Move to Cart",
+                      //       style: context.typography.bodySemiBold.copyWith(
+                      //         color: context.colors.backgroundSubtle,
+                      //       ),
+                      //     ))
+                    ],
+                  ),
+                ],
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

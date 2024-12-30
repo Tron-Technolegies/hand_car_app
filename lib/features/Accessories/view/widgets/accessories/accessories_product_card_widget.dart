@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/snackbar.dart';
+import 'package:hand_car/core/widgets/custome_chip.dart';
 import 'package:hand_car/core/widgets/outline_button_widget.dart';
 import 'package:hand_car/features/Accessories/controller/cart/cart_controller.dart';
 import 'package:hand_car/features/Accessories/controller/wishlist/wishlist_controller.dart';
@@ -259,7 +260,7 @@ class AccessoriesProductCardWidget extends ConsumerWidget {
                       await ref
                           .read(cartControllerProvider.notifier)
                           .addToCart(product.id);
-
+                
                       // Show success feedback
                       if (context.mounted) {
                         SnackbarUtil.showsnackbar(
@@ -270,7 +271,8 @@ class AccessoriesProductCardWidget extends ConsumerWidget {
                       // Show error feedback
                       if (context.mounted) {
                         SnackbarUtil.showsnackbar(
-                            message: "Failed to add to cart", showretry: false);
+                            message: "Failed to add to cart",
+                            showretry: false);
                       }
                     }
                   },

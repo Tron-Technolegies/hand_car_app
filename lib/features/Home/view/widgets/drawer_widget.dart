@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/controller/image_picker_controller.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
+import 'package:hand_car/features/Authentication/view/pages/edit_profile_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/login_with_phone_and_password_page.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:panara_dialogs/panara_dialogs.dart';
@@ -55,7 +56,13 @@ class DrawerWidget extends ConsumerWidget {
           ListTile(
             leading: const Icon(Icons.manage_accounts_outlined),
             title: const Text('Manage Account'),
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditProfileScreen(),
+                  ));
+            },
           ),
           ListTile(
             leading: const Icon(Icons.info),

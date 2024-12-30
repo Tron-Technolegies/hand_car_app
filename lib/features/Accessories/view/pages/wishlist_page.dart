@@ -52,12 +52,16 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(Icons.error_outline, size: 48, color: Colors.red),
-              const SizedBox(height: 16),
+               SizedBox(height:context.space.space_200),   
               Text('Error: ${error.toString()}'),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
                   // ref.read(wishlistNotifierProvider.notifier).();
+
+                  ref
+                      .read(wishlistNotifierProvider.notifier)
+                      .fetchWishlist();
                 },
                 child: const Text('Retry'),
               ),
