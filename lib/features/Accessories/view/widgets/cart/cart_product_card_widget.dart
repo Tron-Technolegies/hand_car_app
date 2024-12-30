@@ -86,10 +86,10 @@ class ProductCard extends HookConsumerWidget {
                         style: context.typography.body,
                       ),
                       IconButton(
-                        onPressed: ()async{
-                        onDelete?.call();
-                        SnackbarUtil.showsnackbar(
-                            message: "Item Deleted", showretry: true);
+                        onPressed: () async {
+                          onDelete?.call();
+                          SnackbarUtil.showsnackbar(
+                              message: "Item Deleted", showretry: false);
                         },
                         icon: Icon(
                           Icons.delete,
