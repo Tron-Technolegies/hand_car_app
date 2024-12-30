@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/controller/image_picker_controller.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Authentication/view/widgets/profile_pic.dart';
+import 'package:hand_car/features/Authentication/view/widgets/user_info_edit_field.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class EditProfileScreen extends ConsumerWidget {
@@ -37,7 +39,7 @@ class EditProfileScreen extends ConsumerWidget {
                   UserInfoEditField(
                     text: "Name",
                     child: TextFormField(
-                      initialValue: "Annette Black",
+                      initialValue: "Leo messi",
                       decoration: InputDecoration(
                         filled: true,
                         // ignore: deprecated_member_use
@@ -176,7 +178,9 @@ class EditProfileScreen extends ConsumerWidget {
                       minimumSize: const Size(double.infinity, 48),
                       shape: const StadiumBorder(),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      context.pop();
+                    },
                     child: const Text("Save Update"),
                   ),
                 ),
@@ -184,38 +188,6 @@ class EditProfileScreen extends ConsumerWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-
-
-class UserInfoEditField extends StatelessWidget {
-  const UserInfoEditField({
-    super.key,
-    required this.text,
-    required this.child,
-  });
-
-  final String text;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0 / 2),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: Text(text),
-          ),
-          Expanded(
-            flex: 3,
-            child: child,
-          ),
-        ],
       ),
     );
   }
