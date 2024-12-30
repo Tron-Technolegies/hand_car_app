@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Accessories/view/widgets/wishlist/wishlist_items_card_widget.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hand_car/features/Accessories/controller/wishlist/wishlist_controller.dart';
@@ -94,7 +95,7 @@ class _EmptyWishlist extends StatelessWidget {
                   color: Colors.grey[600],
                 ),
           ),
-          const SizedBox(height: 24),
+           SizedBox(height: context.space.space_200),
           ElevatedButton(
             onPressed: () {
               // Navigate to products screen

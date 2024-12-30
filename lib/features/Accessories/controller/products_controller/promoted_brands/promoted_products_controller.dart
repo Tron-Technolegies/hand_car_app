@@ -6,6 +6,7 @@ part 'promoted_products_controller.g.dart';
 
 @riverpod
 class PromotedProductsController extends _$PromotedProductsController {
+  @override
   Future<List<PromotedProductsModel>> build() async {
     return fetProducts();
   }
