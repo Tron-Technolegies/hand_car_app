@@ -63,19 +63,27 @@ class AccessoriesPage extends HookConsumerWidget {
       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcST_jdzAn0TttNbib1DGe119FjY-Wi_L5zc8g&s',
       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvOX4aF0GarSWiEFx7EP3sixmcfagZRL6zPg&s'
     ];
-
+     //scroll controller
     final controller = useScrollController();
+    //app bar visibility
     final appBarVisible = useState(true);
+    //page controller
     final pageController = usePageController();
+    //current page
     final currentPage = useState(0);
+    //search
     final isSearching = useState(false);
+    //search controller
     final searchTextController = useTextEditingController();
+    //category controller
     final category = ref.watch(categoryControllerProvider);
+    //product controller
     final products = ref.watch(productsControllerProvider);
-
+    //cart controller
     final cartItems = ref.watch(cartControllerProvider);
     // final authState = ref.watch(authControllerProvider);
 
+    //scroll listener to change app bar visibility
     useEffect(() {
       void onScroll() {
         if (controller.position.userScrollDirection ==
