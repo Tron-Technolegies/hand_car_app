@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hand_car/features/Accessories/view/widgets/wishlist/wishlist_items_card_widget.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/core/utils/snackbar.dart';
-import 'package:hand_car/core/widgets/button_widget.dart';
-import 'package:hand_car/features/Accessories/controller/cart/cart_controller.dart';
 import 'package:hand_car/features/Accessories/controller/wishlist/wishlist_controller.dart';
 import 'package:hand_car/features/Accessories/model/wishlist/wishlist_model.dart';
 
@@ -129,7 +125,7 @@ class _WishlistContent extends ConsumerWidget {
             child: Text(
               'Available Items',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),

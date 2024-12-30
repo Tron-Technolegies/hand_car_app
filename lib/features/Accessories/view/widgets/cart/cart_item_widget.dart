@@ -45,15 +45,19 @@ class CartItemWidget extends HookConsumerWidget {
               decoration: BoxDecoration(
                 color: context.colors.background,
                 shape: BoxShape.circle,
-                image: imageUrl != null ? DecorationImage(
-                  image: NetworkImage(imageUrl!),
-                  fit: BoxFit.cover,
-                ) : null,
+                image: imageUrl != null
+                    ? DecorationImage(
+                        image: NetworkImage(imageUrl!),
+                        fit: BoxFit.cover,
+                      )
+                    : null,
               ),
-              child: imageUrl == null ? Image.asset(Assets.images.accessories.path) : null,
+              child: imageUrl == null
+                  ? Image.asset(Assets.images.accessories.path)
+                  : null,
             ),
             SizedBox(width: context.space.space_200),
-            
+
             // Product Details
             Expanded(
               child: Column(
@@ -68,46 +72,46 @@ class CartItemWidget extends HookConsumerWidget {
                         style: context.typography.bodySmall,
                       ),
                       // Quantity Controls
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.remove_circle_outline),
-                            onPressed: quantity > 1 ? () {
-                              ref.read(cartControllerProvider.notifier)
-                                 .updateQuantity(productId, quantity - 1);
-                            } : null,
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                            iconSize: 20,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: context.space.space_100,
-                            ),
-                            child: Text(
-                              quantity.toString(),
-                              style: context.typography.bodyMedium,
-                            ),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.add_circle_outline),
-                            onPressed: () {
-                              ref.read(cartControllerProvider.notifier)
-                                 .updateQuantity(productId, quantity + 1);
-                            },
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                            iconSize: 20,
-                          ),
-                        ],
-                      ),
+                      // Row(
+                      //   mainAxisSize: MainAxisSize.min,
+                      //   children: [
+                      //     IconButton(
+                      //       icon: const Icon(Icons.remove_circle_outline),
+                      //       onPressed: quantity > 1 ? () {
+                      //         ref.read(cartControllerProvider.notifier)
+                      //            .updateQuantity(productId, quantity - 1);
+                      //       } : null,
+                      //       padding: EdgeInsets.zero,
+                      //       constraints: const BoxConstraints(),
+                      //       iconSize: 20,
+                      //     ),
+                      //     Padding(
+                      //       padding: EdgeInsets.symmetric(
+                      //         horizontal: context.space.space_100,
+                      //       ),
+                      //       child: Text(
+                      //         quantity.toString(),
+                      //         style: context.typography.bodyMedium,
+                      //       ),
+                      //     ),
+                      //     IconButton(
+                      //       icon: const Icon(Icons.add_circle_outline),
+                      //       onPressed: () {
+                      //         ref.read(cartControllerProvider.notifier)
+                      //            .updateQuantity(productId, quantity + 1);
+                      //       },
+                      //       padding: EdgeInsets.zero,
+                      //       constraints: const BoxConstraints(),
+                      //       iconSize: 20,
+                      //     ),
+                      //   ],
+                      // ),
                     ],
                   ),
                 ],
               ),
             ),
-            
+
             // Price
             Text(
               price,
