@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hand_car/core/extension/theme_extension.dart';
 
 class UserInfoEditField extends HookWidget {
   const UserInfoEditField({
@@ -15,7 +16,7 @@ class UserInfoEditField extends HookWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0 / 2),
+      padding:  EdgeInsets.symmetric(vertical: context.space.space_100),
       child: Row(
         children: [
           Expanded(

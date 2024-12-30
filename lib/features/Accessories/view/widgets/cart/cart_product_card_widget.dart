@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/snackbar.dart';
-import 'package:hand_car/features/Accessories/view/widgets/accessories/quantity_button_for_cart_widget.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class ProductCard extends HookConsumerWidget {
@@ -13,8 +13,8 @@ class ProductCard extends HookConsumerWidget {
   final bool isAvailable;
   final int quantity;
   final int productId;
-  final VoidCallback? onDelete; // Added onDelete callback
-  final Function(int)? onQuantityChanged; // Added onQuantityChanged callback
+  final VoidCallback? onDelete;
+  final Function(int)? onQuantityChanged;
 
   const ProductCard({
     super.key,
@@ -31,18 +31,50 @@ class ProductCard extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // State for handling loading during quantity updates
     final isUpdating = useState(false);
+    // Generate list of quantities from 1 to 10
+    final quantities = List<int>.generate(10, (i) => i + 1);
 
-    return Card(
-      color: context.colors.white,
+    return Slidable(
+      key: Key(productId.toString()),
+      endActionPane: ActionPane(
+        motion: const ScrollMotion(),
+        dismissible: DismissiblePane(
+          onDismissed: () {
+            onDelete?.call();
+            SnackbarUtil.showsnackbar(
+              message: "Item Deleted",
+              showretry: false,
+            );
+          },
+        ),
+        children: [
+          SlidableAction(
+            onPressed: (_) {
+              onDelete?.call();
+              SnackbarUtil.showsnackbar(
+                message: "Item Deleted",
+                showretry: false,
+              );
+            },
+            backgroundColor: context.colors.warning,
+            foregroundColor: Colors.white,
+            icon: Icons.delete,
+            label: 'Delete',
+          ),
+        ],
+      ),
       child: Container(
-        padding: EdgeInsets.all(context.space.space_200),
+        padding: EdgeInsets.symmetric(
+          horizontal: context.space.space_200,
+          vertical: context.space.space_150,
+        ),
         decoration: BoxDecoration(
+          color: context.colors.white,
           border: Border(
             bottom: BorderSide(
               color: Colors.grey.shade200,
-              width: 2,
+              width: 1,
             ),
           ),
         ),
@@ -50,105 +82,92 @@ class ProductCard extends HookConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Product Image
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                image: DecorationImage(
-                  image: NetworkImage(image ?? ''),
-                  fit: BoxFit.cover,
-                ),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.network(
+                image ?? '',
+                width: 80,
+                height: 80,
+                fit: BoxFit.cover,
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: context.space.space_200),
 
             // Product Details
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Product Name
+                  // Product Name and Model
                   Text(
                     productName,
-                    style: context.typography.bodyMedium,
+                    style: context.typography.bodySemiBold,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(height: context.space.space_100),
 
-                  // Model Number & Delete Button
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Model: $modelNumber",
-                        style: context.typography.body,
-                      ),
-                      IconButton(
-                        onPressed: () async {
-                          onDelete?.call();
-                          SnackbarUtil.showsnackbar(
-                              message: "Item Deleted", showretry: false);
-                        },
-                        icon: Icon(
-                          Icons.delete,
-                          color: context.colors.primaryTxt,
-                        ),
-                        padding: EdgeInsets.zero,
-                      ),
-                    ],
+                  Text(
+                    "Model Number: $modelNumber",
+                    style: context.typography.body.copyWith(
+                      color: Color(0xff7D7D7D),
+                    ),
                   ),
                   SizedBox(height: context.space.space_150),
 
-                  // Quantity Controls & Price
+                  // Price and Quantity Row
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Quantity Controls
-                      Row(
-                        children: [
-                          QuantityButton(
-                            icon: Icons.remove,
-                            onPressed: isUpdating.value || quantity <= 1
-                                ? null
-                                : () => onQuantityChanged?.call(quantity - 1),
-                          ),
-                          Container(
-                            width: 40,
-                            alignment: Alignment.center,
-                            child: isUpdating.value
-                                ? SizedBox(
-                                    width: 16,
-                                    height: 16,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: context.colors.primary,
-                                    ),
-                                  )
-                                : Text(
-                                    quantity.toString(),
-                                    style: context.typography.bodyMedium,
-                                  ),
-                          ),
-                          QuantityButton(
-                            icon: Icons.add,
-                            onPressed: isUpdating.value
-                                ? null
-                                : () => onQuantityChanged?.call(quantity + 1),
-                          ),
-                        ],
-                      ),
-
                       // Price
                       Text(
                         'AED $price',
                         style: context.typography.bodyMedium.copyWith(
                           color: context.colors.green,
-                          fontWeight: FontWeight.bold,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      ),
+
+                      // Quantity Dropdown
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: context.space.space_150),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: context.colors.primaryTxt.withOpacity(0.3),
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: context.space.space_100,
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: context.space.space_100),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<int>(
+                                value: quantity,
+                                icon: const Icon(Icons.keyboard_arrow_down),
+                                items: quantities.map((int value) {
+                                  return DropdownMenuItem<int>(
+                                    value: value,
+                                    child: Text(
+                                      value.toString(),
+                                      style: context.typography.bodyMedium,
+                                    ),
+                                  );
+                                }).toList(),
+                                onChanged: isUpdating.value
+                                    ? null
+                                    : (int? newValue) {
+                                        if (newValue != null) {
+                                          onQuantityChanged?.call(newValue);
+                                        }
+                                      },
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),

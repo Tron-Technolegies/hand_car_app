@@ -21,6 +21,7 @@ class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
+
   /// The Home Page of the app.
   ///
   /// Contains a carousel with top brands, a section for spare parts, and a section for services.
@@ -35,13 +36,6 @@ class HomePage extends ConsumerWidget {
           child: SvgPicture.asset(Assets.icons.handCarIcon),
         ),
         actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const ShoppingCartScreen();
-                }));
-              },
-              icon: const Icon(Icons.shopping_cart_outlined)),
           IconButton(
               onPressed: () {
                 scaffoldKey1.currentState?.openDrawer();
