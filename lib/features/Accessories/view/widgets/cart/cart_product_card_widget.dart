@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
+import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/quantity_button_for_cart_widget.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -34,7 +35,7 @@ class ProductCard extends HookConsumerWidget {
     final isUpdating = useState(false);
 
     return Card(
-      color: const Color(0xffF5F5F5),
+      color: context.colors.white,
       child: Container(
         padding: EdgeInsets.all(context.space.space_200),
         decoration: BoxDecoration(
@@ -80,13 +81,16 @@ class ProductCard extends HookConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      if (modelNumber != null)
-                        Text(
-                          "Model: $modelNumber",
-                          style: context.typography.body,
-                        ),
+                      Text(
+                        "Model: $modelNumber",
+                        style: context.typography.body,
+                      ),
                       IconButton(
-                        onPressed: onDelete,
+                        onPressed: ()async{
+                        onDelete?.call();
+                        SnackbarUtil.showsnackbar(
+                            message: "Item Deleted", showretry: true);
+                        },
                         icon: Icon(
                           Icons.delete,
                           color: context.colors.primaryTxt,

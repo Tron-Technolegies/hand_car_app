@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
+import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hand_car/core/widgets/outline_button_widget.dart';
 import 'package:hand_car/features/Accessories/controller/cart/cart_controller.dart';
 import 'package:hand_car/features/Accessories/controller/wishlist/wishlist_controller.dart';
@@ -169,8 +170,9 @@ class AccessoriesProductCardWidget extends ConsumerWidget {
                 child: IconButton(
                   onPressed: () {
                     // Optional: Toggle favorite functionality
-                    ref.read(wishlistNotifierProvider.notifier).addToWishlist(
-                        int.parse(product.id.toString()));
+                    ref
+                        .read(wishlistNotifierProvider.notifier)
+                        .addToWishlist(int.parse(product.id.toString()));
                   },
                   icon: const Icon(Icons.favorite_border),
                 ),
@@ -260,22 +262,15 @@ class AccessoriesProductCardWidget extends ConsumerWidget {
 
                       // Show success feedback
                       if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('${product.name} added to cart'),
-                            backgroundColor: Colors.green,
-                          ),
-                        );
+                        SnackbarUtil.showsnackbar(
+                            message: "${product.name} added to cart",
+                            showretry: false);
                       }
                     } catch (e) {
                       // Show error feedback
                       if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Failed to add to cart: $e'),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
+                        SnackbarUtil.showsnackbar(
+                            message: "Failed to add to cart", showretry: false);
                       }
                     }
                   },

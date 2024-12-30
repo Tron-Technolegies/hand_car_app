@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
-import 'package:hand_car/core/widgets/snack_bar_widget.dart';
 import 'package:hand_car/features/Accessories/controller/cart/cart_controller.dart';
 import 'package:hand_car/features/Accessories/controller/wishlist/wishlist_controller.dart';
 import 'package:hand_car/features/Accessories/model/wishlist/wishlist_model.dart';
@@ -259,7 +258,7 @@ class _WishlistItem extends ConsumerWidget {
                       ref
                           .read(cartControllerProvider.notifier)
                           .addToCart(item.id);
-                      SnackbarUtil.showsnackbar(message: "Item added to cart");
+                      SnackbarUtil.showsnackbar(message: "Item Moved to cart");
                     }),
               ),
 
@@ -267,6 +266,8 @@ class _WishlistItem extends ConsumerWidget {
               IconButton(
                 onPressed: () {
                   // Delete logic here
+                  SnackbarUtil.showsnackbar(
+                      message: "Item Removed from Wishlist");
                 },
                 icon: const Icon(
                   Icons.delete_outline,
