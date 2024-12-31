@@ -1,86 +1,108 @@
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
-import 'package:hand_car/core/router/user_validation.dart';
+import 'package:hand_car/features/Accessories/model/address/address_model.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-class AddressApiService {
-  static final Dio _dio = Dio(
-    BaseOptions(
-      baseUrl: baseUrl,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    ),
-  );
+part 'address_api_service.g.dart';
 
-  Future<String?> _getToken() async {
-    return TokenStorage().getAccessToken();
-  }
-//get address
-  Future<List<Map<String, dynamic>>> getAddresses() async {
-    final token = await _getToken();
-    if (token == null) {
-      throw Exception('Authorization token not found');
-    }
+@riverpod
+AddressService addressApiService( ref) {
+  final dio = ref.watch(dioProvider);
+  return AddressService(dio);
+}
 
+@riverpod
+Dio dio( ref) {
+  final dio = Dio();
+  dio.options.baseUrl = baseUrl; // Replace with your API base URL
+  return dio;
+}
+
+class AddressService {
+  final Dio _dio;
+
+  AddressService(this._dio);
+
+  Future<List<AddressModel>> getAddresses() async {
     try {
-      final response = await _dio.get(
-        '/view_addresses',
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
-
-      if (response.statusCode == 200) {
-        // Ensure we're returning a List<Map<String, dynamic>>
-        final List<dynamic> addressList = response.data['addresses'] ?? [];
-        return addressList.cast<Map<String, dynamic>>();
-      } else {
-        throw Exception('Failed to fetch addresses');
-      }
-    } on DioException catch (e) {
-      if (e.response != null) {
-        throw Exception(e.response?.data['error'] ?? 'Failed to fetch addresses');
-      }
-      throw Exception('Failed to connect to server');
+      final response = await _dio.get('/view_addresses');
+      return (response.data['addresses'] as List)
+          .map((json) => AddressModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      throw _handleError(e);
     }
   }
-  //add address
 
-  Future<Map<String, dynamic>> addAddress({
+  Future<AddressModel> addAddress({
     required String street,
-    required String country,
     required String city,
     required String state,
     required String zipCode,
-    required bool isDefault,
+    required String country,
+    bool isDefault = false,
   }) async {
-    final token = await _getToken();
-    if (token == null) {
-      throw Exception('Authorization token not found');
-    }
-
     try {
       final response = await _dio.post(
         '/add_address',
         data: {
           'street': street,
-          'country': country,
           'city': city,
           'state': state,
           'zip_code': zipCode,
+          'country': country,
           'is_default': isDefault,
         },
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
-
-      if (response.statusCode == 200) {
-        return response.data;
-      } else {
-        throw Exception('Failed to add address');
-      }
-    } on DioException catch (e) {
-      if (e.response != null) {
-        throw Exception(e.response?.data['error'] ?? 'Failed to add address');
-      }
-      throw Exception('Failed to connect to server');
+      return AddressModel.fromJson(response.data['address']);
+    } catch (e) {
+      throw _handleError(e);
     }
+  }
+
+  Future<AddressModel> updateAddress({
+    required int id,
+    required String street,
+    required String city,
+    required String state,
+    required String zipCode,
+    required String country,
+    bool isDefault = false,
+  }) async {
+    try {
+      final response = await _dio.put(
+        '/api/addresses/$id/',
+        data: {
+          'street': street,
+          'city': city,
+          'state': state,
+          'zip_code': zipCode,
+          'country': country,
+          'is_default': isDefault,
+        },
+      );
+      return AddressModel.fromJson(response.data['address']);
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<void> deleteAddress(int id) async {
+    try {
+      await _dio.delete('/api/addresses/$id/');
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  String _handleError(dynamic error) {
+    if (error is DioException) {
+      final response = error.response;
+      if (response != null) {
+        return response.data['message'] ?? 'An error occurred';
+      }
+      return error.message ?? 'Network error occurred';
+    }
+    return error.toString();
   }
 }

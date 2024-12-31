@@ -62,12 +62,7 @@ class AddressForm extends StatelessWidget {
           ],
         ),
         SizedBox(height: context.space.space_200),
-        const TextField(
-          decoration: InputDecoration(
-            labelText: 'Phone number',
-            border: OutlineInputBorder(),
-          ),
-        ),
+       
       ],
     );
   }

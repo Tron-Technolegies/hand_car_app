@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/snackbar.dart';
-import 'package:hand_car/core/widgets/custome_chip.dart';
 import 'package:hand_car/core/widgets/outline_button_widget.dart';
 import 'package:hand_car/features/Accessories/controller/cart/cart_controller.dart';
 import 'package:hand_car/features/Accessories/controller/wishlist/wishlist_controller.dart';

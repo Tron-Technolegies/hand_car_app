@@ -1,4 +1,3 @@
-import 'package:hand_car/features/Accessories/model/address/address_model.dart';
 import 'package:hand_car/features/Accessories/model/address/address_state.dart';
 import 'package:hand_car/features/Accessories/services/address_api_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -7,7 +6,7 @@ part 'address_controller.g.dart';
 
 @Riverpod(keepAlive: true)
 class AddressController extends _$AddressController {
-  late final AddressApiService _apiService;
+  late final AddressService _apiService;
 
   @override
   AddressState build() {
@@ -19,51 +18,18 @@ class AddressController extends _$AddressController {
     state = update(state);
   }
 
-  Future<void> fetchAddresses() async {
-    try {
-      updateState((state) => state.copyWith(isLoading: true, error: null));
-
-      // Fetch addresses from API
-      final addressList = await _apiService.getAddresses();
-      final addresses = addressList.map((json) => AddressModel.fromJson(json)).toList();
-
-      updateState((state) => state.copyWith(
-        addresses: addresses,
-        isLoading: false,
-        error: null,
-      ));
-    } catch (e) {
-      updateState((state) => state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      ));
-    }
-  }
-
   Future<void> addAddress({
     required String street,
-    required String country,
     required String city,
     required String state,
     required String zipCode,
+    required String country,
     bool isDefault = false,
   }) async {
+    updateState((state) => state.copyWith(isLoading: true, error: null));
+
     try {
-      updateState((state) => state.copyWith(isLoading: true, error: null));
-
-      // Add address using the API
-      final result = await _apiService.addAddress(
-        street: street,
-        country: country,
-        city: city,
-        state: state,
-        zipCode: zipCode,
-        isDefault: isDefault,
-      );
-
-      // Create the new address model
-      final newAddress = AddressModel(
-        id: result['id']?.toString(),
+      final newAddress = await _apiService.addAddress(
         street: street,
         city: city,
         state: state,
@@ -73,9 +39,8 @@ class AddressController extends _$AddressController {
       );
 
       updateState((state) => state.copyWith(
-        addresses: [...state.addresses, newAddress],
         isLoading: false,
-        error: null,
+        addresses: [...state.addresses, newAddress],
       ));
     } catch (e) {
       updateState((state) => state.copyWith(
@@ -85,13 +50,83 @@ class AddressController extends _$AddressController {
     }
   }
 
-  void clearError() {
-    updateState((state) => state.copyWith(error: null));
+  Future<void> updateAddress({
+    required int id,
+    required String street,
+    required String city,
+    required String state,
+    required String zipCode,
+    required String country,
+    bool isDefault = false,
+  }) async {
+    updateState((state) => state.copyWith(isLoading: true, error: null));
+
+    try {
+      final updatedAddress = await _apiService.updateAddress(
+        id: id,
+        street: street,
+        city: city,
+        state: state,
+        zipCode: zipCode,
+        country: country,
+        isDefault: isDefault,
+      );
+
+      updateState((state) => state.copyWith(
+        isLoading: false,
+        addresses: state.addresses.map((address) =>
+          address.id == id ? updatedAddress : address
+        ).toList(),
+      ));
+    } catch (e) {
+      updateState((state) => state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      ));
+    }
+  }
+
+  Future<void> deleteAddress(int id) async {
+    updateState((state) => state.copyWith(isLoading: true, error: null));
+
+    try {
+      await _apiService.deleteAddress(id);
+
+      updateState((state) => state.copyWith(
+        isLoading: false,
+        addresses: state.addresses.where((address) => address.id != id).toList(),
+      ));
+    } catch (e) {
+      updateState((state) => state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      ));
+    }
+  }
+
+  Future<void> fetchAddresses() async {
+    updateState((state) => state.copyWith(isLoading: true, error: null));
+
+    try {
+      final addresses = await _apiService.getAddresses();
+      updateState((state) => state.copyWith(
+        isLoading: false,
+        addresses: addresses,
+      ));
+    } catch (e) {
+      updateState((state) => state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      ));
+    }
+  }
+
+  Future<void> refresh() async {
+    await fetchAddresses();
   }
 }
 
-// Provider for AddressApiService
-@riverpod
-AddressApiService addressApiService(AddressApiServiceRef ref) {
-  return AddressApiService();
-}
+
+
+
+
