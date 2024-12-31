@@ -140,6 +140,7 @@ class EditProfileScreen extends HookConsumerWidget {
                         hintText: "New Password",
                         filled: true,
                         fillColor:
+                            // ignore: deprecated_member_use
                             Color.fromARGB(255, 226, 87, 83).withOpacity(0.05),
                         contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16.0 * 1.5, vertical: 16.0),
@@ -166,6 +167,7 @@ class EditProfileScreen extends HookConsumerWidget {
                           .textTheme
                           .bodyLarge!
                           .color!
+                          // ignore: deprecated_member_use
                           .withOpacity(0.08),
                       foregroundColor: Colors.white,
                       minimumSize: const Size(double.infinity, 48),

@@ -7,12 +7,12 @@ import 'package:hand_car/features/Accessories/controller/address/address_control
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class AddressForm extends HookConsumerWidget {
-  const AddressForm({super.key});
+  final VoidCallback? onAddressAdded;
+  const AddressForm( {super.key,this.onAddressAdded, });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final formKey = useMemoized(() => GlobalKey<FormState>());
-    final addressState = ref.watch(addressControllerProvider);
     final addressController = ref.read(addressControllerProvider.notifier);
 
     // Form controllers
@@ -30,44 +30,54 @@ class AddressForm extends HookConsumerWidget {
       stateController.clear();
       zipController.clear();
       countryValue.value = null;
-      formKey.currentState?.reset(); // Reset validation state
+      formKey.currentState?.reset();
     }
 
     // Handle form submission
     Future<void> handleSubmit() async {
+      // Unfocus any current text fields to dismiss keyboard
+      FocusScope.of(context).unfocus();
+
       if (formKey.currentState?.validate() ?? false) {
         try {
           isSubmitting.value = true;
+          
           await addressController.addAddress(
-            street: streetController.text,
-            city: cityController.text,
-            state: stateController.text,
-            zipCode: zipController.text,
+            street: streetController.text.trim(),
+            city: cityController.text.trim(),
+            state: stateController.text.trim(),
+            zipCode: zipController.text.trim(),
             country: countryValue.value!,
             isDefault: false,
           );
           
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Address added successfully'),
-                backgroundColor: Colors.green,
+          // Show success message
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Address added successfully', 
+                style: context.typography.bodyMedium?.copyWith(color: Colors.white),
               ),
-            );
-          }
+              backgroundColor: Colors.green,
+            ),
+          );
           
           // Clear all form fields after successful submission
           clearForm();
           
         } catch (e) {
           String errorMessage = 'Failed to add address';
+          
           if (e is DioException) {
-            errorMessage = e.response?.data['error'] ?? errorMessage;
+            errorMessage = e.response?.data['error'] ?? 
+                          e.message ?? 
+                          'Network error occurred';
           }
           
-          if (context.mounted) {
-            SnackbarUtil.showsnackbar(message: errorMessage, showretry: true);
-          }
+          // Show error snackbar
+          SnackbarUtil.showsnackbar(
+            message: errorMessage, 
+            showretry: true
+          );
         } finally {
           isSubmitting.value = false;
         }
@@ -81,14 +91,16 @@ class AddressForm extends HookConsumerWidget {
         children: [
           TextFormField(
             controller: streetController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Street Address',
               hintText: 'Enter your street address',
-              border: OutlineInputBorder(),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
-            validator: (value) => value?.isEmpty ?? true 
-              ? 'Please enter street address' 
-              : null,
+            validator: (value) => 
+              (value?.isEmpty ?? true) ? 'Please enter street address' : null,
+            textInputAction: TextInputAction.next,
           ),
           SizedBox(height: context.space.space_200),
           Row(
@@ -96,26 +108,30 @@ class AddressForm extends HookConsumerWidget {
               Expanded(
                 child: TextFormField(
                   controller: cityController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'City',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
-                  validator: (value) => value?.isEmpty ?? true 
-                    ? 'Please enter city' 
-                    : null,
+                  validator: (value) => 
+                    (value?.isEmpty ?? true) ? 'Please enter city' : null,
+                  textInputAction: TextInputAction.next,
                 ),
               ),
               SizedBox(width: context.space.space_200),
               Expanded(
                 child: TextFormField(
                   controller: stateController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'State/Province',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
-                  validator: (value) => value?.isEmpty ?? true 
-                    ? 'Please enter state' 
-                    : null,
+                  validator: (value) => 
+                    (value?.isEmpty ?? true) ? 'Please enter state' : null,
+                  textInputAction: TextInputAction.next,
                 ),
               ),
             ],
@@ -126,22 +142,27 @@ class AddressForm extends HookConsumerWidget {
               Expanded(
                 child: TextFormField(
                   controller: zipController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'ZIP Code',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
-                  validator: (value) => value?.isEmpty ?? true 
-                    ? 'Please enter ZIP code' 
-                    : null,
+                  validator: (value) => 
+                    (value?.isEmpty ?? true) ? 'Please enter ZIP code' : null,
+                  keyboardType: TextInputType.number,
+                  textInputAction: TextInputAction.next,
                 ),
               ),
               SizedBox(width: context.space.space_200),
               Expanded(
                 child: DropdownButtonFormField<String>(
                   value: countryValue.value,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Country',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                   items: const [
                     DropdownMenuItem(value: 'UAE', child: Text('UAE')),
@@ -151,9 +172,8 @@ class AddressForm extends HookConsumerWidget {
                   onChanged: (value) {
                     countryValue.value = value;
                   },
-                  validator: (value) => value == null 
-                    ? 'Please select country' 
-                    : null,
+                  validator: (value) => 
+                    value == null ? 'Please select country' : null,
                 ),
               ),
             ],
@@ -163,13 +183,19 @@ class AddressForm extends HookConsumerWidget {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: isSubmitting.value ? null : handleSubmit,
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: context.space.space_200),
+              ),
               child: isSubmitting.value
                   ? const SizedBox(
                       height: 20,
                       width: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Save Address'),
+                  : Text(
+                      'Save Address',
+                      style: context.typography.bodyLarge,
+                    ),
             ),
           ),
         ],

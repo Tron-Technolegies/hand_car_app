@@ -23,6 +23,8 @@ class CheckOutPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final showAddressForm = useState(false);
     final selectedAddress = useState<String?>(null);
+    
+    // Watch the cart and address controllers
     final cartController = ref.watch(cartControllerProvider);
     final addressState = ref.watch(addressControllerProvider);
     final addressController = ref.read(addressControllerProvider.notifier);
@@ -53,91 +55,161 @@ class CheckOutPage extends HookConsumerWidget {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () {
+              addressController.fetchAddresses();
+              showAddressForm.value = false;
+            },
+          ),
+        ],
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(context.space.space_200),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            cartController.when(
-              data: (cart) => CartSummaryWidget(cart: cart),
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, _) => Text('Error loading cart: $error'),
-            ),
-            Text(
-              'Select a shipping address',
-              style: context.typography.h3,
-            ),
-            SizedBox(height: context.space.space_200),
-            if (addressState.isLoading)
-              const Center(child: CircularProgressIndicator())
-            else if (addressState.error != null)
-              Center(
-                child: Column(
-                  children: [
-                    Text(addressState.error!),
-                    TextButton(
-                      onPressed: () => addressController.fetchAddresses(),
-                      child: const Text('Retry'),
-                    ),
-                  ],
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await addressController.fetchAddresses();
+          showAddressForm.value = false;
+        },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: EdgeInsets.all(context.space.space_200),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              cartController.when(
+                data: (cart) => CartSummaryWidget(cart: cart),
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, _) => Text('Error loading cart: $error'),
+              ),
+              Text(
+                'Select a shipping address',
+                style: context.typography.h3,
+              ),
+              SizedBox(height: context.space.space_200),
+              
+              // Improved address loading and error handling
+              Builder(
+                builder: (context) {
+                  if (addressState.isLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  
+                  if (addressState.error != null) {
+                    return Center(
+                      child: Column(
+                        children: [
+                          Text(
+                            addressState.error!,
+                            style: context.typography.bodyMedium?.copyWith(color: Colors.red),
+                          ),
+                          ElevatedButton(
+                            onPressed: () => addressController.fetchAddresses(),
+                            child: const Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                  
+                  if (addressState.addresses.isEmpty) {
+                    return Center(
+                      child: Column(
+                        children: [
+                          Text(
+                            'No addresses found',
+                            style: context.typography.bodyLarge,
+                          ),
+                          TextButton.icon(
+                            icon: const Icon(Icons.add),
+                            label: const Text('Add New Address'),
+                            onPressed: () => showAddressForm.value = true,
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                  
+                  // Address List
+                  return Column(
+                    children: [
+                      ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: addressState.addresses.length,
+                        separatorBuilder: (_, __) => 
+                            SizedBox(height: context.space.space_200),
+                        itemBuilder: (context, index) {
+                          final address = addressState.addresses[index];
+                          return AddressCard(
+                            name: address.street,
+                            address: '${address.city}, ${address.state}',
+                            poBox: 'ZIP: ${address.zipCode}',
+                            selectedAddress: selectedAddress,
+                            id: address.id, // Pass the address ID
+                          );
+                        },
+                      ),
+                      SizedBox(height: context.space.space_300),
+                    ],
+                  );
+                },
+              ),
+              
+              // Add Address Section
+              TextButton.icon(
+                icon: const Icon(Icons.add),
+                onPressed: () => showAddressForm.value = !showAddressForm.value,
+                label: Text(
+                  showAddressForm.value ? 'Hide form' : 'Add new address',
+                  style: context.typography.bodyLarge,
                 ),
-              )
-            else if (addressState.addresses.isEmpty)
-              const Center(
-                child: Text('No addresses found. Add a new address below.'),
-              )
-            else
-              ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: addressState.addresses.length,
-                separatorBuilder: (_, __) => 
-                    SizedBox(height: context.space.space_200),
-                itemBuilder: (context, index) {
-                  final address = addressState.addresses[index];
-                  return AddressCard(
-                    name: address.street,
-                    address: '${address.city}, ${address.state}',
-                    poBox: 'ZIP: ${address.zipCode}',
-                   // Add if needed
-                    selectedAddress: selectedAddress,
-                  );
-                },
               ),
-            SizedBox(height: context.space.space_300),
-            TextButton.icon(
-              icon: const Icon(Icons.add),
-              onPressed: () => showAddressForm.value = !showAddressForm.value,
-              label: Text(
-                showAddressForm.value ? 'Hide form' : 'Add new address',
-                style: context.typography.bodyLarge,
+              
+              // Address Form
+              if (showAddressForm.value) ...[
+                SizedBox(height: context.space.space_200),
+                AddressForm(
+                  onAddressAdded: () {
+                    showAddressForm.value = false;
+                    addressController.fetchAddresses();
+                  },
+                ),
+                SizedBox(height: context.space.space_200),
+              ],
+              
+              // Place Order Button
+              SizedBox(height: context.space.space_200),
+              SizedBox(
+                width: double.infinity,
+                child: ButtonWidget(
+                  label: "Place Order",
+                  onTap: () {
+                    if (selectedAddress.value == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Please select a shipping address',
+                            style: context.typography.bodyMedium?.copyWith(color: Colors.white),
+                          ),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                      return;
+                    }
+                    
+                    showModernDialog(
+                      context,
+                      "Order Placed",
+                      "Your order has been placed successfully",
+                      "OK",
+                      () => context.go(NavigationPage.route),
+                      PanaraDialogType.success,
+                    );
+                  },
+                ),
               ),
-            ),
-            if (showAddressForm.value) ...[
-              SizedBox(height: context.space.space_200),
-              const AddressForm(),
-              SizedBox(height: context.space.space_200),
             ],
-            SizedBox(height: context.space.space_200),
-            SizedBox(
-              width: double.infinity,
-              child: ButtonWidget(
-                label: "Place Order",
-                onTap: () {
-                  if (selectedAddress.value == null) return;
-                  showModernDialog(
-                    context,
-                    "Order Placed",
-                    "Your order has been placed successfully",
-                    "OK",
-                    () => context.go(NavigationPage.route),
-                    PanaraDialogType.success,
-                  );
-                },
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
