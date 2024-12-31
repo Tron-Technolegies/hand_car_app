@@ -6,7 +6,7 @@ part 'address_controller.g.dart';
 
 @Riverpod(keepAlive: true)
 class AddressController extends _$AddressController {
-  late final AddressService _apiService;
+  late final AddressApiService _apiService;
 
   @override
   AddressState build() {
@@ -14,7 +14,7 @@ class AddressController extends _$AddressController {
     return const AddressState();
   }
 
-  void updateState(AddressState Function(AddressState state) update) {
+  void _updateState(AddressState Function(AddressState state) update) {
     state = update(state);
   }
 
@@ -26,10 +26,10 @@ class AddressController extends _$AddressController {
     required String country,
     bool isDefault = false,
   }) async {
-    updateState((state) => state.copyWith(isLoading: true, error: null));
+    _updateState((state) => state.copyWith(isLoading: true, error: null));
 
     try {
-      final newAddress = await _apiService.addAddress(
+      final response = await _apiService.addAddress(
         street: street,
         city: city,
         state: state,
@@ -38,15 +38,18 @@ class AddressController extends _$AddressController {
         isDefault: isDefault,
       );
 
-      updateState((state) => state.copyWith(
-        isLoading: false,
-        addresses: [...state.addresses, newAddress],
-      ));
+      if (response.address != null) {
+        _updateState((state) => state.copyWith(
+              isLoading: false,
+              addresses: [...state.addresses, response.address!],
+            ));
+      }
     } catch (e) {
-      updateState((state) => state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      ));
+      _updateState((state) => state.copyWith(
+            isLoading: false,
+            error: e.toString(),
+          ));
+      rethrow;
     }
   }
 
@@ -59,10 +62,10 @@ class AddressController extends _$AddressController {
     required String country,
     bool isDefault = false,
   }) async {
-    updateState((state) => state.copyWith(isLoading: true, error: null));
+    _updateState((state) => state.copyWith(isLoading: true, error: null));
 
     try {
-      final updatedAddress = await _apiService.updateAddress(
+      final response = await _apiService.updateAddress(
         id: id,
         street: street,
         city: city,
@@ -72,52 +75,84 @@ class AddressController extends _$AddressController {
         isDefault: isDefault,
       );
 
-      updateState((state) => state.copyWith(
-        isLoading: false,
-        addresses: state.addresses.map((address) =>
-          address.id == id ? updatedAddress : address
-        ).toList(),
-      ));
+      if (response.address != null) {
+        _updateState((state) => state.copyWith(
+              isLoading: false,
+              addresses: state.addresses
+                  .map((address) =>
+                      address.id == id.toString() ? response.address! : address)
+                  .toList(),
+            ));
+      }
     } catch (e) {
-      updateState((state) => state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      ));
+      _updateState((state) => state.copyWith(
+            isLoading: false,
+            error: e.toString(),
+          ));
+      rethrow;
     }
   }
 
   Future<void> deleteAddress(int id) async {
-    updateState((state) => state.copyWith(isLoading: true, error: null));
+    _updateState((state) => state.copyWith(isLoading: true, error: null));
 
     try {
       await _apiService.deleteAddress(id);
 
-      updateState((state) => state.copyWith(
-        isLoading: false,
-        addresses: state.addresses.where((address) => address.id != id).toList(),
-      ));
+      _updateState((state) => state.copyWith(
+            isLoading: false,
+            addresses: state.addresses
+                .where((address) => address.id != id.toString())
+                .toList(),
+          ));
     } catch (e) {
-      updateState((state) => state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      ));
+      _updateState((state) => state.copyWith(
+            isLoading: false,
+            error: e.toString(),
+          ));
+      rethrow;
     }
   }
 
   Future<void> fetchAddresses() async {
-    updateState((state) => state.copyWith(isLoading: true, error: null));
+    try {
+      _updateState((state) => state.copyWith(isLoading: true, error: null));
+
+      final addresses = await _apiService.getAddresses();
+
+      _updateState((state) => state.copyWith(
+            isLoading: false,
+            addresses: addresses,
+          ));
+    } catch (e) {
+      _updateState((state) => state.copyWith(
+            isLoading: false,
+            error: e.toString(),
+          ));
+      rethrow;
+    }
+  }
+
+  Future<void> setDefaultAddress(int id) async {
+    _updateState((state) => state.copyWith(isLoading: true, error: null));
 
     try {
-      final addresses = await _apiService.getAddresses();
-      updateState((state) => state.copyWith(
-        isLoading: false,
-        addresses: addresses,
-      ));
+      final defaultAddress = await _apiService.setDefaultAddress(id);
+
+      _updateState((state) => state.copyWith(
+            isLoading: false,
+            addresses: state.addresses
+                .map((address) => address.id == defaultAddress.id
+                    ? defaultAddress.copyWith(isDefault: true)
+                    : address.copyWith(isDefault: false))
+                .toList(),
+          ));
     } catch (e) {
-      updateState((state) => state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      ));
+      _updateState((state) => state.copyWith(
+            isLoading: false,
+            error: e.toString(),
+          ));
+      rethrow;
     }
   }
 
@@ -126,7 +161,7 @@ class AddressController extends _$AddressController {
   }
 }
 
-
-
-
-
+@riverpod
+AddressApiService addressApiService(AddressApiServiceRef ref) {
+  return AddressApiService();
+}

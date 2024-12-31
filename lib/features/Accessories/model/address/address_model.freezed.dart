@@ -20,13 +20,16 @@ AddressModel _$AddressModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$AddressModel {
+  @JsonKey(name: 'id', fromJson: _convertToString, toJson: _convertToInt)
+  String get id => throw _privateConstructorUsedError;
   String get street => throw _privateConstructorUsedError;
   String get city => throw _privateConstructorUsedError;
   String get state => throw _privateConstructorUsedError;
+  @JsonKey(name: 'zip_code')
   String get zipCode => throw _privateConstructorUsedError;
   String get country => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_default')
   bool get isDefault => throw _privateConstructorUsedError;
-  String? get id => throw _privateConstructorUsedError;
 
   /// Serializes this AddressModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -45,13 +48,14 @@ abstract class $AddressModelCopyWith<$Res> {
       _$AddressModelCopyWithImpl<$Res, AddressModel>;
   @useResult
   $Res call(
-      {String street,
+      {@JsonKey(name: 'id', fromJson: _convertToString, toJson: _convertToInt)
+      String id,
+      String street,
       String city,
       String state,
-      String zipCode,
+      @JsonKey(name: 'zip_code') String zipCode,
       String country,
-      bool isDefault,
-      String? id});
+      @JsonKey(name: 'is_default') bool isDefault});
 }
 
 /// @nodoc
@@ -69,15 +73,19 @@ class _$AddressModelCopyWithImpl<$Res, $Val extends AddressModel>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? street = null,
     Object? city = null,
     Object? state = null,
     Object? zipCode = null,
     Object? country = null,
     Object? isDefault = null,
-    Object? id = freezed,
   }) {
     return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
       street: null == street
           ? _value.street
           : street // ignore: cast_nullable_to_non_nullable
@@ -102,10 +110,6 @@ class _$AddressModelCopyWithImpl<$Res, $Val extends AddressModel>
           ? _value.isDefault
           : isDefault // ignore: cast_nullable_to_non_nullable
               as bool,
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String?,
     ) as $Val);
   }
 }
@@ -119,13 +123,14 @@ abstract class _$$AddressModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String street,
+      {@JsonKey(name: 'id', fromJson: _convertToString, toJson: _convertToInt)
+      String id,
+      String street,
       String city,
       String state,
-      String zipCode,
+      @JsonKey(name: 'zip_code') String zipCode,
       String country,
-      bool isDefault,
-      String? id});
+      @JsonKey(name: 'is_default') bool isDefault});
 }
 
 /// @nodoc
@@ -141,15 +146,19 @@ class __$$AddressModelImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? street = null,
     Object? city = null,
     Object? state = null,
     Object? zipCode = null,
     Object? country = null,
     Object? isDefault = null,
-    Object? id = freezed,
   }) {
     return _then(_$AddressModelImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
       street: null == street
           ? _value.street
           : street // ignore: cast_nullable_to_non_nullable
@@ -174,10 +183,6 @@ class __$$AddressModelImplCopyWithImpl<$Res>
           ? _value.isDefault
           : isDefault // ignore: cast_nullable_to_non_nullable
               as bool,
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String?,
     ));
   }
 }
@@ -186,17 +191,21 @@ class __$$AddressModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AddressModelImpl implements _AddressModel {
   const _$AddressModelImpl(
-      {required this.street,
+      {@JsonKey(name: 'id', fromJson: _convertToString, toJson: _convertToInt)
+      required this.id,
+      required this.street,
       required this.city,
       required this.state,
-      required this.zipCode,
+      @JsonKey(name: 'zip_code') required this.zipCode,
       required this.country,
-      this.isDefault = false,
-      this.id});
+      @JsonKey(name: 'is_default') this.isDefault = false});
 
   factory _$AddressModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$AddressModelImplFromJson(json);
 
+  @override
+  @JsonKey(name: 'id', fromJson: _convertToString, toJson: _convertToInt)
+  final String id;
   @override
   final String street;
   @override
@@ -204,18 +213,17 @@ class _$AddressModelImpl implements _AddressModel {
   @override
   final String state;
   @override
+  @JsonKey(name: 'zip_code')
   final String zipCode;
   @override
   final String country;
   @override
-  @JsonKey()
+  @JsonKey(name: 'is_default')
   final bool isDefault;
-  @override
-  final String? id;
 
   @override
   String toString() {
-    return 'AddressModel(street: $street, city: $city, state: $state, zipCode: $zipCode, country: $country, isDefault: $isDefault, id: $id)';
+    return 'AddressModel(id: $id, street: $street, city: $city, state: $state, zipCode: $zipCode, country: $country, isDefault: $isDefault)';
   }
 
   @override
@@ -223,20 +231,20 @@ class _$AddressModelImpl implements _AddressModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AddressModelImpl &&
+            (identical(other.id, id) || other.id == id) &&
             (identical(other.street, street) || other.street == street) &&
             (identical(other.city, city) || other.city == city) &&
             (identical(other.state, state) || other.state == state) &&
             (identical(other.zipCode, zipCode) || other.zipCode == zipCode) &&
             (identical(other.country, country) || other.country == country) &&
             (identical(other.isDefault, isDefault) ||
-                other.isDefault == isDefault) &&
-            (identical(other.id, id) || other.id == id));
+                other.isDefault == isDefault));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType, street, city, state, zipCode, country, isDefault, id);
+      runtimeType, id, street, city, state, zipCode, country, isDefault);
 
   /// Create a copy of AddressModel
   /// with the given fields replaced by the non-null parameter values.
@@ -256,17 +264,21 @@ class _$AddressModelImpl implements _AddressModel {
 
 abstract class _AddressModel implements AddressModel {
   const factory _AddressModel(
-      {required final String street,
+      {@JsonKey(name: 'id', fromJson: _convertToString, toJson: _convertToInt)
+      required final String id,
+      required final String street,
       required final String city,
       required final String state,
-      required final String zipCode,
+      @JsonKey(name: 'zip_code') required final String zipCode,
       required final String country,
-      final bool isDefault,
-      final String? id}) = _$AddressModelImpl;
+      @JsonKey(name: 'is_default') final bool isDefault}) = _$AddressModelImpl;
 
   factory _AddressModel.fromJson(Map<String, dynamic> json) =
       _$AddressModelImpl.fromJson;
 
+  @override
+  @JsonKey(name: 'id', fromJson: _convertToString, toJson: _convertToInt)
+  String get id;
   @override
   String get street;
   @override
@@ -274,13 +286,13 @@ abstract class _AddressModel implements AddressModel {
   @override
   String get state;
   @override
+  @JsonKey(name: 'zip_code')
   String get zipCode;
   @override
   String get country;
   @override
+  @JsonKey(name: 'is_default')
   bool get isDefault;
-  @override
-  String? get id;
 
   /// Create a copy of AddressModel
   /// with the given fields replaced by the non-null parameter values.

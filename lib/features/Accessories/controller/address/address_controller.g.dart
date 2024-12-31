@@ -6,11 +6,12 @@ part of 'address_controller.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$addressApiServiceHash() => r'cab0df82bafee5385883531fd5a1427d660ccb4b';
+String _$addressApiServiceHash() => r'e4d6bde0409cd168ea069b7a0d64909b91435480';
 
 /// See also [addressApiService].
 @ProviderFor(addressApiService)
-final addressApiServiceProvider = AutoDisposeProvider<AddressService>.internal(
+final addressApiServiceProvider =
+    AutoDisposeProvider<AddressApiService>.internal(
   addressApiService,
   name: r'addressApiServiceProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -22,8 +23,8 @@ final addressApiServiceProvider = AutoDisposeProvider<AddressService>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef AddressApiServiceRef = AutoDisposeProviderRef<AddressService>;
-String _$addressControllerHash() => r'228be9755edb754ee08357fa548f526ffa1a0f09';
+typedef AddressApiServiceRef = AutoDisposeProviderRef<AddressApiService>;
+String _$addressControllerHash() => r'ac7808b9ce95c269beacf0b08de36390139c0f10';
 
 /// See also [AddressController].
 @ProviderFor(AddressController)

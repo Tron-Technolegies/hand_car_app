@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/show_dialoge.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
+import 'package:hand_car/features/Accessories/controller/address/address_controller.dart';
 import 'package:hand_car/features/Accessories/controller/cart/cart_controller.dart';
 import 'package:hand_car/features/Accessories/view/widgets/address/address_card_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/address/address_form_widget.dart';
@@ -23,6 +24,27 @@ class CheckOutPage extends HookConsumerWidget {
     final showAddressForm = useState(false);
     final selectedAddress = useState<String?>(null);
     final cartController = ref.watch(cartControllerProvider);
+    final addressState = ref.watch(addressControllerProvider);
+    final addressController = ref.read(addressControllerProvider.notifier);
+
+    // Fetch addresses when the page loads
+    useEffect(() {
+      Future(() async {
+        try {
+          await addressController.fetchAddresses();
+        } catch (e) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Error loading addresses: $e'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        }
+      });
+      return null;
+    }, const []);
 
     return Scaffold(
       appBar: AppBar(
@@ -47,29 +69,48 @@ class CheckOutPage extends HookConsumerWidget {
               style: context.typography.h3,
             ),
             SizedBox(height: context.space.space_200),
-            AddressCard(
-              name: 'Muhammed Risan',
-              address:
-                  '123 Sheikh Zayed Road, Downtown Dubai, Dubai,\nUnited Arab Emirates',
-              poBox: 'P.O. Box 12345',
-              mobile: 'Mobile: +971 50 123 4567',
-              selectedAddress: selectedAddress,
-            ),
-            SizedBox(height: context.space.space_200),
-            AddressCard(
-              name: 'Kollam Shafi',
-              address:
-                  '123 Sheikh Zayed Road, Downtown Dubai, Dubai,\nUnited Arab Emirates',
-              poBox: 'P.O. Box 12345',
-              mobile: 'Mobile: +971 50 123 4567',
-              selectedAddress: selectedAddress,
-            ),
+            if (addressState.isLoading)
+              const Center(child: CircularProgressIndicator())
+            else if (addressState.error != null)
+              Center(
+                child: Column(
+                  children: [
+                    Text(addressState.error!),
+                    TextButton(
+                      onPressed: () => addressController.fetchAddresses(),
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              )
+            else if (addressState.addresses.isEmpty)
+              const Center(
+                child: Text('No addresses found. Add a new address below.'),
+              )
+            else
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: addressState.addresses.length,
+                separatorBuilder: (_, __) => 
+                    SizedBox(height: context.space.space_200),
+                itemBuilder: (context, index) {
+                  final address = addressState.addresses[index];
+                  return AddressCard(
+                    name: address.street,
+                    address: '${address.city}, ${address.state}',
+                    poBox: 'ZIP: ${address.zipCode}',
+                   // Add if needed
+                    selectedAddress: selectedAddress,
+                  );
+                },
+              ),
             SizedBox(height: context.space.space_300),
             TextButton.icon(
               icon: const Icon(Icons.add),
               onPressed: () => showAddressForm.value = !showAddressForm.value,
               label: Text(
-                'Add new address',
+                showAddressForm.value ? 'Hide form' : 'Add new address',
                 style: context.typography.bodyLarge,
               ),
             ),
@@ -82,11 +123,17 @@ class CheckOutPage extends HookConsumerWidget {
             SizedBox(
               width: double.infinity,
               child: ButtonWidget(
-                label:
-                    showAddressForm.value ? "Add & Choose Address" : "Continue",
-                onTap: () => {
-                  showModernDialog(context, "Order Placed",
-                      "Your order has been placed successfully", "OK", () => context.go(NavigationPage.route), PanaraDialogType.success)
+                label: "Place Order",
+                onTap: () {
+                  if (selectedAddress.value == null) return;
+                  showModernDialog(
+                    context,
+                    "Order Placed",
+                    "Your order has been placed successfully",
+                    "OK",
+                    () => context.go(NavigationPage.route),
+                    PanaraDialogType.success,
+                  );
                 },
               ),
             ),

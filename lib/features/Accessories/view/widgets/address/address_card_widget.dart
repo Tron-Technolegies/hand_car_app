@@ -7,7 +7,7 @@ class AddressCard extends HookWidget {
   final String name;
   final String address;
   final String poBox;
-  final String mobile;
+
   final ValueNotifier<String?> selectedAddress;
 
   const AddressCard({
@@ -15,7 +15,7 @@ class AddressCard extends HookWidget {
     required this.name,
     required this.address,
     required this.poBox,
-    required this.mobile,
+
     required this.selectedAddress,
   });
 
@@ -38,7 +38,7 @@ class AddressCard extends HookWidget {
           children: [
             Text(address),
             Text(poBox),
-            Text(mobile),
+           
           ],
         ),
         value: name,
