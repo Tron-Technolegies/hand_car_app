@@ -52,14 +52,10 @@ class AddressForm extends HookConsumerWidget {
           );
           
           // Show success message
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Address added successfully', 
-                style: context.typography.bodyMedium?.copyWith(color: Colors.white),
-              ),
-              backgroundColor: Colors.green,
-            ),
-          );
+          SnackbarUtil.showsnackbar(message: 'Address added successfully');
+          
+          // Call the onAddressAdded callback if provided
+          onAddressAdded?.call();
           
           // Clear all form fields after successful submission
           clearForm();

@@ -1,4 +1,6 @@
 // Cart Page
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
@@ -23,30 +25,46 @@ class CheckOutPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final showAddressForm = useState(false);
     final selectedAddress = useState<String?>(null);
+    final isRefreshing = useState(false);
     
-    // Watch the cart and address controllers
     final cartController = ref.watch(cartControllerProvider);
     final addressState = ref.watch(addressControllerProvider);
     final addressController = ref.read(addressControllerProvider.notifier);
 
-    // Fetch addresses when the page loads
-    useEffect(() {
-      Future(() async {
-        try {
-          await addressController.fetchAddresses();
-        } catch (e) {
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Error loading addresses: $e'),
-                backgroundColor: Colors.red,
-              ),
-            );
-          }
+    // Function to handle refresh with debug prints
+    Future<void> refreshAddresses() async {
+      log('Starting address refresh...'); // Debug print
+      isRefreshing.value = true;
+      try {
+        await addressController.fetchAddresses();
+        log('Address fetch completed successfully'); // Debug print
+      } catch (e) {
+        log('Error fetching addresses: $e'); // Debug print
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error refreshing addresses: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
         }
-      });
+      } finally {
+        isRefreshing.value = false;
+      }
+    }
+
+    // Initialize address fetch using initState equivalent in hooks
+    useEffect(() {
+      log('useEffect triggered for address fetch'); // Debug print
+      Future.microtask(() => refreshAddresses());
       return null;
-    }, const []);
+    }, []); // Empty dependency array ensures it only runs once
+
+    // Log whenever address state changes
+    useEffect(() {
+      log('Current address count: ${addressState.addresses.length}'); // Debug print
+      return null;
+    }, [addressState.addresses]);
 
     return Scaffold(
       appBar: AppBar(
@@ -56,20 +74,29 @@ class CheckOutPage extends HookConsumerWidget {
           onPressed: () => context.pop(),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              addressController.fetchAddresses();
-              showAddressForm.value = false;
-            },
-          ),
+          if (isRefreshing.value)
+            const Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              ),
+            )
+          else
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: () {
+                log('Manual refresh triggered'); // Debug print
+                refreshAddresses();
+              },
+            ),
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: () async {
-          await addressController.fetchAddresses();
-          showAddressForm.value = false;
-        },
+        onRefresh: refreshAddresses,
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           padding: EdgeInsets.all(context.space.space_200),
@@ -87,28 +114,16 @@ class CheckOutPage extends HookConsumerWidget {
               ),
               SizedBox(height: context.space.space_200),
               
-              // Improved address loading and error handling
+              // Debug text to show current state
+
+              
+              // Address List with loading state
               Builder(
                 builder: (context) {
-                  if (addressState.isLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+                  log('Building address list section...'); // Debug print
                   
-                  if (addressState.error != null) {
-                    return Center(
-                      child: Column(
-                        children: [
-                          Text(
-                            addressState.error!,
-                            style: context.typography.bodyMedium?.copyWith(color: Colors.red),
-                          ),
-                          ElevatedButton(
-                            onPressed: () => addressController.fetchAddresses(),
-                            child: const Text('Retry'),
-                          ),
-                        ],
-                      ),
-                    );
+                  if (addressState.isLoading || isRefreshing.value) {
+                    return const Center(child: CircularProgressIndicator());
                   }
                   
                   if (addressState.addresses.isEmpty) {
@@ -129,7 +144,6 @@ class CheckOutPage extends HookConsumerWidget {
                     );
                   }
                   
-                  // Address List
                   return Column(
                     children: [
                       ListView.separated(
@@ -140,12 +154,14 @@ class CheckOutPage extends HookConsumerWidget {
                             SizedBox(height: context.space.space_200),
                         itemBuilder: (context, index) {
                           final address = addressState.addresses[index];
+                          log('Building address card for index $index'); // Debug print
                           return AddressCard(
+                            key: ValueKey(address.id),
                             name: address.street,
                             address: '${address.city}, ${address.state}',
                             poBox: 'ZIP: ${address.zipCode}',
                             selectedAddress: selectedAddress,
-                            id: address.id, // Pass the address ID
+                            id: address.id,
                           );
                         },
                       ),
@@ -169,9 +185,12 @@ class CheckOutPage extends HookConsumerWidget {
               if (showAddressForm.value) ...[
                 SizedBox(height: context.space.space_200),
                 AddressForm(
-                  onAddressAdded: () {
+                  onAddressAdded: () async {
+                    log('Address added callback triggered'); // Debug print
                     showAddressForm.value = false;
-                    addressController.fetchAddresses();
+                    await Future.delayed(const Duration(milliseconds: 500));
+                    await refreshAddresses();
+                    log('Address refresh completed after adding new address'); // Debug print
                   },
                 ),
                 SizedBox(height: context.space.space_200),
@@ -189,7 +208,7 @@ class CheckOutPage extends HookConsumerWidget {
                         SnackBar(
                           content: Text(
                             'Please select a shipping address',
-                            style: context.typography.bodyMedium?.copyWith(color: Colors.white),
+                            style: context.typography.bodyMedium.copyWith(color: Colors.white),
                           ),
                           backgroundColor: Colors.red,
                         ),
