@@ -1,222 +1,180 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
-import 'package:hand_car/config.dart';
 import 'package:hand_car/core/router/user_validation.dart';
 import 'package:hand_car/features/Accessories/model/cart/cart_model.dart';
 import 'package:hand_car/core/exception/cart/cart_exception.dart';
 import 'package:hand_car/features/Accessories/model/cart/cart_response.dart';
 
 class CartApiService {
-  static final Dio _dio = Dio(
-    BaseOptions(
-      baseUrl: baseUrl,
-      connectTimeout: const Duration(seconds: 5),
-      receiveTimeout: const Duration(seconds: 3),
-      validateStatus: (status) => status != null && status < 500,
-      followRedirects: true,
-      maxRedirects: 5,
-    ),
-  );
-
-  Map<String, String> _createAuthHeaders(String token) {
-    final tokenValue = token.startsWith('Bearer ') ? token : 'Bearer $token';
-    return {
-      'Authorization': tokenValue,
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    };
-  }
-
-  Future<T> _makeAuthenticatedRequest<T>(
-    Future<T> Function(String token) request
-  ) async {
+  final _dio = Dio(BaseOptions(
+    baseUrl: 'https://handcar-backend-1.onrender.com',
+    validateStatus: (status) => status! < 500,
+  ));
+  
+  final _tokenStorage = TokenStorage();
+  
+  Future<T> _makeAuthenticatedRequest<T>(Future<T> Function() request) async {
     try {
-      // Check token expiration first
-      if (TokenStorage().isAccessTokenExpired()) {
-        log('Access token expired, attempting refresh');
-        final refreshSuccess = await _refreshToken();
-        if (!refreshSuccess) {
-          throw const CartException('Session expired. Please login again.');
-        }
+      // Get both tokens
+      final accessToken = _tokenStorage.getAccessToken();
+      final refreshToken = _tokenStorage.getRefreshToken();
+
+      if (accessToken == null) {
+        throw CartException('No access token found');
       }
 
-      final token = await _getToken();
-      try {
-        return await request(token);
-      } on DioException catch (e) {
-        log('DioException in request: ${e.message}');
-        log('Response status: ${e.response?.statusCode}');
-        log('Response data: ${e.response?.data}');
+      // Set cookies in Dio
+      _dio.options.headers['Cookie'] = _createCookieHeader(
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      );
 
-        if (e.response?.statusCode == 401 || 
-            (e.response?.data != null && e.response?.data['code'] == 'token_not_valid')) {
-          log('Token invalid, attempting refresh');
-          final refreshSuccess = await _refreshToken();
-          if (refreshSuccess) {
-            final newToken = await _getToken();
-            return await request(newToken);
-          }
-          throw const CartException('Session expired. Please login again.');
-        }
-
-        final errorMessage = e.response?.data?['detail']?.toString() ??
-                           e.response?.data?['error']?.toString() ??
-                           'An error occurred';
-        throw CartException(errorMessage);
+      return await request();
+    } on DioException catch (e) {
+      log('DioException in _makeAuthenticatedRequest: ${e.message}');
+      if (e.response?.statusCode == 401) {
+        // Token expired or invalid
+        await _handleTokenExpiration();
+        // Retry the request once after handling token expiration
+        return await request();
       }
+      throw CartException(e.response?.data?['error']?.toString() ?? 'Request failed: ${e.message}');
     } catch (e) {
       log('Error in _makeAuthenticatedRequest: $e');
-      if (e is CartException) rethrow;
-      throw CartException(e.toString());
+      throw CartException('An unexpected error occurred');
     }
   }
 
-  Future<bool> _refreshToken() async {
-    try {
-      final refreshToken = TokenStorage().getRefreshToken();
-      if (refreshToken == null || refreshToken.isEmpty) {
-        log('No refresh token available');
-        return false;
-      }
+  Future<void> _handleTokenExpiration() async {
+    final refreshToken = _tokenStorage.getRefreshToken();
+    if (refreshToken == null) {
+      await _tokenStorage.clearTokens();
+      throw CartException('Session expired, please login again');
+    }
 
-      log('Attempting token refresh');
+    try {
+      // Call your refresh token endpoint
       final response = await _dio.post(
         '/api/token/refresh/',
         data: {'refresh': refreshToken},
+      );
+
+      if (response.statusCode == 200) {
+        // Save the new tokens
+        await _tokenStorage.saveTokens(
+          accessToken: response.data['access'],
+          refreshToken: refreshToken, // Keep the same refresh token
+        );
+      } else {
+        await _tokenStorage.clearTokens();
+        throw CartException('Session expired, please login again');
+      }
+    } catch (e) {
+      await _tokenStorage.clearTokens();
+      throw CartException('Session expired, please login again');
+    }
+  }
+
+  String _createCookieHeader({required String accessToken, String? refreshToken}) {
+    final cookies = [
+      'access_token=$accessToken',
+      if (refreshToken != null) 'refresh_token=$refreshToken',
+    ];
+    return cookies.join('; ');
+  }
+Future<CartResponse> addToCart(String productId) async {
+    return _makeAuthenticatedRequest(() async {
+      log('Adding product to cart: $productId');
+      
+      final response = await _dio.post(
+        '/add_to_cart/$productId/',
         options: Options(
           headers: {'Content-Type': 'application/json'},
         ),
       );
-
-      log('Refresh token response: ${response.statusCode}');
-
-      if (response.statusCode == 200 && response.data != null) {
-        final newAccessToken = response.data['access']?.toString();
-        if (newAccessToken != null && newAccessToken.isNotEmpty) {
-          await TokenStorage().saveTokens(
-            accessToken: newAccessToken,
-            refreshToken: refreshToken,
-          );
-          log('Token refresh successful');
-          return true;
-        }
-      }
       
-      log('Token refresh failed: ${response.data}');
-      return false;
-    } catch (e) {
-      log('Token refresh error: $e');
-      return false;
-    }
-  }
-
-  Future<String> _getToken() async {
-    final token = TokenStorage().getAccessToken();
-    if (token == null || token.isEmpty) {
-      throw const CartException('Please login to continue');
-    }
-    return token;
-  }
-
-  Future<CartResponse> addToCart(int productId) async {
-    return _makeAuthenticatedRequest((token) async {
-      log('Adding product to cart: $productId');
-      
-      final response = await _dio.post(
-        '/cart/add/$productId/',
-        options: Options(
-          headers: _createAuthHeaders(token),
-        ),
-      );
-
       log('Add to cart response: ${response.data}');
-
-      if (response.statusCode == 200) {
-        return CartResponse(
-          message: response.data['message'] as String? ?? 'Product added to cart',
-          cartQuantity: response.data['cart_quantity'] as int? ?? 1,
-          isSuccess: true,
-        );
+      
+      // Parse response into CartResponse object
+      final cartResponse = CartResponse.fromJson(response.data);
+      
+      // Only throw an error if the response indicates failure
+      if (!cartResponse.isSuccess) {
+        throw CartException(cartResponse.error ?? 'Failed to add item to cart');
       }
-
-      throw CartException(
-        response.data['error']?.toString() ?? 'Failed to add item to cart'
-      );
+      
+      return cartResponse;
     });
   }
 
   Future<CartModel> getCart() async {
-    return _makeAuthenticatedRequest((token) async {
+    return _makeAuthenticatedRequest(() async {
       log('Fetching cart');
+      
       final response = await _dio.get(
-        '/viewcartitems/',
-        options: Options(headers: _createAuthHeaders(token)),
+        '/display_cart',
+        options: Options(
+          headers: {'Content-Type': 'application/json'},
+        ),
       );
-
+      
       log('Cart response: ${response.data}');
-
+      
       if (response.statusCode == 200) {
-        if (response.data is! Map<String, dynamic>) {
-          throw const CartException('Invalid response format');
-        }
         return CartModel.fromJson(response.data);
       }
-
+      
       throw CartException(
         response.data['error']?.toString() ?? 'Failed to fetch cart'
       );
     });
   }
 
-  Future<CartResponse> removeFromCart(int productId) async {
-    return _makeAuthenticatedRequest((token) async {
-      log('Removing product from cart: $productId');
-      
-      final response = await _dio.delete(
-        '/removecart/$productId/',
+  Future<void> removeFromCart(String itemId) async {
+    return _makeAuthenticatedRequest(() async {
+      final response = await _dio.post(
+        '/removecart/',
+        data: {'item_id': itemId},
         options: Options(
-          headers: _createAuthHeaders(token),
+          headers: {'Content-Type': 'application/json'},
         ),
       );
-
-      log('Remove from cart response: ${response.data}');
-
-      if (response.statusCode == 200) {
-        return CartResponse(
-          message: response.data['message'] as String? ?? 'Item removed from cart',
-          isSuccess: true,
+      
+      if (response.statusCode != 200) {
+        throw CartException(
+          response.data['error']?.toString() ?? 'Failed to remove item from cart'
         );
       }
-
-      throw CartException(
-        response.data['error']?.toString() ?? 'Failed to remove item'
-      );
     });
   }
 
-  Future<CartResponse> updateQuantity(int productId, int quantity) async {
-    return _makeAuthenticatedRequest((token) async {
-      log('Updating quantity for product: $productId to $quantity');
-      
-      final response = await _dio.post(
-        '/cart/update/$productId/',
-        data: {'quantity': quantity},
-        options: Options(headers: _createAuthHeaders(token)),
-      );
+  Future<CartResponse> updateQuantity(String productId, int quantity) async {
+    if (quantity < 1) {
+      throw CartException('Quantity cannot be less than 1');
+    }
 
-      log('Update quantity response: ${response.data}');
+    try {
+      // Add to cart the required number of times
+      CartResponse lastResponse;
+      int currentQuantity = 0;
+      int targetQuantity = quantity;
 
-      if (response.statusCode == 200) {
-        return CartResponse(
-          message: response.data['message'] as String? ?? 'Quantity updated',
-          cartQuantity: quantity,
-          isSuccess: true,
-        );
+      while (currentQuantity < targetQuantity) {
+        lastResponse = await addToCart(productId);
+        currentQuantity = lastResponse.cartQuantity;
+        
+        // Safety check
+        if (currentQuantity >= targetQuantity) break;
       }
 
-      throw CartException(
-        response.data['error']?.toString() ?? 'Failed to update quantity'
+      return CartResponse(
+        message: 'Quantity updated successfully',
+        cartQuantity: quantity,
+        isSuccess: true,
       );
-    });
+    } catch (e) {
+      log('Error updating quantity: $e');
+      throw CartException('Failed to update quantity: $e');
+    }
   }
 }

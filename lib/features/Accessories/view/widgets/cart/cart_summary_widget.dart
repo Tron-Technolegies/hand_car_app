@@ -48,9 +48,9 @@ class CartSummaryWidget extends StatelessWidget {
                   final item = cart.cartItems[index];
                   return CartItemWidget(
                     name: item.productName,
-                    // Fixed the toString syntax
-                    price: 'AED ${item.productPrice.toString()}',
-                    quantity: item.quantity, productId: item.productId,
+                    price: 'AED ${item.productPrice.toStringAsFixed(2)}',
+                    quantity: item.quantity, 
+                    productId: item.productId ?? 0, // Use null-aware operator
                   );
                 },
               ),

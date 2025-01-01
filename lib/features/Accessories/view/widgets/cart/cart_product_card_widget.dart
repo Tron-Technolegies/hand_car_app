@@ -9,12 +9,12 @@ class ProductCard extends HookConsumerWidget {
   final String productName;
   final String? modelNumber;
   final String? image;
-  final String price;
+  final double price;
   final bool isAvailable;
-  final int quantity;
+  final int currentQuantity;
   final int productId;
   final VoidCallback? onDelete;
-  final Function(int)? onQuantityChanged;
+  final Future<void> Function(int)? onQuantityChanged;
 
   const ProductCard({
     super.key,
@@ -23,7 +23,7 @@ class ProductCard extends HookConsumerWidget {
     this.image,
     required this.price,
     this.isAvailable = true,
-    required this.quantity,
+    required this.currentQuantity,
     required this.productId,
     this.onDelete,
     this.onQuantityChanged,
@@ -31,7 +31,10 @@ class ProductCard extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Use state to manage quantity locally
+    final quantity = useState(currentQuantity);
     final isUpdating = useState(false);
+    
     // Generate list of quantities from 1 to 10
     final quantities = List<int>.generate(10, (i) => i + 1);
 
@@ -41,22 +44,12 @@ class ProductCard extends HookConsumerWidget {
         motion: const ScrollMotion(),
         dismissible: DismissiblePane(
           onDismissed: () {
-            onDelete?.call();
-            SnackbarUtil.showsnackbar(
-              message: "Item Deleted",
-              showretry: false,
-            );
+            _handleDelete(context);
           },
         ),
         children: [
           SlidableAction(
-            onPressed: (_) {
-              onDelete?.call();
-              SnackbarUtil.showsnackbar(
-                message: "Item Deleted",
-                showretry: false,
-              );
-            },
+            onPressed: (_) => _handleDelete(context),
             backgroundColor: context.colors.warning,
             foregroundColor: Colors.white,
             icon: Icons.delete,
@@ -89,6 +82,14 @@ class ProductCard extends HookConsumerWidget {
                 width: 80,
                 height: 80,
                 fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: 80,
+                    height: 80,
+                    color: Colors.grey.shade200,
+                    child: Icon(Icons.image_not_supported, color: Colors.grey),
+                  );
+                },
               ),
             ),
             SizedBox(width: context.space.space_200),
@@ -105,14 +106,15 @@ class ProductCard extends HookConsumerWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: context.space.space_100),
-
-                  Text(
-                    "Model Number: $modelNumber",
-                    style: context.typography.body.copyWith(
-                      color: Color(0xff7D7D7D),
+                  if (modelNumber != null) ...[
+                    SizedBox(height: context.space.space_100),
+                    Text(
+                      "Model Number: $modelNumber",
+                      style: context.typography.body.copyWith(
+                        color: const Color(0xff7D7D7D),
+                      ),
                     ),
-                  ),
+                  ],
                   SizedBox(height: context.space.space_150),
 
                   // Price and Quantity Row
@@ -121,51 +123,67 @@ class ProductCard extends HookConsumerWidget {
                     children: [
                       // Price
                       Text(
-                        'AED $price',
+                        'AED ${price.toStringAsFixed(2)}',
                         style: context.typography.bodyMedium.copyWith(
                           color: context.colors.green,
                         ),
                       ),
 
                       // Quantity Dropdown
-                      Padding(
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: context.colors.primaryTxt.withOpacity(0.3),
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                         padding: EdgeInsets.symmetric(
-                            horizontal: context.space.space_150),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: context.colors.primaryTxt.withOpacity(0.3),
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: context.space.space_100,
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: context.space.space_100),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton<int>(
-                                value: quantity,
-                                icon: const Icon(Icons.keyboard_arrow_down),
-                                items: quantities.map((int value) {
-                                  return DropdownMenuItem<int>(
-                                    value: value,
-                                    child: Text(
-                                      value.toString(),
-                                      style: context.typography.bodyMedium,
-                                    ),
+                          horizontal: context.space.space_100,
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<int>(
+                            value: quantity.value,
+                            icon: const Icon(Icons.keyboard_arrow_down),
+                            items: quantities.map((int value) {
+                              return DropdownMenuItem<int>(
+                                value: value,
+                                child: Text(
+                                  value.toString(),
+                                  style: context.typography.bodyMedium,
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (int? newValue) async {
+                              // Check if quantity change is allowed
+                              if (newValue != null && 
+                                  !isUpdating.value && 
+                                  onQuantityChanged != null) {
+                                try {
+                                  // Set updating state
+                                  isUpdating.value = true;
+
+                                  // Attempt to update quantity
+                                  await onQuantityChanged!(newValue);
+
+                                  // Update local state on successful update
+                                  quantity.value = newValue;
+
+                                  SnackbarUtil.showsnackbar(
+                                    message: "Quantity updated successfully",
+                                    showretry: false,
                                   );
-                                }).toList(),
-                                onChanged: isUpdating.value
-                                    ? null
-                                    : (int? newValue) {
-                                        if (newValue != null) {
-                                          onQuantityChanged?.call(newValue);
-                                        }
-                                      },
-                              ),
-                            ),
+                                } catch (e) {
+                                  // Revert to previous quantity if update fails
+                                  SnackbarUtil.showsnackbar(
+                                    message: "Failed to update quantity: ${e.toString()}",
+                                    showretry: false,
+                                  );
+                                } finally {
+                                  // Reset updating state
+                                  isUpdating.value = false;
+                                }
+                              }
+                            },
                           ),
                         ),
                       ),
@@ -178,5 +196,15 @@ class ProductCard extends HookConsumerWidget {
         ),
       ),
     );
+  }
+
+  void _handleDelete(BuildContext context) {
+    if (onDelete != null) {
+      onDelete!();
+      SnackbarUtil.showsnackbar(
+        message: "Item Deleted",
+        showretry: false,
+      );
+    }
   }
 }

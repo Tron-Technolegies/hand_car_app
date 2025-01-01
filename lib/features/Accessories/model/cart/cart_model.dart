@@ -1,96 +1,88 @@
-import 'dart:developer';
-
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hand_car/features/Accessories/model/coupon/coupon_model.dart';
+
 part 'cart_model.freezed.dart';
+part 'cart_model.g.dart';
 
+// Utility function to safely parse doubles
+double parseDouble(dynamic value) {
+  if (value == null) return 0.0;
+  
+  if (value is int) return value.toDouble();
+  if (value is double) return value;
+  
+  if (value is String) {
+    return double.tryParse(value) ?? 0.0;
+  }
+  
+  return 0.0;
+}
 
-@freezed
 @freezed
 class CartModel with _$CartModel {
   const CartModel._();
 
   const factory CartModel({
-    @Default([]) List<CartItem> cartItems,
-    @Default(0.0) double totalAmount,
+    @Default([]) List<CartItemModel> cartItems,
     CouponModel? appliedCoupon,
     @Default(false) bool isLoading,
   }) = _CartModel;
 
-  double get discountedTotal {
-    if (appliedCoupon == null) return totalAmount;
-    final discount = totalAmount * (appliedCoupon!.discountPercentage / 100);
-    return (totalAmount - discount).roundToDouble();
-  }
+  factory CartModel.fromJson(Map<String, dynamic> json) => _$CartModelFromJson(json);
 
-  int get itemCount => cartItems.fold(0, (sum, item) => sum + item.quantity);
-  bool get isEmpty => cartItems.isEmpty;
-  bool get hasItems => cartItems.isNotEmpty;
-  bool get hasCoupon => appliedCoupon != null;
-  double get savingsAmount => totalAmount - discountedTotal;
-
-  factory CartModel.fromJson(Map<String, dynamic> json) {
-    try {
-      final cartItemsList = (json['cart_items'] as List?)?.map((item) {
-        if (item is Map<String, dynamic>) {
-          return CartItem.fromJson(item);
-        }
-        return null;
-      }).whereType<CartItem>().toList() ?? [];
-
-      final total = double.tryParse(json['total_amount']?.toString() ?? '0') ?? 0.0;
-
-      CouponModel? coupon;
-      if (json['applied_coupon'] != null) {
-        try {
-          coupon = CouponModel.fromJson(json['applied_coupon']);
-        } catch (e) {
-          log('Error parsing coupon: $e');
-        }
-      }
-
-      return CartModel(
-        cartItems: cartItemsList,
-        totalAmount: total,
-        appliedCoupon: coupon,
+  // Computed properties
+  double get totalAmount => cartItems.fold(
+        0.0, 
+        (sum, item) => sum + (item.productPrice * item.quantity)
       );
-    } catch (e, stackTrace) {
-      log('Error parsing CartModel: $e');
-      log('Stack trace: $stackTrace');
-      return const CartModel();
-    }
+
+  double get discountAmount {
+    if (appliedCoupon == null) return 0.0;
+    final discount = (totalAmount * appliedCoupon!.discountPercentage) / 100;
+    return (discount * 100).round() / 100;
   }
+
+  double get discountedTotal {
+    final total = totalAmount - discountAmount;
+    return (total * 100).round() / 100;
+  }
+
+  bool get hasCoupon => appliedCoupon != null;
 }
 
 @freezed
-class CartItem with _$CartItem {
-  const CartItem._();
-
-  const factory CartItem({
-    @Default(0) int productId,
-    @Default('') String productName,
-    @Default('0') String productPrice,
+class CartItemModel with _$CartItemModel {
+  const factory CartItemModel({
+    @JsonKey(name: 'product_id') int? productId,
+    @JsonKey(name: 'product_name') required String productName,
+    @JsonKey(name: 'product_price', fromJson: parseDouble) required double productPrice,
     @Default(1) int quantity,
-    @Default('0') String totalPrice,
-    String? imageUrl,
-  }) = _CartItem;
+    @JsonKey(name: 'image_url') String? imageUrl,
+  }) = _CartItemModel;
 
-  double get itemTotal => (double.tryParse(productPrice) ?? 0) * quantity;
-  bool get isValid => productName.isNotEmpty && double.tryParse(productPrice) != null;
+  factory CartItemModel.fromJson(Map<String, dynamic> json) => 
+      _$CartItemModelFromJson(_transformJson(json));
 
-  factory CartItem.fromJson(Map<String, dynamic> json) {
-    try {
-      return CartItem(
-        productId: int.tryParse(json['product_id']?.toString() ?? '0') ?? 0,
-        productName: json['product_name']?.toString() ?? '',
-        productPrice: json['product_price']?.toString() ?? '0',
-        quantity: int.tryParse(json['quantity']?.toString() ?? '1') ?? 1,
-        totalPrice: json['total_price']?.toString() ?? '0',
-        imageUrl: json['image_url']?.toString(),
-      );
-    } catch (e) {
-      log('Error parsing CartItem: $e');
-      return const CartItem();
+  // Helper method to transform incoming JSON
+  static Map<String, dynamic> _transformJson(Map<String, dynamic> json) {
+    return {
+      'product_id': _parseProductId(json),
+      'product_name': json['product_name'] ?? json['name'] ?? '',
+      'product_price': parseDouble(json['product_price'] ?? json['price'] ?? 0.0),
+      'quantity': json['quantity'] ?? 1,
+      'image_url': json['image_url'] ?? json['image'] ?? json['picture'],
+    };
+  }
+
+  // Helper method to parse product ID
+  static int? _parseProductId(Map<String, dynamic> json) {
+    final id = json['product_id'] ?? json['id'];
+    if (id == null) return null;
+    
+    if (id is int) return id;
+    if (id is String) {
+      return int.tryParse(id);
     }
+    return null;
   }
 }

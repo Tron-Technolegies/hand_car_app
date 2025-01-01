@@ -14,12 +14,18 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
+CartModel _$CartModelFromJson(Map<String, dynamic> json) {
+  return _CartModel.fromJson(json);
+}
+
 /// @nodoc
 mixin _$CartModel {
-  List<CartItem> get cartItems => throw _privateConstructorUsedError;
-  double get totalAmount => throw _privateConstructorUsedError;
+  List<CartItemModel> get cartItems => throw _privateConstructorUsedError;
   CouponModel? get appliedCoupon => throw _privateConstructorUsedError;
   bool get isLoading => throw _privateConstructorUsedError;
+
+  /// Serializes this CartModel to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
   /// Create a copy of CartModel
   /// with the given fields replaced by the non-null parameter values.
@@ -34,8 +40,7 @@ abstract class $CartModelCopyWith<$Res> {
       _$CartModelCopyWithImpl<$Res, CartModel>;
   @useResult
   $Res call(
-      {List<CartItem> cartItems,
-      double totalAmount,
+      {List<CartItemModel> cartItems,
       CouponModel? appliedCoupon,
       bool isLoading});
 
@@ -58,7 +63,6 @@ class _$CartModelCopyWithImpl<$Res, $Val extends CartModel>
   @override
   $Res call({
     Object? cartItems = null,
-    Object? totalAmount = null,
     Object? appliedCoupon = freezed,
     Object? isLoading = null,
   }) {
@@ -66,11 +70,7 @@ class _$CartModelCopyWithImpl<$Res, $Val extends CartModel>
       cartItems: null == cartItems
           ? _value.cartItems
           : cartItems // ignore: cast_nullable_to_non_nullable
-              as List<CartItem>,
-      totalAmount: null == totalAmount
-          ? _value.totalAmount
-          : totalAmount // ignore: cast_nullable_to_non_nullable
-              as double,
+              as List<CartItemModel>,
       appliedCoupon: freezed == appliedCoupon
           ? _value.appliedCoupon
           : appliedCoupon // ignore: cast_nullable_to_non_nullable
@@ -106,8 +106,7 @@ abstract class _$$CartModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {List<CartItem> cartItems,
-      double totalAmount,
+      {List<CartItemModel> cartItems,
       CouponModel? appliedCoupon,
       bool isLoading});
 
@@ -129,7 +128,6 @@ class __$$CartModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? cartItems = null,
-    Object? totalAmount = null,
     Object? appliedCoupon = freezed,
     Object? isLoading = null,
   }) {
@@ -137,11 +135,7 @@ class __$$CartModelImplCopyWithImpl<$Res>
       cartItems: null == cartItems
           ? _value.cartItems
           : cartItems // ignore: cast_nullable_to_non_nullable
-              as List<CartItem>,
-      totalAmount: null == totalAmount
-          ? _value.totalAmount
-          : totalAmount // ignore: cast_nullable_to_non_nullable
-              as double,
+              as List<CartItemModel>,
       appliedCoupon: freezed == appliedCoupon
           ? _value.appliedCoupon
           : appliedCoupon // ignore: cast_nullable_to_non_nullable
@@ -155,21 +149,18 @@ class __$$CartModelImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
+@JsonSerializable()
 class _$CartModelImpl extends _CartModel {
   const _$CartModelImpl(
-      {this.cartItems = const [],
-      this.totalAmount = 0.0,
-      this.appliedCoupon,
-      this.isLoading = false})
+      {this.cartItems = const [], this.appliedCoupon, this.isLoading = false})
       : super._();
+
+  factory _$CartModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$CartModelImplFromJson(json);
 
   @override
   @JsonKey()
-  final List<CartItem> cartItems;
-  @override
-  @JsonKey()
-  final double totalAmount;
+  final List<CartItemModel> cartItems;
   @override
   final CouponModel? appliedCoupon;
   @override
@@ -178,7 +169,7 @@ class _$CartModelImpl extends _CartModel {
 
   @override
   String toString() {
-    return 'CartModel(cartItems: $cartItems, totalAmount: $totalAmount, appliedCoupon: $appliedCoupon, isLoading: $isLoading)';
+    return 'CartModel(cartItems: $cartItems, appliedCoupon: $appliedCoupon, isLoading: $isLoading)';
   }
 
   @override
@@ -187,21 +178,16 @@ class _$CartModelImpl extends _CartModel {
         (other.runtimeType == runtimeType &&
             other is _$CartModelImpl &&
             const DeepCollectionEquality().equals(other.cartItems, cartItems) &&
-            (identical(other.totalAmount, totalAmount) ||
-                other.totalAmount == totalAmount) &&
             (identical(other.appliedCoupon, appliedCoupon) ||
                 other.appliedCoupon == appliedCoupon) &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading));
   }
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(cartItems),
-      totalAmount,
-      appliedCoupon,
-      isLoading);
+  int get hashCode => Object.hash(runtimeType,
+      const DeepCollectionEquality().hash(cartItems), appliedCoupon, isLoading);
 
   /// Create a copy of CartModel
   /// with the given fields replaced by the non-null parameter values.
@@ -210,20 +196,27 @@ class _$CartModelImpl extends _CartModel {
   @pragma('vm:prefer-inline')
   _$$CartModelImplCopyWith<_$CartModelImpl> get copyWith =>
       __$$CartModelImplCopyWithImpl<_$CartModelImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$CartModelImplToJson(
+      this,
+    );
+  }
 }
 
 abstract class _CartModel extends CartModel {
   const factory _CartModel(
-      {final List<CartItem> cartItems,
-      final double totalAmount,
+      {final List<CartItemModel> cartItems,
       final CouponModel? appliedCoupon,
       final bool isLoading}) = _$CartModelImpl;
   const _CartModel._() : super._();
 
+  factory _CartModel.fromJson(Map<String, dynamic> json) =
+      _$CartModelImpl.fromJson;
+
   @override
-  List<CartItem> get cartItems;
-  @override
-  double get totalAmount;
+  List<CartItemModel> get cartItems;
   @override
   CouponModel? get appliedCoupon;
   @override
@@ -237,63 +230,73 @@ abstract class _CartModel extends CartModel {
       throw _privateConstructorUsedError;
 }
 
+CartItemModel _$CartItemModelFromJson(Map<String, dynamic> json) {
+  return _CartItemModel.fromJson(json);
+}
+
 /// @nodoc
-mixin _$CartItem {
-  int get productId => throw _privateConstructorUsedError;
+mixin _$CartItemModel {
+  @JsonKey(name: 'product_id')
+  int? get productId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'product_name')
   String get productName => throw _privateConstructorUsedError;
-  String get productPrice => throw _privateConstructorUsedError;
+  @JsonKey(name: 'product_price', fromJson: parseDouble)
+  double get productPrice => throw _privateConstructorUsedError;
   int get quantity => throw _privateConstructorUsedError;
-  String get totalPrice => throw _privateConstructorUsedError;
+  @JsonKey(name: 'image_url')
   String? get imageUrl => throw _privateConstructorUsedError;
 
-  /// Create a copy of CartItem
+  /// Serializes this CartItemModel to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of CartItemModel
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $CartItemCopyWith<CartItem> get copyWith =>
+  $CartItemModelCopyWith<CartItemModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $CartItemCopyWith<$Res> {
-  factory $CartItemCopyWith(CartItem value, $Res Function(CartItem) then) =
-      _$CartItemCopyWithImpl<$Res, CartItem>;
+abstract class $CartItemModelCopyWith<$Res> {
+  factory $CartItemModelCopyWith(
+          CartItemModel value, $Res Function(CartItemModel) then) =
+      _$CartItemModelCopyWithImpl<$Res, CartItemModel>;
   @useResult
   $Res call(
-      {int productId,
-      String productName,
-      String productPrice,
+      {@JsonKey(name: 'product_id') int? productId,
+      @JsonKey(name: 'product_name') String productName,
+      @JsonKey(name: 'product_price', fromJson: parseDouble)
+      double productPrice,
       int quantity,
-      String totalPrice,
-      String? imageUrl});
+      @JsonKey(name: 'image_url') String? imageUrl});
 }
 
 /// @nodoc
-class _$CartItemCopyWithImpl<$Res, $Val extends CartItem>
-    implements $CartItemCopyWith<$Res> {
-  _$CartItemCopyWithImpl(this._value, this._then);
+class _$CartItemModelCopyWithImpl<$Res, $Val extends CartItemModel>
+    implements $CartItemModelCopyWith<$Res> {
+  _$CartItemModelCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of CartItem
+  /// Create a copy of CartItemModel
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? productId = null,
+    Object? productId = freezed,
     Object? productName = null,
     Object? productPrice = null,
     Object? quantity = null,
-    Object? totalPrice = null,
     Object? imageUrl = freezed,
   }) {
     return _then(_value.copyWith(
-      productId: null == productId
+      productId: freezed == productId
           ? _value.productId
           : productId // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       productName: null == productName
           ? _value.productName
           : productName // ignore: cast_nullable_to_non_nullable
@@ -301,15 +304,11 @@ class _$CartItemCopyWithImpl<$Res, $Val extends CartItem>
       productPrice: null == productPrice
           ? _value.productPrice
           : productPrice // ignore: cast_nullable_to_non_nullable
-              as String,
+              as double,
       quantity: null == quantity
           ? _value.quantity
           : quantity // ignore: cast_nullable_to_non_nullable
               as int,
-      totalPrice: null == totalPrice
-          ? _value.totalPrice
-          : totalPrice // ignore: cast_nullable_to_non_nullable
-              as String,
       imageUrl: freezed == imageUrl
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
@@ -319,47 +318,46 @@ class _$CartItemCopyWithImpl<$Res, $Val extends CartItem>
 }
 
 /// @nodoc
-abstract class _$$CartItemImplCopyWith<$Res>
-    implements $CartItemCopyWith<$Res> {
-  factory _$$CartItemImplCopyWith(
-          _$CartItemImpl value, $Res Function(_$CartItemImpl) then) =
-      __$$CartItemImplCopyWithImpl<$Res>;
+abstract class _$$CartItemModelImplCopyWith<$Res>
+    implements $CartItemModelCopyWith<$Res> {
+  factory _$$CartItemModelImplCopyWith(
+          _$CartItemModelImpl value, $Res Function(_$CartItemModelImpl) then) =
+      __$$CartItemModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
-      {int productId,
-      String productName,
-      String productPrice,
+      {@JsonKey(name: 'product_id') int? productId,
+      @JsonKey(name: 'product_name') String productName,
+      @JsonKey(name: 'product_price', fromJson: parseDouble)
+      double productPrice,
       int quantity,
-      String totalPrice,
-      String? imageUrl});
+      @JsonKey(name: 'image_url') String? imageUrl});
 }
 
 /// @nodoc
-class __$$CartItemImplCopyWithImpl<$Res>
-    extends _$CartItemCopyWithImpl<$Res, _$CartItemImpl>
-    implements _$$CartItemImplCopyWith<$Res> {
-  __$$CartItemImplCopyWithImpl(
-      _$CartItemImpl _value, $Res Function(_$CartItemImpl) _then)
+class __$$CartItemModelImplCopyWithImpl<$Res>
+    extends _$CartItemModelCopyWithImpl<$Res, _$CartItemModelImpl>
+    implements _$$CartItemModelImplCopyWith<$Res> {
+  __$$CartItemModelImplCopyWithImpl(
+      _$CartItemModelImpl _value, $Res Function(_$CartItemModelImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of CartItem
+  /// Create a copy of CartItemModel
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? productId = null,
+    Object? productId = freezed,
     Object? productName = null,
     Object? productPrice = null,
     Object? quantity = null,
-    Object? totalPrice = null,
     Object? imageUrl = freezed,
   }) {
-    return _then(_$CartItemImpl(
-      productId: null == productId
+    return _then(_$CartItemModelImpl(
+      productId: freezed == productId
           ? _value.productId
           : productId // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       productName: null == productName
           ? _value.productName
           : productName // ignore: cast_nullable_to_non_nullable
@@ -367,15 +365,11 @@ class __$$CartItemImplCopyWithImpl<$Res>
       productPrice: null == productPrice
           ? _value.productPrice
           : productPrice // ignore: cast_nullable_to_non_nullable
-              as String,
+              as double,
       quantity: null == quantity
           ? _value.quantity
           : quantity // ignore: cast_nullable_to_non_nullable
               as int,
-      totalPrice: null == totalPrice
-          ? _value.totalPrice
-          : totalPrice // ignore: cast_nullable_to_non_nullable
-              as String,
       imageUrl: freezed == imageUrl
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
@@ -385,45 +379,45 @@ class __$$CartItemImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
-class _$CartItemImpl extends _CartItem {
-  const _$CartItemImpl(
-      {this.productId = 0,
-      this.productName = '',
-      this.productPrice = '0',
+@JsonSerializable()
+class _$CartItemModelImpl implements _CartItemModel {
+  const _$CartItemModelImpl(
+      {@JsonKey(name: 'product_id') this.productId,
+      @JsonKey(name: 'product_name') required this.productName,
+      @JsonKey(name: 'product_price', fromJson: parseDouble)
+      required this.productPrice,
       this.quantity = 1,
-      this.totalPrice = '0',
-      this.imageUrl})
-      : super._();
+      @JsonKey(name: 'image_url') this.imageUrl});
+
+  factory _$CartItemModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$CartItemModelImplFromJson(json);
 
   @override
-  @JsonKey()
-  final int productId;
+  @JsonKey(name: 'product_id')
+  final int? productId;
   @override
-  @JsonKey()
+  @JsonKey(name: 'product_name')
   final String productName;
   @override
-  @JsonKey()
-  final String productPrice;
+  @JsonKey(name: 'product_price', fromJson: parseDouble)
+  final double productPrice;
   @override
   @JsonKey()
   final int quantity;
   @override
-  @JsonKey()
-  final String totalPrice;
-  @override
+  @JsonKey(name: 'image_url')
   final String? imageUrl;
 
   @override
   String toString() {
-    return 'CartItem(productId: $productId, productName: $productName, productPrice: $productPrice, quantity: $quantity, totalPrice: $totalPrice, imageUrl: $imageUrl)';
+    return 'CartItemModel(productId: $productId, productName: $productName, productPrice: $productPrice, quantity: $quantity, imageUrl: $imageUrl)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$CartItemImpl &&
+            other is _$CartItemModelImpl &&
             (identical(other.productId, productId) ||
                 other.productId == productId) &&
             (identical(other.productName, productName) ||
@@ -432,52 +426,63 @@ class _$CartItemImpl extends _CartItem {
                 other.productPrice == productPrice) &&
             (identical(other.quantity, quantity) ||
                 other.quantity == quantity) &&
-            (identical(other.totalPrice, totalPrice) ||
-                other.totalPrice == totalPrice) &&
             (identical(other.imageUrl, imageUrl) ||
                 other.imageUrl == imageUrl));
   }
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, productId, productName,
-      productPrice, quantity, totalPrice, imageUrl);
+  int get hashCode => Object.hash(
+      runtimeType, productId, productName, productPrice, quantity, imageUrl);
 
-  /// Create a copy of CartItem
+  /// Create a copy of CartItemModel
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$CartItemImplCopyWith<_$CartItemImpl> get copyWith =>
-      __$$CartItemImplCopyWithImpl<_$CartItemImpl>(this, _$identity);
+  _$$CartItemModelImplCopyWith<_$CartItemModelImpl> get copyWith =>
+      __$$CartItemModelImplCopyWithImpl<_$CartItemModelImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$CartItemModelImplToJson(
+      this,
+    );
+  }
 }
 
-abstract class _CartItem extends CartItem {
-  const factory _CartItem(
-      {final int productId,
-      final String productName,
-      final String productPrice,
-      final int quantity,
-      final String totalPrice,
-      final String? imageUrl}) = _$CartItemImpl;
-  const _CartItem._() : super._();
+abstract class _CartItemModel implements CartItemModel {
+  const factory _CartItemModel(
+          {@JsonKey(name: 'product_id') final int? productId,
+          @JsonKey(name: 'product_name') required final String productName,
+          @JsonKey(name: 'product_price', fromJson: parseDouble)
+          required final double productPrice,
+          final int quantity,
+          @JsonKey(name: 'image_url') final String? imageUrl}) =
+      _$CartItemModelImpl;
+
+  factory _CartItemModel.fromJson(Map<String, dynamic> json) =
+      _$CartItemModelImpl.fromJson;
 
   @override
-  int get productId;
+  @JsonKey(name: 'product_id')
+  int? get productId;
   @override
+  @JsonKey(name: 'product_name')
   String get productName;
   @override
-  String get productPrice;
+  @JsonKey(name: 'product_price', fromJson: parseDouble)
+  double get productPrice;
   @override
   int get quantity;
   @override
-  String get totalPrice;
-  @override
+  @JsonKey(name: 'image_url')
   String? get imageUrl;
 
-  /// Create a copy of CartItem
+  /// Create a copy of CartItemModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$CartItemImplCopyWith<_$CartItemImpl> get copyWith =>
+  _$$CartItemModelImplCopyWith<_$CartItemModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

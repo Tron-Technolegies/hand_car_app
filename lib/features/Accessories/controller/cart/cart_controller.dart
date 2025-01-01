@@ -33,22 +33,22 @@ class CartController extends _$CartController {
       log('Adding product to cart: $productId');
 
       // Make API call first
-      final response = await _cartService.addToCart(productId);
+      final response = await _cartService.addToCart(productId.toString());
       
-      if (!response.isSuccess) {
+      log('Product added successfully with quantity: ${response.cartQuantity}');
+
+      // Only refresh cart if the addition was successful
+      if (response.isSuccess) {
+        await refreshCart();
+      } else {
         throw CartException(response.error ?? 'Failed to add item to cart');
       }
-
-      log('Product added successfully, refreshing cart');
-
-      // Only update UI after successful API call
-      await refreshCart();
 
     } catch (e) {
       log('Error adding to cart: $e');
       // Restore previous state on error
       state = previousState;
-      rethrow; // Rethrow to handle in UI
+      rethrow;
     }
   }
 
@@ -90,7 +90,7 @@ class CartController extends _$CartController {
         ));
       });
 
-      await _cartService.removeFromCart(productId);
+      await _cartService.removeFromCart(productId.toString());
       
       if (!state.isLoading) {
         state = previousState;
@@ -106,50 +106,70 @@ class CartController extends _$CartController {
       throw CartException('Failed to remove item: ${e.toString()}');
     }
   }
-
-  Future<void> updateQuantity(int productId, int quantity) async {
-    if (quantity < 1) return;
-    
-    final previousState = state;
-    try {
-      // Optimistically update UI
-      state.whenData((currentCart) {
-        final updatedItems = currentCart.cartItems.map((item) {
-          if (item.productId == productId) {
-            return item.copyWith(quantity: quantity);
-          }
-          return item;
-        }).toList();
-
-        state = AsyncValue.data(currentCart.copyWith(
-          cartItems: updatedItems,
-          isLoading: true,
-        ));
-      });
-
-      await _cartService.updateQuantity(productId, quantity);
-      
-      if (!state.isLoading) {
-        state = previousState;
-        return;
-      }
-
-      // Force refresh to get updated cart
-      await refreshCart();
-    } catch (e) {
-      if (!state.isLoading) return;
-      state = previousState;
-      if (e is CartException) rethrow;
-      throw CartException('Failed to update quantity: ${e.toString()}');
-    }
+Future<void> updateQuantity(int productId, int newQuantity) async {
+  if (productId <= 0) {
+    throw CartException('Invalid product ID');
   }
+  
+  if (newQuantity < 1) {
+    throw CartException('Quantity must be at least 1');
+  }
+
+  final previousState = state;
+  try {
+    state.whenData((currentCart) {
+      final currentItem = currentCart.cartItems.firstWhere(
+        (item) => item.productId == productId,
+        orElse: () => throw CartException('Product not found in cart'),
+      );
+
+      // Calculate quantity difference
+      final quantityDiff = newQuantity - currentItem.quantity;
+      
+      if (quantityDiff == 0) return; // No change needed
+      
+      // Optimistically update UI
+      final updatedItems = currentCart.cartItems.map((item) {
+        if (item.productId == productId) {
+          return item.copyWith(quantity: newQuantity);
+        }
+        return item;
+      }).toList();
+
+      state = AsyncValue.data(currentCart.copyWith(
+        cartItems: updatedItems,
+        isLoading: true,
+      ));
+
+      // If quantity increased, we need to add more items
+      if (quantityDiff > 0) {
+        for (var i = 0; i < quantityDiff; i++) {
+          _cartService.addToCart(productId.toString());
+        }
+      }
+      // If quantity decreased, we need to remove items
+      else {
+        // TODO: Implement remove items API call
+        // For now, just refresh the cart to sync with server
+      }
+    });
+
+    // Refresh cart to get updated state from server
+    await refreshCart();
+  } catch (e) {
+    log('Error updating quantity: $e');
+    state = previousState;
+    rethrow;
+  }
+}
+
     void applyCoupon(CouponModel coupon) {
     if (state.value != null) {
       final currentCart = state.value!;
       state = AsyncValue.data(
         CartModel(
           cartItems: currentCart.cartItems,
-          totalAmount: currentCart.totalAmount,
+         
           appliedCoupon: coupon,
         ),
       );

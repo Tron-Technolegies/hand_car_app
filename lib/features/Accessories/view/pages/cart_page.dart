@@ -12,8 +12,6 @@ import 'package:hand_car/features/Accessories/view/widgets/coupon/coupon_input_w
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:lottie/lottie.dart';
-
-// c
 import 'package:hand_car/features/Accessories/controller/coupon/coupon_controller.dart';
 
 class ShoppingCartScreen extends HookConsumerWidget {
@@ -37,8 +35,7 @@ class ShoppingCartScreen extends HookConsumerWidget {
                   context: context,
                   builder: (context) => AlertDialog(
                     title: const Text('Clear Cart'),
-                    content:
-                        const Text('Are you sure you want to clear your cart?'),
+                    content: const Text('Are you sure you want to clear your cart?'),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context),
@@ -47,7 +44,7 @@ class ShoppingCartScreen extends HookConsumerWidget {
                       TextButton(
                         onPressed: () {
                           // Clear cart functionality
-                          Navigator.pop(context);
+                         
                         },
                         child: const Text('Clear'),
                       ),
@@ -72,8 +69,7 @@ class ShoppingCartScreen extends HookConsumerWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Lottie.asset(Assets.animations.emptyCart,
-                                repeat: false),
+                            Lottie.asset(Assets.animations.emptyCart, repeat: false),
                             SizedBox(height: context.space.space_100),
                             Text(
                               "Your cart is empty",
@@ -96,22 +92,39 @@ class ShoppingCartScreen extends HookConsumerWidget {
                       ),
                       itemBuilder: (context, index) {
                         final item = cart.cartItems[index];
+                        
+                        // Add a null check and unique key
                         return ProductCard(
-                          productId: item.productId,
+                          key: Key(item.productId?.toString() ?? 'cart_item_$index'),
+                          currentQuantity: item.quantity,
+                          productId: item.productId ?? 0, // Provide a default value
                           productName: item.productName,
                           price: item.productPrice,
-                          quantity: item.quantity,
-                          image: item.imageUrl ??
-                              'https://e7.pngegg.com/pngimages/809/777/png-clipart-car-revathy-auto-parts-ford-motor-company-spare-part-advance-auto-parts-car-car-vehicle-thumbnail.png',
+                          image: item.imageUrl ?? 'https://e7.pngegg.com/pngimages/809/777/png-clipart-car-revathy-auto-parts-ford-motor-company-spare-part-advance-auto-parts-car-car-vehicle-thumbnail.png',
                           onDelete: () {
-                            ref
-                                .read(cartControllerProvider.notifier)
-                                .removeFromCart(item.productId);
+                            // Only attempt to remove if productId is not null
+                            if (item.productId != null) {
+                              ref
+                                  .read(cartControllerProvider.notifier)
+                                  .removeFromCart(item.productId!);
+                            }
                           },
-                          onQuantityChanged: (newQuantity) {
-                            ref
-                                .read(cartControllerProvider.notifier)
-                                .updateQuantity(item.productId, newQuantity);
+                          onQuantityChanged: (newQuantity) async {
+                            // Only attempt to update if productId is not null
+                            if (item.productId != null) {
+                              try {
+                                await ref
+                                    .read(cartControllerProvider.notifier)
+                                    .updateQuantity(item.productId!, newQuantity);
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Failed to update quantity: $e'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            }
                           },
                         );
                       },
@@ -165,8 +178,7 @@ class ShoppingCartScreen extends HookConsumerWidget {
                                 .applyCoupon(validCoupon);
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                  content:
-                                      Text('Coupon applied successfully!')),
+                                  content: Text('Coupon applied successfully!')),
                             );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
