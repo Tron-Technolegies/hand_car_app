@@ -13,6 +13,7 @@ _$AddressResponseImpl _$$AddressResponseImplFromJson(
       address: json['address'] == null
           ? null
           : AddressModel.fromJson(json['address'] as Map<String, dynamic>),
+      addressId: (json['address_id'] as num?)?.toInt(),
       isSuccess: json['is_success'] as bool? ?? false,
     );
 
@@ -21,5 +22,6 @@ Map<String, dynamic> _$$AddressResponseImplToJson(
     <String, dynamic>{
       if (instance.message case final value?) 'message': value,
       if (instance.address?.toJson() case final value?) 'address': value,
+      if (instance.addressId case final value?) 'address_id': value,
       'is_success': instance.isSuccess,
     };

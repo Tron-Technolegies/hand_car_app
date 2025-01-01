@@ -175,12 +175,11 @@ class AddressApiService {
       log('Add address response: ${response.data}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return AddressResponse(
-          message: response.data['message'] as String? ??
-              'Address added successfully',
-          address:
-              AddressModel.fromJson(response.data['address'] ?? response.data),
-          isSuccess: true,
+        // Use the normalized JSON parser
+        return AddressResponse.fromJson(
+          response.data is Map<String, dynamic>
+              ? response.data
+              : {'message': 'Success'},
         );
       }
 
@@ -233,6 +232,7 @@ class AddressApiService {
     });
   }
 
+//Delete Address
   Future<AddressResponse> deleteAddress(int id) async {
     return _makeAuthenticatedRequest((token) async {
       log('Deleting address: $id');
@@ -260,29 +260,27 @@ class AddressApiService {
   }
 
   Future<void> setDefaultAddress(int id) async {
-  return _makeAuthenticatedRequest((token) async {
-    log('Setting default address: $id');
-    
-    final response = await _dio.put(
-      '/set_default_address/$id/',
-      options: Options(
-        headers: _createAuthHeaders(token),
-      ),
-    );
-    
-    log('Set default address response: ${response.data}');
-    
-    if (response.statusCode == 200) {
-      // Just check for success, don't try to parse address
-      if (response.data['message'] != null) {
-        return;
+    return _makeAuthenticatedRequest((token) async {
+      log('Setting default address: $id');
+
+      final response = await _dio.put(
+        '/set_default_address/$id/',
+        options: Options(
+          headers: _createAuthHeaders(token),
+        ),
+      );
+
+      log('Set default address response: ${response.data}');
+
+      if (response.statusCode == 200) {
+        // Just check for success, don't try to parse address
+        if (response.data['message'] != null) {
+          return;
+        }
       }
-    }
-    
-    throw AddressException(
-      response.data['error']?.toString() ?? 
-      'Failed to set default address'
-    );
-  });
-}
+
+      throw AddressException(response.data['error']?.toString() ??
+          'Failed to set default address');
+    });
+  }
 }

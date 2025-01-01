@@ -22,6 +22,7 @@ AddressResponse _$AddressResponseFromJson(Map<String, dynamic> json) {
 mixin _$AddressResponse {
   String? get message => throw _privateConstructorUsedError;
   AddressModel? get address => throw _privateConstructorUsedError;
+  int? get addressId => throw _privateConstructorUsedError;
   bool get isSuccess => throw _privateConstructorUsedError;
 
   /// Serializes this AddressResponse to a JSON map.
@@ -40,7 +41,8 @@ abstract class $AddressResponseCopyWith<$Res> {
           AddressResponse value, $Res Function(AddressResponse) then) =
       _$AddressResponseCopyWithImpl<$Res, AddressResponse>;
   @useResult
-  $Res call({String? message, AddressModel? address, bool isSuccess});
+  $Res call(
+      {String? message, AddressModel? address, int? addressId, bool isSuccess});
 
   $AddressModelCopyWith<$Res>? get address;
 }
@@ -62,6 +64,7 @@ class _$AddressResponseCopyWithImpl<$Res, $Val extends AddressResponse>
   $Res call({
     Object? message = freezed,
     Object? address = freezed,
+    Object? addressId = freezed,
     Object? isSuccess = null,
   }) {
     return _then(_value.copyWith(
@@ -73,6 +76,10 @@ class _$AddressResponseCopyWithImpl<$Res, $Val extends AddressResponse>
           ? _value.address
           : address // ignore: cast_nullable_to_non_nullable
               as AddressModel?,
+      addressId: freezed == addressId
+          ? _value.addressId
+          : addressId // ignore: cast_nullable_to_non_nullable
+              as int?,
       isSuccess: null == isSuccess
           ? _value.isSuccess
           : isSuccess // ignore: cast_nullable_to_non_nullable
@@ -103,7 +110,8 @@ abstract class _$$AddressResponseImplCopyWith<$Res>
       __$$AddressResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String? message, AddressModel? address, bool isSuccess});
+  $Res call(
+      {String? message, AddressModel? address, int? addressId, bool isSuccess});
 
   @override
   $AddressModelCopyWith<$Res>? get address;
@@ -124,6 +132,7 @@ class __$$AddressResponseImplCopyWithImpl<$Res>
   $Res call({
     Object? message = freezed,
     Object? address = freezed,
+    Object? addressId = freezed,
     Object? isSuccess = null,
   }) {
     return _then(_$AddressResponseImpl(
@@ -135,6 +144,10 @@ class __$$AddressResponseImplCopyWithImpl<$Res>
           ? _value.address
           : address // ignore: cast_nullable_to_non_nullable
               as AddressModel?,
+      addressId: freezed == addressId
+          ? _value.addressId
+          : addressId // ignore: cast_nullable_to_non_nullable
+              as int?,
       isSuccess: null == isSuccess
           ? _value.isSuccess
           : isSuccess // ignore: cast_nullable_to_non_nullable
@@ -147,7 +160,7 @@ class __$$AddressResponseImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AddressResponseImpl implements _AddressResponse {
   const _$AddressResponseImpl(
-      {this.message, this.address, this.isSuccess = false});
+      {this.message, this.address, this.addressId, this.isSuccess = false});
 
   factory _$AddressResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$AddressResponseImplFromJson(json);
@@ -157,12 +170,14 @@ class _$AddressResponseImpl implements _AddressResponse {
   @override
   final AddressModel? address;
   @override
+  final int? addressId;
+  @override
   @JsonKey()
   final bool isSuccess;
 
   @override
   String toString() {
-    return 'AddressResponse(message: $message, address: $address, isSuccess: $isSuccess)';
+    return 'AddressResponse(message: $message, address: $address, addressId: $addressId, isSuccess: $isSuccess)';
   }
 
   @override
@@ -172,13 +187,16 @@ class _$AddressResponseImpl implements _AddressResponse {
             other is _$AddressResponseImpl &&
             (identical(other.message, message) || other.message == message) &&
             (identical(other.address, address) || other.address == address) &&
+            (identical(other.addressId, addressId) ||
+                other.addressId == addressId) &&
             (identical(other.isSuccess, isSuccess) ||
                 other.isSuccess == isSuccess));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, message, address, isSuccess);
+  int get hashCode =>
+      Object.hash(runtimeType, message, address, addressId, isSuccess);
 
   /// Create a copy of AddressResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -201,6 +219,7 @@ abstract class _AddressResponse implements AddressResponse {
   const factory _AddressResponse(
       {final String? message,
       final AddressModel? address,
+      final int? addressId,
       final bool isSuccess}) = _$AddressResponseImpl;
 
   factory _AddressResponse.fromJson(Map<String, dynamic> json) =
@@ -210,6 +229,8 @@ abstract class _AddressResponse implements AddressResponse {
   String? get message;
   @override
   AddressModel? get address;
+  @override
+  int? get addressId;
   @override
   bool get isSuccess;
 

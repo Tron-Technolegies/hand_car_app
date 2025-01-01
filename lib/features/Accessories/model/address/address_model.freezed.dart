@@ -20,14 +20,17 @@ AddressModel _$AddressModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$AddressModel {
+// ignore: invalid_annotation_target
   @JsonKey(name: 'id', fromJson: _convertToString, toJson: _convertToInt)
   String get id => throw _privateConstructorUsedError;
   String get street => throw _privateConstructorUsedError;
   String get city => throw _privateConstructorUsedError;
-  String get state => throw _privateConstructorUsedError;
+  String get state =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'zip_code')
   String get zipCode => throw _privateConstructorUsedError;
-  String get country => throw _privateConstructorUsedError;
+  String get country =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'is_default')
   bool get isDefault => throw _privateConstructorUsedError;
 
@@ -203,6 +206,7 @@ class _$AddressModelImpl implements _AddressModel {
   factory _$AddressModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$AddressModelImplFromJson(json);
 
+// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'id', fromJson: _convertToString, toJson: _convertToInt)
   final String id;
@@ -212,11 +216,13 @@ class _$AddressModelImpl implements _AddressModel {
   final String city;
   @override
   final String state;
+// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'zip_code')
   final String zipCode;
   @override
   final String country;
+// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'is_default')
   final bool isDefault;
@@ -276,6 +282,7 @@ abstract class _AddressModel implements AddressModel {
   factory _AddressModel.fromJson(Map<String, dynamic> json) =
       _$AddressModelImpl.fromJson;
 
+// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'id', fromJson: _convertToString, toJson: _convertToInt)
   String get id;
@@ -284,12 +291,12 @@ abstract class _AddressModel implements AddressModel {
   @override
   String get city;
   @override
-  String get state;
+  String get state; // ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'zip_code')
   String get zipCode;
   @override
-  String get country;
+  String get country; // ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'is_default')
   bool get isDefault;

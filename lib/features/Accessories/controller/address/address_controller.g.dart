@@ -6,7 +6,7 @@ part of 'address_controller.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$addressApiServiceHash() => r'e4d6bde0409cd168ea069b7a0d64909b91435480';
+String _$addressApiServiceHash() => r'36dfdbfba9bc6ba1fea943bb44b56b22b6f899a7';
 
 /// See also [addressApiService].
 @ProviderFor(addressApiService)
@@ -24,7 +24,7 @@ final addressApiServiceProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef AddressApiServiceRef = AutoDisposeProviderRef<AddressApiService>;
-String _$addressControllerHash() => r'ac7808b9ce95c269beacf0b08de36390139c0f10';
+String _$addressControllerHash() => r'8ed2562514c6d013d6166cd5266ea8eeeb5a6b89';
 
 /// See also [AddressController].
 @ProviderFor(AddressController)
