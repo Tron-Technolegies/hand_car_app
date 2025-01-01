@@ -16,6 +16,7 @@ class AddressController extends _$AddressController {
     return const AddressState();
   }
 
+   // In address_controller.dart
     void _updateState(AddressState Function(AddressState state) update) {
     final oldState = state;
     state = update(state);
@@ -24,7 +25,7 @@ class AddressController extends _$AddressController {
     log('New address count: ${state.addresses.length}'); // Debug print
   }
 
- // In address_controller.dart
+ ///Add Address Function
 
 Future<void> addAddress({
   required String street,
@@ -127,26 +128,26 @@ Future<void> addAddress({
   }
 
 
-  Future<void> fetchAddresses() async {
-    log('AddressController: fetchAddresses called'); // Debug print
+Future<void> fetchAddresses() async {
+    log('AddressController: fetchAddresses called');
     try {
       _updateState((state) => state.copyWith(isLoading: true, error: null));
 
-      log('AddressController: Calling API service'); // Debug print
+      log('AddressController: Calling API service');
       final addresses = await _apiService.getAddresses();
-      log('AddressController: Received ${addresses.length} addresses'); // Debug print
+      log('AddressController: Received ${addresses.length} addresses');
 
       _updateState((state) => state.copyWith(
-            isLoading: false,
-            addresses: addresses,
-          ));
-      log('AddressController: State updated with new addresses'); // Debug print
+        isLoading: false,
+        addresses: addresses,
+      ));
+      log('AddressController: State updated with new addresses');
     } catch (e) {
-      log('AddressController: Error fetching addresses - $e'); // Debug print
+      log('AddressController: Error fetching addresses - $e');
       _updateState((state) => state.copyWith(
-            isLoading: false,
-            error: e.toString(),
-          ));
+        isLoading: false,
+        error: e.toString(),
+      ));
       rethrow;
     }
   }
@@ -155,24 +156,32 @@ Future<void> addAddress({
     _updateState((state) => state.copyWith(isLoading: true, error: null));
 
     try {
-      final defaultAddress = await _apiService.setDefaultAddress(id);
+      // Call the API to set default address
+      await _apiService.setDefaultAddress(id);
+      
+      // Update the local state to reflect the change
+      _updateState((state) => state.copyWith(
+        isLoading: false,
+        addresses: state.addresses.map((address) {
+          // Set the selected address as default and others as non-default
+          return address.id == id.toString()
+              ? address.copyWith(isDefault: true)
+              : address.copyWith(isDefault: false);
+        }).toList(),
+      ));
 
-      _updateState((state) => state.copyWith(
-            isLoading: false,
-            addresses: state.addresses
-                .map((address) => address.id == defaultAddress.id
-                    ? defaultAddress.copyWith(isDefault: true)
-                    : address.copyWith(isDefault: false))
-                .toList(),
-          ));
+      // Fetch fresh data from the server to ensure consistency
+      await fetchAddresses();
     } catch (e) {
+      log('Error setting default address: $e');
       _updateState((state) => state.copyWith(
-            isLoading: false,
-            error: e.toString(),
-          ));
+        isLoading: false,
+        error: e.toString(),
+      ));
       rethrow;
     }
   }
+
 
   Future<void> refresh() async {
     await fetchAddresses();
@@ -180,6 +189,6 @@ Future<void> addAddress({
 }
 
 @riverpod
-AddressApiService addressApiService(AddressApiServiceRef ref) {
+AddressApiService addressApiService( ref) {
   return AddressApiService();
 }

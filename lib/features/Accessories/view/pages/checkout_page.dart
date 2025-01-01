@@ -1,6 +1,4 @@
-// Cart Page
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
@@ -31,15 +29,27 @@ class CheckOutPage extends HookConsumerWidget {
     final addressState = ref.watch(addressControllerProvider);
     final addressController = ref.read(addressControllerProvider.notifier);
 
-    // Function to handle refresh with debug prints
+    // Set default address as selected when addresses are loaded
+    useEffect(() {
+      if (selectedAddress.value == null && addressState.addresses.isNotEmpty) {
+        final defaultAddress = addressState.addresses.firstWhere(
+          (address) => address.isDefault,
+          orElse: () => addressState.addresses.first,
+        );
+        selectedAddress.value = defaultAddress.id;
+      }
+      return null;
+    }, [addressState.addresses]);
+
+    // Function to handle refresh
     Future<void> refreshAddresses() async {
-      log('Starting address refresh...'); // Debug print
+      log('Starting address refresh...');
       isRefreshing.value = true;
       try {
         await addressController.fetchAddresses();
-        log('Address fetch completed successfully'); // Debug print
+        log('Address fetch completed successfully');
       } catch (e) {
-        log('Error fetching addresses: $e'); // Debug print
+        log('Error fetching addresses: $e');
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -53,18 +63,11 @@ class CheckOutPage extends HookConsumerWidget {
       }
     }
 
-    // Initialize address fetch using initState equivalent in hooks
+    // Initialize address fetch
     useEffect(() {
-      log('useEffect triggered for address fetch'); // Debug print
       Future.microtask(() => refreshAddresses());
       return null;
-    }, []); // Empty dependency array ensures it only runs once
-
-    // Log whenever address state changes
-    useEffect(() {
-      log('Current address count: ${addressState.addresses.length}'); // Debug print
-      return null;
-    }, [addressState.addresses]);
+    }, []);
 
     return Scaffold(
       appBar: AppBar(
@@ -88,10 +91,7 @@ class CheckOutPage extends HookConsumerWidget {
           else
             IconButton(
               icon: const Icon(Icons.refresh),
-              onPressed: () {
-                log('Manual refresh triggered'); // Debug print
-                refreshAddresses();
-              },
+              onPressed: refreshAddresses,
             ),
         ],
       ),
@@ -103,27 +103,42 @@ class CheckOutPage extends HookConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Cart Summary Section
               cartController.when(
                 data: (cart) => CartSummaryWidget(cart: cart),
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, _) => Text('Error loading cart: $error'),
               ),
+              
+              SizedBox(height: context.space.space_200),
               Text(
                 'Select a shipping address',
                 style: context.typography.h3,
               ),
               SizedBox(height: context.space.space_200),
               
-              // Debug text to show current state
-
-              
-              // Address List with loading state
+              // Address List Section
               Builder(
                 builder: (context) {
-                  log('Building address list section...'); // Debug print
-                  
                   if (addressState.isLoading || isRefreshing.value) {
                     return const Center(child: CircularProgressIndicator());
+                  }
+                  
+                  if (addressState.error != null) {
+                    return Center(
+                      child: Column(
+                        children: [
+                          Text(
+                            'Error: ${addressState.error}',
+                            style: context.typography.bodyLarge.copyWith(color: Colors.red),
+                          ),
+                          TextButton(
+                            onPressed: refreshAddresses,
+                            child: const Text('Try Again'),
+                          ),
+                        ],
+                      ),
+                    );
                   }
                   
                   if (addressState.addresses.isEmpty) {
@@ -154,7 +169,6 @@ class CheckOutPage extends HookConsumerWidget {
                             SizedBox(height: context.space.space_200),
                         itemBuilder: (context, index) {
                           final address = addressState.addresses[index];
-                          log('Building address card for index $index'); // Debug print
                           return AddressCard(
                             key: ValueKey(address.id),
                             name: address.street,
@@ -162,6 +176,7 @@ class CheckOutPage extends HookConsumerWidget {
                             poBox: 'ZIP: ${address.zipCode}',
                             selectedAddress: selectedAddress,
                             id: address.id,
+                            isDefault: address.isDefault,
                           );
                         },
                       ),
@@ -171,7 +186,7 @@ class CheckOutPage extends HookConsumerWidget {
                 },
               ),
               
-              // Add Address Section
+              // Add Address Button
               TextButton.icon(
                 icon: const Icon(Icons.add),
                 onPressed: () => showAddressForm.value = !showAddressForm.value,
@@ -186,11 +201,9 @@ class CheckOutPage extends HookConsumerWidget {
                 SizedBox(height: context.space.space_200),
                 AddressForm(
                   onAddressAdded: () async {
-                    log('Address added callback triggered'); // Debug print
                     showAddressForm.value = false;
                     await Future.delayed(const Duration(milliseconds: 500));
                     await refreshAddresses();
-                    log('Address refresh completed after adding new address'); // Debug print
                   },
                 ),
                 SizedBox(height: context.space.space_200),

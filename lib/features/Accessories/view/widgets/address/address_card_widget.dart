@@ -1,54 +1,112 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
+import 'package:hand_car/features/Accessories/controller/address/address_controller.dart';
 
-// Address Card For Selecting Address
-class AddressCard extends HookWidget {
+class AddressCard extends ConsumerWidget {
   final String name;
   final String address;
   final String poBox;
-  final String id;
   final ValueNotifier<String?> selectedAddress;
+  final String id;
+  final bool isDefault;
 
   const AddressCard({
-    super.key,
+    Key? key,
     required this.name,
     required this.address,
     required this.poBox,
-    required this.id,
     required this.selectedAddress,
-  });
+    required this.id,
+    this.isDefault = false,
+  }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final addressController = ref.read(addressControllerProvider.notifier);
+    final isSelected = selectedAddress.value == id;
+
     return GestureDetector(
       onTap: () => selectedAddress.value = id,
       child: Container(
+        padding: EdgeInsets.all(context.space.space_200),
         decoration: BoxDecoration(
-          color: selectedAddress.value == id
-              ? context.colors.white
-              : context.colors.background,
-          border: Border.all(color: Colors.grey.shade300),
+          border: Border.all(
+            color: isSelected ? context.colors.primary : Colors.grey,
+            width: isSelected ? 2 : 1,
+          ),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: RadioListTile(
-          activeColor: context.colors.primaryTxt,
-          selected: selectedAddress.value == name,
-          title: Text(name),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(address),
-              Text(poBox),
-            ],
-          ),
-          value: name,
-          groupValue: selectedAddress.value,
-          onChanged: (String? value) {
-            if (value != null) {
-              selectedAddress.value = value;
-            }
-          },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(name, style: context.typography.bodyLarge),
+                      const SizedBox(height: 4),
+                      Text(address, style: context.typography.bodyMedium),
+                      Text(poBox, style: context.typography.bodyMedium),
+                    ],
+                  ),
+                ),
+                Radio<String>(
+                  value: id,
+                  groupValue: selectedAddress.value,
+                  onChanged: (value) => selectedAddress.value = value,
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                if (isDefault)
+                  Chip(
+                    label: Text(
+                      'Default',
+                      style: context.typography.bodySmallMedium.copyWith(
+                        color: Colors.white,
+                      ),
+                    ),
+                    backgroundColor: context.colors.primary,
+                  )
+                else
+                  TextButton(
+                    onPressed: () async {
+                      try {
+                        await addressController.setDefaultAddress(int.parse(id));
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Default address updated'),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Error: $e'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      }
+                    },
+                    child: Text(
+                      'Set as Default',
+                      style: context.typography.bodySmallMedium,
+                    ),
+                  ),
+              ],
+            ),
+          ],
         ),
       ),
     );

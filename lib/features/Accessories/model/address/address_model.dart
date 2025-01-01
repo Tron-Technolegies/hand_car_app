@@ -6,6 +6,7 @@ part 'address_model.g.dart';
 @freezed
 class AddressModel with _$AddressModel {
   const factory AddressModel({
+    // ignore: invalid_annotation_target
     @JsonKey(
       name: 'id', 
       fromJson: _convertToString, 
@@ -14,8 +15,10 @@ class AddressModel with _$AddressModel {
     required String street,
     required String city,
     required String state,
+    // ignore: invalid_annotation_target
     @JsonKey(name: 'zip_code') required String zipCode,
     required String country,
+    // ignore: invalid_annotation_target
     @JsonKey(name: 'is_default') @Default(false) bool isDefault,
   }) = _AddressModel;
 

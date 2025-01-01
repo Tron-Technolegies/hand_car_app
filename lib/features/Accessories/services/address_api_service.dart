@@ -259,25 +259,30 @@ class AddressApiService {
     });
   }
 
-  Future<AddressModel> setDefaultAddress(int id) async {
-    return _makeAuthenticatedRequest((token) async {
-      log('Setting default address: $id');
-
-      final response = await _dio.post(
-        '/set_default_address/$id/',
-        options: Options(
-          headers: _createAuthHeaders(token),
-        ),
-      );
-
-      log('Set default address response: ${response.data}');
-
-      if (response.statusCode == 200) {
-        return AddressModel.fromJson(response.data['address'] ?? response.data);
+  Future<void> setDefaultAddress(int id) async {
+  return _makeAuthenticatedRequest((token) async {
+    log('Setting default address: $id');
+    
+    final response = await _dio.put(
+      '/set_default_address/$id/',
+      options: Options(
+        headers: _createAuthHeaders(token),
+      ),
+    );
+    
+    log('Set default address response: ${response.data}');
+    
+    if (response.statusCode == 200) {
+      // Just check for success, don't try to parse address
+      if (response.data['message'] != null) {
+        return;
       }
-
-      throw AddressException(response.data['error']?.toString() ??
-          'Failed to set default address');
-    });
-  }
+    }
+    
+    throw AddressException(
+      response.data['error']?.toString() ?? 
+      'Failed to set default address'
+    );
+  });
+}
 }
