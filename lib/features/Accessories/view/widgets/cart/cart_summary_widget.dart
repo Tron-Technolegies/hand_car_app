@@ -49,7 +49,7 @@ class CartSummaryWidget extends StatelessWidget {
                   return CartItemWidget(
                     name: item.productName,
                     price: 'AED ${item.productPrice.toStringAsFixed(2)}',
-                    quantity: item.quantity, 
+                    quantity: item.quantity,
                     productId: item.productId ?? 0, // Use null-aware operator
                   );
                 },
