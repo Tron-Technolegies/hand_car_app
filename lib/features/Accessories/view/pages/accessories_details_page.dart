@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
+import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
+import 'package:hand_car/features/Accessories/controller/cart/cart_controller.dart';
 import 'package:hand_car/features/Accessories/model/products/products_model.dart';
 
 import 'package:hand_car/features/Accessories/view/widgets/accessories/drop_down_button_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/image_carousel_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/product_section_widget.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-//Accessories Details page 
+//Accessories Details page
 
 class AccessoriesDetailsPage extends HookConsumerWidget {
   static const route = '/accessories-details';
@@ -51,7 +53,9 @@ class AccessoriesDetailsPage extends HookConsumerWidget {
                             ),
                           ),
                         ),
-                        const ImageCarousel(),
+                        ImageCarousel(
+                          product: product,
+                        ),
                         Padding(
                           padding: EdgeInsets.all(context.space.space_200),
                           child: Column(
@@ -105,7 +109,15 @@ class AccessoriesDetailsPage extends HookConsumerWidget {
                                         width: context.space.space_500 * 5,
                                         child: ButtonWidget(
                                             label: "Add to Cart",
-                                            onTap: () {})),
+                                            onTap: () {
+                                              ref
+                                                  .read(cartControllerProvider
+                                                      .notifier)
+                                                  .addToCart(product.id);
+                                              SnackbarUtil.showsnackbar(
+                                                  message:
+                                                      '${product.name} added to cart');
+                                            })),
                                     Padding(
                                       padding: EdgeInsets.symmetric(
                                           horizontal: context.space.space_100),

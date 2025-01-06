@@ -216,36 +216,62 @@ String? validatePassword(String? value) {
                               passwordController.clear();
                             },
                           ),
-                          ButtonWidget(
-                            label: loginState.isLoading ? "Logging in..." : "Login",
-                            onTap: () async {
-                              // Validate all form fields
-                              if (formKey.value.currentState?.validate() ?? false) {
-                                // Combine country code with phone number
-                                final fullPhoneNumber = '+${selectedCountry.value.phoneCode}${phoneController.text}';
-                                
-                                // Proceed with login
-                                await ref
-                                    .read(authControllerProvider.notifier)
-                                    .login(
-                                      fullPhoneNumber,
-                                      passwordController.text,
-                                    );
+                          // Inside the onTap of ButtonWidget in LoginWithPhoneAndPasswordPage
 
-                                // Check for specific error states
-                                final authState = ref.read(authControllerProvider);
-                                authState.whenOrNull(
-                                  error: (error, stackTrace) {
-                                    SnackbarUtil.showsnackbar(
-                                      message: "Login Failed: Invalid Credentials",
-                                      showretry: false,
-                                    );
-                                    log('Login error: $error');
-                                  },
-                                );
-                              }
-                            },
-                          ),
+ButtonWidget(
+  label: loginState.isLoading ? "Logging in..." : "Login",
+  onTap: () async {
+    // Validate all form fields
+    if (formKey.value.currentState?.validate() ?? false) {
+      // Combine country code with phone number
+      final fullPhoneNumber = '+${selectedCountry.value.phoneCode}${phoneController.text}';
+      
+      try {
+        // Proceed with login
+        await ref
+            .read(authControllerProvider.notifier)
+            .login(
+              fullPhoneNumber,
+              passwordController.text,
+            );
+
+        // Check for specific error states
+        final authState = ref.read(authControllerProvider);
+        authState.whenOrNull(
+          error: (error, stackTrace) {
+            // Check for specific error types
+            if (error.toString().contains('Invalid login credentials')) {
+              SnackbarUtil.showsnackbar(
+                message: "Account doesn't exist. Please sign up first.",
+                showretry: true,
+               
+              );
+            } else if (error.toString().contains('Invalid password')) {
+              SnackbarUtil.showsnackbar(
+                message: "Invalid password. Please try again.",
+                showretry: false,
+              );
+            } else {
+              SnackbarUtil.showsnackbar(
+                message: "Login failed. Please try again.",
+                showretry: false,
+              );
+            }
+            log('Login error: $error');
+            log('Login stack trace: $stackTrace');
+          },
+        );
+      } catch (e) {
+        // Handle any unexpected errors
+        SnackbarUtil.showsnackbar(
+          message: "Login Failed.Please Create Account",
+          showretry: false,
+        );
+        log('Unexpected error during login: $e');
+      }
+    }
+  },
+),
                         ],
                       ),
                     ),

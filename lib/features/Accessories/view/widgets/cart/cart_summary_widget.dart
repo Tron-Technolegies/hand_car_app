@@ -34,6 +34,7 @@ class CartSummaryWidget extends StatelessWidget {
               style: context.typography.h3,
             ),
             SizedBox(height: context.space.space_200),
+            
             ConstrainedBox(
               constraints: BoxConstraints(
                 maxHeight: MediaQuery.of(context).size.height * 0.4,
