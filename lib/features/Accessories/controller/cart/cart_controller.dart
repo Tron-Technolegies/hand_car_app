@@ -149,7 +149,7 @@ Future<void> updateQuantity(int productId, int newQuantity) async {
       }
       // If quantity decreased, we need to remove items
       else {
-        // TODO: Implement remove items API call
+        
         // For now, just refresh the cart to sync with server
       }
     });

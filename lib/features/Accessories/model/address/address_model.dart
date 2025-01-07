@@ -1,37 +1,32 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-
 part 'address_model.freezed.dart';
 part 'address_model.g.dart';
 
 @freezed
 class AddressModel with _$AddressModel {
   const factory AddressModel({
-    // ignore: invalid_annotation_target
     @JsonKey(
-      name: 'id', 
-      fromJson: _convertToString, 
-      toJson: _convertToInt
+      name: 'id',
+      fromJson: AddressModel._convertToString,
+      toJson: AddressModel._convertToInt
     ) required String id,
     required String street,
     required String city,
     required String state,
-    // ignore: invalid_annotation_target
     @JsonKey(name: 'zip_code') required String zipCode,
     required String country,
-    // ignore: invalid_annotation_target
     @JsonKey(name: 'is_default') @Default(false) bool isDefault,
   }) = _AddressModel;
 
-  factory AddressModel.fromJson(Map<String, dynamic> json) => 
+  factory AddressModel.fromJson(Map<String, dynamic> json) =>
       _$AddressModelFromJson(json);
-}
+      
+  // Move the conversion methods inside the class and make them static
+  static String _convertToString(dynamic value) {
+    return value.toString();
+  }
 
-// Convert dynamic (int or String) to String
-String _convertToString(dynamic value) {
-  return value.toString();
-}
-
-// Convert String back to int for toJson if needed
-int _convertToInt(String value) {
-  return int.parse(value);
+  static int _convertToInt(String value) {
+    return int.parse(value);
+  }
 }

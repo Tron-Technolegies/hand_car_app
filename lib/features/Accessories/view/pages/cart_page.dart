@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
+import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
 import 'package:hand_car/features/Accessories/controller/cart/cart_controller.dart';
 import 'package:hand_car/features/Accessories/view/pages/checkout_page.dart';
@@ -117,12 +118,8 @@ class ShoppingCartScreen extends HookConsumerWidget {
                                     .read(cartControllerProvider.notifier)
                                     .updateQuantity(item.productId!, newQuantity);
                               } catch (e) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Failed to update quantity: $e'),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
+                              SnackbarUtil.showsnackbar(
+                                  message: e.toString(), showretry: false);
                               }
                             }
                           },

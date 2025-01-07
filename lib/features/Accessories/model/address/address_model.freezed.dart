@@ -20,17 +20,17 @@ AddressModel _$AddressModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$AddressModel {
-// ignore: invalid_annotation_target
-  @JsonKey(name: 'id', fromJson: _convertToString, toJson: _convertToInt)
+  @JsonKey(
+      name: 'id',
+      fromJson: AddressModel._convertToString,
+      toJson: AddressModel._convertToInt)
   String get id => throw _privateConstructorUsedError;
   String get street => throw _privateConstructorUsedError;
   String get city => throw _privateConstructorUsedError;
-  String get state =>
-      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
+  String get state => throw _privateConstructorUsedError;
   @JsonKey(name: 'zip_code')
   String get zipCode => throw _privateConstructorUsedError;
-  String get country =>
-      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
+  String get country => throw _privateConstructorUsedError;
   @JsonKey(name: 'is_default')
   bool get isDefault => throw _privateConstructorUsedError;
 
@@ -51,7 +51,10 @@ abstract class $AddressModelCopyWith<$Res> {
       _$AddressModelCopyWithImpl<$Res, AddressModel>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'id', fromJson: _convertToString, toJson: _convertToInt)
+      {@JsonKey(
+          name: 'id',
+          fromJson: AddressModel._convertToString,
+          toJson: AddressModel._convertToInt)
       String id,
       String street,
       String city,
@@ -126,7 +129,10 @@ abstract class _$$AddressModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'id', fromJson: _convertToString, toJson: _convertToInt)
+      {@JsonKey(
+          name: 'id',
+          fromJson: AddressModel._convertToString,
+          toJson: AddressModel._convertToInt)
       String id,
       String street,
       String city,
@@ -194,7 +200,10 @@ class __$$AddressModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AddressModelImpl implements _AddressModel {
   const _$AddressModelImpl(
-      {@JsonKey(name: 'id', fromJson: _convertToString, toJson: _convertToInt)
+      {@JsonKey(
+          name: 'id',
+          fromJson: AddressModel._convertToString,
+          toJson: AddressModel._convertToInt)
       required this.id,
       required this.street,
       required this.city,
@@ -206,9 +215,11 @@ class _$AddressModelImpl implements _AddressModel {
   factory _$AddressModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$AddressModelImplFromJson(json);
 
-// ignore: invalid_annotation_target
   @override
-  @JsonKey(name: 'id', fromJson: _convertToString, toJson: _convertToInt)
+  @JsonKey(
+      name: 'id',
+      fromJson: AddressModel._convertToString,
+      toJson: AddressModel._convertToInt)
   final String id;
   @override
   final String street;
@@ -216,13 +227,11 @@ class _$AddressModelImpl implements _AddressModel {
   final String city;
   @override
   final String state;
-// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'zip_code')
   final String zipCode;
   @override
   final String country;
-// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'is_default')
   final bool isDefault;
@@ -270,7 +279,10 @@ class _$AddressModelImpl implements _AddressModel {
 
 abstract class _AddressModel implements AddressModel {
   const factory _AddressModel(
-      {@JsonKey(name: 'id', fromJson: _convertToString, toJson: _convertToInt)
+      {@JsonKey(
+          name: 'id',
+          fromJson: AddressModel._convertToString,
+          toJson: AddressModel._convertToInt)
       required final String id,
       required final String street,
       required final String city,
@@ -282,21 +294,23 @@ abstract class _AddressModel implements AddressModel {
   factory _AddressModel.fromJson(Map<String, dynamic> json) =
       _$AddressModelImpl.fromJson;
 
-// ignore: invalid_annotation_target
   @override
-  @JsonKey(name: 'id', fromJson: _convertToString, toJson: _convertToInt)
+  @JsonKey(
+      name: 'id',
+      fromJson: AddressModel._convertToString,
+      toJson: AddressModel._convertToInt)
   String get id;
   @override
   String get street;
   @override
   String get city;
   @override
-  String get state; // ignore: invalid_annotation_target
+  String get state;
   @override
   @JsonKey(name: 'zip_code')
   String get zipCode;
   @override
-  String get country; // ignore: invalid_annotation_target
+  String get country;
   @override
   @JsonKey(name: 'is_default')
   bool get isDefault;

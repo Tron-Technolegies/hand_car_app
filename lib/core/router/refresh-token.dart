@@ -1,3 +1,4 @@
+
 import 'package:dio/dio.dart';
 import 'package:hand_car/core/router/user_validation.dart';
 
@@ -8,7 +9,7 @@ class TokenInterceptor extends Interceptor {
   TokenInterceptor(this._dio, this._tokenStorage);
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) async {
+  void onError( err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 401) {
       // Token expired, try refreshing it
       try {
