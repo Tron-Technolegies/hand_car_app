@@ -11,6 +11,7 @@ import 'package:hand_car/features/Accessories/view/pages/accessories_details_pag
 import 'package:hand_car/features/Accessories/view/pages/cart_page.dart';
 import 'package:hand_car/features/Accessories/view/pages/wishlist_page.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/accessories_circle_avatar_widget.dart';
+import 'package:hand_car/features/Accessories/view/widgets/accessories/filter_dialog.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/grid_view_for_accessories_widget.dart';
 import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
 import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
@@ -161,7 +162,16 @@ class AccessoriesPage extends HookConsumerWidget {
                     onPressed: () {
                       context.push(WishlistScreen.route);
                     },
-                    icon: Icon(Icons.favorite_border_outlined))
+                    icon: Icon(Icons.favorite_border_outlined)),
+                      IconButton(
+    icon: const Icon(Icons.filter_list),
+    onPressed: () {
+      showDialog(
+        context: context,
+        builder: (context) => const ProductsFilterDialog(),
+      );
+    },
+  ),
               ],
               leading: isSearching.value
                   ? IconButton(
