@@ -66,5 +66,25 @@ class ProductsApiServices {
     } catch (e) {
       throw Exception('Failed to fetch promoted products: $e');
     }
+
+  }
+
+   Future<List<ProductsModel>> getFilteredProducts(Map<String, dynamic> queryParams) async {
+    try {
+      final response = await _dio.get(
+        '/filter/products',
+        queryParameters: queryParams,
+      );
+
+      if (response.statusCode == 200) {
+        return (response.data as List)
+            .map((json) => ProductsModel.fromJson(json))
+            .toList();
+      } else {
+        throw Exception('Failed to fetch filtered products');
+      }
+    } catch (e) {
+      throw Exception('Error fetching filtered products: $e');
+    }
   }
 }

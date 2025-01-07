@@ -1,3 +1,4 @@
+import 'package:hand_car/features/Accessories/model/products/filter_products/filter_products_state.dart';
 import 'package:hand_car/features/Accessories/model/products/products_model.dart';
 import 'package:hand_car/features/Accessories/services/products_service.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -18,6 +19,40 @@ class ProductsController extends _$ProductsController {
       return await productsApiService.getProducts();
     } catch (e) {
       throw Exception('Failed to fetch products: $e');
+    }
+  }
+  Future<List<ProductsModel>> fetchFilteredProducts([ProductsFilterState? filters]) async {
+    try {
+      final productsApiService = ref.read(productsApiServiceProvider);
+      
+      if (filters == null) {
+        return await productsApiService.getProducts();
+      }
+
+      // Convert filter state to query parameters
+      final queryParams = <String, dynamic>{
+        if (filters.categoryId != null) 'category_id': filters.categoryId,
+        if (filters.minPrice > 0) 'min_price': filters.minPrice,
+        if (filters.maxPrice < double.infinity) 'max_price': filters.maxPrice,
+        if (filters.brandId != null) 'brand_id': filters.brandId,
+        if (filters.minRating > 0) 'min_rating': filters.minRating,
+        if (filters.showNewArrivals) 'new_arrivals': true,
+        if (filters.showBestsellers) 'bestsellers': true,
+      };
+
+      return await productsApiService.getFilteredProducts(queryParams);
+    } catch (e) {
+      throw Exception('Failed to fetch products: $e');
+    }
+  }
+
+  Future<void> applyFilters(ProductsFilterState filters) async {
+    state = const AsyncValue.loading();
+    try {
+      final filteredProducts = await fetchFilteredProducts(filters);
+      state = AsyncValue.data(filteredProducts);
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
     }
   }
 

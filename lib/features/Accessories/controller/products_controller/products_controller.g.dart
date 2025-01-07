@@ -26,7 +26,7 @@ final productsApiServiceProvider =
 // ignore: unused_element
 typedef ProductsApiServiceRef = AutoDisposeProviderRef<ProductsApiServices>;
 String _$productsControllerHash() =>
-    r'347d429fc327a283d8a997eeb58a98867aa40a8b';
+    r'07a62525544fe7e91579a6fadfe97a9fe8eca133';
 
 /// See also [ProductsController].
 @ProviderFor(ProductsController)
