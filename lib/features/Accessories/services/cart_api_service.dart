@@ -115,6 +115,7 @@ Future<CartResponse> addToCart(String productId) async {
         '/display_cart',
         options: Options(
           headers: {'Content-Type': 'application/json'},
+          
         ),
       );
       
