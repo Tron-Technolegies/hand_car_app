@@ -152,6 +152,10 @@ class AccessoriesProductCardWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Calculate discounted price
+    final originalPrice = double.tryParse(product.price) ?? 0.0;
+    final discountedPrice = originalPrice * (1 - (product.discountPercentage / 100));
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -169,15 +173,14 @@ class AccessoriesProductCardWidget extends ConsumerWidget {
                 alignment: Alignment.topRight,
                 child: IconButton(
                   onPressed: () {
-                    // Optional: Toggle favorite functionality
                     ref
                         .read(wishlistNotifierProvider.notifier)
-                        .addToWishlist(int.parse(product.id.toString()));
+                        .addToWishlist(product.id);
                   },
                   icon: const Icon(Icons.favorite_border),
                 ),
               ),
-              if (product.isBestseller == true)
+              if (product.isBestseller)
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
@@ -202,19 +205,20 @@ class AccessoriesProductCardWidget extends ConsumerWidget {
                 ),
               ),
               SizedBox(height: context.space.space_100),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: context.colors.yellow,
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(context.space.space_100),
-                  child: Text(
-                    '${product.discountPercentage.toStringAsFixed(0)}% OFF',
-                    style: context.typography.bodySemiBold,
+              if (product.discountPercentage > 0)
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: context.colors.yellow,
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(context.space.space_100),
+                    child: Text(
+                      '${product.discountPercentage}% OFF',
+                      style: context.typography.bodySemiBold,
+                    ),
                   ),
                 ),
-              ),
               SizedBox(height: context.space.space_100),
               Text(
                 product.name,
@@ -223,58 +227,66 @@ class AccessoriesProductCardWidget extends ConsumerWidget {
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2,
               ),
-              SizedBox(height: context.space.space_50),
               SizedBox(height: context.space.space_150),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "AED ${product.price}",
-                    style: context.typography.bodyLarge
-                        .copyWith(color: context.colors.primaryTxt),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(left: context.space.space_200),
-                    child: Text(
-                      "AED ${product.price}",
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        decoration: TextDecoration.lineThrough,
+              // Fixed Row for prices
+              Flexible(
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: Text(
+                        "AED ${discountedPrice.toStringAsFixed(2)}",
+                        style: context.typography.bodyLarge
+                            .copyWith(color: context.colors.primaryTxt),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                  ),
-                ],
+                    if (product.discountPercentage > 0)
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          "AED ${product.price}",
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            decoration: TextDecoration.lineThrough,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                  ],
+                ),
               ),
               SizedBox(height: context.space.space_100),
+              // Add to Cart Button
               Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: context.space.space_50,
                   vertical: context.space.space_50,
                 ),
-                child: OutlineButtonWidget(
-                  label: 'Add To Cart',
-                  onTap: () async {
-                    try {
-                      // Call addToCart from the CartController
-                      await ref
-                          .read(cartControllerProvider.notifier)
-                          .addToCart(product.id);
+                child: SizedBox(
+                  width: double.infinity,
+                  child: OutlineButtonWidget(
+                    label: 'Add To Cart',
+                    onTap: () async {
+                      try {
+                        await ref
+                            .read(cartControllerProvider.notifier)
+                            .addToCart(product.id);
                 
-                      // Show success feedback
-                      if (context.mounted) {
-                        SnackbarUtil.showsnackbar(
-                            message: "${product.name} added to cart",
-                            showretry: false);
+                        if (context.mounted) {
+                          SnackbarUtil.showsnackbar(
+                              message: "${product.name} added to cart",
+                              showretry: false);
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          SnackbarUtil.showsnackbar(
+                              message: "Failed to add to cart",
+                              showretry: false);
+                        }
                       }
-                    } catch (e) {
-                      // Show error feedback
-                      if (context.mounted) {
-                        SnackbarUtil.showsnackbar(
-                            message: "Failed to add to cart",
-                            showretry: false);
-                      }
-                    }
-                  },
+                    },
+                  ),
                 ),
               ),
             ],

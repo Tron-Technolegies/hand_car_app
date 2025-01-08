@@ -16,7 +16,7 @@ class PromotedBrandController extends _$PromotedBrandController{
       final productsApiService = ref.read(productsApiServiceProvider);
       return await productsApiService.getPromotedBrands();
     } catch (e) {
-      throw Exception('Failed to fetch products: $e');
+     return [];
     }
   }
  }

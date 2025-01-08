@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:hand_car/config.dart';
 import 'package:hand_car/core/router/router.dart';
 import 'package:hand_car/core/theme/light_theme.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -8,8 +11,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-   await GetStorage.init();
-
+  await GetStorage.init();
+  log('Config: $baseUrl');
   runApp(const ProviderScope(child: MainApp()));
 }
 

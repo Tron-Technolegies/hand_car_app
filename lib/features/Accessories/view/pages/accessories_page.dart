@@ -29,7 +29,7 @@ class AccessoriesPage extends HookConsumerWidget {
   static const route = '/accessories';
   const AccessoriesPage({super.key});
   // Function to show the login dialog
-    void _showLoginDialog(BuildContext context) {
+  void _showLoginDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -64,7 +64,7 @@ class AccessoriesPage extends HookConsumerWidget {
       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcST_jdzAn0TttNbib1DGe119FjY-Wi_L5zc8g&s',
       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvOX4aF0GarSWiEFx7EP3sixmcfagZRL6zPg&s'
     ];
-     //scroll controller
+    //scroll controller
     final controller = useScrollController();
     //app bar visibility
     final appBarVisible = useState(true);
@@ -163,15 +163,15 @@ class AccessoriesPage extends HookConsumerWidget {
                       context.push(WishlistScreen.route);
                     },
                     icon: Icon(Icons.favorite_border_outlined)),
-                      IconButton(
-    icon: const Icon(Icons.filter_list),
-    onPressed: () {
-      showDialog(
-        context: context,
-        builder: (context) => const ProductsFilterDialog(),
-      );
-    },
-  ),
+                IconButton(
+                  icon: const Icon(Icons.filter_list),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => const ProductsFilterDialog(),
+                    );
+                  },
+                ),
               ],
               leading: isSearching.value
                   ? IconButton(
@@ -208,6 +208,7 @@ class AccessoriesPage extends HookConsumerWidget {
                       text1: category.name,
                       image: images[index],
                       onTap: () {
+                        print('Selected category: ${category.name}');
                         pageController.animateToPage(
                           index,
                           duration: const Duration(milliseconds: 300),

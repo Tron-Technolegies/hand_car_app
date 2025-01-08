@@ -5,11 +5,11 @@ import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Accessories/controller/products_controller/promoted_brands/promoted_products_controller.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-
 class AccessoriesAdsHomePageWidget extends ConsumerWidget {
   const AccessoriesAdsHomePageWidget({super.key});
 
   @override
+
   /// Builds a carousel slider that shows the promoted products.
   ///
   /// The slider auto-plays and has a viewport fraction of 0.6.
@@ -35,7 +35,7 @@ class AccessoriesAdsHomePageWidget extends ConsumerWidget {
   Widget build(BuildContext context, ref) {
     // Watch the promoted products state
     final products = ref.watch(promotedProductsControllerProvider);
-    
+
     return products.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stack) => Center(child: Text('Error: $error')),
@@ -48,10 +48,16 @@ class AccessoriesAdsHomePageWidget extends ConsumerWidget {
         itemCount: data.length,
         // Build each item in the slider
         itemBuilder: (context, index, realIndex) {
+          if (data.isEmpty) {
+            return const Center(
+              child: Text('No products available'),
+            );
+          }
           final product = data[index];
           final originalPrice = double.parse(product.price);
-          final discountedPrice = originalPrice * (1 - (product.discountPercentage / 100));
-          
+          final discountedPrice =
+              originalPrice * (1 - (product.discountPercentage / 100));
+
           return Padding(
             padding: EdgeInsets.symmetric(
                 vertical: context.space.space_50,
@@ -63,7 +69,8 @@ class AccessoriesAdsHomePageWidget extends ConsumerWidget {
                 border: Border.all(color: context.colors.background),
               ),
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: context.space.space_100),
+                padding:
+                    EdgeInsets.symmetric(horizontal: context.space.space_100),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

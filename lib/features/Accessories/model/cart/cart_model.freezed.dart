@@ -243,8 +243,8 @@ mixin _$CartItemModel {
   @JsonKey(name: 'product_price', fromJson: parseDouble)
   double get productPrice => throw _privateConstructorUsedError;
   int get quantity => throw _privateConstructorUsedError;
-  @JsonKey(name: 'image_url')
-  String? get imageUrl => throw _privateConstructorUsedError;
+  @JsonKey(name: 'product_image')
+  String? get productImage => throw _privateConstructorUsedError;
 
   /// Serializes this CartItemModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -268,7 +268,7 @@ abstract class $CartItemModelCopyWith<$Res> {
       @JsonKey(name: 'product_price', fromJson: parseDouble)
       double productPrice,
       int quantity,
-      @JsonKey(name: 'image_url') String? imageUrl});
+      @JsonKey(name: 'product_image') String? productImage});
 }
 
 /// @nodoc
@@ -290,7 +290,7 @@ class _$CartItemModelCopyWithImpl<$Res, $Val extends CartItemModel>
     Object? productName = null,
     Object? productPrice = null,
     Object? quantity = null,
-    Object? imageUrl = freezed,
+    Object? productImage = freezed,
   }) {
     return _then(_value.copyWith(
       productId: freezed == productId
@@ -309,9 +309,9 @@ class _$CartItemModelCopyWithImpl<$Res, $Val extends CartItemModel>
           ? _value.quantity
           : quantity // ignore: cast_nullable_to_non_nullable
               as int,
-      imageUrl: freezed == imageUrl
-          ? _value.imageUrl
-          : imageUrl // ignore: cast_nullable_to_non_nullable
+      productImage: freezed == productImage
+          ? _value.productImage
+          : productImage // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
   }
@@ -331,7 +331,7 @@ abstract class _$$CartItemModelImplCopyWith<$Res>
       @JsonKey(name: 'product_price', fromJson: parseDouble)
       double productPrice,
       int quantity,
-      @JsonKey(name: 'image_url') String? imageUrl});
+      @JsonKey(name: 'product_image') String? productImage});
 }
 
 /// @nodoc
@@ -351,7 +351,7 @@ class __$$CartItemModelImplCopyWithImpl<$Res>
     Object? productName = null,
     Object? productPrice = null,
     Object? quantity = null,
-    Object? imageUrl = freezed,
+    Object? productImage = freezed,
   }) {
     return _then(_$CartItemModelImpl(
       productId: freezed == productId
@@ -370,9 +370,9 @@ class __$$CartItemModelImplCopyWithImpl<$Res>
           ? _value.quantity
           : quantity // ignore: cast_nullable_to_non_nullable
               as int,
-      imageUrl: freezed == imageUrl
-          ? _value.imageUrl
-          : imageUrl // ignore: cast_nullable_to_non_nullable
+      productImage: freezed == productImage
+          ? _value.productImage
+          : productImage // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
@@ -387,7 +387,7 @@ class _$CartItemModelImpl implements _CartItemModel {
       @JsonKey(name: 'product_price', fromJson: parseDouble)
       required this.productPrice,
       this.quantity = 1,
-      @JsonKey(name: 'image_url') this.imageUrl});
+      @JsonKey(name: 'product_image') this.productImage});
 
   factory _$CartItemModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$CartItemModelImplFromJson(json);
@@ -405,12 +405,12 @@ class _$CartItemModelImpl implements _CartItemModel {
   @JsonKey()
   final int quantity;
   @override
-  @JsonKey(name: 'image_url')
-  final String? imageUrl;
+  @JsonKey(name: 'product_image')
+  final String? productImage;
 
   @override
   String toString() {
-    return 'CartItemModel(productId: $productId, productName: $productName, productPrice: $productPrice, quantity: $quantity, imageUrl: $imageUrl)';
+    return 'CartItemModel(productId: $productId, productName: $productName, productPrice: $productPrice, quantity: $quantity, productImage: $productImage)';
   }
 
   @override
@@ -426,14 +426,14 @@ class _$CartItemModelImpl implements _CartItemModel {
                 other.productPrice == productPrice) &&
             (identical(other.quantity, quantity) ||
                 other.quantity == quantity) &&
-            (identical(other.imageUrl, imageUrl) ||
-                other.imageUrl == imageUrl));
+            (identical(other.productImage, productImage) ||
+                other.productImage == productImage));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, productId, productName, productPrice, quantity, imageUrl);
+  int get hashCode => Object.hash(runtimeType, productId, productName,
+      productPrice, quantity, productImage);
 
   /// Create a copy of CartItemModel
   /// with the given fields replaced by the non-null parameter values.
@@ -458,7 +458,7 @@ abstract class _CartItemModel implements CartItemModel {
           @JsonKey(name: 'product_price', fromJson: parseDouble)
           required final double productPrice,
           final int quantity,
-          @JsonKey(name: 'image_url') final String? imageUrl}) =
+          @JsonKey(name: 'product_image') final String? productImage}) =
       _$CartItemModelImpl;
 
   factory _CartItemModel.fromJson(Map<String, dynamic> json) =
@@ -476,8 +476,8 @@ abstract class _CartItemModel implements CartItemModel {
   @override
   int get quantity;
   @override
-  @JsonKey(name: 'image_url')
-  String? get imageUrl;
+  @JsonKey(name: 'product_image')
+  String? get productImage;
 
   /// Create a copy of CartItemModel
   /// with the given fields replaced by the non-null parameter values.

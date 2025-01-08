@@ -27,8 +27,10 @@ mixin _$ProductsModel {
   String get price => throw _privateConstructorUsedError;
   String? get image => throw _privateConstructorUsedError;
   @JsonKey(name: "discount_percentage")
-  int get discountPercentage => throw _privateConstructorUsedError;
+  int get discountPercentage =>
+      throw _privateConstructorUsedError; // Set default value to 0
   String get description => throw _privateConstructorUsedError;
+  @JsonKey(name: "is_bestseller")
   bool get isBestseller => throw _privateConstructorUsedError;
 
   /// Serializes this ProductsModel to a JSON map.
@@ -56,7 +58,7 @@ abstract class $ProductsModelCopyWith<$Res> {
       String? image,
       @JsonKey(name: "discount_percentage") int discountPercentage,
       String description,
-      bool isBestseller});
+      @JsonKey(name: "is_bestseller") bool isBestseller});
 }
 
 /// @nodoc
@@ -142,7 +144,7 @@ abstract class _$$ProductModelImplCopyWith<$Res>
       String? image,
       @JsonKey(name: "discount_percentage") int discountPercentage,
       String description,
-      bool isBestseller});
+      @JsonKey(name: "is_bestseller") bool isBestseller});
 }
 
 /// @nodoc
@@ -219,9 +221,9 @@ class _$ProductModelImpl implements _ProductModel {
       required this.brand,
       required this.price,
       this.image,
-      @JsonKey(name: "discount_percentage") required this.discountPercentage,
+      @JsonKey(name: "discount_percentage") this.discountPercentage = 0,
       this.description = '',
-      this.isBestseller = false});
+      @JsonKey(name: "is_bestseller") this.isBestseller = false});
 
   factory _$ProductModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$ProductModelImplFromJson(json);
@@ -241,11 +243,12 @@ class _$ProductModelImpl implements _ProductModel {
   @override
   @JsonKey(name: "discount_percentage")
   final int discountPercentage;
+// Set default value to 0
   @override
   @JsonKey()
   final String description;
   @override
-  @JsonKey()
+  @JsonKey(name: "is_bestseller")
   final bool isBestseller;
 
   @override
@@ -296,16 +299,16 @@ class _$ProductModelImpl implements _ProductModel {
 
 abstract class _ProductModel implements ProductsModel {
   const factory _ProductModel(
-      {required final int id,
-      required final String name,
-      required final String category,
-      required final String brand,
-      required final String price,
-      final String? image,
-      @JsonKey(name: "discount_percentage")
-      required final int discountPercentage,
-      final String description,
-      final bool isBestseller}) = _$ProductModelImpl;
+          {required final int id,
+          required final String name,
+          required final String category,
+          required final String brand,
+          required final String price,
+          final String? image,
+          @JsonKey(name: "discount_percentage") final int discountPercentage,
+          final String description,
+          @JsonKey(name: "is_bestseller") final bool isBestseller}) =
+      _$ProductModelImpl;
 
   factory _ProductModel.fromJson(Map<String, dynamic> json) =
       _$ProductModelImpl.fromJson;
@@ -324,10 +327,11 @@ abstract class _ProductModel implements ProductsModel {
   String? get image;
   @override
   @JsonKey(name: "discount_percentage")
-  int get discountPercentage;
+  int get discountPercentage; // Set default value to 0
   @override
   String get description;
   @override
+  @JsonKey(name: "is_bestseller")
   bool get isBestseller;
 
   /// Create a copy of ProductsModel

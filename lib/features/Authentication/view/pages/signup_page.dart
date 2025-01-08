@@ -229,10 +229,10 @@ class SignupPage extends HookConsumerWidget {
                           await ref
                               .read(authControllerProvider.notifier)
                               .signup(UserModel(
-                                name: nameController.text.trim(),
-                                email: emailController.text.trim(),
+                                name: nameController.text,
+                                email: emailController.text,
                                 phone: fullPhoneNumber,
-                                password: passwordController.text.trim(),
+                                password: passwordController.text
                               ));
 
                           if (context.mounted) {

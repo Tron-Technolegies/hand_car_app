@@ -53,24 +53,32 @@ class CartModel with _$CartModel {
 @freezed
 class CartItemModel with _$CartItemModel {
   const factory CartItemModel({
-    @JsonKey(name: 'product_id') int? productId,
-    @JsonKey(name: 'product_name') required String productName,
-    @JsonKey(name: 'product_price', fromJson: parseDouble) required double productPrice,
-    @Default(1) int quantity,
-    @JsonKey(name: 'image_url') String? imageUrl,
+    @JsonKey(name: 'product_id') 
+    int? productId,
+    
+    @JsonKey(name: 'product_name') 
+    required String productName,
+    
+    @JsonKey(name: 'product_price', fromJson: parseDouble) 
+    required double productPrice,
+    
+    @Default(1) 
+    int quantity,
+    
+    @JsonKey(name: 'product_image')  // Changed from 'product_images' to 'product_image'
+    String? productImage,  // Changed variable name to match JSON
   }) = _CartItemModel;
 
-  factory CartItemModel.fromJson(Map<String, dynamic> json) => 
+  factory CartItemModel.fromJson(Map<String, dynamic> json) =>
       _$CartItemModelFromJson(_transformJson(json));
 
-  // Helper method to transform incoming JSON
   static Map<String, dynamic> _transformJson(Map<String, dynamic> json) {
     return {
       'product_id': _parseProductId(json),
       'product_name': json['product_name'] ?? json['name'] ?? '',
       'product_price': parseDouble(json['product_price'] ?? json['price'] ?? 0.0),
       'quantity': json['quantity'] ?? 1,
-      'image_url': json['image_url'] ?? json['image'] ?? json['picture'],
+      'product_image': json['product_image'], // Use the correct field name from API
     };
   }
 

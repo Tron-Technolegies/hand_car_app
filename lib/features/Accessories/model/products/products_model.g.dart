@@ -14,7 +14,7 @@ _$ProductModelImpl _$$ProductModelImplFromJson(Map<String, dynamic> json) =>
       brand: json['brand'] as String,
       price: json['price'] as String,
       image: json['image'] as String?,
-      discountPercentage: (json['discount_percentage'] as num).toInt(),
+      discountPercentage: (json['discount_percentage'] as num?)?.toInt() ?? 0,
       description: json['description'] as String? ?? '',
       isBestseller: json['is_bestseller'] as bool? ?? false,
     );

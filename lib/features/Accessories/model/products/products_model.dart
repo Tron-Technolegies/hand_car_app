@@ -5,6 +5,7 @@ part 'products_model.g.dart';
 
 //Products Model class to get the data from the API
 
+
 @freezed
 class ProductsModel with _$ProductsModel {
   const factory ProductsModel({
@@ -15,11 +16,12 @@ class ProductsModel with _$ProductsModel {
     required String price,
     String? image,
     @JsonKey(name: "discount_percentage")
-        required int discountPercentage,
+    @Default(0) int discountPercentage,  // Set default value to 0
     @Default('') String description,
+    @JsonKey(name: "is_bestseller")      // Add JsonKey for is_bestseller
     @Default(false) bool isBestseller,
   }) = _ProductModel;
-   //Products Model from json method
+
   factory ProductsModel.fromJson(Map<String, dynamic> json) =>
       _$ProductsModelFromJson(json);
 }

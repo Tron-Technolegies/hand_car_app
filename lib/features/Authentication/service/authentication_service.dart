@@ -4,7 +4,6 @@ import 'package:hand_car/config.dart';
 import 'package:hand_car/features/Authentication/model/auth_model.dart';
 import 'package:hand_car/core/router/user_validation.dart';
 import 'package:hand_car/features/Authentication/model/user_model.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'authentication_service.g.dart';
@@ -129,38 +128,56 @@ class ApiServiceAuthentication {
     }
   }
 
-  Future<AuthModel> login(String username, String password) async {
-    try {
-      final response = await _dio.post(
-        '/UserLogin',
-        data: FormData.fromMap({
-          'username': username,
-          'password': password,
-        }),
-      );
+ Future<AuthModel> login(String username, String password) async {
+  try {
+    print('LOGIN ATTEMPT - Username: $username, Password: $password');
+    
+    // Create FormData object
+    final formData = FormData.fromMap({
+      'username': username,
+      'password': password,
+    });
 
-      log('Login response: ${response.data}');
+    print('Sending FormData: ${formData.fields}');
 
-      if (response.statusCode != 200) {
-        throw Exception('Login failed: ${response.statusMessage}');
-      }
+    final response = await _dio.post(
+      '/UserLogin',
+      data: formData,  // Use formData instead of JSON
+      options: Options(
+        contentType: 'multipart/form-data',  // Set content type to multipart/form-data
+        headers: {
+          'Accept': 'application/json',
+        },
+      ),
+    );
 
+    print('Login response: ${response.data}');
+
+    if (response.statusCode == 200) {
       final authModel = AuthModel.fromJson(response.data);
       await _tokenStorage.saveTokens(
         accessToken: authModel.accessToken,
         refreshToken: authModel.refreshToken,
       );
-
       return authModel;
-    } on DioException catch (e) {
-      final errorMessage = _handleDioError(e);
-      log('Login error: $errorMessage');
-      throw Exception(errorMessage);
-    } catch (e) {
-      log('Unexpected login error: $e');
-      throw Exception('An unexpected error occurred');
+    } else {
+      throw Exception(response.data['error'] ?? 'Login failed');
     }
+  } on DioException catch (e) {
+    print('DIO ERROR DETAILS:');
+    print('Type: ${e.type}');
+    print('Error Message: ${e.message}');
+    print('Response Status Code: ${e.response?.statusCode}');
+    print('Response Data: ${e.response?.data}');
+    print('Request Path: ${e.requestOptions.path}');
+    print('Request Data: ${e.requestOptions.data}');
+    final errorMessage = _handleDioError(e);
+    throw Exception(errorMessage);
+  } catch (e) {
+    print('Unexpected login error: $e');
+    throw Exception('An unexpected error occurred');
   }
+}
 
   Future<void> logout() async {
     try {
@@ -186,26 +203,39 @@ class ApiServiceAuthentication {
   }
 
   Future<String> signUp(UserModel user) async {
-    try {
-      final response = await _dio.post(
-        '/signup',
-        data: user.toJson(),
-      );
+  try {
+    // Add logging to see what's being sent
+    log('Attempting signup with data: ${user.toJson()}');
+    
+    final response = await _dio.post(
+      '/signup',
+      data: user.toJson(),
+      options: Options(
+        contentType: 'application/json',
+        followRedirects: false,
+        validateStatus: (status) {
+          return status! < 500;
+        },
+      ),
+    );
 
-      if (response.statusCode != 200 && response.statusCode != 201) {
-        throw Exception('Signup failed: ${response.statusMessage}');
-      }
+    log('Signup response: ${response.data}');
 
+    if (response.statusCode == 201 || response.statusCode == 200) {
       return response.data['message'] ?? 'Signup successful';
-    } on DioException catch (e) {
-      final errorMessage = _handleDioError(e);
-      log('Signup error: $errorMessage');
-      throw Exception(errorMessage);
-    } catch (e) {
-      log('Unexpected signup error: $e');
-      throw Exception('An unexpected error occurred during signup');
+    } else {
+      throw Exception(response.data['error'] ?? 'Signup failed');
     }
+  } on DioException catch (e) {
+    log('DioError during signup: ${e.message}');
+    log('DioError response: ${e.response?.data}');
+    final errorMessage = _handleDioError(e);
+    throw Exception(errorMessage);
+  } catch (e) {
+    log('Unexpected signup error: $e');
+    throw Exception('An unexpected error occurred during signup');
   }
+}
 
   String _handleDioError(DioException e) {
     if (e.response != null) {

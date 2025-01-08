@@ -76,22 +76,21 @@ class ProductCard extends HookConsumerWidget {
           children: [
             // Product Image
             ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                image ?? '',
-                width: 80,
-                height: 80,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: 80,
-                    height: 80,
-                    color: Colors.grey.shade200,
-                    child: Icon(Icons.image_not_supported, color: Colors.grey),
-                  );
-                },
-              ),
-            ),
+  borderRadius: BorderRadius.circular(8),
+  child: image != null && image!.isNotEmpty
+      ? Image.network(
+          image!,
+          width: 80,
+          height: 80,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            print('Image error for URL: $image');
+            print('Error details: $error');
+            return _buildPlaceholder();
+          },
+        )
+      : _buildPlaceholder(),
+),
             SizedBox(width: context.space.space_200),
 
             // Product Details
@@ -207,4 +206,19 @@ class ProductCard extends HookConsumerWidget {
       );
     }
   }
+}
+Widget _buildPlaceholder() {
+  return Container(
+    width: 80,
+    height: 80,
+    decoration: BoxDecoration(
+      color: Colors.grey.shade200,
+      borderRadius: BorderRadius.circular(8),
+    ),
+    child: Icon(
+      Icons.image_not_supported,
+      color: Colors.grey.shade400,
+      size: 30,
+    ),
+  );
 }

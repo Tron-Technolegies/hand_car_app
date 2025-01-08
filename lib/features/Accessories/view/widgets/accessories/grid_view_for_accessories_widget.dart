@@ -28,25 +28,40 @@ class GridViewBuilderAccessoriesWidget extends ConsumerWidget {
           children: [
             Lottie.asset(Assets.animations.error),
             const SizedBox(height: 16),
-            Text(
-              'Something went wrong. Please try again later.',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
+            Text('Error: $error'),
           ],
         ),
       ),
       data: (products) {
+        print('Total products: ${products.length}');
+        print('Current category: $categoryName');
+        print('Available categories: ${products.map((p) => p.category).toSet()}');
+        
         // Filter products based on the category
         final categoryProducts = products
-            .where((product) =>
-                product.category.toLowerCase() == categoryName.toLowerCase())
+            .where((product) {
+              print('Comparing: ${product.category.toLowerCase()} with ${categoryName.toLowerCase()}');
+              return product.category.toLowerCase().trim() == categoryName.toLowerCase().trim();
+            })
             .toList();
+
+        print('Filtered products count: ${categoryProducts.length}');
 
         if (categoryProducts.isEmpty) {
           return Center(
-            child: Text(
-              'No products available in this category.',
-              style: Theme.of(context).textTheme.bodyMedium,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'No products available in $categoryName category.',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Available categories: ${products.map((p) => p.category).toSet().join(", ")}',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
             ),
           );
         }
@@ -62,10 +77,9 @@ class GridViewBuilderAccessoriesWidget extends ConsumerWidget {
           itemCount: categoryProducts.length,
           itemBuilder: (context, index) {
             final product = categoryProducts[index];
-
             return AccessoriesProductCardWidget(
               product: product,
-              onTap: () => onProductTap(product), // Handle product tap
+              onTap: () => onProductTap(product),
             );
           },
         );

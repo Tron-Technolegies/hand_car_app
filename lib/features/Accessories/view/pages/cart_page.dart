@@ -36,7 +36,8 @@ class ShoppingCartScreen extends HookConsumerWidget {
                   context: context,
                   builder: (context) => AlertDialog(
                     title: const Text('Clear Cart'),
-                    content: const Text('Are you sure you want to clear your cart?'),
+                    content:
+                        const Text('Are you sure you want to clear your cart?'),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context),
@@ -45,7 +46,6 @@ class ShoppingCartScreen extends HookConsumerWidget {
                       TextButton(
                         onPressed: () {
                           // Clear cart functionality
-                         
                         },
                         child: const Text('Clear'),
                       ),
@@ -70,7 +70,8 @@ class ShoppingCartScreen extends HookConsumerWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Lottie.asset(Assets.animations.emptyCart, repeat: false),
+                            Lottie.asset(Assets.animations.emptyCart,
+                                repeat: false),
                             SizedBox(height: context.space.space_100),
                             Text(
                               "Your cart is empty",
@@ -93,15 +94,17 @@ class ShoppingCartScreen extends HookConsumerWidget {
                       ),
                       itemBuilder: (context, index) {
                         final item = cart.cartItems[index];
-                        
+
                         // Add a null check and unique key
                         return ProductCard(
-                          key: Key(item.productId?.toString() ?? 'cart_item_$index'),
+                          key: Key(
+                              item.productId?.toString() ?? 'cart_item_$index'),
                           currentQuantity: item.quantity,
-                          productId: item.productId ?? 0, // Provide a default value
+                          productId:
+                              item.productId ?? 0, // Provide a default value
                           productName: item.productName,
                           price: item.productPrice,
-                          image: item.imageUrl ?? 'https://e7.pngegg.com/pngimages/809/777/png-clipart-car-revathy-auto-parts-ford-motor-company-spare-part-advance-auto-parts-car-car-vehicle-thumbnail.png',
+                          image: item.productImage,
                           onDelete: () {
                             // Only attempt to remove if productId is not null
                             if (item.productId != null) {
@@ -116,10 +119,11 @@ class ShoppingCartScreen extends HookConsumerWidget {
                               try {
                                 await ref
                                     .read(cartControllerProvider.notifier)
-                                    .updateQuantity(item.productId!, newQuantity);
+                                    .updateQuantity(
+                                        item.productId!, newQuantity);
                               } catch (e) {
-                              SnackbarUtil.showsnackbar(
-                                  message: e.toString(), showretry: false);
+                                SnackbarUtil.showsnackbar(
+                                    message: e.toString(), showretry: false);
                               }
                             }
                           },
@@ -175,7 +179,8 @@ class ShoppingCartScreen extends HookConsumerWidget {
                                 .applyCoupon(validCoupon);
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                  content: Text('Coupon applied successfully!')),
+                                  content:
+                                      Text('Coupon applied successfully!')),
                             );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
