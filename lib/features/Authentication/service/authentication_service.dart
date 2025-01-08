@@ -39,11 +39,11 @@ class ApiServiceAuthentication {
   }
 
   void _handleRequest(
-    RequestOptions options, 
+    RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
     try {
-      final token = await _tokenStorage.getAccessToken();
+      final token = _tokenStorage.getAccessToken();
       if (token != null && token.isNotEmpty) {
         options.headers['Authorization'] = 'Bearer $token';
       }
@@ -65,9 +65,9 @@ class ApiServiceAuthentication {
     if (error.response?.statusCode == 401) {
       try {
         await _refreshToken();
-        
+
         // Retry the original request with new token
-        final newToken = await _tokenStorage.getAccessToken();
+        final newToken = _tokenStorage.getAccessToken();
         if (newToken == null) throw Exception('No access token after refresh');
 
         final response = await _retryRequest(error.requestOptions, newToken);
@@ -102,7 +102,7 @@ class ApiServiceAuthentication {
   }
 
   Future<void> _refreshToken() async {
-    final refreshToken = await _tokenStorage.getRefreshToken();
+    final refreshToken = _tokenStorage.getRefreshToken();
     if (refreshToken == null || refreshToken.isEmpty) {
       throw Exception('No refresh token available');
     }
@@ -128,60 +128,61 @@ class ApiServiceAuthentication {
     }
   }
 
- Future<AuthModel> login(String username, String password) async {
-  try {
-    print('LOGIN ATTEMPT - Username: $username, Password: $password');
-    
-    // Create FormData object
-    final formData = FormData.fromMap({
-      'username': username,
-      'password': password,
-    });
+  Future<AuthModel> login(String username, String password) async {
+    try {
+      log('LOGIN ATTEMPT - Username: $username, Password: $password');
 
-    print('Sending FormData: ${formData.fields}');
+      // Create FormData object
+      final formData = FormData.fromMap({
+        'username': username,
+        'password': password,
+      });
 
-    final response = await _dio.post(
-      '/UserLogin',
-      data: formData,  // Use formData instead of JSON
-      options: Options(
-        contentType: 'multipart/form-data',  // Set content type to multipart/form-data
-        headers: {
-          'Accept': 'application/json',
-        },
-      ),
-    );
+      log('Sending FormData: ${formData.fields}');
 
-    print('Login response: ${response.data}');
-
-    if (response.statusCode == 200) {
-      final authModel = AuthModel.fromJson(response.data);
-      await _tokenStorage.saveTokens(
-        accessToken: authModel.accessToken,
-        refreshToken: authModel.refreshToken,
+      final response = await _dio.post(
+        '/UserLogin',
+        data: formData, // Use formData instead of JSON
+        options: Options(
+          contentType:
+              'multipart/form-data', // Set content type to multipart/form-data
+          headers: {
+            'Accept': 'application/json',
+          },
+        ),
       );
-      return authModel;
-    } else {
-      throw Exception(response.data['error'] ?? 'Login failed');
+
+      log('Login response: ${response.data}');
+
+      if (response.statusCode == 200) {
+        final authModel = AuthModel.fromJson(response.data);
+        await _tokenStorage.saveTokens(
+          accessToken: authModel.accessToken,
+          refreshToken: authModel.refreshToken,
+        );
+        return authModel;
+      } else {
+        throw Exception(response.data['error'] ?? 'Login failed');
+      }
+    } on DioException catch (e) {
+      log('DIO ERROR DETAILS:');
+      log('Type: ${e.type}');
+      log('Error Message: ${e.message}');
+      log('Response Status Code: ${e.response?.statusCode}');
+      log('Response Data: ${e.response?.data}');
+      log('Request Path: ${e.requestOptions.path}');
+      log('Request Data: ${e.requestOptions.data}');
+      final errorMessage = _handleDioError(e);
+      throw Exception(errorMessage);
+    } catch (e) {
+      log('Unexpected login error: $e');
+      throw Exception('An unexpected error occurred');
     }
-  } on DioException catch (e) {
-    print('DIO ERROR DETAILS:');
-    print('Type: ${e.type}');
-    print('Error Message: ${e.message}');
-    print('Response Status Code: ${e.response?.statusCode}');
-    print('Response Data: ${e.response?.data}');
-    print('Request Path: ${e.requestOptions.path}');
-    print('Request Data: ${e.requestOptions.data}');
-    final errorMessage = _handleDioError(e);
-    throw Exception(errorMessage);
-  } catch (e) {
-    print('Unexpected login error: $e');
-    throw Exception('An unexpected error occurred');
   }
-}
 
   Future<void> logout() async {
     try {
-      final token = await _tokenStorage.getAccessToken();
+      final token = _tokenStorage.getAccessToken();
       if (token != null) {
         await _dio.post(
           '/Logout',
@@ -203,39 +204,39 @@ class ApiServiceAuthentication {
   }
 
   Future<String> signUp(UserModel user) async {
-  try {
-    // Add logging to see what's being sent
-    log('Attempting signup with data: ${user.toJson()}');
-    
-    final response = await _dio.post(
-      '/signup',
-      data: user.toJson(),
-      options: Options(
-        contentType: 'application/json',
-        followRedirects: false,
-        validateStatus: (status) {
-          return status! < 500;
-        },
-      ),
-    );
+    try {
+      // Add logging to see what's being sent
+      log('Attempting signup with data: ${user.toJson()}');
 
-    log('Signup response: ${response.data}');
+      final response = await _dio.post(
+        '/signup',
+        data: user.toJson(),
+        options: Options(
+          contentType: 'application/json',
+          followRedirects: false,
+          validateStatus: (status) {
+            return status! < 500;
+          },
+        ),
+      );
 
-    if (response.statusCode == 201 || response.statusCode == 200) {
-      return response.data['message'] ?? 'Signup successful';
-    } else {
-      throw Exception(response.data['error'] ?? 'Signup failed');
+      log('Signup response: ${response.data}');
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        return response.data['message'] ?? 'Signup successful';
+      } else {
+        throw Exception(response.data['error'] ?? 'Signup failed');
+      }
+    } on DioException catch (e) {
+      log('DioError during signup: ${e.message}');
+      log('DioError response: ${e.response?.data}');
+      final errorMessage = _handleDioError(e);
+      throw Exception(errorMessage);
+    } catch (e) {
+      log('Unexpected signup error: $e');
+      throw Exception('An unexpected error occurred during signup');
     }
-  } on DioException catch (e) {
-    log('DioError during signup: ${e.message}');
-    log('DioError response: ${e.response?.data}');
-    final errorMessage = _handleDioError(e);
-    throw Exception(errorMessage);
-  } catch (e) {
-    log('Unexpected signup error: $e');
-    throw Exception('An unexpected error occurred during signup');
   }
-}
 
   String _handleDioError(DioException e) {
     if (e.response != null) {
@@ -279,6 +280,6 @@ class ApiServiceAuthentication {
 }
 
 @riverpod
-ApiServiceAuthentication apiService( ref) {
+ApiServiceAuthentication apiService(ref) {
   return ApiServiceAuthentication();
 }

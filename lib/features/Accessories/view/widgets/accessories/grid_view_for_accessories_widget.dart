@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:hand_car/features/Accessories/model/products/products_model.dart';
 import 'package:hand_car/features/Accessories/controller/products_controller/products_controller.dart';
@@ -33,19 +35,18 @@ class GridViewBuilderAccessoriesWidget extends ConsumerWidget {
         ),
       ),
       data: (products) {
-        print('Total products: ${products.length}');
-        print('Current category: $categoryName');
-        print('Available categories: ${products.map((p) => p.category).toSet()}');
-        
-        // Filter products based on the category
-        final categoryProducts = products
-            .where((product) {
-              print('Comparing: ${product.category.toLowerCase()} with ${categoryName.toLowerCase()}');
-              return product.category.toLowerCase().trim() == categoryName.toLowerCase().trim();
-            })
-            .toList();
+        log('Total products: ${products.length}');
+        log('Current category: $categoryName');
+        log('Available categories: ${products.map((p) => p.category).toSet()}');
 
-        print('Filtered products count: ${categoryProducts.length}');
+        // Filter products based on the category
+        final categoryProducts = products.where((product) {
+          log('Comparing: ${product.category.toLowerCase()} with ${categoryName.toLowerCase()}');
+          return product.category.toLowerCase().trim() ==
+              categoryName.toLowerCase().trim();
+        }).toList();
+
+        log('Filtered products count: ${categoryProducts.length}');
 
         if (categoryProducts.isEmpty) {
           return Center(

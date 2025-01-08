@@ -22,15 +22,16 @@ class ProductsApiServices {
   Future<List<ProductsModel>> getProducts() async {
     try {
       final response = await _dio.get('/view_products');
-      print('Raw API response: ${response.data}');
-      
+      log('Raw API response: ${response.data}');
+
       final List<dynamic> productList = response.data['product'];
-      print('Product list: $productList');
+      log('Product list: $productList');
 
       return productList.map((dynamic item) {
         // Convert the dynamic Map to Map<String, dynamic>
-        final Map<String, dynamic> json = Map<String, dynamic>.from(item as Map);
-        
+        final Map<String, dynamic> json =
+            Map<String, dynamic>.from(item as Map);
+
         // Add default values for optional fields
         final modifiedJson = {
           ...json,
@@ -42,22 +43,22 @@ class ProductsApiServices {
         try {
           return ProductsModel.fromJson(modifiedJson);
         } catch (e) {
-          print('Error parsing product: $e');
-          print('Product data: $modifiedJson');
+          log('Error parsing product: $e');
+          log('Product data: $modifiedJson');
           rethrow;
         }
       }).toList();
-      
     } on DioException catch (e) {
-      print('Dio error: ${e.message}');
-      print('Response: ${e.response?.data}');
+      log('Dio error: ${e.message}');
+      log('Response: ${e.response?.data}');
       throw Exception('Failed to fetch products: ${e.message}');
     } catch (e, stack) {
-      print('Error fetching products: $e');
-      print('Stack trace: $stack');
+      log('Error fetching products: $e');
+      log('Stack trace: $stack');
       throw Exception('Failed to fetch products: $e');
     }
   }
+
   /// Search products
 
   Future<SearchResponse> searchProducts(String query) async {
@@ -85,20 +86,20 @@ class ProductsApiServices {
 
   //Promoted Products
 
-   Future<List<PromotedProductsModel>> getPromotedProducts() async {
+  Future<List<PromotedProductsModel>> getPromotedProducts() async {
     try {
-      final response =
-          await _dio.get('/view_promoted_products'); // Adjust endpoint as needed
+      final response = await _dio
+          .get('/view_promoted_products'); // Adjust endpoint as needed
       final List<dynamic> data = response.data['promoted_products'];
       log('Promoted products data: $data');
       return data.map((json) => PromotedProductsModel.fromJson(json)).toList();
     } catch (e) {
       throw Exception('Failed to fetch promoted products: $e');
     }
-
   }
 
-   Future<List<ProductsModel>> getFilteredProducts(Map<String, dynamic> queryParams) async {
+  Future<List<ProductsModel>> getFilteredProducts(
+      Map<String, dynamic> queryParams) async {
     try {
       final response = await _dio.get(
         '/filter/products',

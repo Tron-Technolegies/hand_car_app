@@ -46,7 +46,7 @@ class EditProfileScreen extends HookConsumerWidget {
                         filled: true,
                         // ignore: deprecated_member_use
                         fillColor:
-                            Color.fromARGB(255, 226, 87, 83).withOpacity(0.05),
+                            Color.fromARGB(255, 226, 87, 83).withValues(alpha:0.05),
                         contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16.0 * 1.5, vertical: 16.0),
                         border: const OutlineInputBorder(
@@ -63,7 +63,7 @@ class EditProfileScreen extends HookConsumerWidget {
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: const Color.fromARGB(255, 226, 87, 83)
-                            .withOpacity(0.05),
+                            .withValues(alpha: 0.05),
                         contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16.0 * 1.5, vertical: 16.0),
                         border: const OutlineInputBorder(
@@ -80,7 +80,7 @@ class EditProfileScreen extends HookConsumerWidget {
                       decoration: InputDecoration(
                         filled: true,
                         fillColor:
-                            Color.fromARGB(255, 226, 87, 83).withOpacity(0.05),
+                            Color.fromARGB(255, 226, 87, 83).withValues(alpha:0.05),
                         contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16.0 * 1.5, vertical: 16.0),
                         border: const OutlineInputBorder(
@@ -97,7 +97,7 @@ class EditProfileScreen extends HookConsumerWidget {
                       decoration: InputDecoration(
                         filled: true,
                         fillColor:
-                            Color.fromARGB(255, 226, 87, 83).withOpacity(0.05),
+                            Color.fromARGB(255, 226, 87, 83).withValues(alpha:0.05),
                         contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16.0 * 1.5, vertical: 16.0),
                         border: const OutlineInputBorder(
@@ -123,7 +123,7 @@ class EditProfileScreen extends HookConsumerWidget {
                         ),
                         filled: true,
                         fillColor:
-                            Color.fromARGB(255, 226, 87, 83).withOpacity(0.05),
+                            Color.fromARGB(255, 226, 87, 83).withValues(alpha:0.05),
                         contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16.0 * 1.5, vertical: 16.0),
                         border: const OutlineInputBorder(
@@ -141,7 +141,7 @@ class EditProfileScreen extends HookConsumerWidget {
                         filled: true,
                         fillColor:
                             // ignore: deprecated_member_use
-                            Color.fromARGB(255, 226, 87, 83).withOpacity(0.05),
+                            Color.fromARGB(255, 226, 87, 83).withValues(alpha:0.05),
                         contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16.0 * 1.5, vertical: 16.0),
                         border: const OutlineInputBorder(
@@ -168,7 +168,7 @@ class EditProfileScreen extends HookConsumerWidget {
                           .bodyLarge!
                           .color!
                           // ignore: deprecated_member_use
-                          .withOpacity(0.08),
+                          .withValues(alpha:0.08),
                       foregroundColor: Colors.white,
                       minimumSize: const Size(double.infinity, 48),
                       shape: const StadiumBorder(),

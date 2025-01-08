@@ -60,7 +60,7 @@ class SubscriptionPage extends HookWidget {
               ? context.colors.primaryTxt
               : context.colors.primary,
           labelStyle: context.typography.bodyLarge,
-          unselectedLabelColor: context.colors.primaryTxt.withOpacity(0.5),
+          unselectedLabelColor: context.colors.primaryTxt.withValues(alpha:0.5),
           unselectedLabelStyle: context.typography.bodyLarge,
           indicatorSize: TabBarIndicatorSize.label,
           tabs: const [

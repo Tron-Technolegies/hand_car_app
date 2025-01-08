@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -34,7 +36,7 @@ class ProductCard extends HookConsumerWidget {
     // Use state to manage quantity locally
     final quantity = useState(currentQuantity);
     final isUpdating = useState(false);
-    
+
     // Generate list of quantities from 1 to 10
     final quantities = List<int>.generate(10, (i) => i + 1);
 
@@ -76,21 +78,21 @@ class ProductCard extends HookConsumerWidget {
           children: [
             // Product Image
             ClipRRect(
-  borderRadius: BorderRadius.circular(8),
-  child: image != null && image!.isNotEmpty
-      ? Image.network(
-          image!,
-          width: 80,
-          height: 80,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            print('Image error for URL: $image');
-            print('Error details: $error');
-            return _buildPlaceholder();
-          },
-        )
-      : _buildPlaceholder(),
-),
+              borderRadius: BorderRadius.circular(8),
+              child: image != null && image!.isNotEmpty
+                  ? Image.network(
+                      image!,
+                      width: 80,
+                      height: 80,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        log('Image error for URL: $image');
+                        log('Error details: $error');
+                        return _buildPlaceholder();
+                      },
+                    )
+                  : _buildPlaceholder(),
+            ),
             SizedBox(width: context.space.space_200),
 
             // Product Details
@@ -132,7 +134,7 @@ class ProductCard extends HookConsumerWidget {
                       Container(
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: context.colors.primaryTxt.withOpacity(0.3),
+                            color: context.colors.primaryTxt.withValues(alpha: 0.3),
                           ),
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -154,8 +156,8 @@ class ProductCard extends HookConsumerWidget {
                             }).toList(),
                             onChanged: (int? newValue) async {
                               // Check if quantity change is allowed
-                              if (newValue != null && 
-                                  !isUpdating.value && 
+                              if (newValue != null &&
+                                  !isUpdating.value &&
                                   onQuantityChanged != null) {
                                 try {
                                   // Set updating state
@@ -174,7 +176,8 @@ class ProductCard extends HookConsumerWidget {
                                 } catch (e) {
                                   // Revert to previous quantity if update fails
                                   SnackbarUtil.showsnackbar(
-                                    message: "Failed to update quantity: ${e.toString()}",
+                                    message:
+                                        "Failed to update quantity: ${e.toString()}",
                                     showretry: false,
                                   );
                                 } finally {
@@ -207,6 +210,7 @@ class ProductCard extends HookConsumerWidget {
     }
   }
 }
+
 Widget _buildPlaceholder() {
   return Container(
     width: 80,

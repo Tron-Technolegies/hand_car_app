@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Accessories/controller/cart/cart_controller.dart';
@@ -166,7 +168,7 @@ class CartItemWidget extends HookConsumerWidget {
                       height: 40,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
-                        print('Image error: $error for URL: $imageUrl');
+                        log('Image error: $error for URL: $imageUrl');
                         return _buildPlaceholder(context);
                       },
                       loadingBuilder: (context, child, loadingProgress) {

@@ -30,7 +30,7 @@ class TokenInterceptor extends Interceptor {
   }
 
   Future<void> _refreshToken() async {
-    final refreshToken = await _tokenStorage.getRefreshToken();
+    final refreshToken = _tokenStorage.getRefreshToken();
     if (refreshToken == null || refreshToken.isEmpty) {
       throw Exception('No refresh token available');
     }

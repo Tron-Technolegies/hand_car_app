@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -208,7 +210,7 @@ class AccessoriesPage extends HookConsumerWidget {
                       text1: category.name,
                       image: images[index],
                       onTap: () {
-                        print('Selected category: ${category.name}');
+                        log('Selected category: ${category.name}');
                         pageController.animateToPage(
                           index,
                           duration: const Duration(milliseconds: 300),

@@ -41,7 +41,7 @@ class CouponCardWidget extends HookConsumerWidget {
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 8,
             spreadRadius: 2,
             offset: const Offset(0, 4),
@@ -106,7 +106,7 @@ class CouponCardWidget extends HookConsumerWidget {
                   color: isCopied.value ? Colors.green : Colors.black87,
                 ),
               ),
-               SizedBox(width: context.space.space_200),
+              SizedBox(width: context.space.space_200),
               // Apply Button
               GestureDetector(
                 onTap: onApply,

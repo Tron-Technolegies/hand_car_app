@@ -12,14 +12,14 @@ class AddressCard extends ConsumerWidget {
   final bool isDefault;
 
   const AddressCard({
-    Key? key,
+    super.key,
     required this.name,
     required this.address,
     required this.poBox,
     required this.selectedAddress,
     required this.id,
     this.isDefault = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
