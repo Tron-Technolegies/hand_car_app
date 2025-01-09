@@ -90,7 +90,7 @@ class CartController extends _$CartController {
         ));
       });
 
-      await _cartService.removeFromCart(productId.toString());
+      await _cartService.removeFromCart(productId);
       
       if (!state.isLoading) {
         state = previousState;

@@ -114,7 +114,11 @@ Future<CartResponse> addToCart(String productId) async {
       final response = await _dio.get(
         '/display_cart',
         options: Options(
-          headers: {'Content-Type': 'application/json'},
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer ${_tokenStorage.getAccessToken()}'
+            },
           
         ),
       );
@@ -131,13 +135,16 @@ Future<CartResponse> addToCart(String productId) async {
     });
   }
 
-  Future<void> removeFromCart(String itemId) async {
+  Future<void> removeFromCart(int itemId) async {
     return _makeAuthenticatedRequest(() async {
       final response = await _dio.post(
         '/removecart/',
-        data: {'item_id': itemId},
+        data: FormData.fromMap({'item_id': itemId}),
         options: Options(
-          headers: {'Content-Type': 'application/json'},
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${_tokenStorage.getAccessToken()}'
+            },
         ),
       );
       

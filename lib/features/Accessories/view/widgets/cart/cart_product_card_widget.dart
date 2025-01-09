@@ -1,5 +1,5 @@
 import 'dart:developer';
-
+import 'dart:math' as Math;
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -33,12 +33,23 @@ class ProductCard extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Use state to manage quantity locally
-    final quantity = useState(currentQuantity);
+    final maxQuantity = 10;
+    final quantity = useState<int>(currentQuantity < 1 ? 1 : currentQuantity);
     final isUpdating = useState(false);
+    final isMounted = useIsMounted();
 
-    // Generate list of quantities from 1 to 10
-    final quantities = List<int>.generate(10, (i) => i + 1);
+    // Generate list of quantities, ensuring current quantity is included
+    final quantities = List<int>.generate(
+      Math.max(maxQuantity, quantity.value),
+      (i) => i + 1,
+    ).take(Math.max(maxQuantity, quantity.value)).toList();
+
+    // Create a safe setState function
+    void safeSetState(bool value) {
+      if (isMounted()) {
+        isUpdating.value = value;
+      }
+    }
 
     return Slidable(
       key: Key(productId.toString()),
@@ -78,7 +89,7 @@ class ProductCard extends HookConsumerWidget {
           children: [
             // Product Image
             ClipRRect(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(context.space.space_100),
               child: image != null && image!.isNotEmpty
                   ? Image.network(
                       image!,
@@ -100,7 +111,6 @@ class ProductCard extends HookConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Product Name and Model
                   Text(
                     productName,
                     style: context.typography.bodySemiBold,
@@ -122,7 +132,6 @@ class ProductCard extends HookConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Price
                       Text(
                         'AED ${price.toStringAsFixed(2)}',
                         style: context.typography.bodyMedium.copyWith(
@@ -130,64 +139,72 @@ class ProductCard extends HookConsumerWidget {
                         ),
                       ),
 
-                      // Quantity Dropdown
+                      // Quantity Dropdown with loading indicator
                       Container(
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: context.colors.primaryTxt.withValues(alpha: 0.3),
+                            color: context.colors.primaryTxt
+                                .withValues(alpha: 0.3),
                           ),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         padding: EdgeInsets.symmetric(
                           horizontal: context.space.space_100,
                         ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<int>(
-                            value: quantity.value,
-                            icon: const Icon(Icons.keyboard_arrow_down),
-                            items: quantities.map((int value) {
-                              return DropdownMenuItem<int>(
-                                value: value,
-                                child: Text(
-                                  value.toString(),
-                                  style: context.typography.bodyMedium,
+                        child: isUpdating.value
+                            ? SizedBox(
+                                width: context.space.space_300,
+                                height: context.space.space_300,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    context.colors.primary,
+                                  ),
                                 ),
-                              );
-                            }).toList(),
-                            onChanged: (int? newValue) async {
-                              // Check if quantity change is allowed
-                              if (newValue != null &&
-                                  !isUpdating.value &&
-                                  onQuantityChanged != null) {
-                                try {
-                                  // Set updating state
-                                  isUpdating.value = true;
-
-                                  // Attempt to update quantity
-                                  await onQuantityChanged!(newValue);
-
-                                  // Update local state on successful update
-                                  quantity.value = newValue;
-
-                                  SnackbarUtil.showsnackbar(
-                                    message: "Quantity updated successfully",
-                                    showretry: false,
-                                  );
-                                } catch (e) {
-                                  // Revert to previous quantity if update fails
-                                  SnackbarUtil.showsnackbar(
-                                    message:
-                                        "Failed to update quantity: ${e.toString()}",
-                                    showretry: false,
-                                  );
-                                } finally {
-                                  // Reset updating state
-                                  isUpdating.value = false;
-                                }
-                              }
-                            },
-                          ),
-                        ),
+                              )
+                            : DropdownButtonHideUnderline(
+                                child: DropdownButton<int>(
+                                  value: quantity.value,
+                                  icon: const Icon(Icons.keyboard_arrow_down),
+                                  items: quantities.map((int value) {
+                                    return DropdownMenuItem<int>(
+                                      value: value,
+                                      child: Text(
+                                        value.toString(),
+                                        style: context.typography.bodyMedium,
+                                      ),
+                                    );
+                                  }).toList(),
+                                  onChanged: (int? newValue) async {
+                                    if (newValue != null &&
+                                        !isUpdating.value &&
+                                        onQuantityChanged != null) {
+                                      try {
+                                        safeSetState(true);
+                                        await onQuantityChanged!(newValue);
+                                        if (isMounted()) {
+                                          quantity.value = newValue;
+                                          SnackbarUtil.showsnackbar(
+                                            message:
+                                                "Quantity updated successfully",
+                                            showretry: false,
+                                          );
+                                        }
+                                      } catch (e) {
+                                        if (isMounted()) {
+                                          SnackbarUtil.showsnackbar(
+                                            message:
+                                                "Failed to update quantity: ${e.toString()}",
+                                            showretry: false,
+                                          );
+                                        }
+                                      } finally {
+                                        safeSetState(false);
+                                      }
+                                    }
+                                  },
+                                ),
+                              ),
                       ),
                     ],
                   ),
