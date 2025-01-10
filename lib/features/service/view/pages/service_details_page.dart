@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hand_car/features/service/view/widgets/services_list_widget.dart';
@@ -152,7 +153,67 @@ class ServiceDetailsPage extends StatelessWidget {
                 ])
               ],
             ),
-            SizedBox(height: context.space.space_100),
+            SizedBox(height: context.space.space_200),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              spacing: context.space.space_200,
+              children: [
+                Container(
+                  width: 50.0,
+                  height: 50.0,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color:
+                            Colors.black.withValues(alpha: 0.5), // Shadow color
+                        spreadRadius: 2,
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: IconButton(
+                      onPressed: () {
+                        launchWhatsApp();
+                      },
+                      icon: const Icon(
+                        FontAwesomeIcons.whatsapp,
+                        color: Colors.green,
+                      )),
+                ),
+                Container(
+                  width: 50.0,
+                  height: 50.0,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color:
+                            Colors.black.withValues(alpha: 0.5), // Shadow color
+                        spreadRadius: 2,
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: IconButton(
+                      onPressed: () {
+                        makePhoneCall('+971 55 249 9872');
+                      },
+                      icon: const Icon(
+                        FontAwesomeIcons.phone,
+                        color: Colors.black,
+                      )),
+                ),
+              ],
+            ),
+
+            SizedBox(height: context.space.space_200),
+
             Text(
               "Address",
               style: context.typography.bodyLargeSemiBold

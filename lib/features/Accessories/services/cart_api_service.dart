@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
+import 'package:hand_car/config.dart';
 import 'package:hand_car/core/router/user_validation.dart';
 import 'package:hand_car/features/Accessories/model/cart/cart_model.dart';
 import 'package:hand_car/core/exception/cart/cart_exception.dart';
@@ -7,7 +8,7 @@ import 'package:hand_car/features/Accessories/model/cart/cart_response.dart';
 
 class CartApiService {
   final _dio = Dio(BaseOptions(
-    baseUrl: 'https://handcar-backend-1.onrender.com',
+    baseUrl: baseUrl,
     validateStatus: (status) => status! < 500,
   ));
   
