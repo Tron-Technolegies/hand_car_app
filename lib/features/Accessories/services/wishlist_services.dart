@@ -24,7 +24,7 @@ class WishlistServices {
       'Accept': 'application/json',
     };
   }
-
+   // Function to add a product to the wishlist
    Future<WishlistResponse> addToWishlist(int productId) async {
     try {
       final token = TokenStorage().getAccessToken();
@@ -58,7 +58,7 @@ class WishlistServices {
       throw Exception(e.toString());
     }
   }
-
+  //remove from wishlist
    Future<bool> removeFromWishlist(String productId) async {
     try {
       final token = TokenStorage().getAccessToken();
@@ -87,6 +87,8 @@ class WishlistServices {
       throw Exception(e.toString());
     }
   }
+
+  // Function to get the wishlist
   Future<Map<String, WishlistResponse>> getWishlist() async {
   try {
     final token = TokenStorage().getAccessToken();

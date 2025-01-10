@@ -12,6 +12,8 @@ class ReviewApiServices {
     ),
 
   );
+
+  // Add a new review
   Future<ReviewModel> addReview({required int productId,required int rating,required String comment,}) async {
     try {
       final response = await _dio.post(

@@ -98,6 +98,7 @@ class ProductsApiServices {
     }
   }
 
+// Filtered products
   Future<List<ProductsModel>> getFilteredProducts(
       Map<String, dynamic> queryParams) async {
     try {
