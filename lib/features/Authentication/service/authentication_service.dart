@@ -20,8 +20,8 @@ class ApiServiceAuthentication {
               'Accept': 'application/json',
             },
             baseUrl: baseUrl,
-            connectTimeout: const Duration(seconds: 5),
-            receiveTimeout: const Duration(seconds: 3),
+            connectTimeout: const Duration(seconds: 10),
+            receiveTimeout: const Duration(seconds: 10),
           ),
         ),
         _tokenStorage = TokenStorage() {
@@ -203,40 +203,39 @@ class ApiServiceAuthentication {
     _dio.options.headers.remove('Authorization');
   }
 
-  Future<String> signUp(UserModel user) async {
+Future<String> signUp(UserModel user) async {
+  int retryCount = 0;
+  const maxRetries = 3;
+  
+  while (retryCount < maxRetries) {
     try {
-      // Add logging to see what's being sent
-      log('Attempting signup with data: ${user.toJson()}');
-
       final response = await _dio.post(
-        '/signup',
+        '/signup/',
         data: user.toJson(),
         options: Options(
-          contentType: 'application/json',
-          followRedirects: false,
-          validateStatus: (status) {
-            return status! < 500;
-          },
+          headers: {'Content-Type': 'application/json'},
         ),
       );
 
-      log('Signup response: ${response.data}');
-
-      if (response.statusCode == 201 || response.statusCode == 200) {
-        return response.data['message'] ?? 'Signup successful';
-      } else {
+      if (response.statusCode != 200) {
         throw Exception(response.data['error'] ?? 'Signup failed');
       }
+      return response.data['message'] ?? 'Signup successful';
     } on DioException catch (e) {
-      log('DioError during signup: ${e.message}');
-      log('DioError response: ${e.response?.data}');
-      final errorMessage = _handleDioError(e);
-      throw Exception(errorMessage);
-    } catch (e) {
-      log('Unexpected signup error: $e');
-      throw Exception('An unexpected error occurred during signup');
+      if (e.type == DioExceptionType.receiveTimeout ||
+          e.type == DioExceptionType.connectionTimeout) {
+        retryCount++;
+        if (retryCount == maxRetries) {
+          rethrow;
+        }
+        await Future.delayed(Duration(seconds: 2 * retryCount));
+        continue;
+      }
+      rethrow;
     }
   }
+  throw Exception('Failed after $maxRetries retries');
+}
 
   String _handleDioError(DioException e) {
     if (e.response != null) {
