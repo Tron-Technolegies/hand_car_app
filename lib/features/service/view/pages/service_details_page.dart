@@ -159,55 +159,92 @@ class ServiceDetailsPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               spacing: context.space.space_200,
               children: [
-                Container(
-                  width: 50.0,
-                  height: 50.0,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color:
-                            Colors.black.withValues(alpha: 0.5), // Shadow color
-                        spreadRadius: 2,
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
+                Column(
+                  spacing: context.space.space_100,
+                  children: [
+                    Container(
+                      width: 50.0,
+                      height: 50.0,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black
+                                .withValues(alpha: 0.5), // Shadow color
+                            spreadRadius: 2,
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: IconButton(
-                      onPressed: () {
-                        launchWhatsApp();
-                      },
-                      icon: const Icon(
-                        FontAwesomeIcons.whatsapp,
-                        color: Colors.green,
-                      )),
+                      child: IconButton(
+                          onPressed: () {
+                            launchWhatsApp();
+                          },
+                          icon: const Icon(
+                            FontAwesomeIcons.whatsapp,
+                            color: Colors.green,
+                          )),
+                    ),
+                    Text.rich(TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "Chat ",
+                          style: context.typography.bodyMedium,
+                        ),
+                        TextSpan(
+                          text: "US",
+                          style: context.typography.bodyMedium
+                              .copyWith(color: context.colors.green),
+                        ),
+                      ],
+                    ))
+                  ],
                 ),
-                Container(
-                  width: 50.0,
-                  height: 50.0,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color:
-                            Colors.black.withValues(alpha: 0.5), // Shadow color
-                        spreadRadius: 2,
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
+                Column(
+                  spacing: context.space.space_100,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Container(
+                      width: 50.0,
+                      height: 50.0,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black
+                                .withValues(alpha: 0.5), // Shadow color
+                            spreadRadius: 2,
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: IconButton(
-                      onPressed: () {
-                        makePhoneCall('+971 55 249 9872');
-                      },
-                      icon: const Icon(
-                        FontAwesomeIcons.phone,
-                        color: Colors.black,
-                      )),
+                      child: IconButton(
+                          onPressed: () {
+                            makePhoneCall('+971 55 249 9872');
+                          },
+                          icon: const Icon(
+                            FontAwesomeIcons.phone,
+                            color: Colors.black,
+                          )),
+                    ),
+                    Text.rich(TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "Call ",
+                          style: context.typography.bodyMedium,
+                        ),
+                        TextSpan(
+                          text: "US",
+                          style: context.typography.bodyMedium
+                              .copyWith(color: context.colors.primary),
+                        ),
+                      ],
+                    ))
+                  ],
                 ),
               ],
             ),
