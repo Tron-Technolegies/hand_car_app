@@ -20,11 +20,15 @@ ServiceModel _$ServiceModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ServiceModel {
-  String get serviceName => throw _privateConstructorUsedError;
-  String get serviceCategory => throw _privateConstructorUsedError;
+  int get id => throw _privateConstructorUsedError;
+  String get vendorName => throw _privateConstructorUsedError;
+  String get phoneNumber => throw _privateConstructorUsedError;
+  String get whatsappNumber => throw _privateConstructorUsedError;
+  String? get serviceCategory => throw _privateConstructorUsedError;
   String get serviceDetails => throw _privateConstructorUsedError;
+  String get address => throw _privateConstructorUsedError;
   double get rate => throw _privateConstructorUsedError;
-  String get image => throw _privateConstructorUsedError;
+  List<String> get images => throw _privateConstructorUsedError;
 
   /// Serializes this ServiceModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -43,11 +47,15 @@ abstract class $ServiceModelCopyWith<$Res> {
       _$ServiceModelCopyWithImpl<$Res, ServiceModel>;
   @useResult
   $Res call(
-      {String serviceName,
-      String serviceCategory,
+      {int id,
+      String vendorName,
+      String phoneNumber,
+      String whatsappNumber,
+      String? serviceCategory,
       String serviceDetails,
+      String address,
       double rate,
-      String image});
+      List<String> images});
 }
 
 /// @nodoc
@@ -65,33 +73,53 @@ class _$ServiceModelCopyWithImpl<$Res, $Val extends ServiceModel>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? serviceName = null,
-    Object? serviceCategory = null,
+    Object? id = null,
+    Object? vendorName = null,
+    Object? phoneNumber = null,
+    Object? whatsappNumber = null,
+    Object? serviceCategory = freezed,
     Object? serviceDetails = null,
+    Object? address = null,
     Object? rate = null,
-    Object? image = null,
+    Object? images = null,
   }) {
     return _then(_value.copyWith(
-      serviceName: null == serviceName
-          ? _value.serviceName
-          : serviceName // ignore: cast_nullable_to_non_nullable
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
+      vendorName: null == vendorName
+          ? _value.vendorName
+          : vendorName // ignore: cast_nullable_to_non_nullable
               as String,
-      serviceCategory: null == serviceCategory
+      phoneNumber: null == phoneNumber
+          ? _value.phoneNumber
+          : phoneNumber // ignore: cast_nullable_to_non_nullable
+              as String,
+      whatsappNumber: null == whatsappNumber
+          ? _value.whatsappNumber
+          : whatsappNumber // ignore: cast_nullable_to_non_nullable
+              as String,
+      serviceCategory: freezed == serviceCategory
           ? _value.serviceCategory
           : serviceCategory // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       serviceDetails: null == serviceDetails
           ? _value.serviceDetails
           : serviceDetails // ignore: cast_nullable_to_non_nullable
+              as String,
+      address: null == address
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
               as String,
       rate: null == rate
           ? _value.rate
           : rate // ignore: cast_nullable_to_non_nullable
               as double,
-      image: null == image
-          ? _value.image
-          : image // ignore: cast_nullable_to_non_nullable
-              as String,
+      images: null == images
+          ? _value.images
+          : images // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ) as $Val);
   }
 }
@@ -105,11 +133,15 @@ abstract class _$$ServiceModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String serviceName,
-      String serviceCategory,
+      {int id,
+      String vendorName,
+      String phoneNumber,
+      String whatsappNumber,
+      String? serviceCategory,
       String serviceDetails,
+      String address,
       double rate,
-      String image});
+      List<String> images});
 }
 
 /// @nodoc
@@ -125,33 +157,53 @@ class __$$ServiceModelImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? serviceName = null,
-    Object? serviceCategory = null,
+    Object? id = null,
+    Object? vendorName = null,
+    Object? phoneNumber = null,
+    Object? whatsappNumber = null,
+    Object? serviceCategory = freezed,
     Object? serviceDetails = null,
+    Object? address = null,
     Object? rate = null,
-    Object? image = null,
+    Object? images = null,
   }) {
     return _then(_$ServiceModelImpl(
-      serviceName: null == serviceName
-          ? _value.serviceName
-          : serviceName // ignore: cast_nullable_to_non_nullable
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
+      vendorName: null == vendorName
+          ? _value.vendorName
+          : vendorName // ignore: cast_nullable_to_non_nullable
               as String,
-      serviceCategory: null == serviceCategory
+      phoneNumber: null == phoneNumber
+          ? _value.phoneNumber
+          : phoneNumber // ignore: cast_nullable_to_non_nullable
+              as String,
+      whatsappNumber: null == whatsappNumber
+          ? _value.whatsappNumber
+          : whatsappNumber // ignore: cast_nullable_to_non_nullable
+              as String,
+      serviceCategory: freezed == serviceCategory
           ? _value.serviceCategory
           : serviceCategory // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       serviceDetails: null == serviceDetails
           ? _value.serviceDetails
           : serviceDetails // ignore: cast_nullable_to_non_nullable
+              as String,
+      address: null == address
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
               as String,
       rate: null == rate
           ? _value.rate
           : rate // ignore: cast_nullable_to_non_nullable
               as double,
-      image: null == image
-          ? _value.image
-          : image // ignore: cast_nullable_to_non_nullable
-              as String,
+      images: null == images
+          ? _value.images
+          : images // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ));
   }
 }
@@ -160,29 +212,41 @@ class __$$ServiceModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ServiceModelImpl implements _ServiceModel {
   const _$ServiceModelImpl(
-      {required this.serviceName,
-      required this.serviceCategory,
+      {required this.id,
+      required this.vendorName,
+      required this.phoneNumber,
+      required this.whatsappNumber,
+      this.serviceCategory,
       required this.serviceDetails,
+      required this.address,
       required this.rate,
-      required this.image});
+      required this.images});
 
   factory _$ServiceModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$ServiceModelImplFromJson(json);
 
   @override
-  final String serviceName;
+  final int id;
   @override
-  final String serviceCategory;
+  final String vendorName;
+  @override
+  final String phoneNumber;
+  @override
+  final String whatsappNumber;
+  @override
+  final String? serviceCategory;
   @override
   final String serviceDetails;
   @override
+  final String address;
+  @override
   final double rate;
   @override
-  final String image;
+  final List<String> images;
 
   @override
   String toString() {
-    return 'ServiceModel(serviceName: $serviceName, serviceCategory: $serviceCategory, serviceDetails: $serviceDetails, rate: $rate, image: $image)';
+    return 'ServiceModel(id: $id, vendorName: $vendorName, phoneNumber: $phoneNumber, whatsappNumber: $whatsappNumber, serviceCategory: $serviceCategory, serviceDetails: $serviceDetails, address: $address, rate: $rate, images: $images)';
   }
 
   @override
@@ -190,20 +254,35 @@ class _$ServiceModelImpl implements _ServiceModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ServiceModelImpl &&
-            (identical(other.serviceName, serviceName) ||
-                other.serviceName == serviceName) &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.vendorName, vendorName) ||
+                other.vendorName == vendorName) &&
+            (identical(other.phoneNumber, phoneNumber) ||
+                other.phoneNumber == phoneNumber) &&
+            (identical(other.whatsappNumber, whatsappNumber) ||
+                other.whatsappNumber == whatsappNumber) &&
             (identical(other.serviceCategory, serviceCategory) ||
                 other.serviceCategory == serviceCategory) &&
             (identical(other.serviceDetails, serviceDetails) ||
                 other.serviceDetails == serviceDetails) &&
+            (identical(other.address, address) || other.address == address) &&
             (identical(other.rate, rate) || other.rate == rate) &&
-            (identical(other.image, image) || other.image == image));
+            const DeepCollectionEquality().equals(other.images, images));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType, serviceName, serviceCategory, serviceDetails, rate, image);
+      runtimeType,
+      id,
+      vendorName,
+      phoneNumber,
+      whatsappNumber,
+      serviceCategory,
+      serviceDetails,
+      address,
+      rate,
+      const DeepCollectionEquality().hash(images));
 
   /// Create a copy of ServiceModel
   /// with the given fields replaced by the non-null parameter values.
@@ -223,25 +302,37 @@ class _$ServiceModelImpl implements _ServiceModel {
 
 abstract class _ServiceModel implements ServiceModel {
   const factory _ServiceModel(
-      {required final String serviceName,
-      required final String serviceCategory,
+      {required final int id,
+      required final String vendorName,
+      required final String phoneNumber,
+      required final String whatsappNumber,
+      final String? serviceCategory,
       required final String serviceDetails,
+      required final String address,
       required final double rate,
-      required final String image}) = _$ServiceModelImpl;
+      required final List<String> images}) = _$ServiceModelImpl;
 
   factory _ServiceModel.fromJson(Map<String, dynamic> json) =
       _$ServiceModelImpl.fromJson;
 
   @override
-  String get serviceName;
+  int get id;
   @override
-  String get serviceCategory;
+  String get vendorName;
+  @override
+  String get phoneNumber;
+  @override
+  String get whatsappNumber;
+  @override
+  String? get serviceCategory;
   @override
   String get serviceDetails;
   @override
+  String get address;
+  @override
   double get rate;
   @override
-  String get image;
+  List<String> get images;
 
   /// Create a copy of ServiceModel
   /// with the given fields replaced by the non-null parameter values.
