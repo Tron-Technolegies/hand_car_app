@@ -18,7 +18,7 @@ class ItemCodeSearch extends StatelessWidget {
       String itemCode,
     ) async {
       final message = Uri.encodeComponent(
-          "Hello, I would like to search for spare parts for chassis number: $itemCode");
+          "Hello, I’m looking to find spare parts for the item with code:$itemCode");
 
       final whatsappUrl = Uri.parse("https://wa.me/9895499872?text=$message");
 

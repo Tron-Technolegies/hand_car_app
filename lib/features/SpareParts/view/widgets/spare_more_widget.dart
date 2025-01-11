@@ -6,17 +6,42 @@ import 'package:hand_car/features/SpareParts/view/widgets/spare_brands_container
 import 'package:hand_car/gen/assets.gen.dart';
 
 class SpareMoreWidget extends HookWidget {
-  final List<String> initialBrands = [
-    Assets.icons.bremboLogo.path,
-    Assets.icons.fuchsLogo.path,
-    Assets.icons.elringLogo.path,
+  final List<Map<String, String>> initialBrands = [
+    {
+      'image': Assets.icons.bremboLogo.path,
+      'name': 'Brembo'
+    },
+    {
+      'image': Assets.icons.fuchsLogo.path,
+      'name': 'Fuchs'
+    },
+    {
+      'image': Assets.icons.elringLogo.path,
+      'name': 'Elring'
+    },
   ];
-  final List<String> moreBrands = [
-    Assets.icons.densoLogo.path,
-    Assets.icons.totalLogo.path,
-    Assets.icons.kybLogo.path,
-    Assets.icons.mannLogo.path,
-    Assets.icons.motulLogo.path,
+
+  final List<Map<String, String>> moreBrands = [
+    {
+      'image': Assets.icons.densoLogo.path,
+      'name': 'Denso'
+    },
+    {
+      'image': Assets.icons.totalLogo.path,
+      'name': 'Total'
+    },
+    {
+      'image': Assets.icons.kybLogo.path,
+      'name': 'KYB'
+    },
+    {
+      'image': Assets.icons.mannLogo.path,
+      'name': 'Mann'
+    },
+    {
+      'image': Assets.icons.motulLogo.path,
+      'name': 'Motul'
+    },
   ];
 
   SpareMoreWidget({super.key});
@@ -34,12 +59,18 @@ class SpareMoreWidget extends HookWidget {
         SizedBox(height: context.space.space_200),
         ...initialBrands.map((brand) => Padding(
               padding: EdgeInsets.all(context.space.space_100),
-              child: SpareBrandsContainerWidget(brandImage: brand),
+              child: SpareBrandsContainerWidget(
+                brandImage: brand['image']!,
+                brandName: brand['name']!,
+              ),
             )),
         if (showMoreBrands.value)
           ...moreBrands.map((brand) => Padding(
                 padding: EdgeInsets.all(context.space.space_100),
-                child: SpareBrandsContainerWidget(brandImage: brand),
+                child: SpareBrandsContainerWidget(
+                  brandImage: brand['image']!,
+                  brandName: brand['name']!,
+                ),
               )),
         SizedBox(height: context.space.space_200),
         if (!showMoreBrands.value)

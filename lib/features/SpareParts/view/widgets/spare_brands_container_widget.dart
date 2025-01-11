@@ -6,19 +6,30 @@ import 'package:url_launcher/url_launcher.dart';
 
 class SpareBrandsContainerWidget extends StatelessWidget {
   final String brandImage;
-  const SpareBrandsContainerWidget({super.key, required this.brandImage});
+  final String brandName;
+
+  const SpareBrandsContainerWidget({
+    super.key, 
+    required this.brandImage,
+    required this.brandName,
+  });
 
   @override
   Widget build(BuildContext context) {
     Future<void> launchWhatsApp() async {
-      final whatsappUrl = Uri.parse("https://wa.me/9895499872");
+      // Create a URL-encoded message that includes the brand name
+      final message = Uri.encodeComponent(
+     "Hello,I’m looking for spare parts for $brandName. Could you please provide more details?"
+      );
+      final whatsappUrl = Uri.parse("https://wa.me/9895499872?text=$message");
 
       if (await canLaunchUrl(whatsappUrl)) {
         await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
       } else {
-        // Fallback if canLaunchUrl fails
         SnackbarUtil.showsnackbar(
-            message: "Could not launch WhatsApp", showretry: true);
+          message: "Could not launch WhatsApp",
+          showretry: true
+        );
       }
     }
 

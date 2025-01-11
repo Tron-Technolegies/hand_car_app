@@ -153,11 +153,11 @@ class ServiceDetailsPage extends StatelessWidget {
                 ])
               ],
             ),
-            SizedBox(height: context.space.space_200),
+            SizedBox(height: context.space.space_300),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
-              spacing: context.space.space_200,
+              spacing: context.space.space_500,
               children: [
                 Column(
                   spacing: context.space.space_100,
@@ -190,13 +190,8 @@ class ServiceDetailsPage extends StatelessWidget {
                     Text.rich(TextSpan(
                       children: [
                         TextSpan(
-                          text: "Chat ",
+                          text: "Chat US ",
                           style: context.typography.bodyMedium,
-                        ),
-                        TextSpan(
-                          text: "US",
-                          style: context.typography.bodyMedium
-                              .copyWith(color: context.colors.green),
                         ),
                       ],
                     ))
@@ -234,13 +229,8 @@ class ServiceDetailsPage extends StatelessWidget {
                     Text.rich(TextSpan(
                       children: [
                         TextSpan(
-                          text: "Call ",
+                          text: "Call US",
                           style: context.typography.bodyMedium,
-                        ),
-                        TextSpan(
-                          text: "US",
-                          style: context.typography.bodyMedium
-                              .copyWith(color: context.colors.primary),
                         ),
                       ],
                     ))
