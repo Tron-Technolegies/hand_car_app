@@ -79,7 +79,7 @@ class ProductSearchContainerWidget extends StatelessWidget {
                 controller: chassisController,
                 decoration: const InputDecoration(
                   hintText: '  Enter Chassis Number',
-                  hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+                  hintStyle: TextStyle(color: Colors.black, fontSize: 14),
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,
                 ),

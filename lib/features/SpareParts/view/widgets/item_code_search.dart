@@ -36,8 +36,8 @@ class ItemCodeSearch extends StatelessWidget {
         borderRadius: BorderRadius.circular(5),
         gradient: LinearGradient(
           colors: [
-         Color(0xff0069E4),
-         Color(0xff0069E4),
+            Color(0xff0069E4),
+            Color(0xff0069E4),
           ],
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
@@ -49,13 +49,13 @@ class ItemCodeSearch extends StatelessWidget {
           Center(
             child: Column(children: [
               Text(
-                "   Enter your chassis number to discover",
+                "Find the best car spare parts ",
                 style: context.typography.bodyLarge.copyWith(
                   color: context.colors.white,
                 ),
               ),
               Text(
-                "  tailored spare parts for your car.",
+                " from top brands by Item code.",
                 style: context.typography.bodyLarge.copyWith(
                   color: context.colors.white,
                 ),
@@ -74,9 +74,9 @@ class ItemCodeSearch extends StatelessWidget {
               ),
               child: TextField(
                 controller: itemCodeController,
-                decoration: const InputDecoration(
-                  hintText: '  Enter Chassis Number',
-                  hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+                decoration: InputDecoration(
+                  hintText: '  Enter Item Code ',
+                  hintStyle: TextStyle(color: Colors.black, fontSize: 14),
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,
                 ),
@@ -104,7 +104,7 @@ class ItemCodeSearch extends StatelessWidget {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                             content:
-                                Text("Please enter a valid chassis number")),
+                                Text("Please enter a valid Item Code number")),
                       );
                     }
                   }),

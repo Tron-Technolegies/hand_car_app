@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
+import 'package:hand_car/features/SpareParts/view/widgets/item_code_search.dart';
 import 'package:hand_car/features/SpareParts/view/widgets/product_search_container_widget.dart';
 import 'package:hand_car/features/SpareParts/view/widgets/carousel_slider_for_genuine_spare_widget.dart';
 import 'package:hand_car/features/SpareParts/view/widgets/spare_more_widget.dart';
@@ -50,6 +51,8 @@ class AutoPartsPage extends HookWidget {
                 "spare parts for your drive",
                 style: context.typography.h3,
               ),
+              SizedBox(height: context.space.space_200),
+              ItemCodeSearch(),
               SizedBox(height: context.space.space_200),
               Text(
                 "Reliable Performance, Guaranteed:",
