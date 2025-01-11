@@ -3,8 +3,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
-import 'package:hand_car/features/service/view/widgets/grid_view_service_widget.dart';
-import 'package:hand_car/features/service/view/widgets/services_icon_widget.dart';
+import 'package:hand_car/features/car_service/view/widgets/grid_view_service_widget.dart';
+import 'package:hand_car/features/car_service/view/widgets/services_icon_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

@@ -3,7 +3,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/snackbar.dart';
-import 'package:hand_car/features/service/view/widgets/services_list_widget.dart';
+import 'package:hand_car/features/car_service/view/widgets/services_list_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:url_launcher/url_launcher.dart';
 

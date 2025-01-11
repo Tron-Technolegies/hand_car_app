@@ -17,7 +17,7 @@ import 'package:hand_car/features/Authentication/view/pages/signup_page.dart';
 import 'package:hand_car/features/Home/view/pages/navigation_page.dart';
 import 'package:hand_car/features/Home/view/pages/onbording_page.dart';
 import 'package:hand_car/features/Home/view/pages/splash_screen_page.dart';
-import 'package:hand_car/features/service/view/pages/service_details_page.dart';
+import 'package:hand_car/features/car_service/view/pages/service_details_page.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 

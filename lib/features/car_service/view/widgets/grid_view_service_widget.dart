@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hand_car/features/service/view/widgets/service_info_container_widget.dart';
+import 'package:hand_car/features/car_service/view/widgets/service_info_container_widget.dart';
 
 //GridView Service
 class GridViewServicesWidget extends StatelessWidget {
