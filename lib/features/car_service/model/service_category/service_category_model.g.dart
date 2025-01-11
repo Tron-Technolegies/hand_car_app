@@ -9,7 +9,7 @@ part of 'service_category_model.dart';
 _$ServiceCategoryModelImpl _$$ServiceCategoryModelImplFromJson(
         Map<String, dynamic> json) =>
     _$ServiceCategoryModelImpl(
-      id: json['id'] as String,
+      id: (json['id'] as num).toInt(),
       name: json['name'] as String,
     );
 

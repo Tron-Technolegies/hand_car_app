@@ -20,7 +20,9 @@ ServiceCategoryModel _$ServiceCategoryModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ServiceCategoryModel {
-  String get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'id')
+  int get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'name')
   String get name => throw _privateConstructorUsedError;
 
   /// Serializes this ServiceCategoryModel to a JSON map.
@@ -39,7 +41,7 @@ abstract class $ServiceCategoryModelCopyWith<$Res> {
           $Res Function(ServiceCategoryModel) then) =
       _$ServiceCategoryModelCopyWithImpl<$Res, ServiceCategoryModel>;
   @useResult
-  $Res call({String id, String name});
+  $Res call({@JsonKey(name: 'id') int id, @JsonKey(name: 'name') String name});
 }
 
 /// @nodoc
@@ -65,7 +67,7 @@ class _$ServiceCategoryModelCopyWithImpl<$Res,
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as int,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -82,7 +84,7 @@ abstract class _$$ServiceCategoryModelImplCopyWith<$Res>
       __$$ServiceCategoryModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, String name});
+  $Res call({@JsonKey(name: 'id') int id, @JsonKey(name: 'name') String name});
 }
 
 /// @nodoc
@@ -105,7 +107,7 @@ class __$$ServiceCategoryModelImplCopyWithImpl<$Res>
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as int,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -117,14 +119,18 @@ class __$$ServiceCategoryModelImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$ServiceCategoryModelImpl implements _ServiceCategoryModel {
-  const _$ServiceCategoryModelImpl({required this.id, required this.name});
+  const _$ServiceCategoryModelImpl(
+      {@JsonKey(name: 'id') required this.id,
+      @JsonKey(name: 'name') required this.name});
 
   factory _$ServiceCategoryModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$ServiceCategoryModelImplFromJson(json);
 
   @override
-  final String id;
+  @JsonKey(name: 'id')
+  final int id;
   @override
+  @JsonKey(name: 'name')
   final String name;
 
   @override
@@ -165,15 +171,18 @@ class _$ServiceCategoryModelImpl implements _ServiceCategoryModel {
 
 abstract class _ServiceCategoryModel implements ServiceCategoryModel {
   const factory _ServiceCategoryModel(
-      {required final String id,
-      required final String name}) = _$ServiceCategoryModelImpl;
+          {@JsonKey(name: 'id') required final int id,
+          @JsonKey(name: 'name') required final String name}) =
+      _$ServiceCategoryModelImpl;
 
   factory _ServiceCategoryModel.fromJson(Map<String, dynamic> json) =
       _$ServiceCategoryModelImpl.fromJson;
 
   @override
-  String get id;
+  @JsonKey(name: 'id')
+  int get id;
   @override
+  @JsonKey(name: 'name')
   String get name;
 
   /// Create a copy of ServiceCategoryModel

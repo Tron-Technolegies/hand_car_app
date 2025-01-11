@@ -3,6 +3,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/features/Accessories/view/pages/wishlist_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/login_with_phone_and_password_page.dart';
+import 'package:hand_car/features/car_service/model/service_model.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Import necessary page routes
@@ -115,19 +116,14 @@ final _routes = [
       return AccessoriesDetailsPage(product: product!);
     },
   ),
-  GoRoute(
-    path: ServiceDetailsPage.route,
-    builder: (context, state) {
-      final data = state.extra as Map<String, dynamic>;
-      return ServiceDetailsPage(
-        image: data['image'] as String,
-        title: data['title'] as String,
-        title2: data['title2'] as String,
-        rating: data['rating'] as String,
-        price: data['price'] as String,
-      );
-    },
-  ),
+ GoRoute(
+  path: ServiceDetailsPage.route,
+  builder: (context, state) {
+    final data = state.extra as Map<String, dynamic>;
+    final service = data['service'] as ServiceModel;
+    return ServiceDetailsPage(service: service);
+  },
+),
   GoRoute(
     path: ShoppingCartScreen.route,
     builder: (context, state) => const ShoppingCartScreen(),

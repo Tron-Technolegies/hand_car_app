@@ -1,41 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:hand_car/features/car_service/model/service_model.dart';
 import 'package:hand_car/features/car_service/view/widgets/service_info_container_widget.dart';
 
-//GridView Service
 class GridViewServicesWidget extends StatelessWidget {
-  final String title;
-  final String title2;
-  final String rating;
-  final String price;
-  final String image;
+  final List<ServiceModel> services;
+
   const GridViewServicesWidget({
     super.key,
-    required this.title,
-    required this.title2,
-    required this.rating,
-    required this.price,
-    required this.image,
+    required this.services,
   });
 
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-      physics: const AlwaysScrollableScrollPhysics(),
-      shrinkWrap: true,
-      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 320,
-        mainAxisSpacing: 0.1,
-        mainAxisExtent: 390,
-        crossAxisSpacing: 0.2,
+      padding: const EdgeInsets.all(12),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 0.8, // Adjusted for better fit
       ),
-      itemCount: 5,
-      itemBuilder: (context, index) => ServiceCardWidget(
-        image: image,
-        title: title,
-        title2: title2,
-        rating: rating,
-        price: price,
-      ),
+      itemCount: services.length,
+      itemBuilder: (context, index) {
+        final service = services[index];
+        return ServiceCardWidget(
+          service: service,
+        );
+      },
     );
   }
 }
+
+// Example usage in your page:
+/*
+Consumer(
+  builder: (context, ref, child) {
+    final servicesAsync = ref.watch(carServiceControllerProvider);
+    
+    return servicesAsync.when(
+      data: (services) => services.isEmpty
+          ? const Center(child: Text('No services available'))
+          : GridViewServicesWidget(services: services),
+      error: (error, stack) => Center(
+        child: Text('Error: ${error.toString()}'),
+      ),
+      loading: () => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  },
+)
+*/

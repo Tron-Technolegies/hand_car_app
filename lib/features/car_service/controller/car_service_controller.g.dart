@@ -7,7 +7,7 @@ part of 'car_service_controller.dart';
 // **************************************************************************
 
 String _$carServiceControllerHash() =>
-    r'358e05ac335c8155b934a9b146f3a65a38e30d04';
+    r'db0ab47cc19422f79683aa7422285732c35600e6';
 
 /// See also [CarServiceController].
 @ProviderFor(CarServiceController)

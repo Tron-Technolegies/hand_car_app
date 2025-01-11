@@ -21,13 +21,20 @@ ServiceModel _$ServiceModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$ServiceModel {
   int get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'vendor_name')
   String get vendorName => throw _privateConstructorUsedError;
+  @JsonKey(name: 'phone_number')
   String get phoneNumber => throw _privateConstructorUsedError;
+  @JsonKey(name: 'whatsapp_number')
   String get whatsappNumber => throw _privateConstructorUsedError;
+  @JsonKey(name: 'service_category')
   String? get serviceCategory => throw _privateConstructorUsedError;
+  @JsonKey(name: 'service_details')
   String get serviceDetails => throw _privateConstructorUsedError;
   String get address => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _parseRate)
   double get rate => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _parseImages)
   List<String> get images => throw _privateConstructorUsedError;
 
   /// Serializes this ServiceModel to a JSON map.
@@ -48,14 +55,14 @@ abstract class $ServiceModelCopyWith<$Res> {
   @useResult
   $Res call(
       {int id,
-      String vendorName,
-      String phoneNumber,
-      String whatsappNumber,
-      String? serviceCategory,
-      String serviceDetails,
+      @JsonKey(name: 'vendor_name') String vendorName,
+      @JsonKey(name: 'phone_number') String phoneNumber,
+      @JsonKey(name: 'whatsapp_number') String whatsappNumber,
+      @JsonKey(name: 'service_category') String? serviceCategory,
+      @JsonKey(name: 'service_details') String serviceDetails,
       String address,
-      double rate,
-      List<String> images});
+      @JsonKey(fromJson: _parseRate) double rate,
+      @JsonKey(fromJson: _parseImages) List<String> images});
 }
 
 /// @nodoc
@@ -134,14 +141,14 @@ abstract class _$$ServiceModelImplCopyWith<$Res>
   @useResult
   $Res call(
       {int id,
-      String vendorName,
-      String phoneNumber,
-      String whatsappNumber,
-      String? serviceCategory,
-      String serviceDetails,
+      @JsonKey(name: 'vendor_name') String vendorName,
+      @JsonKey(name: 'phone_number') String phoneNumber,
+      @JsonKey(name: 'whatsapp_number') String whatsappNumber,
+      @JsonKey(name: 'service_category') String? serviceCategory,
+      @JsonKey(name: 'service_details') String serviceDetails,
       String address,
-      double rate,
-      List<String> images});
+      @JsonKey(fromJson: _parseRate) double rate,
+      @JsonKey(fromJson: _parseImages) List<String> images});
 }
 
 /// @nodoc
@@ -213,14 +220,14 @@ class __$$ServiceModelImplCopyWithImpl<$Res>
 class _$ServiceModelImpl implements _ServiceModel {
   const _$ServiceModelImpl(
       {required this.id,
-      required this.vendorName,
-      required this.phoneNumber,
-      required this.whatsappNumber,
-      this.serviceCategory,
-      required this.serviceDetails,
+      @JsonKey(name: 'vendor_name') required this.vendorName,
+      @JsonKey(name: 'phone_number') required this.phoneNumber,
+      @JsonKey(name: 'whatsapp_number') required this.whatsappNumber,
+      @JsonKey(name: 'service_category') this.serviceCategory,
+      @JsonKey(name: 'service_details') required this.serviceDetails,
       required this.address,
-      required this.rate,
-      required this.images});
+      @JsonKey(fromJson: _parseRate) required this.rate,
+      @JsonKey(fromJson: _parseImages) this.images = const []});
 
   factory _$ServiceModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$ServiceModelImplFromJson(json);
@@ -228,20 +235,27 @@ class _$ServiceModelImpl implements _ServiceModel {
   @override
   final int id;
   @override
+  @JsonKey(name: 'vendor_name')
   final String vendorName;
   @override
+  @JsonKey(name: 'phone_number')
   final String phoneNumber;
   @override
+  @JsonKey(name: 'whatsapp_number')
   final String whatsappNumber;
   @override
+  @JsonKey(name: 'service_category')
   final String? serviceCategory;
   @override
+  @JsonKey(name: 'service_details')
   final String serviceDetails;
   @override
   final String address;
   @override
+  @JsonKey(fromJson: _parseRate)
   final double rate;
   @override
+  @JsonKey(fromJson: _parseImages)
   final List<String> images;
 
   @override
@@ -303,14 +317,15 @@ class _$ServiceModelImpl implements _ServiceModel {
 abstract class _ServiceModel implements ServiceModel {
   const factory _ServiceModel(
       {required final int id,
-      required final String vendorName,
-      required final String phoneNumber,
-      required final String whatsappNumber,
-      final String? serviceCategory,
-      required final String serviceDetails,
+      @JsonKey(name: 'vendor_name') required final String vendorName,
+      @JsonKey(name: 'phone_number') required final String phoneNumber,
+      @JsonKey(name: 'whatsapp_number') required final String whatsappNumber,
+      @JsonKey(name: 'service_category') final String? serviceCategory,
+      @JsonKey(name: 'service_details') required final String serviceDetails,
       required final String address,
-      required final double rate,
-      required final List<String> images}) = _$ServiceModelImpl;
+      @JsonKey(fromJson: _parseRate) required final double rate,
+      @JsonKey(fromJson: _parseImages)
+      final List<String> images}) = _$ServiceModelImpl;
 
   factory _ServiceModel.fromJson(Map<String, dynamic> json) =
       _$ServiceModelImpl.fromJson;
@@ -318,20 +333,27 @@ abstract class _ServiceModel implements ServiceModel {
   @override
   int get id;
   @override
+  @JsonKey(name: 'vendor_name')
   String get vendorName;
   @override
+  @JsonKey(name: 'phone_number')
   String get phoneNumber;
   @override
+  @JsonKey(name: 'whatsapp_number')
   String get whatsappNumber;
   @override
+  @JsonKey(name: 'service_category')
   String? get serviceCategory;
   @override
+  @JsonKey(name: 'service_details')
   String get serviceDetails;
   @override
   String get address;
   @override
+  @JsonKey(fromJson: _parseRate)
   double get rate;
   @override
+  @JsonKey(fromJson: _parseImages)
   List<String> get images;
 
   /// Create a copy of ServiceModel

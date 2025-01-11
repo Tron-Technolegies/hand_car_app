@@ -1,7 +1,6 @@
 
-import 'package:hand_car/features/car_service/controller/car_service_controller.dart';
-import 'package:hand_car/features/car_service/controller/service_category/service_category.dart';
-import 'package:hand_car/features/car_service/model/service_model.dart';
+import 'package:hand_car/features/car_service/model/service_category/service_category_model.dart';
+import 'package:hand_car/features/car_service/service/service_categories.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'service_filter.g.dart';
@@ -10,29 +9,33 @@ part 'service_filter.g.dart';
 
 
 @riverpod
-class FilteredServices extends _$FilteredServices {
-  @override
-  AsyncValue<List<ServiceModel>> build() {
-    final selectedCategory = ref.watch(serviceCategoryFilterProvider);
-    final servicesAsyncValue = ref.watch(carServiceControllerProvider);
 
-    return servicesAsyncValue.when(
-      data: (services) {
-        if (selectedCategory.isEmpty) {
-          return AsyncValue.data(services);
-        } else {
-          final filteredServices = services
-              .where((service) => service.serviceCategory == selectedCategory)
-              .toList();
-          return AsyncValue.data(filteredServices);
-        }
-      },
-      error: (error, stackTrace) => AsyncValue.error(error, stackTrace),
-      loading: () => const AsyncValue.loading(),
-    );
+@riverpod
+class ServiceCategoryController extends _$ServiceCategoryController {
+  late final ServiceCategoriesService _service;
+
+  @override
+  Future<List<ServiceCategoryModel>> build() async {
+    _service = ServiceCategoriesService();
+    return _fetchCategories();
   }
 
-  void filterByCategory(String category) {
-    ref.read(serviceCategoryFilterProvider.notifier).state = category;
+  Future<List<ServiceCategoryModel>> _fetchCategories() async {
+    try {
+      final categories = await _service.getCategory();
+      return categories;
+    } catch (e) {
+      throw Exception('Failed to fetch categories: $e');
+    }
+  }
+
+  Future<void> refreshCategories() async {
+    state = const AsyncValue.loading();
+    try {
+      final categories = await _service.getCategory();
+      state = AsyncValue.data(categories);
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    }
   }
 }

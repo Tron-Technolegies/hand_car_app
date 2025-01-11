@@ -3,8 +3,9 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
+import 'package:hand_car/features/car_service/controller/car_service_controller.dart';
 import 'package:hand_car/features/car_service/controller/filter_categories/service_filter.dart';
-import 'package:hand_car/features/car_service/controller/service_category/service_category.dart';
+
 import 'package:hand_car/features/car_service/view/widgets/grid_view_service_widget.dart';
 import 'package:hand_car/features/car_service/view/widgets/services_icon_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
@@ -16,14 +17,6 @@ final GlobalKey<ScaffoldState> scaffoldKey3 = GlobalKey<ScaffoldState>();
 
 class ServicesPage extends HookConsumerWidget {
   static const String route = '/services_page';
-
-  final List<String> services = [
-    "Painting",
-    "Fitting",
-    "Spare parts",
-    "General Checkup",
-    "Car Wash",
-  ];
 
   final List<String> images = [
     Assets.icons.icPaintingService,
@@ -40,11 +33,12 @@ class ServicesPage extends HookConsumerWidget {
     final pageController = usePageController();
     final buttonIndex = useState(0);
     final scrollController = useScrollController();
-    final animationController = 
+    final animationController =
         useAnimationController(duration: const Duration(milliseconds: 500));
 
-    // Watch the filtered services
-    final filteredServicesAsyncValue = ref.watch(filteredServicesProvider);
+    // Watch both services and categories
+    final servicesAsync = ref.watch(carServiceControllerProvider);
+    final categoriesAsync = ref.watch(serviceCategoryControllerProvider);
 
     void scrollToIndex(int index) {
       final screenWidth = MediaQuery.of(context).size.width;
@@ -62,7 +56,7 @@ class ServicesPage extends HookConsumerWidget {
       );
     }
 
-    void onItemTapped(int index) {
+    void onItemTapped(int index, String category) {
       buttonIndex.value = index;
       pageController.animateToPage(
         index,
@@ -74,10 +68,6 @@ class ServicesPage extends HookConsumerWidget {
         animationController.reset();
         animationController.forward();
       }
-
-      // Update selected category
-      ref.read(serviceCategoryFilterProvider.notifier)
-         .setCategory(services[index]);
 
       scrollToIndex(index);
     }
@@ -91,7 +81,8 @@ class ServicesPage extends HookConsumerWidget {
         ),
         title: Text(
           "Our Services",
-          style: context.typography.h3.copyWith(color: context.colors.primaryTxt),
+          style:
+              context.typography.h3.copyWith(color: context.colors.primaryTxt),
         ),
         centerTitle: true,
         actions: [
@@ -101,7 +92,8 @@ class ServicesPage extends HookConsumerWidget {
           ),
           IconButton(
             onPressed: () {},
-            icon: Icon(Icons.filter_alt_rounded, color: context.colors.primaryTxt),
+            icon: Icon(Icons.filter_alt_rounded,
+                color: context.colors.primaryTxt),
           ),
           IconButton(
             onPressed: () {
@@ -116,89 +108,103 @@ class ServicesPage extends HookConsumerWidget {
       body: Column(
         children: [
           SizedBox(height: context.space.space_200),
-          // Services Icons List
-          SizedBox(
-            height: context.space.space_600 * 2.6,
-            child: ListView.builder(
-              controller: scrollController,
-              scrollDirection: Axis.horizontal,
-              itemCount: services.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: context.space.space_50),
-                  child: AnimatedBuilder(
-                    animation: animationController,
-                    builder: (context, child) {
-                      final bounce = index == 0
-                          ? Curves.elasticOut.transform(animationController.value)
-                          : 0.0;
-                      final scale = 1.0 + (bounce * 0.2);
-                      return Transform.scale(scale: scale, child: child);
-                    },
-                    child: ServicesIconsWidget(
-                      image: images[index],
-                      title: services[index],
-                      selectedIndex: index,
-                      isSelected: index == buttonIndex.value,
-                      onSelectService: onItemTapped,
+          // Categories List
+          categoriesAsync.when(
+            data: (categories) => SizedBox(
+              height: context.space.space_600 * 2.6,
+              child: ListView.builder(
+                controller: scrollController,
+                scrollDirection: Axis.horizontal,
+                itemCount: categories.length,
+                itemBuilder: (context, index) {
+                  final category = categories[index];
+                  return Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: context.space.space_50),
+                    child: AnimatedBuilder(
+                      animation: animationController,
+                      builder: (context, child) {
+                        final bounce = index == 0
+                            ? Curves.elasticOut
+                                .transform(animationController.value)
+                            : 0.0;
+                        final scale = 1.0 + (bounce * 0.2);
+                        return Transform.scale(scale: scale, child: child);
+                      },
+                      child: ServicesIconsWidget(
+                        image:
+                            index < images.length ? images[index] : images[0],
+                        title: category.name,
+                        selectedIndex: index,
+                        isSelected: index == buttonIndex.value,
+                        onSelectService: (idx) =>
+                            onItemTapped(idx, category.name),
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
+            error: (error, _) =>
+                Center(child: Text('Error loading categories')),
+            loading: () => const Center(child: CircularProgressIndicator()),
           ),
           SizedBox(height: context.space.space_100),
           // Services Grid
           Expanded(
-            child: PageView(
-              controller: pageController,
-              onPageChanged: (value) {
-                buttonIndex.value = value;
-                ref.read(serviceCategoryFilterProvider.notifier)
-                   .setCategory(services[value]);
-                scrollToIndex(value);
-              },
-              children: services.map((category) {
-                return Builder(
-                  builder: (context) => filteredServicesAsyncValue.when(
-                  data: (services) => services.isEmpty
-                      ? Center(child: Text('No $category services available'))
-                      : GridView.builder(
-                          padding: EdgeInsets.all(context.space.space_200),
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 16,
-                            mainAxisSpacing: 16,
-                            childAspectRatio: 0.75,
+            child: categoriesAsync.when(
+              data: (categories) => PageView.builder(
+                controller: pageController,
+                onPageChanged: (value) {
+                  buttonIndex.value = value;
+                  if (value < categories.length) {
+                    scrollToIndex(value);
+                  }
+                },
+                itemCount: categories.length,
+                itemBuilder: (context, categoryIndex) {
+                  return servicesAsync.when(
+                    data: (services) {
+                      final filteredServices = services
+                          .where((service) =>
+                              service.serviceCategory ==
+                              categories[categoryIndex].name)
+                          .toList();
+
+                      if (filteredServices.isEmpty) {
+                        return Center(
+                          child: Text(
+                            'No ${categories[categoryIndex].name} services available',
+                            style: context.typography.bodyLarge,
                           ),
-                          itemCount: services.length,
-                          itemBuilder: (context, index) {
-                            final service = services[index];
-                            return GridViewServicesWidget(
-                              image: service.images.isNotEmpty 
-                                  ? service.images[0] 
-                                  : Assets.images.imgPainting6.path,
-                              title: service.vendorName,
-                              title2: service.serviceCategory ?? '',
-                              rating: '4.0', // You might want to add this to your backend
-                              price: service.rate.toString(),
-                              // onTap: () {
-                              //   // Navigate to service detail page
-                              //   // Navigator.pushNamed(context, ServiceDetailPage.route, arguments: service);
-                              // },
-                            );
-                          },
-                        ),
-                  error: (error, stack) => Center(
-                    child: Text('Error: ${error.toString()}'),
-                  ),
-                  loading: () => const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                ));
-              }).toList(),
+                        );
+                      }
+
+                      return GridViewServicesWidget(services: filteredServices);
+                    },
+                    error: (error, _) => Center(
+                      child: Text(
+                        'Error $error services',
+                        style: context.typography.bodyLarge,
+                      ),
+                    ),
+                    loading: () => const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                },
+              ),
+              error: (error, _) => Center(
+                child: Text(
+                  'Error loading categories',
+                  style: context.typography.bodyLarge,
+                ),
+              ),
+              loading: () => const Center(
+                child: CircularProgressIndicator(),
+              ),
             ),
-          ),
+          )
         ],
       ),
     );

@@ -15,9 +15,8 @@ _$ServiceModelImpl _$$ServiceModelImplFromJson(Map<String, dynamic> json) =>
       serviceCategory: json['service_category'] as String?,
       serviceDetails: json['service_details'] as String,
       address: json['address'] as String,
-      rate: (json['rate'] as num).toDouble(),
-      images:
-          (json['images'] as List<dynamic>).map((e) => e as String).toList(),
+      rate: _parseRate(json['rate']),
+      images: json['images'] == null ? const [] : _parseImages(json['images']),
     );
 
 Map<String, dynamic> _$$ServiceModelImplToJson(_$ServiceModelImpl instance) =>

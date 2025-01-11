@@ -1,5 +1,6 @@
 
 
+import 'package:hand_car/config.dart';
 import 'package:hand_car/features/car_service/model/service_model.dart';
 import 'package:hand_car/features/car_service/service/car_service_api_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -9,23 +10,20 @@ part 'car_service_controller.g.dart';
 @riverpod
 class CarServiceController extends _$CarServiceController {
   
-  late final CarServiceApiService _service ;
+  late final CarServiceApiService _service;
 
   @override
   Future<List<ServiceModel>> build() async {
-    _service = CarServiceApiService();
-    return fetchServices();
+    _service = CarServiceApiService(baseUrl: baseUrl);
+    return _fetchServices();
   }
-  Future<List<ServiceModel>> fetchServices() async {
-    return _service.getService();
-  }
-Future<void> refresh() async {
-    state = const AsyncValue.loading();
+
+  Future<List<ServiceModel>> _fetchServices() async {
     try {
-      final response = await _service.getService();
-      state = AsyncValue.data(response);
-    } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
+      return await _service.getService();
+    } catch (e) {
+      throw Exception('Failed to fetch services: $e');
     }
   }
+
 }

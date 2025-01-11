@@ -6,22 +6,23 @@ part of 'service_filter.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$filteredServicesHash() => r'3b963710491ba9e7830478a809464a2c129c0df8';
+String _$serviceCategoryControllerHash() =>
+    r'3ff27f8403722f155d9ef2c6019098fc58ac5927';
 
-/// See also [FilteredServices].
-@ProviderFor(FilteredServices)
-final filteredServicesProvider = AutoDisposeNotifierProvider<FilteredServices,
-    AsyncValue<List<ServiceModel>>>.internal(
-  FilteredServices.new,
-  name: r'filteredServicesProvider',
+/// See also [ServiceCategoryController].
+@ProviderFor(ServiceCategoryController)
+final serviceCategoryControllerProvider = AutoDisposeAsyncNotifierProvider<
+    ServiceCategoryController, List<ServiceCategoryModel>>.internal(
+  ServiceCategoryController.new,
+  name: r'serviceCategoryControllerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$filteredServicesHash,
+      : _$serviceCategoryControllerHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$FilteredServices
-    = AutoDisposeNotifier<AsyncValue<List<ServiceModel>>>;
+typedef _$ServiceCategoryController
+    = AutoDisposeAsyncNotifier<List<ServiceCategoryModel>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
