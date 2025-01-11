@@ -18,7 +18,7 @@ class CarServiceApiService {
     try {
        final response=await _dio.get('/view_services');
        if(response.statusCode==200){
-        final List<dynamic>serviceList=response.data['Service List:'];
+        final List<dynamic>serviceList=response.data['services'];
         return serviceList.map((service) => ServiceModel.fromJson(service)).toList();
        }
        throw Exception('Failed to fetch services');
