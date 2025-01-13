@@ -7,6 +7,7 @@ import 'package:hand_car/features/car_service/controller/car_service_controller.
 import 'package:hand_car/features/car_service/controller/filter_categories/service_filter.dart';
 
 import 'package:hand_car/features/car_service/view/widgets/grid_view_service_widget.dart';
+import 'package:hand_car/features/car_service/view/widgets/map/map_widget.dart';
 import 'package:hand_car/features/car_service/view/widgets/services_icon_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -108,6 +109,9 @@ class ServicesPage extends HookConsumerWidget {
       body: Column(
         children: [
           SizedBox(height: context.space.space_200),
+          MapUIMockup(),
+          SizedBox(height: context.space.space_200),
+
           // Categories List
           categoriesAsync.when(
             data: (categories) => SizedBox(

@@ -321,42 +321,7 @@ class ServiceDetailsPage extends StatelessWidget {
 
             SizedBox(height: context.space.space_200),
 
-            // Discount Banner
-            // Container(
-            //   width: double.infinity,
-            //   padding: EdgeInsets.all(context.space.space_200),
-            //   decoration: BoxDecoration(
-            //     color: context.colors.green100,
-            //     borderRadius: BorderRadius.circular(10),
-            //     border: Border.all(color: context.colors.green),
-            //   ),
-            //   child: Row(
-            //     mainAxisAlignment: MainAxisAlignment.center,
-            //     children: [
-            //       Container(
-            //         decoration: BoxDecoration(
-            //           color: context.colors.green,
-            //           shape: BoxShape.circle,
-            //         ),
-            //         padding: EdgeInsets.all(context.space.space_100),
-            //         child: Icon(
-            //           Icons.check,
-            //           color: Colors.white,
-            //           size: context.space.space_100 * 3,
-            //         ),
-            //       ),
-            //       SizedBox(width: context.space.space_100),
-            //       Expanded(
-            //         child: Text(
-            //           '20% discount coupon applied',
-            //           style: context.typography.bodyLargeSemiBold.copyWith(
-            //             color: context.colors.green,
-            //           ),
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
+            
 
             SizedBox(height: context.space.space_200),
 
