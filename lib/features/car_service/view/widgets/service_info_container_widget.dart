@@ -3,7 +3,12 @@ import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
 
+import 'package:hand_car/features/car_service/model/service_model.dart';
 
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hand_car/core/extension/theme_extension.dart';
+import 'package:hand_car/core/widgets/button_widget.dart';
 import 'package:hand_car/features/car_service/model/service_model.dart';
 
 class ServiceCardWidget extends StatelessWidget {
@@ -37,7 +42,8 @@ class ServiceCardWidget extends StatelessWidget {
           children: [
             // Image Section
             ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(15)),
               child: service.images.isNotEmpty
                   ? Image.network(
                       service.images[0],
@@ -56,7 +62,8 @@ class ServiceCardWidget extends StatelessWidget {
                           width: double.infinity,
                           height: 150,
                           color: Colors.grey[200],
-                          child: const Center(child: CircularProgressIndicator()),
+                          child:
+                              const Center(child: CircularProgressIndicator()),
                         );
                       },
                     )
@@ -69,78 +76,68 @@ class ServiceCardWidget extends StatelessWidget {
             ),
 
             // Content Section
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Title Section
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          service.vendorName,
-                          style: context.typography.bodyMedium.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          service.serviceCategory ?? '',
-                          style: context.typography.bodyMedium.copyWith(
-                            color: Colors.grey[600],
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Title Section
+                  Text(
+                    service.vendorName,
+                    style: context.typography.bodyMedium.copyWith(
+                      fontWeight: FontWeight.bold,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    service.serviceCategory ?? '',
+                    style: context.typography.bodyMedium.copyWith(
+                      color: Colors.grey[600],
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 12),
 
-                    // Price and Rating Section
-                    Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'AED ${service.rate}/hr',
-                              style: context.typography.bodyLarge.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: context.colors.primary,
-                              ),
-                            ),
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.star_rounded,
-                                  color: Colors.amber,
-                                  size: 20,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  '4.0',
-                                  style: context.typography.bodyMedium,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ButtonWidget(
-                            label: 'View Details',
-                            onTap: () => _navigateToDetails(context),
+                  // Price and Rating Section
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Text(
+                      //   'AED ${service.rate}/hr',
+                      //   style: context.typography.bodyLarge.copyWith(
+                      //     fontWeight: FontWeight.bold,
+                      //     color: context.colors.primary,
+                      //   ),
+                      // ),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.star_rounded,
+                            color: Colors.amber,
+                            size: 20,
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 4),
+                          Text(
+                            '4.0',
+                            style: context.typography.bodyMedium,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ButtonWidget(
+                      label: 'View Details',
+                      onTap: () => _navigateToDetails(context),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ],

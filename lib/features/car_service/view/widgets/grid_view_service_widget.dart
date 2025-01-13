@@ -13,12 +13,12 @@ class GridViewServicesWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-      padding: const EdgeInsets.all(12),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        childAspectRatio: 0.8, // Adjusted for better fit
+      physics: const ClampingScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 340,
+        mainAxisSpacing: 0.5,
+        mainAxisExtent: 330,
+        crossAxisSpacing: 1.8,
       ),
       itemCount: services.length,
       itemBuilder: (context, index) {
