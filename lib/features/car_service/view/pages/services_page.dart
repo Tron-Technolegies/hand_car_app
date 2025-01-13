@@ -109,7 +109,7 @@ class ServicesPage extends HookConsumerWidget {
       body: Column(
         children: [
           SizedBox(height: context.space.space_200),
-          MapUIMockup(),
+        ServiceMapUI(),
           SizedBox(height: context.space.space_200),
 
           // Categories List
