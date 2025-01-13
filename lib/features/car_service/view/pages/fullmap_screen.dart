@@ -195,7 +195,7 @@ class FullScreenMap extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                'Dubai Marina, Dubai',
+                                'Abu Dhabi, United Arab Emirates',
                                 style: context.typography.bodySmall,
                               ),
                             ],

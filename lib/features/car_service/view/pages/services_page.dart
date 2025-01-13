@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
@@ -11,6 +13,7 @@ import 'package:hand_car/features/car_service/view/widgets/map/map_widget.dart';
 import 'package:hand_car/features/car_service/view/widgets/services_icon_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 final GlobalKey<ScaffoldState> scaffoldKey3 = GlobalKey<ScaffoldState>();
 
@@ -147,7 +150,11 @@ class ServicesPage extends HookConsumerWidget {
             ),
             error: (error, _) =>
                 Center(child: Text('Error loading categories')),
-            loading: () => const Center(child: CircularProgressIndicator()),
+            loading: () => Center(
+                child: LoadingAnimationWidget.staggeredDotsWave(
+              color: Colors.black,
+              size: 200,
+            )),
           ),
           SizedBox(height: context.space.space_200),
           // Services Grid
@@ -156,6 +163,7 @@ class ServicesPage extends HookConsumerWidget {
               data: (categories) => PageView.builder(
                 controller: pageController,
                 onPageChanged: (value) {
+                  log(serviceCategoryControllerProvider.name.toString());
                   buttonIndex.value = value;
                   if (value < categories.length) {
                     scrollToIndex(value);

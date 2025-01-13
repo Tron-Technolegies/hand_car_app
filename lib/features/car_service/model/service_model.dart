@@ -13,6 +13,8 @@ List<String> _parseImages(dynamic images) {
       .toList();
 }
 
+
+//Parse rate as a double
 double _parseRate(dynamic rate) {
   if (rate is int) return rate.toDouble();
   if (rate is double) return rate;
