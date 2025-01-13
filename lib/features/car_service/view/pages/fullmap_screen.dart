@@ -95,12 +95,17 @@ class FullScreenMap extends StatelessWidget {
                   ),
                   child: Column(
                     children: [
-                      ListTile(
-                        leading: Icon(
-                          FontAwesomeIcons.locationArrow,
-                        ),
-                        title: Text(
-                          "Choose Your Location",
+                      Ink(
+                        child: InkWell(
+                          onTap: () {},
+                          child: ListTile(
+                            leading: Icon(
+                              FontAwesomeIcons.locationArrow,
+                            ),
+                            title: Text(
+                              "Choose Your Location",
+                            ),
+                          ),
                         ),
                       ),
                       ListTile(

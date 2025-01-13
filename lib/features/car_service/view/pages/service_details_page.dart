@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/snackbar.dart';
-import 'package:hand_car/features/Accessories/view/widgets/accessories/rating_widget.dart';
 import 'package:hand_car/features/car_service/model/service_model.dart';
 import 'package:hand_car/features/car_service/view/widgets/review/review_list_widget.dart';
 import 'package:hand_car/features/car_service/view/widgets/review/service_review_widget.dart';

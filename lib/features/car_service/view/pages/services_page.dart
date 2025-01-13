@@ -109,7 +109,7 @@ class ServicesPage extends HookConsumerWidget {
       body: Column(
         children: [
           SizedBox(height: context.space.space_200),
-        ServiceMapUI(),
+          ServiceMapUI(),
           SizedBox(height: context.space.space_200),
 
           // Categories List
@@ -124,7 +124,7 @@ class ServicesPage extends HookConsumerWidget {
                   final category = categories[index];
                   return Padding(
                     padding: EdgeInsets.symmetric(
-                        horizontal: context.space.space_50),
+                        horizontal: context.space.space_100),
                     child: AnimatedBuilder(
                       animation: animationController,
                       builder: (context, child) {
