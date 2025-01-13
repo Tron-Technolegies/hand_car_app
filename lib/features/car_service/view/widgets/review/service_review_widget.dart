@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/features/Accessories/view/widgets/review/bottom_sheet_for_write_review_widget.dart';
-import 'package:hand_car/features/Accessories/view/widgets/accessories/progress_indicator_bar_widget.dart';
 
-//ProductRatingsWidget For Show In Details Page
+import 'package:hand_car/features/Accessories/view/widgets/accessories/progress_indicator_bar_widget.dart';
+import 'package:hand_car/features/car_service/view/widgets/rating/rating_dialoag.dart';
+
 class ServiceReviewWidget extends StatelessWidget {
+  final String serviceId;
+  final String serviceName;
+  final String? serviceImage;
   final double rating;
   final int totalReviews;
   final List<int> starCounts;
 
   const ServiceReviewWidget({
     super.key,
+    required this.serviceId,
+    required this.serviceName,
+    this.serviceImage,
     required this.rating,
     required this.totalReviews,
     required this.starCounts,
@@ -29,26 +35,25 @@ class ServiceReviewWidget extends StatelessWidget {
           ),
           SizedBox(height: context.space.space_100),
           Text(
-            'Have a review about this product?',
+            'Have a review about this service?',
             style: context.typography.bodyLargeMedium,
           ),
           TextButton(
-              onPressed: () {
-                showModalBottomSheet(
-                    isScrollControlled: true,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(20)),
-                    ),
-                    context: context,
-                    builder: (context) => const BottomSheetForWriteReview());
-              },
-              child: Text(
-                "Write here...",
-                style: context.typography.bodyLargeMedium.copyWith(
-                  color: const Color(0xff4069D8),
-                ),
-              )),
+            onPressed: () {
+              showServiceRatingDialog(
+                context: context,
+                serviceId: serviceId,
+                serviceName: serviceName,
+                serviceImage: serviceImage,
+              );
+            },
+            child: Text(
+              "Write here...",
+              style: context.typography.bodyLargeMedium.copyWith(
+                color: const Color(0xff4069D8),
+              ),
+            ),
+          ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [

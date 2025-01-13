@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
+import 'package:hand_car/features/car_service/model/rating/response/rating_response.dart';
+import 'package:hand_car/features/car_service/model/rating/service_rating.dart';
 
 class ReviewService {
   static final Dio _dio = Dio(
@@ -14,13 +16,13 @@ class ReviewService {
    Future<ServiceRatingResponse> addServiceRating(ServiceRatingModel rating) async {
     try {
       final response = await _dio.post(
-        '/api/add_service_rating/',
-        data: {
+        '/add_service_rating',
+        data: FormData.fromMap( {
           'service_id': rating.serviceId,
           'rating': rating.rating,
           if (rating.comment != null) 'comment': rating.comment,
         },
-      );
+      ));
 
       return ServiceRatingResponse.fromJson(response.data);
     } on DioException catch (e) {
