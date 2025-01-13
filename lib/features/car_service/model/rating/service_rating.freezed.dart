@@ -14,152 +14,189 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-ServiceRating _$ServiceRatingFromJson(Map<String, dynamic> json) {
-  return _ServiceRating.fromJson(json);
+ServiceRatingModel _$ServiceRatingModelFromJson(Map<String, dynamic> json) {
+  return _ServiceRatingModel.fromJson(json);
 }
 
 /// @nodoc
-mixin _$ServiceRating {
-  double get rating => throw _privateConstructorUsedError;
+mixin _$ServiceRatingModel {
+  String get serviceId => throw _privateConstructorUsedError;
+  int get rating => throw _privateConstructorUsedError;
+  String? get comment => throw _privateConstructorUsedError;
 
-  /// Serializes this ServiceRating to a JSON map.
+  /// Serializes this ServiceRatingModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
-  /// Create a copy of ServiceRating
+  /// Create a copy of ServiceRatingModel
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $ServiceRatingCopyWith<ServiceRating> get copyWith =>
+  $ServiceRatingModelCopyWith<ServiceRatingModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $ServiceRatingCopyWith<$Res> {
-  factory $ServiceRatingCopyWith(
-          ServiceRating value, $Res Function(ServiceRating) then) =
-      _$ServiceRatingCopyWithImpl<$Res, ServiceRating>;
+abstract class $ServiceRatingModelCopyWith<$Res> {
+  factory $ServiceRatingModelCopyWith(
+          ServiceRatingModel value, $Res Function(ServiceRatingModel) then) =
+      _$ServiceRatingModelCopyWithImpl<$Res, ServiceRatingModel>;
   @useResult
-  $Res call({double rating});
+  $Res call({String serviceId, int rating, String? comment});
 }
 
 /// @nodoc
-class _$ServiceRatingCopyWithImpl<$Res, $Val extends ServiceRating>
-    implements $ServiceRatingCopyWith<$Res> {
-  _$ServiceRatingCopyWithImpl(this._value, this._then);
+class _$ServiceRatingModelCopyWithImpl<$Res, $Val extends ServiceRatingModel>
+    implements $ServiceRatingModelCopyWith<$Res> {
+  _$ServiceRatingModelCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of ServiceRating
+  /// Create a copy of ServiceRatingModel
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? serviceId = null,
     Object? rating = null,
+    Object? comment = freezed,
   }) {
     return _then(_value.copyWith(
+      serviceId: null == serviceId
+          ? _value.serviceId
+          : serviceId // ignore: cast_nullable_to_non_nullable
+              as String,
       rating: null == rating
           ? _value.rating
           : rating // ignore: cast_nullable_to_non_nullable
-              as double,
+              as int,
+      comment: freezed == comment
+          ? _value.comment
+          : comment // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$ServiceRatingImplCopyWith<$Res>
-    implements $ServiceRatingCopyWith<$Res> {
-  factory _$$ServiceRatingImplCopyWith(
-          _$ServiceRatingImpl value, $Res Function(_$ServiceRatingImpl) then) =
-      __$$ServiceRatingImplCopyWithImpl<$Res>;
+abstract class _$$ServiceRatingModelImplCopyWith<$Res>
+    implements $ServiceRatingModelCopyWith<$Res> {
+  factory _$$ServiceRatingModelImplCopyWith(_$ServiceRatingModelImpl value,
+          $Res Function(_$ServiceRatingModelImpl) then) =
+      __$$ServiceRatingModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({double rating});
+  $Res call({String serviceId, int rating, String? comment});
 }
 
 /// @nodoc
-class __$$ServiceRatingImplCopyWithImpl<$Res>
-    extends _$ServiceRatingCopyWithImpl<$Res, _$ServiceRatingImpl>
-    implements _$$ServiceRatingImplCopyWith<$Res> {
-  __$$ServiceRatingImplCopyWithImpl(
-      _$ServiceRatingImpl _value, $Res Function(_$ServiceRatingImpl) _then)
+class __$$ServiceRatingModelImplCopyWithImpl<$Res>
+    extends _$ServiceRatingModelCopyWithImpl<$Res, _$ServiceRatingModelImpl>
+    implements _$$ServiceRatingModelImplCopyWith<$Res> {
+  __$$ServiceRatingModelImplCopyWithImpl(_$ServiceRatingModelImpl _value,
+      $Res Function(_$ServiceRatingModelImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of ServiceRating
+  /// Create a copy of ServiceRatingModel
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? serviceId = null,
     Object? rating = null,
+    Object? comment = freezed,
   }) {
-    return _then(_$ServiceRatingImpl(
+    return _then(_$ServiceRatingModelImpl(
+      serviceId: null == serviceId
+          ? _value.serviceId
+          : serviceId // ignore: cast_nullable_to_non_nullable
+              as String,
       rating: null == rating
           ? _value.rating
           : rating // ignore: cast_nullable_to_non_nullable
-              as double,
+              as int,
+      comment: freezed == comment
+          ? _value.comment
+          : comment // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$ServiceRatingImpl implements _ServiceRating {
-  const _$ServiceRatingImpl({required this.rating});
+class _$ServiceRatingModelImpl implements _ServiceRatingModel {
+  const _$ServiceRatingModelImpl(
+      {required this.serviceId, required this.rating, this.comment});
 
-  factory _$ServiceRatingImpl.fromJson(Map<String, dynamic> json) =>
-      _$$ServiceRatingImplFromJson(json);
+  factory _$ServiceRatingModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ServiceRatingModelImplFromJson(json);
 
   @override
-  final double rating;
+  final String serviceId;
+  @override
+  final int rating;
+  @override
+  final String? comment;
 
   @override
   String toString() {
-    return 'ServiceRating(rating: $rating)';
+    return 'ServiceRatingModel(serviceId: $serviceId, rating: $rating, comment: $comment)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ServiceRatingImpl &&
-            (identical(other.rating, rating) || other.rating == rating));
+            other is _$ServiceRatingModelImpl &&
+            (identical(other.serviceId, serviceId) ||
+                other.serviceId == serviceId) &&
+            (identical(other.rating, rating) || other.rating == rating) &&
+            (identical(other.comment, comment) || other.comment == comment));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, rating);
+  int get hashCode => Object.hash(runtimeType, serviceId, rating, comment);
 
-  /// Create a copy of ServiceRating
+  /// Create a copy of ServiceRatingModel
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$ServiceRatingImplCopyWith<_$ServiceRatingImpl> get copyWith =>
-      __$$ServiceRatingImplCopyWithImpl<_$ServiceRatingImpl>(this, _$identity);
+  _$$ServiceRatingModelImplCopyWith<_$ServiceRatingModelImpl> get copyWith =>
+      __$$ServiceRatingModelImplCopyWithImpl<_$ServiceRatingModelImpl>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$ServiceRatingImplToJson(
+    return _$$ServiceRatingModelImplToJson(
       this,
     );
   }
 }
 
-abstract class _ServiceRating implements ServiceRating {
-  const factory _ServiceRating({required final double rating}) =
-      _$ServiceRatingImpl;
+abstract class _ServiceRatingModel implements ServiceRatingModel {
+  const factory _ServiceRatingModel(
+      {required final String serviceId,
+      required final int rating,
+      final String? comment}) = _$ServiceRatingModelImpl;
 
-  factory _ServiceRating.fromJson(Map<String, dynamic> json) =
-      _$ServiceRatingImpl.fromJson;
+  factory _ServiceRatingModel.fromJson(Map<String, dynamic> json) =
+      _$ServiceRatingModelImpl.fromJson;
 
   @override
-  double get rating;
+  String get serviceId;
+  @override
+  int get rating;
+  @override
+  String? get comment;
 
-  /// Create a copy of ServiceRating
+  /// Create a copy of ServiceRatingModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$ServiceRatingImplCopyWith<_$ServiceRatingImpl> get copyWith =>
+  _$$ServiceRatingModelImplCopyWith<_$ServiceRatingModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

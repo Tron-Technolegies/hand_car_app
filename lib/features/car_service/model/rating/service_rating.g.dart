@@ -6,12 +6,18 @@ part of 'service_rating.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$ServiceRatingImpl _$$ServiceRatingImplFromJson(Map<String, dynamic> json) =>
-    _$ServiceRatingImpl(
-      rating: (json['rating'] as num).toDouble(),
+_$ServiceRatingModelImpl _$$ServiceRatingModelImplFromJson(
+        Map<String, dynamic> json) =>
+    _$ServiceRatingModelImpl(
+      serviceId: json['service_id'] as String,
+      rating: (json['rating'] as num).toInt(),
+      comment: json['comment'] as String?,
     );
 
-Map<String, dynamic> _$$ServiceRatingImplToJson(_$ServiceRatingImpl instance) =>
+Map<String, dynamic> _$$ServiceRatingModelImplToJson(
+        _$ServiceRatingModelImpl instance) =>
     <String, dynamic>{
+      'service_id': instance.serviceId,
       'rating': instance.rating,
+      if (instance.comment case final value?) 'comment': value,
     };

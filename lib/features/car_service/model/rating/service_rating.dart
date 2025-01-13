@@ -6,10 +6,13 @@ part 'service_rating.freezed.dart';
 part 'service_rating.g.dart';
 
 @freezed
-class ServiceRating with _$ServiceRating{
-  const factory ServiceRating({
-   required double rating,
-  }) = _ServiceRating;
+class ServiceRatingModel with _$ServiceRatingModel {
+  const factory ServiceRatingModel({
+    required String serviceId,
+    required int rating,
+    String? comment,
+  }) = _ServiceRatingModel;
 
-  factory ServiceRating.fromJson(Map<String, dynamic> json) => _$ServiceRatingFromJson(json);
+  factory ServiceRatingModel.fromJson(Map<String, dynamic> json) =>
+      _$ServiceRatingModelFromJson(json);
 }
