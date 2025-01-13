@@ -89,10 +89,6 @@ class ServicesPage extends HookConsumerWidget {
         actions: [
           IconButton(
             onPressed: () {},
-            icon: Icon(Icons.search, color: context.colors.primaryTxt),
-          ),
-          IconButton(
-            onPressed: () {},
             icon: Icon(Icons.filter_alt_rounded,
                 color: context.colors.primaryTxt),
           ),
@@ -153,7 +149,7 @@ class ServicesPage extends HookConsumerWidget {
                 Center(child: Text('Error loading categories')),
             loading: () => const Center(child: CircularProgressIndicator()),
           ),
-          SizedBox(height: context.space.space_100),
+          SizedBox(height: context.space.space_200),
           // Services Grid
           Expanded(
             child: categoriesAsync.when(
