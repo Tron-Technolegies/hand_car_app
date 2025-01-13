@@ -18,6 +18,7 @@ class ServiceRatingDialog extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final controller=TextEditingController();
     final dialog = rating_dialog.RatingDialog(
       initialRating: 1.0,
       title: Text(
@@ -71,6 +72,7 @@ class ServiceRatingDialog extends ConsumerWidget {
         color: Colors.black,
       ),
       commentHint: 'Tell us about your experience (optional)',
+      
       starSize: 32,
       starColor: Colors.amber,
       onCancelled: () => Navigator.pop(context),
@@ -88,7 +90,7 @@ class ServiceRatingDialog extends ConsumerWidget {
           final result = await ref
               .read(serviceRatingControllerProvider.notifier)
               .submitRating(
-                serviceId: serviceId,
+                serviceId: int.parse(serviceId),
                 rating: response.rating.toInt(),
                 comment: response.comment.isNotEmpty ? response.comment : null,
               );

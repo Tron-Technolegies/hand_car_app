@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/snackbar.dart';
+import 'package:hand_car/features/car_service/model/rating/service_rating.dart';
 import 'package:hand_car/features/car_service/model/service_model.dart';
+import 'package:hand_car/features/car_service/view/widgets/rating/rating_dialoag.dart';
 import 'package:hand_car/features/car_service/view/widgets/review/review_list_widget.dart';
 import 'package:hand_car/features/car_service/view/widgets/review/service_review_widget.dart';
 import 'package:hand_car/features/car_service/view/widgets/services_list_widget.dart';
@@ -13,10 +15,12 @@ import 'package:url_launcher/url_launcher.dart';
 class ServiceDetailsPage extends StatelessWidget {
   static const route = '/serviceDetailsPage';
   final ServiceModel service;
+  final ServiceRatingModel? rating;
 
   const ServiceDetailsPage({
     super.key,
     required this.service,
+    this.rating,
   });
 
   String cleanImageUrl(String originalUrl) {
@@ -335,7 +339,9 @@ class ServiceDetailsPage extends StatelessWidget {
                     starCounts: [5, 4, 3, 2, 1])),
             SizedBox(
                 height: context.space.space_500 * 8.2,
-                child: const ReviewsList()),
+                child:  ReviewsList(
+               vendorName: service.vendorName,
+                )),
           ],
         ),
       ),

@@ -7,7 +7,7 @@ part 'rating_response.g.dart';
 class ServiceRatingResponse with _$ServiceRatingResponse {
   const factory ServiceRatingResponse({
     String? error,
-    bool? success,
+    String? message,
   }) = _ServiceRatingResponse;
 
   factory ServiceRatingResponse.fromJson(Map<String, dynamic> json) =>

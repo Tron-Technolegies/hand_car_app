@@ -22,7 +22,7 @@ ServiceRatingResponse _$ServiceRatingResponseFromJson(
 /// @nodoc
 mixin _$ServiceRatingResponse {
   String? get error => throw _privateConstructorUsedError;
-  bool? get success => throw _privateConstructorUsedError;
+  String? get message => throw _privateConstructorUsedError;
 
   /// Serializes this ServiceRatingResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -40,7 +40,7 @@ abstract class $ServiceRatingResponseCopyWith<$Res> {
           $Res Function(ServiceRatingResponse) then) =
       _$ServiceRatingResponseCopyWithImpl<$Res, ServiceRatingResponse>;
   @useResult
-  $Res call({String? error, bool? success});
+  $Res call({String? error, String? message});
 }
 
 /// @nodoc
@@ -60,17 +60,17 @@ class _$ServiceRatingResponseCopyWithImpl<$Res,
   @override
   $Res call({
     Object? error = freezed,
-    Object? success = freezed,
+    Object? message = freezed,
   }) {
     return _then(_value.copyWith(
       error: freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
               as String?,
-      success: freezed == success
-          ? _value.success
-          : success // ignore: cast_nullable_to_non_nullable
-              as bool?,
+      message: freezed == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -84,7 +84,7 @@ abstract class _$$ServiceRatingResponseImplCopyWith<$Res>
       __$$ServiceRatingResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String? error, bool? success});
+  $Res call({String? error, String? message});
 }
 
 /// @nodoc
@@ -102,17 +102,17 @@ class __$$ServiceRatingResponseImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? error = freezed,
-    Object? success = freezed,
+    Object? message = freezed,
   }) {
     return _then(_$ServiceRatingResponseImpl(
       error: freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
               as String?,
-      success: freezed == success
-          ? _value.success
-          : success // ignore: cast_nullable_to_non_nullable
-              as bool?,
+      message: freezed == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -120,7 +120,7 @@ class __$$ServiceRatingResponseImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$ServiceRatingResponseImpl implements _ServiceRatingResponse {
-  const _$ServiceRatingResponseImpl({this.error, this.success});
+  const _$ServiceRatingResponseImpl({this.error, this.message});
 
   factory _$ServiceRatingResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$ServiceRatingResponseImplFromJson(json);
@@ -128,11 +128,11 @@ class _$ServiceRatingResponseImpl implements _ServiceRatingResponse {
   @override
   final String? error;
   @override
-  final bool? success;
+  final String? message;
 
   @override
   String toString() {
-    return 'ServiceRatingResponse(error: $error, success: $success)';
+    return 'ServiceRatingResponse(error: $error, message: $message)';
   }
 
   @override
@@ -141,12 +141,12 @@ class _$ServiceRatingResponseImpl implements _ServiceRatingResponse {
         (other.runtimeType == runtimeType &&
             other is _$ServiceRatingResponseImpl &&
             (identical(other.error, error) || other.error == error) &&
-            (identical(other.success, success) || other.success == success));
+            (identical(other.message, message) || other.message == message));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, error, success);
+  int get hashCode => Object.hash(runtimeType, error, message);
 
   /// Create a copy of ServiceRatingResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -167,7 +167,8 @@ class _$ServiceRatingResponseImpl implements _ServiceRatingResponse {
 
 abstract class _ServiceRatingResponse implements ServiceRatingResponse {
   const factory _ServiceRatingResponse(
-      {final String? error, final bool? success}) = _$ServiceRatingResponseImpl;
+      {final String? error,
+      final String? message}) = _$ServiceRatingResponseImpl;
 
   factory _ServiceRatingResponse.fromJson(Map<String, dynamic> json) =
       _$ServiceRatingResponseImpl.fromJson;
@@ -175,7 +176,7 @@ abstract class _ServiceRatingResponse implements ServiceRatingResponse {
   @override
   String? get error;
   @override
-  bool? get success;
+  String? get message;
 
   /// Create a copy of ServiceRatingResponse
   /// with the given fields replaced by the non-null parameter values.

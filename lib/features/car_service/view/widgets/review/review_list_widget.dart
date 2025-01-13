@@ -1,26 +1,55 @@
+// reviews_list.dart
 import 'package:flutter/material.dart';
-import 'package:hand_car/core/controller/multiple_image_picker_provider.dart';
-import 'package:hand_car/features/Accessories/view/widgets/review/review_items_widget.dart';
+import 'package:hand_car/features/car_service/controller/rating/service_rating_controller.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:hand_car/features/car_service/model/rating/service_rating.dart';
 
-// ReviewListWidget For Show In Details Page
+import 'package:hand_car/features/car_service/view/widgets/review/review_items_widget.dart';
+
+
 class ReviewsList extends ConsumerWidget {
-  const ReviewsList({super.key});
+  final String vendorName;  // Changed from serviceId to vendorName
+
+  const ReviewsList({
+    required this.vendorName,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final images = ref.watch(multipleImagePickerProvider);
+    final ratingsAsync = ref.watch(serviceRatingControllerProvider);
 
-    return ListView.builder(
-      itemCount: 5,
-      itemBuilder: (context, index) => ReviewItemsWidget(
-        username: "Risan",
-        date: "10/10/2022",
-        comment: "Nice perfume in affordable price",
-        review:
-            "I found Davidoff Cool Water perfume is a timeless and refreshing fragrance that exudes elegance and sophistication. The captivating blend of aromatic and aquatic notes creates a sense of tranquility and vitality, perfect for both casual and formal occasions.",
-        rating: 5,
-        images: images.selectedImages.map((xFile) => xFile.path).toList(),
+    return ratingsAsync.when(
+      data: (ratingsList) {
+        // Filter ratings by vendor name instead of service id
+        final serviceRatings = ratingsList.ratings
+            .where((rating) => rating.vendorName == vendorName)
+            .toList();
+
+        if (serviceRatings.isEmpty) {
+          return const Center(
+            child: Text('No reviews yet'),
+          );
+        }
+
+        return ListView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: serviceRatings.length,
+          itemBuilder: (context, index) {
+            final rating = serviceRatings[index];
+            return ReviewItemsWidget(
+              username: rating.username,
+              comment: rating.comment ?? '',
+              rating: rating.rating,
+            );
+          },
+        );
+      },
+      loading: () => const Center(
+        child: CircularProgressIndicator(),
+      ),
+      error: (error, stack) => Center(
+        child: Text('Error loading reviews: $error'),
       ),
     );
   }

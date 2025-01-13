@@ -10,12 +10,12 @@ _$ServiceRatingResponseImpl _$$ServiceRatingResponseImplFromJson(
         Map<String, dynamic> json) =>
     _$ServiceRatingResponseImpl(
       error: json['error'] as String?,
-      success: json['success'] as bool?,
+      message: json['message'] as String?,
     );
 
 Map<String, dynamic> _$$ServiceRatingResponseImplToJson(
         _$ServiceRatingResponseImpl instance) =>
     <String, dynamic>{
       if (instance.error case final value?) 'error': value,
-      if (instance.success case final value?) 'success': value,
+      if (instance.message case final value?) 'message': value,
     };

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 
 import 'package:hand_car/features/Accessories/view/widgets/accessories/progress_indicator_bar_widget.dart';
-import 'package:hand_car/features/car_service/view/widgets/rating/rating_dialoag.dart';
+import 'package:hand_car/features/Accessories/view/widgets/review/bottom_sheet_for_write_review_widget.dart';
+import 'package:hand_car/features/car_service/view/widgets/review/bottom_sheet_for_write_review_widget.dart';
+
 
 class ServiceReviewWidget extends StatelessWidget {
   final String serviceId;
@@ -40,12 +42,18 @@ class ServiceReviewWidget extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              showServiceRatingDialog(
-                context: context,
-                serviceId: serviceId,
-                serviceName: serviceName,
-                serviceImage: serviceImage,
-              );
+                showModalBottomSheet(
+                    isScrollControlled: true,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(20)),
+                    ),
+                    context: context,
+                    builder: (context) =>  BottomSheetForWriteReviewWidget(
+                      serviceId: serviceId,
+                      serviceName: serviceName,
+                    )
+                    );
             },
             child: Text(
               "Write here...",

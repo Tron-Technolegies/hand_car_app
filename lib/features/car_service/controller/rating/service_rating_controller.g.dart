@@ -7,12 +7,12 @@ part of 'service_rating_controller.dart';
 // **************************************************************************
 
 String _$serviceRatingControllerHash() =>
-    r'fc118c8967f6d8ac4e70e639dff75a1928c79b74';
+    r'949b4b177e8753933b3e47152e4af0d5a80a7bf0';
 
 /// See also [ServiceRatingController].
 @ProviderFor(ServiceRatingController)
-final serviceRatingControllerProvider =
-    AutoDisposeAsyncNotifierProvider<ServiceRatingController, void>.internal(
+final serviceRatingControllerProvider = AutoDisposeAsyncNotifierProvider<
+    ServiceRatingController, ServiceRatingList>.internal(
   ServiceRatingController.new,
   name: r'serviceRatingControllerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -22,6 +22,6 @@ final serviceRatingControllerProvider =
   allTransitiveDependencies: null,
 );
 
-typedef _$ServiceRatingController = AutoDisposeAsyncNotifier<void>;
+typedef _$ServiceRatingController = AutoDisposeAsyncNotifier<ServiceRatingList>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

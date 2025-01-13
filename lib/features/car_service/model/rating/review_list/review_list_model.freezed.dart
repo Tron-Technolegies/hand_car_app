@@ -20,6 +20,7 @@ ServiceRatingList _$ServiceRatingListFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ServiceRatingList {
+  @JsonKey(name: 'Ratings')
   List<ServiceRating> get ratings => throw _privateConstructorUsedError;
 
   /// Serializes this ServiceRatingList to a JSON map.
@@ -38,7 +39,7 @@ abstract class $ServiceRatingListCopyWith<$Res> {
           ServiceRatingList value, $Res Function(ServiceRatingList) then) =
       _$ServiceRatingListCopyWithImpl<$Res, ServiceRatingList>;
   @useResult
-  $Res call({List<ServiceRating> ratings});
+  $Res call({@JsonKey(name: 'Ratings') List<ServiceRating> ratings});
 }
 
 /// @nodoc
@@ -75,7 +76,7 @@ abstract class _$$ServiceRatingListImplCopyWith<$Res>
       __$$ServiceRatingListImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({List<ServiceRating> ratings});
+  $Res call({@JsonKey(name: 'Ratings') List<ServiceRating> ratings});
 }
 
 /// @nodoc
@@ -105,12 +106,14 @@ class __$$ServiceRatingListImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$ServiceRatingListImpl implements _ServiceRatingList {
-  const _$ServiceRatingListImpl({required this.ratings});
+  const _$ServiceRatingListImpl(
+      {@JsonKey(name: 'Ratings') required this.ratings});
 
   factory _$ServiceRatingListImpl.fromJson(Map<String, dynamic> json) =>
       _$$ServiceRatingListImplFromJson(json);
 
   @override
+  @JsonKey(name: 'Ratings')
   final List<ServiceRating> ratings;
 
   @override
@@ -150,12 +153,14 @@ class _$ServiceRatingListImpl implements _ServiceRatingList {
 
 abstract class _ServiceRatingList implements ServiceRatingList {
   const factory _ServiceRatingList(
-      {required final List<ServiceRating> ratings}) = _$ServiceRatingListImpl;
+      {@JsonKey(name: 'Ratings')
+      required final List<ServiceRating> ratings}) = _$ServiceRatingListImpl;
 
   factory _ServiceRatingList.fromJson(Map<String, dynamic> json) =
       _$ServiceRatingListImpl.fromJson;
 
   @override
+  @JsonKey(name: 'Ratings')
   List<ServiceRating> get ratings;
 
   /// Create a copy of ServiceRatingList
@@ -172,12 +177,12 @@ ServiceRating _$ServiceRatingFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ServiceRating {
-  String get id => throw _privateConstructorUsedError;
+  int get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'vendor_name')
   String get vendorName => throw _privateConstructorUsedError;
-  String get phoneNumber => throw _privateConstructorUsedError;
-  double get whatsappNumber =>
-      throw _privateConstructorUsedError; // This is actually the rating value based on your API
-  String? get serviceCategory => throw _privateConstructorUsedError;
+  String get username => throw _privateConstructorUsedError;
+  int get rating => throw _privateConstructorUsedError;
+  String? get comment => throw _privateConstructorUsedError;
 
   /// Serializes this ServiceRating to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -196,11 +201,11 @@ abstract class $ServiceRatingCopyWith<$Res> {
       _$ServiceRatingCopyWithImpl<$Res, ServiceRating>;
   @useResult
   $Res call(
-      {String id,
-      String vendorName,
-      String phoneNumber,
-      double whatsappNumber,
-      String? serviceCategory});
+      {int id,
+      @JsonKey(name: 'vendor_name') String vendorName,
+      String username,
+      int rating,
+      String? comment});
 }
 
 /// @nodoc
@@ -220,30 +225,30 @@ class _$ServiceRatingCopyWithImpl<$Res, $Val extends ServiceRating>
   $Res call({
     Object? id = null,
     Object? vendorName = null,
-    Object? phoneNumber = null,
-    Object? whatsappNumber = null,
-    Object? serviceCategory = freezed,
+    Object? username = null,
+    Object? rating = null,
+    Object? comment = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as int,
       vendorName: null == vendorName
           ? _value.vendorName
           : vendorName // ignore: cast_nullable_to_non_nullable
               as String,
-      phoneNumber: null == phoneNumber
-          ? _value.phoneNumber
-          : phoneNumber // ignore: cast_nullable_to_non_nullable
+      username: null == username
+          ? _value.username
+          : username // ignore: cast_nullable_to_non_nullable
               as String,
-      whatsappNumber: null == whatsappNumber
-          ? _value.whatsappNumber
-          : whatsappNumber // ignore: cast_nullable_to_non_nullable
-              as double,
-      serviceCategory: freezed == serviceCategory
-          ? _value.serviceCategory
-          : serviceCategory // ignore: cast_nullable_to_non_nullable
+      rating: null == rating
+          ? _value.rating
+          : rating // ignore: cast_nullable_to_non_nullable
+              as int,
+      comment: freezed == comment
+          ? _value.comment
+          : comment // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
   }
@@ -258,11 +263,11 @@ abstract class _$$ServiceRatingImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String id,
-      String vendorName,
-      String phoneNumber,
-      double whatsappNumber,
-      String? serviceCategory});
+      {int id,
+      @JsonKey(name: 'vendor_name') String vendorName,
+      String username,
+      int rating,
+      String? comment});
 }
 
 /// @nodoc
@@ -280,30 +285,30 @@ class __$$ServiceRatingImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? vendorName = null,
-    Object? phoneNumber = null,
-    Object? whatsappNumber = null,
-    Object? serviceCategory = freezed,
+    Object? username = null,
+    Object? rating = null,
+    Object? comment = freezed,
   }) {
     return _then(_$ServiceRatingImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as int,
       vendorName: null == vendorName
           ? _value.vendorName
           : vendorName // ignore: cast_nullable_to_non_nullable
               as String,
-      phoneNumber: null == phoneNumber
-          ? _value.phoneNumber
-          : phoneNumber // ignore: cast_nullable_to_non_nullable
+      username: null == username
+          ? _value.username
+          : username // ignore: cast_nullable_to_non_nullable
               as String,
-      whatsappNumber: null == whatsappNumber
-          ? _value.whatsappNumber
-          : whatsappNumber // ignore: cast_nullable_to_non_nullable
-              as double,
-      serviceCategory: freezed == serviceCategory
-          ? _value.serviceCategory
-          : serviceCategory // ignore: cast_nullable_to_non_nullable
+      rating: null == rating
+          ? _value.rating
+          : rating // ignore: cast_nullable_to_non_nullable
+              as int,
+      comment: freezed == comment
+          ? _value.comment
+          : comment // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
@@ -314,29 +319,29 @@ class __$$ServiceRatingImplCopyWithImpl<$Res>
 class _$ServiceRatingImpl implements _ServiceRating {
   const _$ServiceRatingImpl(
       {required this.id,
-      required this.vendorName,
-      required this.phoneNumber,
-      required this.whatsappNumber,
-      this.serviceCategory});
+      @JsonKey(name: 'vendor_name') required this.vendorName,
+      required this.username,
+      required this.rating,
+      this.comment});
 
   factory _$ServiceRatingImpl.fromJson(Map<String, dynamic> json) =>
       _$$ServiceRatingImplFromJson(json);
 
   @override
-  final String id;
+  final int id;
   @override
+  @JsonKey(name: 'vendor_name')
   final String vendorName;
   @override
-  final String phoneNumber;
+  final String username;
   @override
-  final double whatsappNumber;
-// This is actually the rating value based on your API
+  final int rating;
   @override
-  final String? serviceCategory;
+  final String? comment;
 
   @override
   String toString() {
-    return 'ServiceRating(id: $id, vendorName: $vendorName, phoneNumber: $phoneNumber, whatsappNumber: $whatsappNumber, serviceCategory: $serviceCategory)';
+    return 'ServiceRating(id: $id, vendorName: $vendorName, username: $username, rating: $rating, comment: $comment)';
   }
 
   @override
@@ -347,18 +352,16 @@ class _$ServiceRatingImpl implements _ServiceRating {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.vendorName, vendorName) ||
                 other.vendorName == vendorName) &&
-            (identical(other.phoneNumber, phoneNumber) ||
-                other.phoneNumber == phoneNumber) &&
-            (identical(other.whatsappNumber, whatsappNumber) ||
-                other.whatsappNumber == whatsappNumber) &&
-            (identical(other.serviceCategory, serviceCategory) ||
-                other.serviceCategory == serviceCategory));
+            (identical(other.username, username) ||
+                other.username == username) &&
+            (identical(other.rating, rating) || other.rating == rating) &&
+            (identical(other.comment, comment) || other.comment == comment));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, vendorName, phoneNumber,
-      whatsappNumber, serviceCategory);
+  int get hashCode =>
+      Object.hash(runtimeType, id, vendorName, username, rating, comment);
 
   /// Create a copy of ServiceRating
   /// with the given fields replaced by the non-null parameter values.
@@ -378,26 +381,26 @@ class _$ServiceRatingImpl implements _ServiceRating {
 
 abstract class _ServiceRating implements ServiceRating {
   const factory _ServiceRating(
-      {required final String id,
-      required final String vendorName,
-      required final String phoneNumber,
-      required final double whatsappNumber,
-      final String? serviceCategory}) = _$ServiceRatingImpl;
+      {required final int id,
+      @JsonKey(name: 'vendor_name') required final String vendorName,
+      required final String username,
+      required final int rating,
+      final String? comment}) = _$ServiceRatingImpl;
 
   factory _ServiceRating.fromJson(Map<String, dynamic> json) =
       _$ServiceRatingImpl.fromJson;
 
   @override
-  String get id;
+  int get id;
   @override
+  @JsonKey(name: 'vendor_name')
   String get vendorName;
   @override
-  String get phoneNumber;
+  String get username;
   @override
-  double
-      get whatsappNumber; // This is actually the rating value based on your API
+  int get rating;
   @override
-  String? get serviceCategory;
+  String? get comment;
 
   /// Create a copy of ServiceRating
   /// with the given fields replaced by the non-null parameter values.

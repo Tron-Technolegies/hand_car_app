@@ -20,7 +20,8 @@ ServiceRatingModel _$ServiceRatingModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ServiceRatingModel {
-  String get serviceId => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _parseId)
+  int get serviceId => throw _privateConstructorUsedError;
   int get rating => throw _privateConstructorUsedError;
   String? get comment => throw _privateConstructorUsedError;
 
@@ -40,7 +41,10 @@ abstract class $ServiceRatingModelCopyWith<$Res> {
           ServiceRatingModel value, $Res Function(ServiceRatingModel) then) =
       _$ServiceRatingModelCopyWithImpl<$Res, ServiceRatingModel>;
   @useResult
-  $Res call({String serviceId, int rating, String? comment});
+  $Res call(
+      {@JsonKey(fromJson: _parseId) int serviceId,
+      int rating,
+      String? comment});
 }
 
 /// @nodoc
@@ -66,7 +70,7 @@ class _$ServiceRatingModelCopyWithImpl<$Res, $Val extends ServiceRatingModel>
       serviceId: null == serviceId
           ? _value.serviceId
           : serviceId // ignore: cast_nullable_to_non_nullable
-              as String,
+              as int,
       rating: null == rating
           ? _value.rating
           : rating // ignore: cast_nullable_to_non_nullable
@@ -87,7 +91,10 @@ abstract class _$$ServiceRatingModelImplCopyWith<$Res>
       __$$ServiceRatingModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String serviceId, int rating, String? comment});
+  $Res call(
+      {@JsonKey(fromJson: _parseId) int serviceId,
+      int rating,
+      String? comment});
 }
 
 /// @nodoc
@@ -111,7 +118,7 @@ class __$$ServiceRatingModelImplCopyWithImpl<$Res>
       serviceId: null == serviceId
           ? _value.serviceId
           : serviceId // ignore: cast_nullable_to_non_nullable
-              as String,
+              as int,
       rating: null == rating
           ? _value.rating
           : rating // ignore: cast_nullable_to_non_nullable
@@ -128,13 +135,16 @@ class __$$ServiceRatingModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ServiceRatingModelImpl implements _ServiceRatingModel {
   const _$ServiceRatingModelImpl(
-      {required this.serviceId, required this.rating, this.comment});
+      {@JsonKey(fromJson: _parseId) required this.serviceId,
+      required this.rating,
+      this.comment});
 
   factory _$ServiceRatingModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$ServiceRatingModelImplFromJson(json);
 
   @override
-  final String serviceId;
+  @JsonKey(fromJson: _parseId)
+  final int serviceId;
   @override
   final int rating;
   @override
@@ -179,7 +189,7 @@ class _$ServiceRatingModelImpl implements _ServiceRatingModel {
 
 abstract class _ServiceRatingModel implements ServiceRatingModel {
   const factory _ServiceRatingModel(
-      {required final String serviceId,
+      {@JsonKey(fromJson: _parseId) required final int serviceId,
       required final int rating,
       final String? comment}) = _$ServiceRatingModelImpl;
 
@@ -187,7 +197,8 @@ abstract class _ServiceRatingModel implements ServiceRatingModel {
       _$ServiceRatingModelImpl.fromJson;
 
   @override
-  String get serviceId;
+  @JsonKey(fromJson: _parseId)
+  int get serviceId;
   @override
   int get rating;
   @override

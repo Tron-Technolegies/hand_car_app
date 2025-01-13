@@ -1,4 +1,5 @@
 import 'package:hand_car/features/car_service/model/rating/response/rating_response.dart';
+import 'package:hand_car/features/car_service/model/rating/review_list/review_list_model.dart';
 import 'package:hand_car/features/car_service/model/rating/service_rating.dart';
 import 'package:hand_car/features/car_service/service/review_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -9,19 +10,24 @@ part 'service_rating_controller.g.dart';
 @riverpod
 class ServiceRatingController extends _$ServiceRatingController {
   @override
-  FutureOr<void> build() {
-    // Initial state
+  FutureOr<ServiceRatingList> build() {
+    return _fetchRatings();
+  }
+  Future<ServiceRatingList> _fetchRatings() async {
+    final repository = ReviewService().getServiceRatings();
+    return repository;
   }
 
-  Future<ServiceRatingResponse> submitRating({
-    required String serviceId,
+  Future<void> refreshRatings() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(_fetchRatings);
+  }
+   Future<ServiceRatingResponse> submitRating({
+    required int serviceId,
     required int rating,
     String? comment,
   }) async {
-    state = const AsyncLoading();
-
     try {
-    
       final response = await ReviewService().addServiceRating(
         ServiceRatingModel(
           serviceId: serviceId,
@@ -30,16 +36,13 @@ class ServiceRatingController extends _$ServiceRatingController {
         ),
       );
 
-      if (response.error != null) {
-        state = AsyncError(response.error!, StackTrace.current);
-      } else {
-        state = const AsyncData(null);
+      if (response.error == null) {
+        await refreshRatings();
       }
 
       return response;
-    } catch (error, stackTrace) {
-      state = AsyncError(error, stackTrace);
-      return const ServiceRatingResponse(error: 'Failed to submit rating');
+    } catch (error) {
+      return ServiceRatingResponse(error: error.toString());
     }
   }
 }

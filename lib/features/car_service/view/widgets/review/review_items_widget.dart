@@ -4,21 +4,17 @@ import 'package:hand_car/core/extension/theme_extension.dart';
 
 // ReviewItemsWidget For Show In Details Page
 class ReviewItemsWidget extends StatelessWidget {
-  final String username;
-  final int rating;
-  final String date;
+   final String username;
   final String comment;
-  final String review;
-  final List<String> images;
+  final int rating;
 
   const ReviewItemsWidget({
     super.key,
     required this.username,
     required this.rating,
-    required this.date,
+
     required this.comment,
-    required this.review,
-    required this.images,
+  
   });
 
   @override
@@ -41,7 +37,7 @@ class ReviewItemsWidget extends StatelessWidget {
           ),
           SizedBox(height: context.space.space_100),
           // Date
-          Text(date),
+       
           SizedBox(height: context.space.space_100),
           Row(
             children: List.generate(
@@ -60,26 +56,10 @@ class ReviewItemsWidget extends StatelessWidget {
           ),
           SizedBox(height: context.space.space_100),
           // Review
-          Text(review, style: context.typography.body),
+       
           SizedBox(height: context.space.space_200),
           // Grid view for multiple images
-          if (images.isNotEmpty)
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-              ),
-              itemCount: images.length,
-              itemBuilder: (context, index) {
-                return Image.file(
-                  File(images[index]),
-                  fit: BoxFit.cover,
-                );
-              },
-            ),
+         
         ],
       ),
     );

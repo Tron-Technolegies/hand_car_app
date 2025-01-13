@@ -4,10 +4,12 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'review_list_model.freezed.dart';
 part 'review_list_model.g.dart';
 
+
+
 @freezed
 class ServiceRatingList with _$ServiceRatingList {
   const factory ServiceRatingList({
-    required List<ServiceRating> ratings,
+    @JsonKey(name: 'Ratings') required List<ServiceRating> ratings,
   }) = _ServiceRatingList;
 
   factory ServiceRatingList.fromJson(Map<String, dynamic> json) =>
@@ -17,11 +19,11 @@ class ServiceRatingList with _$ServiceRatingList {
 @freezed
 class ServiceRating with _$ServiceRating {
   const factory ServiceRating({
-    required String id,
-    required String vendorName,
-    required String phoneNumber,
-    required double whatsappNumber,  // This is actually the rating value based on your API
-    String? serviceCategory,  // This is actually the comment based on your API
+    required int id,
+    @JsonKey(name: 'vendor_name') required String vendorName,
+    required String username,
+    required int rating,
+    String? comment,
   }) = _ServiceRating;
 
   factory ServiceRating.fromJson(Map<String, dynamic> json) =>

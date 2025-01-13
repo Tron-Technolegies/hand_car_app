@@ -9,7 +9,7 @@ part of 'service_rating.dart';
 _$ServiceRatingModelImpl _$$ServiceRatingModelImplFromJson(
         Map<String, dynamic> json) =>
     _$ServiceRatingModelImpl(
-      serviceId: json['service_id'] as String,
+      serviceId: _parseId(json['service_id']),
       rating: (json['rating'] as num).toInt(),
       comment: json['comment'] as String?,
     );
