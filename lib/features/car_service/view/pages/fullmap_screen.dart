@@ -3,7 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/features/car_service/service/location_service.dart';
+import 'package:hand_car/features/car_service/service/location/location_service.dart';
 
 // class FullScreenMap extends StatelessWidget {
 //   const FullScreenMap({super.key});

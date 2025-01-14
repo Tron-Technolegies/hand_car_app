@@ -1,6 +1,6 @@
 
 import 'package:hand_car/features/car_service/model/service_category/service_category_model.dart';
-import 'package:hand_car/features/car_service/service/service_categories.dart';
+import 'package:hand_car/features/car_service/service/category/service_categories.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'service_filter.g.dart';

@@ -1,7 +1,7 @@
 import 'package:hand_car/features/car_service/model/rating/response/rating_response.dart';
 import 'package:hand_car/features/car_service/model/rating/review_list/review_list_model.dart';
 import 'package:hand_car/features/car_service/model/rating/service_rating.dart';
-import 'package:hand_car/features/car_service/service/review_service.dart';
+import 'package:hand_car/features/car_service/service/review/review_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'service_rating_controller.g.dart';
