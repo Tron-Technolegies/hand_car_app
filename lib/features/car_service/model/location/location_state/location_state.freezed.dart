@@ -157,7 +157,8 @@ class _$LocationStateImpl implements _LocationState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$LocationStateImpl &&
-            const DeepCollectionEquality().equals(other.position, position) &&
+            (identical(other.position, position) ||
+                other.position == position) &&
             (identical(other.address, address) || other.address == address) &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
@@ -165,8 +166,8 @@ class _$LocationStateImpl implements _LocationState {
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType,
-      const DeepCollectionEquality().hash(position), address, isLoading, error);
+  int get hashCode =>
+      Object.hash(runtimeType, position, address, isLoading, error);
 
   /// Create a copy of LocationState
   /// with the given fields replaced by the non-null parameter values.
