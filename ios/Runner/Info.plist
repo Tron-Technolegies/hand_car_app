@@ -64,5 +64,9 @@
     <string>Allow access to microphone, as it's needed if you plan to record videos.</string>
     <key>NSAppTransportSecurity</key>
     <key>NSAllowsArbitraryLoads</key>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>This app needs access to location when open to find nearby service centers.</string>
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>This app needs access to location when in the background to find nearby service centers.</string>
 </dict>
 </plist>
