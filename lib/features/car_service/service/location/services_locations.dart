@@ -3,6 +3,8 @@ import 'package:hand_car/config.dart';
 import 'package:hand_car/features/car_service/model/location/location_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+part 'services_locations.g.dart';
+
 class ServicesLocations {
   final Dio _dio;
   
