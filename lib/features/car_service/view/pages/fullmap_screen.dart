@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/features/car_service/service/location/location_service.dart';
+import 'package:hand_car/features/car_service/controller/location/location_list/location_list.dart';
+import 'package:hand_car/features/car_service/controller/location/location_notifier/location_notifier.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // class FullScreenMap extends StatelessWidget {
 //   const FullScreenMap({super.key});
@@ -251,55 +251,32 @@ import 'package:hand_car/features/car_service/service/location/location_service.
 // }
 
 
-class FullScreenMap extends HookWidget {
+// screens/full_screen_map.dart
+
+
+
+class FullScreenMap extends HookConsumerWidget {
   const FullScreenMap({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final locationService = useMemoized(() => LocationService());
-    final currentPosition = useState<Position?>(null);
-    final currentAddress = useState('');
+  Widget build(BuildContext context, WidgetRef ref) {
+    final locationState = ref.watch(locationNotifierProvider);
+    final servicesState = ref.watch(servicesNotifierProvider);
     final searchController = useTextEditingController();
 
-    // Define getCurrentLocation function using hooks
-    final getCurrentLocation = useCallback(() async {
-      try {
-        final position = await locationService.getCurrentLocation();
-        currentPosition.value = position;
-        
-        // Get address from coordinates
-        final address = await locationService.getAddressFromCoordinates(
-          position.latitude,
-          position.longitude
-        );
-        currentAddress.value = address;
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString()))
-        );
-      }
-    }, [locationService]);
-
-    // Define searchLocation function using hooks
-    final searchLocation = useCallback((String address) async {
-      try {
-        final position = await locationService.getCoordinatesFromAddress(address);
-        if (position != null) {
-          currentPosition.value = position;
-          // Update map position here
-        }
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString()))
-        );
-      }
-    }, [locationService]);
-
-    // Use effect for initialization
+    // Initialize location on first build
     useEffect(() {
-      getCurrentLocation();
+      Future.microtask(() async {
+        await ref.read(locationNotifierProvider.notifier).getCurrentLocation();
+        if (locationState.position != null) {
+          await ref.read(servicesNotifierProvider.notifier).fetchNearbyServices(
+                locationState.position!.latitude,
+                locationState.position!.longitude,
+              );
+        }
+      });
       return null;
-    }, []);
+    }, const []);
 
     return Scaffold(
       body: Stack(
@@ -308,9 +285,10 @@ class FullScreenMap extends HookWidget {
           Container(
             color: Colors.grey[200],
             child: Center(
-              child: currentPosition.value != null
-                ? Text('Lat: ${currentPosition.value!.latitude}, Long: ${currentPosition.value!.longitude}')
-                : const Text('Loading location...'),
+              child: locationState.position != null
+                  ? Text(
+                      'Lat: ${locationState.position!.latitude}, Long: ${locationState.position!.longitude}')
+                  : const Text('Loading location...'),
             ),
           ),
 
@@ -329,7 +307,7 @@ class FullScreenMap extends HookWidget {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.1),
+                            color: Colors.black.withOpacity(0.1),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -348,7 +326,7 @@ class FullScreenMap extends HookWidget {
                           borderRadius: BorderRadius.circular(8),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.1),
+                              color: Colors.black.withOpacity(0.1),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),
@@ -356,87 +334,114 @@ class FullScreenMap extends HookWidget {
                         ),
                         child: TextField(
                           controller: searchController,
-                          autofocus: true,
                           decoration: InputDecoration(
                             hintText: 'Search for service centers',
                             prefixIcon: const Icon(Icons.search),
                             suffixIcon: IconButton(
                               icon: const Icon(Icons.close),
-                              onPressed: () {
-                                searchController.clear();
-                              },
+                              onPressed: () => searchController.clear(),
                             ),
                             border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: context.space.space_200,
-                              vertical: context.space.space_150),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
                           ),
-                          onSubmitted: searchLocation,
                         ),
                       ),
                     ),
                   ],
                 ),
 
-                // Location info and recent searches
-                Container(
-                  margin: const EdgeInsets.only(top: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      Ink(
-                        child: InkWell(
-                          onTap: getCurrentLocation,
-                          child: ListTile(
-                            leading: Icon(FontAwesomeIcons.locationArrow),
-                            title: Text(currentAddress.value.isEmpty 
-                              ? "Choose Your Location"
-                              : currentAddress.value),
+                // Location info
+                if (locationState.address.isNotEmpty)
+                  Container(
+                    margin: const EdgeInsets.only(top: 8),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(FontAwesomeIcons.locationArrow),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            locationState.address,
+                            style: Theme.of(context).textTheme.bodyLarge,
                           ),
                         ),
-                      ),
-                      // Rest of your existing ListTiles...
-                    ],
+                      ],
+                    ),
                   ),
-                ),
               ],
             ),
           ),
 
-          // Action Buttons
+          // Services List
           Positioned(
-            right: 16,
-            bottom: 340,
-            child: Column(
-              children: [
-                FloatingActionButton(
-                  heroTag: 'myLocation',
-                  onPressed: getCurrentLocation,
-                  backgroundColor: Colors.white,
-                  child: Icon(Icons.my_location, color: context.colors.primary),
-                ),
-                const SizedBox(height: 8),
-                FloatingActionButton(
-                  heroTag: 'layers',
-                  onPressed: () {},
-                  backgroundColor: Colors.white,
-                  child: Icon(Icons.layers, color: context.colors.primary),
-                ),
-              ],
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 12),
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  if (servicesState.isLoading)
+                    const Center(child: CircularProgressIndicator())
+                  else if (servicesState.error != null)
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Text(
+                        servicesState.error!,
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                    )
+                  else
+                    Container(
+                      constraints: const BoxConstraints(maxHeight: 300),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: servicesState.services.length,
+                        itemBuilder: (context, index) {
+                          final service = servicesState.services[index];
+                          return ListTile(
+                            title: Text(service.name),
+                            subtitle: Text(
+                                '${service.distance.toStringAsFixed(1)} km away'),
+                            trailing: const Icon(Icons.arrow_forward_ios),
+                            onTap: () {
+                              // Handle service selection
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
-
-          // Your existing bottom sheet...
         ],
       ),
     );

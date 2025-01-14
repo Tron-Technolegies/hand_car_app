@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:hand_car/features/car_service/controller/rating/service_rating_controller.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:hand_car/features/car_service/model/rating/service_rating.dart';
 
 import 'package:hand_car/features/car_service/view/widgets/review/review_items_widget.dart';
 

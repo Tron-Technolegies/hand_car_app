@@ -18,7 +18,7 @@ class ServiceRatingDialog extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final controller=TextEditingController();
+  
     final dialog = rating_dialog.RatingDialog(
       initialRating: 1.0,
       title: Text(

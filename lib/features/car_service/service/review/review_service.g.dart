@@ -1,27 +1,27 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'service_rating_controller.dart';
+part of 'review_service.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$serviceRatingControllerHash() =>
-    r'1482e2fa17960092d7349a1ca389cae0ab054fcc';
+String _$reviewServiceHash() => r'72bf0667ab1f2ffed79772db5a378b66f936545f';
 
-/// See also [ServiceRatingController].
-@ProviderFor(ServiceRatingController)
-final serviceRatingControllerProvider = AutoDisposeAsyncNotifierProvider<
-    ServiceRatingController, ServiceRatingList>.internal(
-  ServiceRatingController.new,
-  name: r'serviceRatingControllerProvider',
+/// See also [reviewService].
+@ProviderFor(reviewService)
+final reviewServiceProvider = AutoDisposeProvider<ReviewService>.internal(
+  reviewService,
+  name: r'reviewServiceProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$serviceRatingControllerHash,
+      : _$reviewServiceHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$ServiceRatingController = AutoDisposeAsyncNotifier<ServiceRatingList>;
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ReviewServiceRef = AutoDisposeProviderRef<ReviewService>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

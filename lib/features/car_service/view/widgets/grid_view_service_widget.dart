@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/car_service/model/service_model.dart';
 import 'package:hand_car/features/car_service/view/widgets/service_info_container_widget.dart';
 
@@ -23,8 +24,11 @@ class GridViewServicesWidget extends StatelessWidget {
       itemCount: services.length,
       itemBuilder: (context, index) {
         final service = services[index];
-        return ServiceCardWidget(
-          service: service,
+        return Padding(
+          padding: EdgeInsets.all(context.space.space_100),
+          child: ServiceCardWidget(
+            service: service,
+          ),
         );
       },
     );

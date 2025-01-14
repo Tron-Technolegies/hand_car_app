@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 
 import 'package:hand_car/features/Accessories/view/widgets/accessories/progress_indicator_bar_widget.dart';
-import 'package:hand_car/features/Accessories/view/widgets/review/bottom_sheet_for_write_review_widget.dart';
 import 'package:hand_car/features/car_service/view/widgets/review/bottom_sheet_for_write_review_widget.dart';
 
 

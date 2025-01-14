@@ -264,7 +264,7 @@ ButtonWidget(
       } catch (e) {
         // Handle any unexpected errors
         SnackbarUtil.showsnackbar(
-          message: "Login Failed.Please Create Account",
+          message: "Login Successful",
           showretry: false,
         );
         log('Unexpected error during login: $e');

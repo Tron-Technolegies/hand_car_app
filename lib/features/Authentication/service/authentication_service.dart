@@ -9,11 +9,11 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'authentication_service.g.dart';
 
 class ApiServiceAuthentication {
-  final Dio _dio;
+  final Dio dio;
   final TokenStorage _tokenStorage;
 
   ApiServiceAuthentication()
-      : _dio = Dio(
+      : dio = Dio(
           BaseOptions(
             headers: {
               'Content-Type': 'application/json',
@@ -29,8 +29,8 @@ class ApiServiceAuthentication {
   }
 
   void _setupInterceptors() {
-    _dio.interceptors.clear(); // Clear any existing interceptors
-    _dio.interceptors.add(
+    dio.interceptors.clear(); // Clear any existing interceptors
+    dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: _handleRequest,
         onError: _handleError,
@@ -93,7 +93,7 @@ class ApiServiceAuthentication {
       },
     );
 
-    return await _dio.request(
+    return await dio.request(
       requestOptions.path,
       options: options,
       data: requestOptions.data,
@@ -108,7 +108,7 @@ class ApiServiceAuthentication {
     }
 
     try {
-      final response = await _dio.post(
+      final response = await dio.post(
         '/refresh-token/',
         data: {'refresh_token': refreshToken},
       );
@@ -140,7 +140,7 @@ class ApiServiceAuthentication {
 
       log('Sending FormData: ${formData.fields}');
 
-      final response = await _dio.post(
+      final response = await dio.post(
         '/UserLogin',
         data: formData, // Use formData instead of JSON
         options: Options(
@@ -184,7 +184,7 @@ class ApiServiceAuthentication {
     try {
       final token = _tokenStorage.getAccessToken();
       if (token != null) {
-        await _dio.post(
+        await dio.post(
           '/Logout',
           options: Options(
             headers: {'Authorization': 'Bearer $token'},
@@ -200,7 +200,7 @@ class ApiServiceAuthentication {
 
   Future<void> _handleLogout() async {
     await _tokenStorage.clearTokens();
-    _dio.options.headers.remove('Authorization');
+    dio.options.headers.remove('Authorization');
   }
 
 Future<String> signUp(UserModel user) async {
@@ -209,7 +209,7 @@ Future<String> signUp(UserModel user) async {
   
   while (retryCount < maxRetries) {
     try {
-      final response = await _dio.post(
+      final response = await dio.post(
         '/signup/',
         data: user.toJson(),
         options: Options(

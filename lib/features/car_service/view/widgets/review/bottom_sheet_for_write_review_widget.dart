@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
+import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
-import 'package:hand_car/features/Accessories/controller/review/review_controller.dart';
 import 'package:hand_car/features/car_service/controller/rating/service_rating_controller.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -136,6 +136,10 @@ class BottomSheetForWriteReviewWidget extends HookConsumerWidget {
                             .submitRating(serviceId: int.parse(serviceId), rating: rating.value, comment: reviewController.text);
 
                         isSubmitting.value = false;
+                        SnackbarUtil.showsnackbar(
+                          message: "Review submitted successfully",
+                       
+                        );
                         if (context.mounted) {
                           Navigator.pop(context);
                         }
