@@ -1,259 +1,14 @@
+// full_screen_map.dart
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:hand_car/features/car_service/controller/location/location_list/location_list.dart';
 import 'package:hand_car/features/car_service/controller/location/location_notifier/location_notifier.dart';
+import 'package:hand_car/features/car_service/controller/location/search/location_search_controller.dart';
+import 'package:hand_car/features/car_service/view/widgets/map/location_widget.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-
-// class FullScreenMap extends StatelessWidget {
-//   const FullScreenMap({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: Stack(
-//         children: [
-//           // Map Container
-//           Container(
-//             color: Colors.grey[200],
-//             child: const Center(
-//               child: Text('Map View'),
-//             ),
-//           ),
-
-//           // Search Bar
-//           Positioned(
-//             top: MediaQuery.of(context).padding.top + 10,
-//             left: 16,
-//             right: 16,
-//             child: Column(
-//               children: [
-//                 // Back button and search bar row
-//                 Row(
-//                   children: [
-//                     Container(
-//                       decoration: BoxDecoration(
-//                         color: Colors.white,
-//                         shape: BoxShape.circle,
-//                         boxShadow: [
-//                           BoxShadow(
-//                             color: Colors.black.withValues(alpha: 0.1),
-//                             blurRadius: 8,
-//                             offset: const Offset(0, 2),
-//                           ),
-//                         ],
-//                       ),
-//                       child: IconButton(
-//                         icon: const Icon(Icons.arrow_back),
-//                         onPressed: () => Navigator.pop(context),
-//                       ),
-//                     ),
-//                     const SizedBox(width: 8),
-//                     Expanded(
-//                       child: Container(
-//                         decoration: BoxDecoration(
-//                           color: Colors.white,
-//                           borderRadius: BorderRadius.circular(8),
-//                           boxShadow: [
-//                             BoxShadow(
-//                               color: Colors.black.withValues(alpha: 0.1),
-//                               blurRadius: 8,
-//                               offset: const Offset(0, 2),
-//                             ),
-//                           ],
-//                         ),
-//                         child: TextField(
-//                           autofocus: true,
-//                           decoration: InputDecoration(
-//                             hintText: 'Search for service centers',
-//                             prefixIcon: const Icon(Icons.search),
-//                             suffixIcon: IconButton(
-//                               icon: const Icon(Icons.close),
-//                               onPressed: () {},
-//                             ),
-//                             border: InputBorder.none,
-//                             contentPadding: EdgeInsets.symmetric(
-//                                 horizontal: context.space.space_200,
-//                                 vertical: context.space.space_150),
-//                           ),
-//                         ),
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-
-//                 // Recent searches container
-//                 Container(
-//                   margin: const EdgeInsets.only(top: 8),
-//                   decoration: BoxDecoration(
-//                     color: Colors.white,
-//                     borderRadius: BorderRadius.circular(8),
-//                     boxShadow: [
-//                       BoxShadow(
-//                         color: Colors.black.withValues(alpha: 0.1),
-//                         blurRadius: 8,
-//                         offset: const Offset(0, 2),
-//                       ),
-//                     ],
-//                   ),
-//                   child: Column(
-//                     children: [
-//                       Ink(
-//                         child: InkWell(
-//                           onTap: () {},
-//                           child: ListTile(
-//                             leading: Icon(
-//                               FontAwesomeIcons.locationArrow,
-//                             ),
-//                             title: Text(
-//                               "Choose Your Location",
-//                             ),
-//                           ),
-//                         ),
-//                       ),
-//                       ListTile(
-//                         leading: const Icon(Icons.history),
-//                         title: Text('Tron Digital',
-//                             style: context.typography.bodyMedium),
-//                         dense: true,
-//                         onTap: () {},
-//                       ),
-//                       ListTile(
-//                         leading: const Icon(Icons.history),
-//                         title: Text('Dahab Miners',
-//                             style: context.typography.bodyMedium),
-//                         dense: true,
-//                         onTap: () {},
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ),
-
-//           // Bottom Sheet with Service Centers
-//           Positioned(
-//             bottom: 0,
-//             left: 0,
-//             right: 0,
-//             child: Container(
-//               decoration: BoxDecoration(
-//                 color: Colors.white,
-//                 borderRadius:
-//                     const BorderRadius.vertical(top: Radius.circular(16)),
-//                 boxShadow: [
-//                   BoxShadow(
-//                     color: Colors.black.withValues(alpha: 0.1),
-//                     blurRadius: 8,
-//                     offset: const Offset(0, -2),
-//                   ),
-//                 ],
-//               ),
-//               child: Column(
-//                 mainAxisSize: MainAxisSize.min,
-//                 children: [
-//                   // Drag handle
-//                   Center(
-//                     child: Container(
-//                       margin: const EdgeInsets.symmetric(vertical: 12),
-//                       width: 40,
-//                       height: 4,
-//                       decoration: BoxDecoration(
-//                         color: Colors.grey[300],
-//                         borderRadius: BorderRadius.circular(2),
-//                       ),
-//                     ),
-//                   ),
-
-//                   // Service centers list
-//                   Container(
-//                     constraints: const BoxConstraints(maxHeight: 300),
-//                     child: ListView.builder(
-//                       shrinkWrap: true,
-//                       itemCount: 3,
-//                       itemBuilder: (context, index) {
-//                         return ListTile(
-//                           leading: Container(
-//                             width: 50,
-//                             height: 50,
-//                             decoration: BoxDecoration(
-//                               color: Colors.grey[200],
-//                               borderRadius: BorderRadius.circular(8),
-//                             ),
-//                             child: Icon(Icons.car_repair,
-//                                 color: context.colors.primary),
-//                           ),
-//                           title: Text(
-//                             'Service Center ${index + 1}',
-//                             style: context.typography.bodySemiBold,
-//                           ),
-//                           subtitle: Column(
-//                             crossAxisAlignment: CrossAxisAlignment.start,
-//                             children: [
-//                               Text(
-//                                 '2.3 km away',
-//                                 style: context.typography.bodySmall.copyWith(
-//                                   color: context.colors.primary,
-//                                 ),
-//                               ),
-//                               Text(
-//                                 'Abu Dhabi, United Arab Emirates',
-//                                 style: context.typography.bodySmall,
-//                               ),
-//                             ],
-//                           ),
-//                           trailing: CircleAvatar(
-//                             backgroundColor:
-//                                 context.colors.primary.withValues(alpha: 0.1),
-//                             child: Icon(
-//                               Icons.arrow_forward,
-//                               color: context.colors.primary,
-//                               size: 20,
-//                             ),
-//                           ),
-//                           onTap: () {},
-//                         );
-//                       },
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           ),
-
-//           // Action Buttons
-//           Positioned(
-//             right: 16,
-//             bottom: 340,
-//             child: Column(
-//               children: [
-//                 FloatingActionButton(
-//                   heroTag: 'myLocation',
-//                   onPressed: () {},
-//                   backgroundColor: Colors.white,
-//                   child: Icon(Icons.my_location, color: context.colors.primary),
-//                 ),
-//                 const SizedBox(height: 8),
-//                 FloatingActionButton(
-//                   heroTag: 'layers',
-//                   onPressed: () {},
-//                   backgroundColor: Colors.white,
-//                   child: Icon(Icons.layers, color: context.colors.primary),
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-
-
-// screens/full_screen_map.dart
-
-
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class FullScreenMap extends HookConsumerWidget {
   const FullScreenMap({super.key});
@@ -262,7 +17,10 @@ class FullScreenMap extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final locationState = ref.watch(locationNotifierProvider);
     final servicesState = ref.watch(servicesNotifierProvider);
+    final searchResults = ref.watch(searchNotifierProvider);
     final searchController = useTextEditingController();
+    final mapController = useRef(MapController());
+    final showSearchResults = useState(false);
 
     // Initialize location on first build
     useEffect(() {
@@ -282,17 +40,92 @@ class FullScreenMap extends HookConsumerWidget {
       body: Stack(
         children: [
           // Map Container
-          Container(
-            color: Colors.grey[200],
-            child: Center(
-              child: locationState.position != null
-                  ? Text(
-                      'Lat: ${locationState.position!.latitude}, Long: ${locationState.position!.longitude}')
-                  : const Text('Loading location...'),
+          FlutterMap(
+            mapController: mapController.value,
+            options: MapOptions(
+              initialCenter: locationState.position != null
+                  ? LatLng(
+                      locationState.position!.latitude,
+                      locationState.position!.longitude,
+                    )
+                  : const LatLng(0, 0),
+              initialZoom: 13,
+              minZoom: 5,
+              maxZoom: 18,
+              onTap: (_, __) {
+                // Hide search results on map tap
+                showSearchResults.value = false;
+              },
             ),
+            children: [
+              // Base map layer
+              TileLayer(
+                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                userAgentPackageName: 'com.hand_car.app',
+              ),
+              // Markers layer
+              MarkerLayer(
+                markers: [
+                  if (locationState.position != null)
+                    Marker(
+                      point: LatLng(
+                        locationState.position!.latitude,
+                        locationState.position!.longitude,
+                      ),
+                      width: 40,
+                      height: 40,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color:
+                              Theme.of(context).primaryColor.withOpacity(0.9),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.my_location,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  // Service location markers
+                  ...servicesState.services.map(
+                    (service) => Marker(
+                      point: LatLng(service.latitude, service.longitude),
+                      width: 40,
+                      height: 40,
+                      child: GestureDetector(
+                        onTap: () {
+                          mapController.value.move(
+                            LatLng(service.latitude, service.longitude),
+                            15,
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 4,
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            Icons.car_repair,
+                            color: Theme.of(context).primaryColor,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
 
-          // Search Bar
+          // Search Bar and Results
           Positioned(
             top: MediaQuery.of(context).padding.top + 10,
             left: 16,
@@ -334,12 +167,21 @@ class FullScreenMap extends HookConsumerWidget {
                         ),
                         child: TextField(
                           controller: searchController,
+                          onChanged: (value) {
+                            showSearchResults.value = value.isNotEmpty;
+                            ref
+                                .read(searchNotifierProvider.notifier)
+                                .searchLocation(value);
+                          },
                           decoration: InputDecoration(
-                            hintText: 'Search for service centers',
+                            hintText: 'Search for locations',
                             prefixIcon: const Icon(Icons.search),
                             suffixIcon: IconButton(
                               icon: const Icon(Icons.close),
-                              onPressed: () => searchController.clear(),
+                              onPressed: () {
+                                searchController.clear();
+                                showSearchResults.value = false;
+                              },
                             ),
                             border: InputBorder.none,
                             contentPadding: const EdgeInsets.symmetric(
@@ -353,11 +195,10 @@ class FullScreenMap extends HookConsumerWidget {
                   ],
                 ),
 
-                // Location info
-                if (locationState.address.isNotEmpty)
+                // Search Results
+                if (showSearchResults.value)
                   Container(
                     margin: const EdgeInsets.only(top: 8),
-                    padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8),
@@ -369,19 +210,97 @@ class FullScreenMap extends HookConsumerWidget {
                         ),
                       ],
                     ),
-                    child: Row(
-                      children: [
-                        const Icon(FontAwesomeIcons.locationArrow),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            locationState.address,
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                        ),
-                      ],
+                    child: searchResults.when(
+                      data: (results) => Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: results
+                            .map((result) => ListTile(
+                                  leading: const Icon(Icons.location_on),
+                                  title: Text(result.displayName),
+                                  subtitle: Text(result.address ?? ''),
+                                  onTap: () {
+                                    mapController.value.move(
+                                      result.latLng,
+                                      15,
+                                    );
+                                    showSearchResults.value = false;
+                                    searchController.clear();
+                                    ref
+                                        .read(servicesNotifierProvider.notifier)
+                                        .fetchNearbyServices(
+                                          result.latLng.latitude,
+                                          result.latLng.longitude,
+                                        );
+                                  },
+                                ))
+                            .toList(),
+                      ),
+                      loading: () => const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Center(child: CircularProgressIndicator()),
+                      ),
+                      error: (error, _) => ListTile(
+                        leading: const Icon(Icons.error, color: Colors.red),
+                        title: Text('Error: $error'),
+                      ),
                     ),
                   ),
+
+                // Current Location Display
+                if (locationState.address.isNotEmpty &&
+                    !showSearchResults.value)
+                  Container(
+                      margin: const EdgeInsets.only(top: 8),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: LocationWidget()),
+              ],
+            ),
+          ),
+
+          // Action Buttons
+          Positioned(
+            right: 16,
+            bottom: 340,
+            child: Column(
+              children: [
+                FloatingActionButton(
+                  heroTag: 'myLocation',
+                  onPressed: () {
+                    if (locationState.position != null) {
+                      mapController.value.move(
+                        LatLng(
+                          locationState.position!.latitude,
+                          locationState.position!.longitude,
+                        ),
+                        15,
+                      );
+                    }
+                  },
+                  backgroundColor: Colors.white,
+                  child: Icon(Icons.my_location,
+                      color: Theme.of(context).primaryColor),
+                ),
+                const SizedBox(height: 8),
+                FloatingActionButton(
+                  heroTag: 'layers',
+                  onPressed: () {
+                    // Handle layers button
+                  },
+                  backgroundColor: Colors.white,
+                  child:
+                      Icon(Icons.layers, color: Theme.of(context).primaryColor),
+                ),
               ],
             ),
           ),
@@ -429,10 +348,14 @@ class FullScreenMap extends HookConsumerWidget {
                           return ListTile(
                             title: Text(service.name),
                             subtitle: Text(
-                                '${service.distance.toStringAsFixed(1)} km away'),
+                              '${service.distance.toStringAsFixed(1)} km away',
+                            ),
                             trailing: const Icon(Icons.arrow_forward_ios),
                             onTap: () {
-                              // Handle service selection
+                              mapController.value.move(
+                                LatLng(service.latitude, service.longitude),
+                                15,
+                              );
                             },
                           );
                         },
