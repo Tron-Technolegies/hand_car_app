@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hand_car/core/controller/multiple_image_picker_provider.dart';
 import 'package:hand_car/features/Accessories/view/widgets/review/review_items_widget.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -9,7 +8,7 @@ class ReviewsList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final images = ref.watch(multipleImagePickerProvider);
+   
 
     return ListView.builder(
       itemCount: 5,

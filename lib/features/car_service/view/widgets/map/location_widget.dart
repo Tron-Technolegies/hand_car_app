@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -47,7 +49,7 @@ class LocationWidget extends HookWidget {
       } catch (e) {
         // Handle any errors
         currentAddress.value = 'Unable to get location';
-        print('Error getting location: $e');
+        log('Error getting location: $e');
       }
     }, []);
 

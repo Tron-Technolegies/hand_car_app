@@ -3,16 +3,20 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/car_service/controller/location/location_list/location_list.dart';
 import 'package:hand_car/features/car_service/controller/location/location_notifier/location_notifier.dart';
 import 'package:hand_car/features/car_service/controller/location/search/location_search_controller.dart';
+import 'package:hand_car/features/car_service/model/service_model.dart';
 import 'package:hand_car/features/car_service/view/widgets/map/location_widget.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 class FullScreenMap extends HookConsumerWidget {
-  const FullScreenMap({super.key});
+  final ServiceModel serviceModel;
+  const FullScreenMap({required this.serviceModel,super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,7 +38,7 @@ class FullScreenMap extends HookConsumerWidget {
 
           // Check if location was obtained successfully
           if (locationState.position != null) {
-            print(
+            log(
                 'Location obtained: ${locationState.position!.latitude}, ${locationState.position!.longitude}');
 
             // Fetch nearby services
@@ -54,10 +58,10 @@ class FullScreenMap extends HookConsumerWidget {
               15,
             );
           } else {
-            print('Failed to get location');
+            log('Failed to get location');
           }
         } catch (e) {
-          print('Error initializing map: $e');
+          log('Error initializing map: $e');
         }
       });
       return null;
@@ -136,7 +140,7 @@ class FullScreenMap extends HookConsumerWidget {
                       child: Container(
                         decoration: BoxDecoration(
                           color:
-                              Theme.of(context).primaryColor.withOpacity(0.9),
+                              Theme.of(context).primaryColor.withValues(alpha:0.9),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
@@ -165,7 +169,7 @@ class FullScreenMap extends HookConsumerWidget {
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
+                                color: Colors.black.withValues(alpha:0.2),
                                 blurRadius: 4,
                               ),
                             ],
@@ -187,8 +191,8 @@ class FullScreenMap extends HookConsumerWidget {
           // Search Bar and Results
           Positioned(
             top: MediaQuery.of(context).padding.top + 10,
-            left: 16,
-            right: 16,
+            left: context.space.space_200,
+            right: context.space.space_200,
             child: Column(
               children: [
                 Row(
@@ -199,7 +203,7 @@ class FullScreenMap extends HookConsumerWidget {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.black.withValues(alpha:0.1),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -210,7 +214,7 @@ class FullScreenMap extends HookConsumerWidget {
                         onPressed: () => Navigator.pop(context),
                       ),
                     ),
-                    const SizedBox(width: 8),
+                     SizedBox(width: context.space.space_100),
                     Expanded(
                       child: Container(
                         decoration: BoxDecoration(
@@ -218,7 +222,7 @@ class FullScreenMap extends HookConsumerWidget {
                           borderRadius: BorderRadius.circular(8),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withValues(alpha:0.1),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),
@@ -257,13 +261,13 @@ class FullScreenMap extends HookConsumerWidget {
                 // Search Results
                 if (showSearchResults.value)
                   Container(
-                    margin: const EdgeInsets.only(top: 8),
+                    margin:  EdgeInsets.only(top: context.space.space_100),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(context.space.space_100),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha:0.1),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -294,8 +298,8 @@ class FullScreenMap extends HookConsumerWidget {
                                 ))
                             .toList(),
                       ),
-                      loading: () => const Padding(
-                        padding: EdgeInsets.all(16.0),
+                      loading: () =>  Padding(
+                        padding: EdgeInsets.all(context.space.space_200),
                         child: Center(child: CircularProgressIndicator()),
                       ),
                       error: (error, _) => ListTile(
@@ -316,7 +320,7 @@ class FullScreenMap extends HookConsumerWidget {
                         borderRadius: BorderRadius.circular(8),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.black.withValues(alpha:0.1),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -378,7 +382,7 @@ class FullScreenMap extends HookConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    margin: const EdgeInsets.symmetric(vertical: 12),
+                    margin:  EdgeInsets.symmetric(vertical: context.space.space_150),
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
@@ -390,7 +394,7 @@ class FullScreenMap extends HookConsumerWidget {
                     const Center(child: CircularProgressIndicator())
                   else if (servicesState.error != null)
                     Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding:  EdgeInsets.all(context.space.space_200),
                       child: Text(
                         servicesState.error!,
                         style: const TextStyle(color: Colors.red),
@@ -410,12 +414,7 @@ class FullScreenMap extends HookConsumerWidget {
                               '${service.distance.toStringAsFixed(1)} km away',
                             ),
                             trailing: const Icon(Icons.arrow_forward_ios),
-                            onTap: () {
-                              mapController.value.move(
-                                LatLng(service.latitude, service.longitude),
-                                15,
-                              );
-                            },
+                            onTap: ()=> _navigateToDetails(context),
                           );
                         },
                       ),
@@ -426,6 +425,13 @@ class FullScreenMap extends HookConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void _navigateToDetails(BuildContext context) {
+    context.push(
+      '/serviceDetailsPage',
+      extra: {'service':serviceModel },
     );
   }
 }

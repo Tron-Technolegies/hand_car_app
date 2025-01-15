@@ -4,13 +4,13 @@ import 'package:hand_car/features/car_service/model/service_model.dart';
 import 'package:hand_car/features/car_service/view/pages/fullmap_screen.dart';
 
 class ServiceMapUI extends StatelessWidget {
-  final ServiceModel? service;
-  const ServiceMapUI({super.key, this.service});
+  final ServiceModel service;
+  const ServiceMapUI({super.key,required this.service});
 
   void _showMapScreen(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) =>  FullScreenMap(),
+        builder: (context) =>  FullScreenMap(serviceModel: service),
       ),
     );
   }
