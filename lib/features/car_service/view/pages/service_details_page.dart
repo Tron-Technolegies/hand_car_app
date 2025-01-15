@@ -333,9 +333,7 @@ class ServiceDetailsPage extends StatelessWidget {
                 child: ServiceReviewWidget(
                     serviceId: service.id.toString(),
                     serviceName: service.vendorName,
-                    rating: 4.4,
-                    totalReviews: 45,
-                    starCounts: [5, 4, 3, 2, 1])),
+                    )),
             SizedBox(
                 height: context.space.space_500 * 8.2,
                 child:  ReviewsList(

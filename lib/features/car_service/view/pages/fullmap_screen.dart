@@ -1,4 +1,6 @@
 // full_screen_map.dart
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:hand_car/features/car_service/controller/location/location_list/location_list.dart';
@@ -8,7 +10,6 @@ import 'package:hand_car/features/car_service/view/widgets/map/location_widget.d
 import 'package:latlong2/latlong.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class FullScreenMap extends HookConsumerWidget {
   const FullScreenMap({super.key});
@@ -25,16 +26,74 @@ class FullScreenMap extends HookConsumerWidget {
     // Initialize location on first build
     useEffect(() {
       Future.microtask(() async {
-        await ref.read(locationNotifierProvider.notifier).getCurrentLocation();
-        if (locationState.position != null) {
-          await ref.read(servicesNotifierProvider.notifier).fetchNearbyServices(
+        try {
+          // Get current location
+          await ref
+              .read(locationNotifierProvider.notifier)
+              .getCurrentLocation();
+
+          // Check if location was obtained successfully
+          if (locationState.position != null) {
+            print(
+                'Location obtained: ${locationState.position!.latitude}, ${locationState.position!.longitude}');
+
+            // Fetch nearby services
+            await ref
+                .read(servicesNotifierProvider.notifier)
+                .fetchNearbyServices(
+                  locationState.position!.latitude,
+                  locationState.position!.longitude,
+                );
+
+            // Move map to current location
+            mapController.value.move(
+              LatLng(
                 locationState.position!.latitude,
                 locationState.position!.longitude,
-              );
+              ),
+              15,
+            );
+          } else {
+            print('Failed to get location');
+          }
+        } catch (e) {
+          print('Error initializing map: $e');
         }
       });
       return null;
     }, const []);
+
+    // Handle my location button press
+    Future<void> moveToMyLocation() async {
+      if (locationState.position != null) {
+        try {
+          log('Moving to location: ${locationState.position!.latitude}, ${locationState.position!.longitude}');
+
+          // Move map to location
+          mapController.value.move(
+            LatLng(
+              locationState.position!.latitude,
+              locationState.position!.longitude,
+            ),
+            15,
+          );
+
+          // Refresh nearby services
+          await ref.read(servicesNotifierProvider.notifier).fetchNearbyServices(
+                locationState.position!.latitude,
+                locationState.position!.longitude,
+              );
+        } catch (e) {
+          log('Error moving to location: $e');
+        }
+      } else {
+        // Try to get location if not available
+        await ref.read(locationNotifierProvider.notifier).getCurrentLocation();
+        if (locationState.position != null) {
+          moveToMyLocation();
+        }
+      }
+    }
 
     return Scaffold(
       body: Stack(
@@ -263,7 +322,7 @@ class FullScreenMap extends HookConsumerWidget {
                           ),
                         ],
                       ),
-                      child: LocationWidget()),
+                      child: LocationWidget(() => moveToMyLocation())),
               ],
             ),
           ),

@@ -1,5 +1,4 @@
 
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hand_car/features/car_service/model/location/location_state/location_state.dart';

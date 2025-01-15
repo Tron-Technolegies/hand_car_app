@@ -5,7 +5,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 
 class LocationWidget extends HookWidget {
-  const LocationWidget({super.key});
+  final VoidCallback onTap;
+  const LocationWidget(this.onTap, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +52,7 @@ class LocationWidget extends HookWidget {
     }, []);
 
     return InkWell(
-      onTap: getCurrentLocation,
+      onTap:onTap ,
       child: Row(
         children: [
           const Icon(FontAwesomeIcons.locationArrow),

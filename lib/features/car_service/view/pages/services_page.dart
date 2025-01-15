@@ -8,6 +8,7 @@ import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
 import 'package:hand_car/features/car_service/controller/car_service_controller.dart';
 import 'package:hand_car/features/car_service/controller/filter_categories/service_filter.dart';
 
+
 import 'package:hand_car/features/car_service/view/widgets/grid_view_service_widget.dart';
 import 'package:hand_car/features/car_service/view/widgets/map/map_widget.dart';
 import 'package:hand_car/features/car_service/view/widgets/services_icon_widget.dart';
@@ -153,7 +154,7 @@ class ServicesPage extends HookConsumerWidget {
             loading: () => Center(
                 child: LoadingAnimationWidget.staggeredDotsWave(
               color: Colors.black,
-              size: 200,
+              size: 50,
             )),
           ),
           SizedBox(height: context.space.space_200),

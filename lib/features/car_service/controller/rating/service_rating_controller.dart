@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:hand_car/core/router/user_validation.dart';
 import 'package:hand_car/features/car_service/model/rating/response/rating_response.dart';
 import 'package:hand_car/features/car_service/model/rating/review_list/review_list_model.dart';
 import 'package:hand_car/features/car_service/model/rating/service_rating.dart';
@@ -11,12 +12,20 @@ part 'service_rating_controller.g.dart';
 
 
 
+
+
 @riverpod
 class ServiceRatingController extends _$ServiceRatingController {
-  ReviewService get _reviewService => ref.watch(reviewServiceProvider);
+  late final ReviewService _reviewService;
 
   @override
-  FutureOr<ServiceRatingList> build() {
+  Future<ServiceRatingList> build() async {
+    _reviewService = ReviewService();
+    
+    if (!TokenStorage().hasTokens) {
+      throw Exception('Please login to view ratings');
+    }
+    
     return _fetchRatings();
   }
 
@@ -30,12 +39,16 @@ class ServiceRatingController extends _$ServiceRatingController {
   }
 
   Future<void> refreshRatings() async {
+    state = const AsyncValue.loading();
     try {
-      state = const AsyncLoading();
+      if (!TokenStorage().hasTokens) {
+        throw Exception('Please login to view ratings');
+      }
+      
       final ratings = await _fetchRatings();
-      state = AsyncData(ratings);
-    } catch (error) {
-      state = AsyncError(error, StackTrace.current);
+      state = AsyncValue.data(ratings);
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
     }
   }
 
@@ -44,7 +57,17 @@ class ServiceRatingController extends _$ServiceRatingController {
     required int rating,
     String? comment,
   }) async {
+    final previousState = state;
+    
     try {
+      // Check authentication first
+      if (!TokenStorage().hasTokens) {
+        throw Exception('Please login to continue');
+      }
+
+      log('Submitting rating for service: $serviceId');
+
+      // Make API call
       final response = await _reviewService.addServiceRating(
         ServiceRatingModel(
           serviceId: serviceId,
@@ -53,19 +76,45 @@ class ServiceRatingController extends _$ServiceRatingController {
         ),
       );
 
+      log('Rating submission response: $response');
+
+      // Only refresh ratings if submission was successful
       if (response.error == null) {
-        // Only refresh if the submission was successful
         await refreshRatings();
       } else {
         log('Rating submission failed: ${response.error}');
+        // Restore previous state
+        state = previousState;
       }
 
       return response;
     } catch (error) {
       log('Error submitting rating: $error');
+      
+      // Restore previous state
+      state = previousState;
+      
       return ServiceRatingResponse(
         error: 'Failed to submit rating: ${error.toString()}'
       );
     }
+  }
+
+  // Computed property for total ratings
+  int get totalRatings {
+    return state.whenOrNull(
+      data: (ratingList) => ratingList.ratings.length,
+    ) ?? 0;
+  }
+
+  // Computed property for average rating
+  double get averageRating {
+    return state.whenOrNull(
+      data: (ratingList) {
+        if (ratingList.ratings.isEmpty) return 0.0;
+        final totalRating = ratingList.ratings.fold(0, (sum, rating) => sum + rating.rating);
+        return totalRating / ratingList.ratings.length;
+      },
+    ) ?? 0.0;
   }
 }

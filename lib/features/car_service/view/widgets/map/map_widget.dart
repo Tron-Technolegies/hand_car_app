@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
+import 'package:hand_car/features/car_service/model/service_model.dart';
 import 'package:hand_car/features/car_service/view/pages/fullmap_screen.dart';
 
 class ServiceMapUI extends StatelessWidget {
-  const ServiceMapUI({super.key});
+  final ServiceModel? service;
+  const ServiceMapUI({super.key, this.service});
 
   void _showMapScreen(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => const FullScreenMap(),
+        builder: (context) =>  FullScreenMap(),
       ),
     );
   }
