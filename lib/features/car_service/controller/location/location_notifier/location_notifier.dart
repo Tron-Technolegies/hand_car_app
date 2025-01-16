@@ -40,8 +40,11 @@ class LocationNotifier extends _$LocationNotifier {
 
       // Get current position with high accuracy
       final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-        timeLimit: const Duration(seconds: 5),
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        timeLimit: Duration(seconds: 10),
+      ),
+        
       );
 
       // Get detailed address information

@@ -246,6 +246,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
 import 'package:hand_car/features/car_service/controller/car_service_controller.dart';
@@ -256,6 +257,7 @@ import 'package:hand_car/features/car_service/controller/location/search/locatio
 import 'package:hand_car/features/car_service/model/location/location_model.dart';
 import 'package:hand_car/features/car_service/model/service_model.dart';
 import 'package:hand_car/features/car_service/view/widgets/grid_view_service_widget.dart';
+import 'package:hand_car/features/car_service/view/widgets/map/location_widget.dart';
 import 'package:hand_car/features/car_service/view/widgets/map/map_widget.dart';
 import 'package:hand_car/features/car_service/view/widgets/services_icon_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
@@ -275,7 +277,7 @@ class ServicesPage extends HookConsumerWidget {
     Assets.icons.icWashService
   ];
 
-   ServicesPage({super.key});
+  ServicesPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -384,7 +386,7 @@ class ServicesPage extends HookConsumerWidget {
                         onTap: () async {
                           showSearchResults.value = false;
                           searchController.text = result.displayName;
-                          
+
                           // Fetch nearby services for the selected location
                           await ref
                               .read(servicesNotifierProvider.notifier)
@@ -396,7 +398,8 @@ class ServicesPage extends HookConsumerWidget {
                       );
                     },
                   ),
-                  loading: () => const Center(child: CircularProgressIndicator()),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
                   error: (error, _) => ListTile(
                     leading: const Icon(Icons.error, color: Colors.red),
                     title: Text('Error: $error'),
@@ -426,9 +429,9 @@ class ServicesPage extends HookConsumerWidget {
       }
 
       // Filter services by category first
-      final filteredByCategory = services.where(
-        (service) => service.serviceCategory == categoryName
-      ).toList();
+      final filteredByCategory = services
+          .where((service) => service.serviceCategory == categoryName)
+          .toList();
 
       // If no services in category
       if (filteredByCategory.isEmpty) {
@@ -445,10 +448,9 @@ class ServicesPage extends HookConsumerWidget {
       if (showSearchResults.value && servicesState.services.isNotEmpty) {
         // Find services that exist in the nearby services list
         final nearbyServices = filteredByCategory.where((service) {
-          return servicesState.services.any((nearbyService) => 
-            nearbyService.name == service.vendorName && 
-            nearbyService.distance <= 50
-          );
+          return servicesState.services.any((nearbyService) =>
+              nearbyService.name == service.vendorName &&
+              nearbyService.distance <= 50);
         }).toList();
 
         // If no nearby services found
@@ -469,8 +471,7 @@ class ServicesPage extends HookConsumerWidget {
                 (s) => s.name == a.vendorName,
                 orElse: () => const ServiceLocation(
                   name: '',
-               
-                  distance: double.infinity,
+                  distance: 10,
                   latitude: 0,
                   longitude: 0,
                 ),
@@ -482,7 +483,6 @@ class ServicesPage extends HookConsumerWidget {
                 (s) => s.name == b.vendorName,
                 orElse: () => const ServiceLocation(
                   name: '',
-                  
                   distance: double.infinity,
                   latitude: 0,
                   longitude: 0,
@@ -522,13 +522,16 @@ class ServicesPage extends HookConsumerWidget {
         ),
         centerTitle: true,
         actions: [
-          IconButton(
-            onPressed: () => ref.read(locationNotifierProvider.notifier).getCurrentLocation(),
-            icon: Icon(
-              Icons.my_location,
-              color: context.colors.primaryTxt,
-            ),
-          ),
+          // IconButton(
+          //   onPressed: () => ref
+          //       .read(locationNotifierProvider.notifier)
+          //       .getCurrentLocation(),
+          //   icon: Icon(
+          //     Icons.my_location,
+          //     color: context.colors.primaryTxt,
+          //   ),
+          // ),
+          IconButton(onPressed: () {}, icon: Icon(Icons.filter_alt_sharp)),
           IconButton(
             onPressed: () => scaffoldKey3.currentState?.openDrawer(),
             icon: Icon(
@@ -541,11 +544,12 @@ class ServicesPage extends HookConsumerWidget {
       drawer: const DrawerWidget(),
       endDrawerEnableOpenDragGesture: true,
       body: Column(
+        spacing: context.space.space_200,
         children: [
           if (locationState.error != null)
             Container(
               padding: EdgeInsets.all(context.space.space_200),
-              color: Colors.red.withOpacity(0.1),
+              color: Colors.red.withValues(alpha:0.1),
               child: Text(
                 locationState.error!,
                 style: context.typography.bodyMedium.copyWith(
@@ -553,9 +557,31 @@ class ServicesPage extends HookConsumerWidget {
                 ),
               ),
             ),
-          SizedBox(height: context.space.space_200),
+          // SizedBox(height: context.space.space_200),
           buildSearchBar(),
-          SizedBox(height: context.space.space_200),
+          // SizedBox(height: context.space.space_100),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: context.space.space_200),
+            child: Container(
+                margin: const EdgeInsets.only(top: 8),
+                padding: EdgeInsets.all(context.space.space_200),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: LocationWidget(() {
+                  ref
+                      .read(locationNotifierProvider.notifier)
+                      .getCurrentLocation();
+                })),
+          ),
 
           // Categories List
           categoriesAsync.when(
@@ -583,7 +609,8 @@ class ServicesPage extends HookConsumerWidget {
                         return Transform.scale(scale: scale, child: child);
                       },
                       child: ServicesIconsWidget(
-                        image: index < images.length ? images[index] : images[0],
+                        image:
+                            index < images.length ? images[index] : images[0],
                         title: category.name,
                         selectedIndex: index,
                         isSelected: index == buttonIndex.value,
@@ -623,11 +650,13 @@ class ServicesPage extends HookConsumerWidget {
                 itemBuilder: (context, categoryIndex) {
                   return servicesAsync.when(
                     data: (services) {
-                      final filteredServices = services.where(
-                        (service) =>
-                            service.serviceCategory ==
-                            categories[categoryIndex].name,
-                      ).toList();
+                      final filteredServices = services
+                          .where(
+                            (service) =>
+                                service.serviceCategory ==
+                                categories[categoryIndex].name,
+                          )
+                          .toList();
 
                       return buildServicesGrid(
                         filteredServices,
