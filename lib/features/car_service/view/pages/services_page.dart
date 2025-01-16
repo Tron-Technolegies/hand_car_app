@@ -15,6 +15,7 @@ import 'package:hand_car/features/car_service/controller/location/location_notif
 import 'package:hand_car/features/car_service/controller/location/search/location_search_controller.dart';
 import 'package:hand_car/features/car_service/model/location/location_model.dart';
 import 'package:hand_car/features/car_service/model/service_model.dart';
+import 'package:hand_car/features/car_service/view/widgets/grid/location_based_grid_view.dart';
 import 'package:hand_car/features/car_service/view/widgets/grid_view_service_widget.dart';
 import 'package:hand_car/features/car_service/view/widgets/map/location_search_widget.dart';
 import 'package:hand_car/features/car_service/view/widgets/map/location_widget.dart';
@@ -148,93 +149,6 @@ class ServicesPage extends HookConsumerWidget {
       );
     }
 
-
-
-    // Build services grid with location-based filtering
-    Widget buildServicesGrid(List<ServiceModel> services, String categoryName) {
-      if (servicesState.isLoading) {
-        return const Center(child: CircularProgressIndicator());
-      }
-
-      if (servicesState.error != null) {
-        return Center(
-          child: Text(
-            servicesState.error!,
-            style: context.typography.bodyLarge,
-          ),
-        );
-      }
-
-      final filteredByCategory = services
-          .where((service) => service.serviceCategory == categoryName)
-          .toList();
-
-      if (filteredByCategory.isEmpty) {
-        return Center(
-          child: Text(
-            'No $categoryName services available',
-            style: context.typography.bodyLarge,
-            textAlign: TextAlign.center,
-          ),
-        );
-      }
-
-      if (showNearbyServices.value && servicesState.services.isNotEmpty) {
-        final nearbyServices = filteredByCategory.where((service) {
-          return servicesState.services.any((nearbyService) =>
-              nearbyService.name == service.vendorName &&
-              nearbyService.distance <= 50);
-        }).toList();
-
-        if (nearbyServices.isEmpty) {
-          return Center(
-            child: Text(
-              'No $categoryName services available in the selected location',
-              style: context.typography.bodyLarge,
-              textAlign: TextAlign.center,
-            ),
-          );
-        }
-
-        nearbyServices.sort((a, b) {
-          final distanceA = servicesState.services
-              .firstWhere(
-                (s) => s.name == a.vendorName,
-                orElse: () => const ServiceLocation(
-                  name: '',
-                  distance: double.infinity,
-                  latitude: 0,
-                  longitude: 0,
-                ),
-              )
-              .distance;
-
-          final distanceB = servicesState.services
-              .firstWhere(
-                (s) => s.name == b.vendorName,
-                orElse: () => const ServiceLocation(
-                  name: '',
-                  distance: double.infinity,
-                  latitude: 0,
-                  longitude: 0,
-                ),
-              )
-              .distance;
-
-          return distanceA.compareTo(distanceB);
-        });
-
-        return GridViewServicesWidget(
-          services: nearbyServices,
-          locationServices: servicesState.services,
-        );
-      }
-
-      return GridViewServicesWidget(
-        services: filteredByCategory,
-        locationServices: const [],
-      );
-    }
 
     return Scaffold(
       key: scaffoldKey3,
@@ -417,9 +331,9 @@ class ServicesPage extends HookConsumerWidget {
                           )
                           .toList();
 
-                      return buildServicesGrid(
-                        filteredServices,
-                        categories[categoryIndex].name,
+                      return LocationBasedGridView(
+                      
+                        categoryName:categories[categoryIndex].name, services: filteredServices,
                       );
                     },
                     error: (error, _) => Center(
