@@ -1,252 +1,11 @@
-// import 'dart:developer';
-// import 'package:flutter/material.dart';
-// import 'package:flutter_hooks/flutter_hooks.dart';
-// import 'package:flutter_svg/svg.dart';
-// import 'package:hand_car/core/extension/theme_extension.dart';
-// import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
-// import 'package:hand_car/features/car_service/controller/car_service_controller.dart';
-// import 'package:hand_car/features/car_service/controller/filter_categories/service_filter.dart';
-// import 'package:hand_car/features/car_service/model/service_model.dart';
-// import 'package:hand_car/features/car_service/view/widgets/grid_view_service_widget.dart';
-// import 'package:hand_car/features/car_service/view/widgets/map/map_widget.dart';
-// import 'package:hand_car/features/car_service/view/widgets/services_icon_widget.dart';
-// import 'package:hand_car/gen/assets.gen.dart';
-// import 'package:hooks_riverpod/hooks_riverpod.dart';
-// import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-// final GlobalKey<ScaffoldState> scaffoldKey3 = GlobalKey<ScaffoldState>();
 
-// class ServicesPage extends HookConsumerWidget {
-//   static const String route = '/services_page';
-
-//   final List<String> images = [
-//     Assets.icons.icPaintingService,
-//     Assets.icons.icFittingService,
-//     Assets.icons.icSparePartsService,
-//     Assets.icons.icGeneralCheckupService,
-//     Assets.icons.icWashService
-//   ];
-
-//   ServicesPage({super.key});
-
-//   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//     final pageController = usePageController();
-//     final buttonIndex = useState(0);
-//     final scrollController = useScrollController();
-//     final animationController = useAnimationController(
-//       duration: const Duration(milliseconds: 500),
-//     );
-
-//     final servicesAsync = ref.watch(carServiceControllerProvider);
-//     final categoriesAsync = ref.watch(serviceCategoryControllerProvider);
-
-//     void scrollToIndex(int index) {
-//       final screenWidth = MediaQuery.of(context).size.width;
-//       final itemWidth = screenWidth / 3;
-//       final maxScroll = scrollController.position.maxScrollExtent;
-//       const minScroll = 0.0;
-
-//       double targetScroll = index * itemWidth - (screenWidth - itemWidth) / 2;
-//       targetScroll = targetScroll.clamp(minScroll, maxScroll);
-
-//       scrollController.animateTo(
-//         targetScroll,
-//         duration: const Duration(milliseconds: 300),
-//         curve: Curves.easeInOut,
-//       );
-//     }
-
-//     void onItemTapped(int index, String category) {
-//       buttonIndex.value = index;
-//       pageController.animateToPage(
-//         index,
-//         duration: const Duration(milliseconds: 300),
-//         curve: Curves.easeInOut,
-//       );
-
-//       if (index == 0) {
-//         animationController.reset();
-//         animationController.forward();
-//       }
-
-//       scrollToIndex(index);
-//     }
-
-//     Widget buildServiceMap() {
-//       return servicesAsync.when(
-//         data: (services) {
-//           if (services.isEmpty) {
-//             return const SizedBox.shrink();
-//           }
-//           return ServiceMapUI(service: services[0]);
-//         },
-//         loading: () => const Center(child: CircularProgressIndicator()),
-//         error: (error, _) => Center(
-//           child: Text('Error loading service map: $error'),
-//         ),
-//       );
-//     }
-
-//     return Scaffold(
-//       key: scaffoldKey3,
-//       appBar: AppBar(
-//         leading: IconButton(
-//           onPressed: () {},
-//           icon: SvgPicture.asset(Assets.icons.handCarIcon),
-//         ),
-//         title: Text(
-//           "Our Services",
-//           style: context.typography.h3.copyWith(
-//             color: context.colors.primaryTxt,
-//           ),
-//         ),
-//         centerTitle: true,
-//         actions: [
-//           IconButton(
-//             onPressed: () {},
-//             icon: Icon(
-//               Icons.filter_alt_rounded,
-//               color: context.colors.primaryTxt,
-//             ),
-//           ),
-//           IconButton(
-//             onPressed: () => scaffoldKey3.currentState?.openDrawer(),
-//             icon: Icon(
-//               Icons.menu,
-//               color: context.colors.primaryTxt,
-//             ),
-//           ),
-//         ],
-//       ),
-//       drawer: const DrawerWidget(),
-//       endDrawerEnableOpenDragGesture: true,
-//       body: Column(
-//         children: [
-//           SizedBox(height: context.space.space_200),
-//           buildServiceMap(),
-//           SizedBox(height: context.space.space_200),
-
-//           // Categories List
-//           categoriesAsync.when(
-//             data: (categories) => SizedBox(
-//               height: context.space.space_600 * 2.6,
-//               child: ListView.builder(
-//                 controller: scrollController,
-//                 scrollDirection: Axis.horizontal,
-//                 itemCount: categories.length,
-//                 itemBuilder: (context, index) {
-//                   final category = categories[index];
-//                   return Padding(
-//                     padding: EdgeInsets.symmetric(
-//                       horizontal: context.space.space_100,
-//                     ),
-//                     child: AnimatedBuilder(
-//                       animation: animationController,
-//                       builder: (context, child) {
-//                         final bounce = index == 0
-//                             ? Curves.elasticOut.transform(
-//                                 animationController.value,
-//                               )
-//                             : 0.0;
-//                         final scale = 1.0 + (bounce * 0.2);
-//                         return Transform.scale(scale: scale, child: child);
-//                       },
-//                       child: ServicesIconsWidget(
-//                         image: index < images.length ? images[index] : images[0],
-//                         title: category.name,
-//                         selectedIndex: index,
-//                         isSelected: index == buttonIndex.value,
-//                         onSelectService: (idx) => onItemTapped(
-//                           idx,
-//                           category.name,
-//                         ),
-//                       ),
-//                     ),
-//                   );
-//                 },
-//               ),
-//             ),
-//             error: (error, _) => Center(
-//               child: Text('Error loading categories'),
-//             ),
-//             loading: () => Center(
-//               child: LoadingAnimationWidget.staggeredDotsWave(
-//                 color: Colors.black,
-//                 size: 50,
-//               ),
-//             ),
-//           ),
-//           SizedBox(height: context.space.space_200),
-
-//           // Services Grid
-//           Expanded(
-//             child: categoriesAsync.when(
-//               data: (categories) => PageView.builder(
-//                 controller: pageController,
-//                 onPageChanged: (value) {
-//                   log(serviceCategoryControllerProvider.name.toString());
-//                   buttonIndex.value = value;
-//                   if (value < categories.length) {
-//                     scrollToIndex(value);
-//                   }
-//                 },
-//                 itemCount: categories.length,
-//                 itemBuilder: (context, categoryIndex) {
-//                   return servicesAsync.when(
-//                     data: (services) {
-//                       final filteredServices = services.where(
-//                         (service) =>
-//                             service.serviceCategory ==
-//                             categories[categoryIndex].name,
-//                       ).toList();
-
-//                       if (filteredServices.isEmpty) {
-//                         return Center(
-//                           child: Text(
-//                             'No ${categories[categoryIndex].name} services available',
-//                             style: context.typography.bodyLarge,
-//                           ),
-//                         );
-//                       }
-
-//                       return GridViewServicesWidget(
-//                         services: filteredServices,
-//                       );
-//                     },
-//                     error: (error, _) => Center(
-//                       child: Text(
-//                         'Error loading services: $error',
-//                         style: context.typography.bodyLarge,
-//                       ),
-//                     ),
-//                     loading: () => const Center(
-//                       child: CircularProgressIndicator(),
-//                     ),
-//                   );
-//                 },
-//               ),
-//               error: (error, _) => Center(
-//                 child: Text(
-//                   'Error loading categories',
-//                   style: context.typography.bodyLarge,
-//                 ),
-//               ),
-//               loading: () => const Center(
-//                 child: CircularProgressIndicator(),
-//               ),
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
 import 'package:hand_car/features/car_service/controller/car_service_controller.dart';
@@ -257,8 +16,9 @@ import 'package:hand_car/features/car_service/controller/location/search/locatio
 import 'package:hand_car/features/car_service/model/location/location_model.dart';
 import 'package:hand_car/features/car_service/model/service_model.dart';
 import 'package:hand_car/features/car_service/view/widgets/grid_view_service_widget.dart';
+import 'package:hand_car/features/car_service/view/widgets/map/location_search_widget.dart';
 import 'package:hand_car/features/car_service/view/widgets/map/location_widget.dart';
-import 'package:hand_car/features/car_service/view/widgets/map/map_widget.dart';
+
 import 'package:hand_car/features/car_service/view/widgets/services_icon_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -281,19 +41,18 @@ class ServicesPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final pageController = usePageController();
+     final pageController = usePageController();
     final buttonIndex = useState(0);
     final scrollController = useScrollController();
-    final searchController = useTextEditingController();
-    final showSearchResults = useState(false);
+    final showNearbyServices = useState(false);
     final animationController = useAnimationController(
       duration: const Duration(milliseconds: 500),
     );
 
+    // Providers
     final servicesAsync = ref.watch(carServiceControllerProvider);
     final categoriesAsync = ref.watch(serviceCategoryControllerProvider);
     final locationState = ref.watch(locationNotifierProvider);
-    final searchResults = ref.watch(searchNotifierProvider);
     final servicesState = ref.watch(servicesNotifierProvider);
 
     void scrollToIndex(int index) {
@@ -328,97 +87,75 @@ class ServicesPage extends HookConsumerWidget {
       scrollToIndex(index);
     }
 
-    // Build search bar
-    Widget buildSearchBar() {
-      return Container(
-        margin: EdgeInsets.symmetric(horizontal: context.space.space_200),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            TextField(
-              controller: searchController,
-              onChanged: (value) {
-                showSearchResults.value = value.isNotEmpty;
-                ref.read(searchNotifierProvider.notifier).searchLocation(value);
-              },
-              decoration: InputDecoration(
-                hintText: 'Search for locations',
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: searchController.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () {
-                          searchController.clear();
-                          showSearchResults.value = false;
-                        },
-                      )
-                    : null,
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-              ),
-            ),
-            if (showSearchResults.value)
-              Container(
-                constraints: const BoxConstraints(maxHeight: 200),
-                child: searchResults.when(
-                  data: (results) => ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: results.length,
-                    itemBuilder: (context, index) {
-                      final result = results[index];
-                      return ListTile(
-                        leading: const Icon(Icons.location_on),
-                        title: Text(result.displayName),
-                        subtitle: Text(result.address ?? ''),
-                        onTap: () async {
-                          showSearchResults.value = false;
-                          searchController.text = result.displayName;
-
-                          // Fetch nearby services for the selected location
-                          await ref
-                              .read(servicesNotifierProvider.notifier)
-                              .fetchNearbyServices(
-                                result.latLng.latitude,
-                                result.latLng.longitude,
-                              );
-                        },
-                      );
-                    },
-                  ),
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
-                  error: (error, _) => ListTile(
-                    leading: const Icon(Icons.error, color: Colors.red),
-                    title: Text('Error: $error'),
-                  ),
-                ),
-              ),
-          ],
-        ),
-      );
-    }
-
-    // Build services grid with location-based filtering
-    Widget buildServicesGrid(List<ServiceModel> services, String categoryName) {
-      // Handle loading state
+    Widget buildNearbyServicesList() {
       if (servicesState.isLoading) {
         return const Center(child: CircularProgressIndicator());
       }
 
-      // Handle error state
+      if (servicesState.services.isEmpty) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            'No services found nearby',
+            style: context.typography.bodyMedium,
+          ),
+        );
+      }
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Nearby Services',
+                  style: context.typography.bodyLarge,
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => showNearbyServices.value = false,
+                ),
+              ],
+            ),
+          ),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: servicesState.services.length,
+            itemBuilder: (context, index) {
+              final service = servicesState.services[index];
+              return Card(
+                margin: const EdgeInsets.only(bottom: 8.0),
+                child: ListTile(
+                  leading: const Icon(Icons.store),
+                  title: Text(service.name),
+                  subtitle: Text(
+                    '${service.distance.toStringAsFixed(1)} km away',
+                  ),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  onTap: () {
+                    // Handle service selection
+                    // You might want to navigate to service details page
+                  },
+                ),
+              );
+            },
+          ),
+        ],
+      );
+    }
+
+
+
+    // Build services grid with location-based filtering
+    Widget buildServicesGrid(List<ServiceModel> services, String categoryName) {
+      if (servicesState.isLoading) {
+        return const Center(child: CircularProgressIndicator());
+      }
+
       if (servicesState.error != null) {
         return Center(
           child: Text(
@@ -428,12 +165,10 @@ class ServicesPage extends HookConsumerWidget {
         );
       }
 
-      // Filter services by category first
       final filteredByCategory = services
           .where((service) => service.serviceCategory == categoryName)
           .toList();
 
-      // If no services in category
       if (filteredByCategory.isEmpty) {
         return Center(
           child: Text(
@@ -444,16 +179,13 @@ class ServicesPage extends HookConsumerWidget {
         );
       }
 
-      // If location search is active
-      if (showSearchResults.value && servicesState.services.isNotEmpty) {
-        // Find services that exist in the nearby services list
+      if (showNearbyServices.value && servicesState.services.isNotEmpty) {
         final nearbyServices = filteredByCategory.where((service) {
           return servicesState.services.any((nearbyService) =>
               nearbyService.name == service.vendorName &&
               nearbyService.distance <= 50);
         }).toList();
 
-        // If no nearby services found
         if (nearbyServices.isEmpty) {
           return Center(
             child: Text(
@@ -464,14 +196,13 @@ class ServicesPage extends HookConsumerWidget {
           );
         }
 
-        // Sort services by distance
         nearbyServices.sort((a, b) {
           final distanceA = servicesState.services
               .firstWhere(
                 (s) => s.name == a.vendorName,
                 orElse: () => const ServiceLocation(
                   name: '',
-                  distance: 10,
+                  distance: double.infinity,
                   latitude: 0,
                   longitude: 0,
                 ),
@@ -493,14 +224,12 @@ class ServicesPage extends HookConsumerWidget {
           return distanceA.compareTo(distanceB);
         });
 
-        // Return grid with nearby services and location info
         return GridViewServicesWidget(
           services: nearbyServices,
           locationServices: servicesState.services,
         );
       }
 
-      // Return all services in category if no location search
       return GridViewServicesWidget(
         services: filteredByCategory,
         locationServices: const [],
@@ -522,16 +251,13 @@ class ServicesPage extends HookConsumerWidget {
         ),
         centerTitle: true,
         actions: [
-          // IconButton(
-          //   onPressed: () => ref
-          //       .read(locationNotifierProvider.notifier)
-          //       .getCurrentLocation(),
-          //   icon: Icon(
-          //     Icons.my_location,
-          //     color: context.colors.primaryTxt,
-          //   ),
-          // ),
-          IconButton(onPressed: () {}, icon: Icon(Icons.filter_alt_sharp)),
+          IconButton(
+            onPressed: () {},
+            icon: Icon(
+              Icons.filter_alt_sharp,
+              color: context.colors.primaryTxt,
+            ),
+          ),
           IconButton(
             onPressed: () => scaffoldKey3.currentState?.openDrawer(),
             icon: Icon(
@@ -544,12 +270,12 @@ class ServicesPage extends HookConsumerWidget {
       drawer: const DrawerWidget(),
       endDrawerEnableOpenDragGesture: true,
       body: Column(
-        spacing: context.space.space_200,
         children: [
+          const SizedBox(height: 16),
           if (locationState.error != null)
             Container(
               padding: EdgeInsets.all(context.space.space_200),
-              color: Colors.red.withValues(alpha:0.1),
+              color: Colors.red.withOpacity(0.1),
               child: Text(
                 locationState.error!,
                 style: context.typography.bodyMedium.copyWith(
@@ -557,30 +283,63 @@ class ServicesPage extends HookConsumerWidget {
                 ),
               ),
             ),
-          // SizedBox(height: context.space.space_200),
-          buildSearchBar(),
-          // SizedBox(height: context.space.space_100),
+        LocationSearchWidget(),
+          const SizedBox(height: 16),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: context.space.space_200),
             child: Container(
-                margin: const EdgeInsets.only(top: 8),
-                padding: EdgeInsets.all(context.space.space_200),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
+              margin: const EdgeInsets.only(top: 8),
+              padding: EdgeInsets.all(context.space.space_200),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  LocationWidget(() async {
+                    try {
+                      if (locationState.position != null) {
+                        showNearbyServices.value = true;
+                        await ref
+                            .read(servicesNotifierProvider.notifier)
+                            .fetchNearbyServices(
+                              locationState.position!.latitude,
+                              locationState.position!.longitude,
+                            );
+                      } else {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Please enable location services'),
+                            ),
+                          );
+                        }
+                      }
+                    } catch (e) {
+                      log(e.toString());
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Error: ${e.toString()}'),
+                          ),
+                        );
+                      }
+                    }
+                  }),
+                  if (showNearbyServices.value) ...[
+                    const SizedBox(height: 16),
+                    buildNearbyServicesList(),
                   ],
-                ),
-                child: LocationWidget(() {
-                  ref
-                      .read(locationNotifierProvider.notifier)
-                      .getCurrentLocation();
-                })),
+                ],
+              ),
+            ),
           ),
 
           // Categories List
