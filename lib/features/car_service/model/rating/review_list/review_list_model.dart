@@ -9,7 +9,7 @@ part 'review_list_model.g.dart';
 @freezed
 class ServiceRatingList with _$ServiceRatingList {
   const factory ServiceRatingList({
-    @JsonKey(name: 'Ratings') required List<ServiceRating> ratings,
+    @JsonKey(name: 'Ratings') @Default([]) List<ServiceRating> ratings,
   }) = _ServiceRatingList;
 
   factory ServiceRatingList.fromJson(Map<String, dynamic> json) =>
@@ -25,6 +25,7 @@ class ServiceRating with _$ServiceRating {
     required int rating,
     String? comment,
   }) = _ServiceRating;
+
 
   factory ServiceRating.fromJson(Map<String, dynamic> json) =>
       _$ServiceRatingFromJson(json);

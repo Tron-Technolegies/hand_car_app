@@ -107,7 +107,7 @@ class __$$ServiceRatingListImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ServiceRatingListImpl implements _ServiceRatingList {
   const _$ServiceRatingListImpl(
-      {@JsonKey(name: 'Ratings') required this.ratings});
+      {@JsonKey(name: 'Ratings') this.ratings = const []});
 
   factory _$ServiceRatingListImpl.fromJson(Map<String, dynamic> json) =>
       _$$ServiceRatingListImplFromJson(json);
@@ -153,8 +153,8 @@ class _$ServiceRatingListImpl implements _ServiceRatingList {
 
 abstract class _ServiceRatingList implements ServiceRatingList {
   const factory _ServiceRatingList(
-      {@JsonKey(name: 'Ratings')
-      required final List<ServiceRating> ratings}) = _$ServiceRatingListImpl;
+          {@JsonKey(name: 'Ratings') final List<ServiceRating> ratings}) =
+      _$ServiceRatingListImpl;
 
   factory _ServiceRatingList.fromJson(Map<String, dynamic> json) =
       _$ServiceRatingListImpl.fromJson;

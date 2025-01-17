@@ -117,27 +117,64 @@ class ReviewService {
     });
   }
 
-  Future<ServiceRatingList> getServiceRatings() async {
-    return _makeAuthenticatedRequest(() async {
-      final response = await _dio.get(
-        '/view_service_rating',
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-        ),
-      );
-      
-      log('Get ratings response: ${response.data}');
+    Future<ServiceRatingList> getServiceRatings(int serviceId) async {
+  try {
+    log('Fetching ratings for service ID: $serviceId');
 
-      if (response.statusCode == 200) {
-        return ServiceRatingList.fromJson(response.data);
+    final response = await _dio.get(
+      '/view_service_rating',
+      queryParameters: {
+        'service_id': serviceId.toString(),
+      },
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      ),
+    );
+
+    log('API Response Status Code: ${response.statusCode}');
+    log('Raw API Response Data: ${response.data}');
+
+    // Check the response structure
+    if (response.data is Map<String, dynamic>) {
+      log('Response is a Map');
+      if (response.data.containsKey('Ratings')) {
+        log('Response contains Ratings key');
+        log('Ratings data: ${response.data['Ratings']}');
+      } else {
+        log('Response does not contain Ratings key');
+        log('Available keys: ${response.data.keys.toList()}');
       }
-      
-      throw Exception(
-        response.data['error'] ?? 'Failed to fetch ratings'
-      );
-    });
+    } else {
+      log('Response is not a Map, it is a ${response.data.runtimeType}');
+    }
+
+    if (response.statusCode == 404) {
+      log('No ratings found');
+      return const ServiceRatingList(ratings: []);
+    }
+
+    if (response.statusCode == 200) {
+      try {
+        final ratingsList = ServiceRatingList.fromJson(response.data);
+        log('Successfully parsed ratings list');
+        log('Number of ratings: ${ratingsList.ratings.length}');
+        log('First rating (if exists): ${ratingsList.ratings.firstOrNull}');
+        return ratingsList;
+      } catch (e) {
+        log('Error parsing ratings list: $e');
+        rethrow;
+      }
+    }
+
+    throw Exception(response.data['error'] ?? 'Failed to fetch ratings');
+  } catch (e) {
+    log('Error in getServiceRatings: $e');
+    rethrow;
   }
 }
+
+    }
+  

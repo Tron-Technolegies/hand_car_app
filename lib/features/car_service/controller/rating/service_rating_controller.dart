@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:hand_car/core/router/user_validation.dart';
 import 'package:hand_car/features/car_service/model/rating/response/rating_response.dart';
 import 'package:hand_car/features/car_service/model/rating/review_list/review_list_model.dart';
@@ -9,47 +8,47 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'service_rating_controller.g.dart';
 
-
-
-
-
-
-@riverpod
+@Riverpod(keepAlive: true)
 class ServiceRatingController extends _$ServiceRatingController {
   late final ReviewService _reviewService;
+  int? _currentServiceId;
 
   @override
-  Future<ServiceRatingList> build() async {
+  FutureOr<ServiceRatingList> build() {
     _reviewService = ReviewService();
-    
-    if (!TokenStorage().hasTokens) {
-      throw Exception('Please login to view ratings');
-    }
-    
-    return _fetchRatings();
+    return const ServiceRatingList(ratings: []);
   }
 
-  Future<ServiceRatingList> _fetchRatings() async {
-    try {
-      return await _reviewService.getServiceRatings();
-    } catch (e) {
-      log('Error fetching ratings: $e');
-      rethrow;
+  Future<void> fetchRatings(int serviceId) async {
+    // Avoid duplicate fetches for the same service
+    if (_currentServiceId == serviceId && !state.isLoading) {
+      return;
     }
-  }
 
-  Future<void> refreshRatings() async {
     state = const AsyncValue.loading();
+    _currentServiceId = serviceId;
+
     try {
-      if (!TokenStorage().hasTokens) {
-        throw Exception('Please login to view ratings');
-      }
+      log('Fetching ratings for service ID: $serviceId');
+      final ratings = await _reviewService.getServiceRatings(serviceId);
       
-      final ratings = await _fetchRatings();
+      if (!state.isLoading) return; // Check if state is still valid
+      
       state = AsyncValue.data(ratings);
-    } catch (error, stackTrace) {
-      state = AsyncValue.error(error, stackTrace);
+      log('Successfully fetched ${ratings.ratings.length} ratings');
+    } catch (e, stack) {
+      log('Error fetching ratings: $e\n$stack');
+      state = AsyncValue.error(e, stack);
     }
+  }
+
+  Future<void> refreshRatings([int? serviceId]) async {
+    if (serviceId == null && _currentServiceId == null) {
+      log('Cannot refresh: no service ID available');
+      return;
+    }
+
+    await fetchRatings(serviceId ?? _currentServiceId!);
   }
 
   Future<ServiceRatingResponse> submitRating({
@@ -57,17 +56,19 @@ class ServiceRatingController extends _$ServiceRatingController {
     required int rating,
     String? comment,
   }) async {
-    final previousState = state;
-    
-    try {
-      // Check authentication first
-      if (!TokenStorage().hasTokens) {
-        throw Exception('Please login to continue');
-      }
+    if (!TokenStorage().hasTokens) {
+      return ServiceRatingResponse(error: 'Please login to continue');
+    }
 
+    if (rating < 1 || rating > 5) {
+      return ServiceRatingResponse(error: 'Rating must be between 1 and 5');
+    }
+
+    final previousState = state;
+
+    try {
       log('Submitting rating for service: $serviceId');
 
-      // Make API call
       final response = await _reviewService.addServiceRating(
         ServiceRatingModel(
           serviceId: serviceId,
@@ -78,20 +79,16 @@ class ServiceRatingController extends _$ServiceRatingController {
 
       log('Rating submission response: $response');
 
-      // Only refresh ratings if submission was successful
       if (response.error == null) {
-        await refreshRatings();
+        await fetchRatings(serviceId);
       } else {
         log('Rating submission failed: ${response.error}');
-        // Restore previous state
         state = previousState;
       }
 
       return response;
     } catch (error) {
       log('Error submitting rating: $error');
-      
-      // Restore previous state
       state = previousState;
       
       return ServiceRatingResponse(
@@ -100,21 +97,86 @@ class ServiceRatingController extends _$ServiceRatingController {
     }
   }
 
-  // Computed property for total ratings
+  // Computed getters
   int get totalRatings {
     return state.whenOrNull(
       data: (ratingList) => ratingList.ratings.length,
     ) ?? 0;
   }
 
-  // Computed property for average rating
   double get averageRating {
     return state.whenOrNull(
       data: (ratingList) {
         if (ratingList.ratings.isEmpty) return 0.0;
-        final totalRating = ratingList.ratings.fold(0, (sum, rating) => sum + rating.rating);
-        return totalRating / ratingList.ratings.length;
+        
+        final totalRating = ratingList.ratings.fold<double>(
+          0.0,
+          (sum, rating) => sum + rating.rating.toDouble(),
+        );
+        
+        return (totalRating / ratingList.ratings.length).roundToDouble();
       },
     ) ?? 0.0;
   }
+
+  Map<int, int> get ratingDistribution {
+    return state.whenOrNull(
+      data: (ratingList) {
+        final distribution = <int, int>{};
+        for (var i = 1; i <= 5; i++) {
+          distribution[i] = 0;
+        }
+        for (final rating in ratingList.ratings) {
+          distribution[rating.rating] = (distribution[rating.rating] ?? 0) + 1;
+        }
+        return distribution;
+      },
+    ) ?? {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
+  }
+
+  double getRatingPercentage(int stars) {
+    if (totalRatings == 0) return 0.0;
+    final distribution = ratingDistribution;
+    return (distribution[stars] ?? 0) / totalRatings * 100;
+  }
+
+  bool get hasRatings => totalRatings > 0;
+  
+  bool get isLoading => state.isLoading;
+  
+  String? get error => state.error?.toString();
+  
+  void clearError() {
+    if (state.hasError) {
+      state = const AsyncValue.data(ServiceRatingList(ratings: []));
+    }
+  }
+}
+
+// Service-specific provider for individual service ratings
+@riverpod
+Future<ServiceRatingList> serviceRatings(
+   ref,
+  int serviceId,
+) async {
+  final controller = ref.watch(serviceRatingControllerProvider.notifier);
+  await controller.fetchRatings(serviceId);
+  
+  return ref.watch(serviceRatingControllerProvider).valueOrNull ?? 
+         const ServiceRatingList(ratings: []);
+}
+
+// Provider for filtered ratings by vendor name
+@riverpod
+List<ServiceRating> vendorRatings(
+   ref,
+  String vendorName,
+) {
+  final ratingsState = ref.watch(serviceRatingControllerProvider);
+  
+  return ratingsState.whenOrNull(
+    data: (ratingList) => ratingList.ratings
+        .where((rating) => rating.vendorName == vendorName)
+        .toList(),
+  ) ?? [];
 }

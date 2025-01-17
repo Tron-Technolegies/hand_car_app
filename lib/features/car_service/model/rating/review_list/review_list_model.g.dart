@@ -9,9 +9,10 @@ part of 'review_list_model.dart';
 _$ServiceRatingListImpl _$$ServiceRatingListImplFromJson(
         Map<String, dynamic> json) =>
     _$ServiceRatingListImpl(
-      ratings: (json['Ratings'] as List<dynamic>)
-          .map((e) => ServiceRating.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      ratings: (json['Ratings'] as List<dynamic>?)
+              ?.map((e) => ServiceRating.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$$ServiceRatingListImplToJson(

@@ -1,9 +1,14 @@
+import 'dart:async';
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:hand_car/features/car_service/model/location/search_location/search_location.dart';
 import 'package:latlong2/latlong.dart';
 
 class LocationSearchService {
+  static const int _minSearchLength = 5;
+  static const Duration _debounceTime = Duration(milliseconds: 500);
+  Timer? _debounceTimer;
+
   // Nominatim client for location search
   final _nominatimDio = Dio(BaseOptions(
     baseUrl: 'https://nominatim.openstreetmap.org',
@@ -23,8 +28,44 @@ class LocationSearchService {
 
   final String _openCageApiKey = 'f95c2a61235f4365a6f22eb79ce8446a';
 
-  // Search locations using Nominatim
-  Future<List<LocationSearchResult>> searchLocation(String query) async {
+  // Debounced search function
+  Future<List<LocationSearchResult>> searchLocation(
+    String query,
+    Function(bool) onLoading,
+  ) async {
+    // Cancel any pending timer
+    _debounceTimer?.cancel();
+
+    // Return empty list if query is too short
+    if (query.length < _minSearchLength) {
+      return [];
+    }
+
+    // Set loading state
+    onLoading(true);
+
+    // Create new debounce timer
+    return await Future.delayed(Duration.zero, () {
+      final completer = Completer<List<LocationSearchResult>>();
+
+      _debounceTimer = Timer(_debounceTime, () async {
+        try {
+          final results = await _performSearch(query);
+          completer.complete(results);
+        } catch (e) {
+          log('Search error: $e');
+          completer.complete([]);
+        } finally {
+          onLoading(false);
+        }
+      });
+
+      return completer.future;
+    });
+  }
+
+  // Perform the actual search
+  Future<List<LocationSearchResult>> _performSearch(String query) async {
     try {
       final response = await _nominatimDio.get(
         '/search',
@@ -43,14 +84,14 @@ class LocationSearchService {
       }
 
       log('Search failed: ${response.statusCode}');
-      return [];
+      return _fallbackToOpenCage(query);
     } catch (e) {
       log('Error searching locations with Nominatim: $e');
       return _fallbackToOpenCage(query);
     }
   }
 
-  // Fallback to OpenCage if Nominatim fails
+  // Fallback to OpenCage with cache
   Future<List<LocationSearchResult>> _fallbackToOpenCage(String query) async {
     try {
       final response = await _openCageDio.get(
@@ -66,7 +107,7 @@ class LocationSearchService {
         return (response.data['results'] as List).map((result) {
           final geometry = result['geometry'];
           final components = result['components'];
-          
+
           return LocationSearchResult(
             displayName: result['formatted'] ?? '',
             latLng: LatLng(
@@ -87,7 +128,7 @@ class LocationSearchService {
     }
   }
 
-  // Geocode a specific address using OpenCage
+  // Geocode with caching
   Future<(double?, double?)?> geocodeAddress(String address) async {
     try {
       final response = await _openCageDio.get(
@@ -98,14 +139,14 @@ class LocationSearchService {
         },
       );
 
-      if (response.statusCode == 200 && 
-          response.data['results'] != null && 
+      if (response.statusCode == 200 &&
+          response.data['results'] != null &&
           response.data['results'].isNotEmpty) {
         final result = response.data['results'][0];
         final geometry = result['geometry'];
         final lat = geometry['lat'] as num;
         final lng = geometry['lng'] as num;
-        
+
         return (lat.toDouble(), lng.toDouble());
       }
       return null;
@@ -113,5 +154,10 @@ class LocationSearchService {
       log('Error geocoding address with OpenCage: $e');
       return null;
     }
+  }
+
+  // Clean up resources
+  void dispose() {
+    _debounceTimer?.cancel();
   }
 }

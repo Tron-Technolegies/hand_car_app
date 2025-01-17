@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
@@ -5,11 +7,10 @@ import 'package:hand_car/features/car_service/controller/location/location_list/
 import 'package:hand_car/features/car_service/controller/location/search/location_search_controller.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-
-
-
 class LocationSearchWidget extends HookConsumerWidget {
   const LocationSearchWidget({super.key});
+
+  static const int minSearchLength = 5;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -17,16 +18,76 @@ class LocationSearchWidget extends HookConsumerWidget {
     final showSearchResults = useState(false);
     final showNearbyServices = useState(false);
     final selectedLocation = useState<String?>(null);
+    final isTyping = useState(false);
 
     final searchResults = ref.watch(searchNotifierProvider);
     final servicesState = ref.watch(servicesNotifierProvider);
+
+    // Setup debounce timer
+    final debounceTimer = useState<Timer?>(null);
+
+    useEffect(() {
+      return () {
+        debounceTimer.value?.cancel();
+      };
+    }, []);
+
+    void handleSearch(String value) {
+      isTyping.value = true;
+      debounceTimer.value?.cancel();
+
+      if (value.length < minSearchLength) {
+        showSearchResults.value = false;
+        return;
+      }
+
+      debounceTimer.value = Timer(const Duration(milliseconds: 500), () {
+        isTyping.value = false;
+        showSearchResults.value = true;
+        ref.read(searchNotifierProvider.notifier).searchLocation(value);
+      });
+    }
 
     void resetSearch() {
       searchController.clear();
       showSearchResults.value = false;
       showNearbyServices.value = false;
       selectedLocation.value = null;
+      debounceTimer.value?.cancel();
       ref.read(servicesNotifierProvider.notifier).clearServices();
+    }
+
+    Widget buildSearchHint() {
+      if (searchController.text.isEmpty) {
+        return const SizedBox.shrink();
+      }
+      
+      if (searchController.text.length < minSearchLength) {
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            'Please enter at least $minSearchLength characters to search',
+            style: context.typography.bodyMedium.copyWith(
+              color: context.colors.primaryTxt,
+            ),
+          ),
+        );
+      }
+
+      if (isTyping.value) {
+        return const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Center(
+            child: SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          ),
+        );
+      }
+
+      return const SizedBox.shrink();
     }
 
     Widget buildNoServicesMessage() {
@@ -91,10 +152,7 @@ class LocationSearchWidget extends HookConsumerWidget {
             children: [
               TextField(
                 controller: searchController,
-                onChanged: (value) {
-                  showSearchResults.value = value.isNotEmpty;
-                  ref.read(searchNotifierProvider.notifier).searchLocation(value);
-                },
+                onChanged: handleSearch,
                 decoration: InputDecoration(
                   hintText: 'Search for locations',
                   prefixIcon: const Icon(Icons.search),
@@ -111,47 +169,67 @@ class LocationSearchWidget extends HookConsumerWidget {
                   ),
                 ),
               ),
+              buildSearchHint(),
               if (showSearchResults.value)
                 Container(
                   constraints: const BoxConstraints(maxHeight: 200),
                   child: searchResults.when(
-                    data: (results) => ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: results.length,
-                      itemBuilder: (context, index) {
-                        final result = results[index];
+                    data: (results) {
+                      if (results.isEmpty && !isTyping.value) {
                         return ListTile(
-                          leading: const Icon(Icons.location_on),
-                          title: Text(result.displayName),
-                          subtitle: Text(result.address ?? ''),
-                          onTap: () async {
-                            showSearchResults.value = false;
-                            searchController.text = result.displayName;
-                            showNearbyServices.value = true;
-                            selectedLocation.value = result.displayName;
-
-                            await ref
-                                .read(servicesNotifierProvider.notifier)
-                                .fetchNearbyServices(
-                                  result.latLng.latitude,
-                                  result.latLng.longitude,
-                                );
-                          },
+                          leading: const Icon(Icons.info_outline),
+                          title: Text(
+                            'No locations found',
+                            style: context.typography.bodyMedium,
+                          ),
                         );
-                      },
+                      }
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: results.length,
+                        itemBuilder: (context, index) {
+                          final result = results[index];
+                          return ListTile(
+                            leading: const Icon(Icons.location_on),
+                            title: Text(result.displayName),
+                            subtitle: Text(result.address ?? ''),
+                            onTap: () async {
+                              showSearchResults.value = false;
+                              searchController.text = result.displayName;
+                              showNearbyServices.value = true;
+                              selectedLocation.value = result.displayName;
+
+                              await ref
+                                  .read(servicesNotifierProvider.notifier)
+                                  .fetchNearbyServices(
+                                    result.latLng.latitude,
+                                    result.latLng.longitude,
+                                  );
+                            },
+                          );
+                        },
+                      );
+                    },
+                    loading: () => const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: CircularProgressIndicator(),
+                      ),
                     ),
-                    loading: () =>
-                        const Center(child: CircularProgressIndicator()),
                     error: (error, _) => ListTile(
                       leading: const Icon(Icons.error, color: Colors.red),
-                      title: Text('Error: $error'),
+                      title: Text(
+                        'Error searching locations',
+                        style: context.typography.bodyMedium.copyWith(
+                          color: Colors.red,
+                        ),
+                      ),
                     ),
                   ),
                 ),
             ],
           ),
         ),
-        // Show "No services" message when appropriate
         if (servicesState.services.isEmpty &&
             !servicesState.isLoading &&
             showNearbyServices.value)
@@ -160,4 +238,3 @@ class LocationSearchWidget extends HookConsumerWidget {
     );
   }
 }
- 

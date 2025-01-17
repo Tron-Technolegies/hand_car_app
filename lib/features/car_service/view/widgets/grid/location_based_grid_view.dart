@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/car_service/controller/location/location_list/location_list.dart';
 import 'package:hand_car/features/car_service/model/service_model.dart';
@@ -19,7 +18,7 @@ class LocationBasedGridView extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final servicesState = ref.watch(servicesNotifierProvider);
-    final showNearbyServices = useState(false);
+    // final showNearbyServices = useState(false);
 
     // Filter services by category
     final filteredByCategory = services

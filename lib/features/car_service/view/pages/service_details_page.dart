@@ -8,10 +8,11 @@ import 'package:hand_car/features/car_service/model/service_model.dart';
 import 'package:hand_car/features/car_service/view/widgets/review/review_list_widget.dart';
 import 'package:hand_car/features/car_service/view/widgets/review/service_review_widget.dart';
 import 'package:hand_car/features/car_service/view/widgets/services_list_widget.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class ServiceDetailsPage extends StatelessWidget {
+class ServiceDetailsPage extends ConsumerWidget {
   static const route = '/serviceDetailsPage';
   final ServiceModel service;
   final ServiceRatingModel? rating;
@@ -47,6 +48,7 @@ class ServiceDetailsPage extends StatelessWidget {
       );
     }
   }
+  // In your service details page
 
   Future<void> launchWhatsApp(ServiceModel service) async {
     final whatsappUrl = Uri.parse("https://wa.me/${service.phoneNumber}");
@@ -66,7 +68,7 @@ class ServiceDetailsPage extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
     final CarouselSliderControllerImpl carouselController =
         CarouselSliderControllerImpl();
     final ValueNotifier<int> currentImageIndex = ValueNotifier(0);
@@ -323,21 +325,21 @@ class ServiceDetailsPage extends StatelessWidget {
 
             SizedBox(height: context.space.space_200),
 
-            
-
             SizedBox(height: context.space.space_200),
 
             // Reviews Section
             SizedBox(
                 height: context.space.space_500 * 9,
                 child: ServiceReviewWidget(
-                    serviceId: service.id.toString(),
-                    serviceName: service.vendorName,
-                    )),
+                  serviceId: service.id.toString(),
+                  serviceName: service.vendorName,
+                )),
             SizedBox(
                 height: context.space.space_500 * 8.2,
-                child:  ReviewsList(
-               vendorName: service.vendorName,
+                child: ReviewsList(
+                  vendorName:
+                      service.vendorName, // Change from service.id.toString()
+                  serviceId: service.id,
                 )),
           ],
         ),
