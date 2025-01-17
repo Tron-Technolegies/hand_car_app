@@ -5,7 +5,6 @@ import 'package:hand_car/core/widgets/button_widget.dart';
 
 import 'package:hand_car/features/car_service/model/service_model.dart';
 
-
 class ServiceCardWidget extends StatelessWidget {
   final ServiceModel service;
 
@@ -24,7 +23,7 @@ class ServiceCardWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(15),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha:0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               spreadRadius: 1,
               blurRadius: 4,
               offset: const Offset(0, 2),

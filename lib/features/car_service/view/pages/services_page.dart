@@ -1,5 +1,3 @@
-
-
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -40,7 +38,7 @@ class ServicesPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-     final pageController = usePageController();
+    final pageController = usePageController();
     final buttonIndex = useState(0);
     final scrollController = useScrollController();
     final showNearbyServices = useState(false);
@@ -147,7 +145,6 @@ class ServicesPage extends HookConsumerWidget {
       );
     }
 
-
     return Scaffold(
       key: scaffoldKey3,
       appBar: AppBar(
@@ -195,7 +192,7 @@ class ServicesPage extends HookConsumerWidget {
                 ),
               ),
             ),
-        LocationSearchWidget(),
+          LocationSearchWidget(),
           const SizedBox(height: 16),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: context.space.space_200),
@@ -219,10 +216,10 @@ class ServicesPage extends HookConsumerWidget {
                     try {
                       if (locationState.position != null) {
                         showNearbyServices.value = true;
-                         await ref.read(locationNotifierProvider.notifier).getCurrentLocation();
-            if (locationState.position != null) {
-             
-            }
+                        await ref
+                            .read(locationNotifierProvider.notifier)
+                            .getCurrentLocation();
+                        if (locationState.position != null) {}
                       } else {
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -251,6 +248,7 @@ class ServicesPage extends HookConsumerWidget {
               ),
             ),
           ),
+          SizedBox(height: context.space.space_200),
 
           // Categories List
           categoriesAsync.when(
@@ -328,8 +326,8 @@ class ServicesPage extends HookConsumerWidget {
                           .toList();
 
                       return LocationBasedGridView(
-                      
-                        categoryName:categories[categoryIndex].name, services: filteredServices,
+                        categoryName: categories[categoryIndex].name,
+                        services: filteredServices,
                       );
                     },
                     error: (error, _) => Center(

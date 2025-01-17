@@ -3,6 +3,11 @@ import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/car_service/model/service_model.dart';
 import 'package:hand_car/features/car_service/view/widgets/service_info_container_widget.dart';
 
+import 'package:flutter/material.dart';
+import 'package:hand_car/core/extension/theme_extension.dart';
+import 'package:hand_car/features/car_service/model/service_model.dart';
+import 'package:hand_car/features/car_service/view/widgets/service_info_container_widget.dart';
+
 class GridViewServicesWidget extends StatelessWidget {
   final List<ServiceModel> services;
   final List<ServiceModel> locationServices;
@@ -10,7 +15,7 @@ class GridViewServicesWidget extends StatelessWidget {
   const GridViewServicesWidget({
     super.key,
     required this.services,
-    this.locationServices = const [],
+    required this.locationServices,
   });
 
   String? _getDistance(String vendorName) {
@@ -29,7 +34,7 @@ class GridViewServicesWidget extends StatelessWidget {
       ),
     );
 
-    if (locationService.distance == null || 
+    if (locationService.distance == null ||
         locationService.distance == double.infinity) return null;
     return '${locationService.distance!.toStringAsFixed(1)} km';
   }
@@ -41,7 +46,7 @@ class GridViewServicesWidget extends StatelessWidget {
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 340,
         mainAxisSpacing: 0.5,
-        mainAxisExtent: 330,
+        mainAxisExtent: 340, // Increased to accommodate distance
         crossAxisSpacing: 1.8,
       ),
       itemCount: services.length,
@@ -51,40 +56,17 @@ class GridViewServicesWidget extends StatelessWidget {
 
         return Padding(
           padding: EdgeInsets.all(context.space.space_100),
-          child: Card(
+          child: SizedBox(
+            height: 340, // Fixed height container
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
                   child: ServiceCardWidget(
                     service: service,
                   ),
                 ),
-                if (distance != null)
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left: context.space.space_200,
-                      right: context.space.space_200,
-                      bottom: context.space.space_100,
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.location_on,
-                          size: 16,
-                          color: context.colors.primaryTxt,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          distance,
-                          style: context.typography.bodySmall.copyWith(
-                            color: context.colors.primaryTxt,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                
+                
               ],
             ),
           ),
