@@ -3,13 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
+import 'package:hand_car/features/car_service/controller/location/location_notifier/location_notifier.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class LocationWidget extends HookWidget {
-  final VoidCallback onTap;
-  const LocationWidget(this.onTap, {super.key});
+class LocationWidget extends HookConsumerWidget {
+  final VoidCallback onLocationReceived;
+  const LocationWidget(this.onLocationReceived, {super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,ref) {
+       final locationState = ref.watch(locationNotifierProvider);
     // Use useState hook to manage address state
     // final currentAddress = useState('Tap to get location');
 
@@ -50,7 +53,12 @@ class LocationWidget extends HookWidget {
     // }, []);
 
     return InkWell(
-      onTap: onTap,
+      onTap: () async{
+         await ref.read(locationNotifierProvider.notifier).getCurrentLocation();
+            if (locationState.position != null) {
+              onLocationReceived();
+            }
+      },
       child: Row(
         children: [
           const Icon(FontAwesomeIcons.locationArrow),

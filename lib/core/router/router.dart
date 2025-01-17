@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hand_car/features/Accessories/view/pages/wishlist_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/login_with_phone_and_password_page.dart';
 import 'package:hand_car/features/car_service/model/service_model.dart';
+import 'package:hand_car/features/car_service/view/pages/services_page.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Import necessary page routes
@@ -116,6 +117,7 @@ final _routes = [
       return AccessoriesDetailsPage(product: product!);
     },
   ),
+  GoRoute(path: ServicesPage.route, builder: (context, state) =>  ServicesPage()),
  GoRoute(
   path: ServiceDetailsPage.route,
   builder: (context, state) {

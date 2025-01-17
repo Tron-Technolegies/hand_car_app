@@ -20,6 +20,7 @@ mixin _$LocationState {
   String get address => throw _privateConstructorUsedError;
   bool get isLoading => throw _privateConstructorUsedError;
   String? get error => throw _privateConstructorUsedError;
+  bool get isLocationEnabled => throw _privateConstructorUsedError;
 
   /// Create a copy of LocationState
   /// with the given fields replaced by the non-null parameter values.
@@ -35,7 +36,11 @@ abstract class $LocationStateCopyWith<$Res> {
       _$LocationStateCopyWithImpl<$Res, LocationState>;
   @useResult
   $Res call(
-      {Position? position, String address, bool isLoading, String? error});
+      {Position? position,
+      String address,
+      bool isLoading,
+      String? error,
+      bool isLocationEnabled});
 }
 
 /// @nodoc
@@ -57,6 +62,7 @@ class _$LocationStateCopyWithImpl<$Res, $Val extends LocationState>
     Object? address = null,
     Object? isLoading = null,
     Object? error = freezed,
+    Object? isLocationEnabled = null,
   }) {
     return _then(_value.copyWith(
       position: freezed == position
@@ -75,6 +81,10 @@ class _$LocationStateCopyWithImpl<$Res, $Val extends LocationState>
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
               as String?,
+      isLocationEnabled: null == isLocationEnabled
+          ? _value.isLocationEnabled
+          : isLocationEnabled // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -88,7 +98,11 @@ abstract class _$$LocationStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {Position? position, String address, bool isLoading, String? error});
+      {Position? position,
+      String address,
+      bool isLoading,
+      String? error,
+      bool isLocationEnabled});
 }
 
 /// @nodoc
@@ -108,6 +122,7 @@ class __$$LocationStateImplCopyWithImpl<$Res>
     Object? address = null,
     Object? isLoading = null,
     Object? error = freezed,
+    Object? isLocationEnabled = null,
   }) {
     return _then(_$LocationStateImpl(
       position: freezed == position
@@ -126,6 +141,10 @@ class __$$LocationStateImplCopyWithImpl<$Res>
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
               as String?,
+      isLocationEnabled: null == isLocationEnabled
+          ? _value.isLocationEnabled
+          : isLocationEnabled // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -134,7 +153,11 @@ class __$$LocationStateImplCopyWithImpl<$Res>
 
 class _$LocationStateImpl implements _LocationState {
   const _$LocationStateImpl(
-      {this.position, this.address = '', this.isLoading = false, this.error});
+      {this.position,
+      this.address = '',
+      this.isLoading = false,
+      this.error,
+      this.isLocationEnabled = false});
 
   @override
   final Position? position;
@@ -146,10 +169,13 @@ class _$LocationStateImpl implements _LocationState {
   final bool isLoading;
   @override
   final String? error;
+  @override
+  @JsonKey()
+  final bool isLocationEnabled;
 
   @override
   String toString() {
-    return 'LocationState(position: $position, address: $address, isLoading: $isLoading, error: $error)';
+    return 'LocationState(position: $position, address: $address, isLoading: $isLoading, error: $error, isLocationEnabled: $isLocationEnabled)';
   }
 
   @override
@@ -162,12 +188,14 @@ class _$LocationStateImpl implements _LocationState {
             (identical(other.address, address) || other.address == address) &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
-            (identical(other.error, error) || other.error == error));
+            (identical(other.error, error) || other.error == error) &&
+            (identical(other.isLocationEnabled, isLocationEnabled) ||
+                other.isLocationEnabled == isLocationEnabled));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, position, address, isLoading, error);
+  int get hashCode => Object.hash(
+      runtimeType, position, address, isLoading, error, isLocationEnabled);
 
   /// Create a copy of LocationState
   /// with the given fields replaced by the non-null parameter values.
@@ -183,7 +211,8 @@ abstract class _LocationState implements LocationState {
       {final Position? position,
       final String address,
       final bool isLoading,
-      final String? error}) = _$LocationStateImpl;
+      final String? error,
+      final bool isLocationEnabled}) = _$LocationStateImpl;
 
   @override
   Position? get position;
@@ -193,6 +222,8 @@ abstract class _LocationState implements LocationState {
   bool get isLoading;
   @override
   String? get error;
+  @override
+  bool get isLocationEnabled;
 
   /// Create a copy of LocationState
   /// with the given fields replaced by the non-null parameter values.

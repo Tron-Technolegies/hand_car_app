@@ -6,7 +6,7 @@ part of 'location_list.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$servicesNotifierHash() => r'f87b78b91bd9eb5d66fcb3a625f87b106b39d1fb';
+String _$servicesNotifierHash() => r'b1701ec152217217ee5ab2e5f4c9d95d4e034170';
 
 /// See also [ServicesNotifier].
 @ProviderFor(ServicesNotifier)

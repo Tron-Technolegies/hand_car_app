@@ -12,11 +12,9 @@ import 'package:hand_car/features/car_service/controller/car_service_controller.
 import 'package:hand_car/features/car_service/controller/filter_categories/service_filter.dart';
 import 'package:hand_car/features/car_service/controller/location/location_list/location_list.dart';
 import 'package:hand_car/features/car_service/controller/location/location_notifier/location_notifier.dart';
-import 'package:hand_car/features/car_service/controller/location/search/location_search_controller.dart';
-import 'package:hand_car/features/car_service/model/location/location_model.dart';
-import 'package:hand_car/features/car_service/model/service_model.dart';
+
 import 'package:hand_car/features/car_service/view/widgets/grid/location_based_grid_view.dart';
-import 'package:hand_car/features/car_service/view/widgets/grid_view_service_widget.dart';
+
 import 'package:hand_car/features/car_service/view/widgets/map/location_search_widget.dart';
 import 'package:hand_car/features/car_service/view/widgets/map/location_widget.dart';
 
@@ -132,9 +130,9 @@ class ServicesPage extends HookConsumerWidget {
                 margin: const EdgeInsets.only(bottom: 8.0),
                 child: ListTile(
                   leading: const Icon(Icons.store),
-                  title: Text(service.name),
+                  title: Text(service.vendorName),
                   subtitle: Text(
-                    '${service.distance.toStringAsFixed(1)} km away',
+                    '${service.distance!.toStringAsFixed(1)} km away',
                   ),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () {
@@ -221,12 +219,10 @@ class ServicesPage extends HookConsumerWidget {
                     try {
                       if (locationState.position != null) {
                         showNearbyServices.value = true;
-                        await ref
-                            .read(servicesNotifierProvider.notifier)
-                            .fetchNearbyServices(
-                              locationState.position!.latitude,
-                              locationState.position!.longitude,
-                            );
+                         await ref.read(locationNotifierProvider.notifier).getCurrentLocation();
+            if (locationState.position != null) {
+             
+            }
                       } else {
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(

@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:hand_car/features/car_service/model/service_model.dart';
 
 part 'location_model.freezed.dart';
 part 'location_model.g.dart';
@@ -20,7 +21,7 @@ class ServiceLocation with _$ServiceLocation {
 @freezed
 class ServicesState with _$ServicesState {
   const factory ServicesState({
-    @Default([]) List<ServiceLocation> services,
+    @Default([]) List<ServiceModel> services,
     @Default(false) bool isLoading,
     String? error,
   }) = _ServicesState;

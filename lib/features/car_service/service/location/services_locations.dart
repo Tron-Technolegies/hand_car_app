@@ -1,39 +1,33 @@
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
-import 'package:hand_car/features/car_service/model/location/location_model.dart';
+import 'package:hand_car/features/car_service/model/service_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'services_locations.g.dart';
 
 class ServicesLocations {
   final Dio _dio;
-  
+
   ServicesLocations(this._dio);
 
-  Future<List<ServiceLocation>> getNearbyServices(double lat, double lng) async {
+  Future<List<ServiceModel>> getNearbyServices(
+    double lat, 
+    double lng, 
+    [double radius = 10]
+  ) async {
     try {
       final response = await _dio.get(
         '/get_nearby_services',
         queryParameters: {
-          'lat': lat.toString(), // Convert to string to match backend
-          'lng': lng.toString(), // Convert to string to match backend
+          'lat': lat.toString(),
+          'lng': lng.toString(),
+          'radius': radius.toString(),
         },
       );
 
       if (response.statusCode == 200 && response.data['services'] != null) {
         final List<dynamic> services = response.data['services'];
-        return services.map((service) {
-          // Match the backend response structure
-          return ServiceLocation(
-            name: service['vendor_name'] as String,
- 
-            // Convert distance to double and round to 2 decimal places
-            distance: double.parse((service['distance'] as num).toStringAsFixed(2)),
-            // Since the backend doesn't return these, we'll set them to 0
-            latitude: 0,
-            longitude: 0,
-          );
-        }).toList();
+        return services.map((service) => ServiceModel.fromJson(service)).toList();
       }
       throw Exception('Failed to fetch services');
     } on DioException catch (e) {
@@ -60,12 +54,8 @@ ServicesLocations servicesLocations( ref) {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     },
-    validateStatus: (status) {
-      return status != null && status < 500;
-    },
   ));
-  
-  // Add interceptors for logging in debug mode
+
   dio.interceptors.add(LogInterceptor(
     request: true,
     requestHeader: true,
@@ -74,6 +64,6 @@ ServicesLocations servicesLocations( ref) {
     responseBody: true,
     error: true,
   ));
-  
+
   return ServicesLocations(dio);
 }

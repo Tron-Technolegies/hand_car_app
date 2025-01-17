@@ -57,9 +57,9 @@ class NearbyServiceList extends HookConsumerWidget {
                 margin: const EdgeInsets.only(bottom: 8.0),
                 child: ListTile(
                   leading: const Icon(Icons.store),
-                  title: Text(service.name),
+                  title: Text(service.vendorName),
                   subtitle: Text(
-                    '${service.distance.toStringAsFixed(1)} km away',
+                    '${service.distance!.toStringAsFixed(1)} km away',
                   ),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () {

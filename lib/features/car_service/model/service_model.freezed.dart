@@ -32,10 +32,12 @@ mixin _$ServiceModel {
   @JsonKey(name: 'service_details')
   String get serviceDetails => throw _privateConstructorUsedError;
   String get address => throw _privateConstructorUsedError;
-  @JsonKey(fromJson: _parseRate)
-  double get rate => throw _privateConstructorUsedError;
+  @JsonKey(name: 'rate', fromJson: _parseRate)
+  double? get rate => throw _privateConstructorUsedError;
   @JsonKey(fromJson: _parseImages)
   List<String> get images => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _parseDistance)
+  double? get distance => throw _privateConstructorUsedError;
 
   /// Serializes this ServiceModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -61,8 +63,9 @@ abstract class $ServiceModelCopyWith<$Res> {
       @JsonKey(name: 'service_category') String? serviceCategory,
       @JsonKey(name: 'service_details') String serviceDetails,
       String address,
-      @JsonKey(fromJson: _parseRate) double rate,
-      @JsonKey(fromJson: _parseImages) List<String> images});
+      @JsonKey(name: 'rate', fromJson: _parseRate) double? rate,
+      @JsonKey(fromJson: _parseImages) List<String> images,
+      @JsonKey(fromJson: _parseDistance) double? distance});
 }
 
 /// @nodoc
@@ -87,8 +90,9 @@ class _$ServiceModelCopyWithImpl<$Res, $Val extends ServiceModel>
     Object? serviceCategory = freezed,
     Object? serviceDetails = null,
     Object? address = null,
-    Object? rate = null,
+    Object? rate = freezed,
     Object? images = null,
+    Object? distance = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -119,14 +123,18 @@ class _$ServiceModelCopyWithImpl<$Res, $Val extends ServiceModel>
           ? _value.address
           : address // ignore: cast_nullable_to_non_nullable
               as String,
-      rate: null == rate
+      rate: freezed == rate
           ? _value.rate
           : rate // ignore: cast_nullable_to_non_nullable
-              as double,
+              as double?,
       images: null == images
           ? _value.images
           : images // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      distance: freezed == distance
+          ? _value.distance
+          : distance // ignore: cast_nullable_to_non_nullable
+              as double?,
     ) as $Val);
   }
 }
@@ -147,8 +155,9 @@ abstract class _$$ServiceModelImplCopyWith<$Res>
       @JsonKey(name: 'service_category') String? serviceCategory,
       @JsonKey(name: 'service_details') String serviceDetails,
       String address,
-      @JsonKey(fromJson: _parseRate) double rate,
-      @JsonKey(fromJson: _parseImages) List<String> images});
+      @JsonKey(name: 'rate', fromJson: _parseRate) double? rate,
+      @JsonKey(fromJson: _parseImages) List<String> images,
+      @JsonKey(fromJson: _parseDistance) double? distance});
 }
 
 /// @nodoc
@@ -171,8 +180,9 @@ class __$$ServiceModelImplCopyWithImpl<$Res>
     Object? serviceCategory = freezed,
     Object? serviceDetails = null,
     Object? address = null,
-    Object? rate = null,
+    Object? rate = freezed,
     Object? images = null,
+    Object? distance = freezed,
   }) {
     return _then(_$ServiceModelImpl(
       id: null == id
@@ -203,14 +213,18 @@ class __$$ServiceModelImplCopyWithImpl<$Res>
           ? _value.address
           : address // ignore: cast_nullable_to_non_nullable
               as String,
-      rate: null == rate
+      rate: freezed == rate
           ? _value.rate
           : rate // ignore: cast_nullable_to_non_nullable
-              as double,
+              as double?,
       images: null == images
           ? _value.images
           : images // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      distance: freezed == distance
+          ? _value.distance
+          : distance // ignore: cast_nullable_to_non_nullable
+              as double?,
     ));
   }
 }
@@ -226,8 +240,9 @@ class _$ServiceModelImpl implements _ServiceModel {
       @JsonKey(name: 'service_category') this.serviceCategory,
       @JsonKey(name: 'service_details') required this.serviceDetails,
       required this.address,
-      @JsonKey(fromJson: _parseRate) required this.rate,
-      @JsonKey(fromJson: _parseImages) this.images = const []});
+      @JsonKey(name: 'rate', fromJson: _parseRate) this.rate,
+      @JsonKey(fromJson: _parseImages) this.images = const [],
+      @JsonKey(fromJson: _parseDistance) this.distance});
 
   factory _$ServiceModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$ServiceModelImplFromJson(json);
@@ -252,15 +267,18 @@ class _$ServiceModelImpl implements _ServiceModel {
   @override
   final String address;
   @override
-  @JsonKey(fromJson: _parseRate)
-  final double rate;
+  @JsonKey(name: 'rate', fromJson: _parseRate)
+  final double? rate;
   @override
   @JsonKey(fromJson: _parseImages)
   final List<String> images;
+  @override
+  @JsonKey(fromJson: _parseDistance)
+  final double? distance;
 
   @override
   String toString() {
-    return 'ServiceModel(id: $id, vendorName: $vendorName, phoneNumber: $phoneNumber, whatsappNumber: $whatsappNumber, serviceCategory: $serviceCategory, serviceDetails: $serviceDetails, address: $address, rate: $rate, images: $images)';
+    return 'ServiceModel(id: $id, vendorName: $vendorName, phoneNumber: $phoneNumber, whatsappNumber: $whatsappNumber, serviceCategory: $serviceCategory, serviceDetails: $serviceDetails, address: $address, rate: $rate, images: $images, distance: $distance)';
   }
 
   @override
@@ -281,7 +299,9 @@ class _$ServiceModelImpl implements _ServiceModel {
                 other.serviceDetails == serviceDetails) &&
             (identical(other.address, address) || other.address == address) &&
             (identical(other.rate, rate) || other.rate == rate) &&
-            const DeepCollectionEquality().equals(other.images, images));
+            const DeepCollectionEquality().equals(other.images, images) &&
+            (identical(other.distance, distance) ||
+                other.distance == distance));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -296,7 +316,8 @@ class _$ServiceModelImpl implements _ServiceModel {
       serviceDetails,
       address,
       rate,
-      const DeepCollectionEquality().hash(images));
+      const DeepCollectionEquality().hash(images),
+      distance);
 
   /// Create a copy of ServiceModel
   /// with the given fields replaced by the non-null parameter values.
@@ -323,9 +344,10 @@ abstract class _ServiceModel implements ServiceModel {
       @JsonKey(name: 'service_category') final String? serviceCategory,
       @JsonKey(name: 'service_details') required final String serviceDetails,
       required final String address,
-      @JsonKey(fromJson: _parseRate) required final double rate,
-      @JsonKey(fromJson: _parseImages)
-      final List<String> images}) = _$ServiceModelImpl;
+      @JsonKey(name: 'rate', fromJson: _parseRate) final double? rate,
+      @JsonKey(fromJson: _parseImages) final List<String> images,
+      @JsonKey(fromJson: _parseDistance)
+      final double? distance}) = _$ServiceModelImpl;
 
   factory _ServiceModel.fromJson(Map<String, dynamic> json) =
       _$ServiceModelImpl.fromJson;
@@ -350,11 +372,14 @@ abstract class _ServiceModel implements ServiceModel {
   @override
   String get address;
   @override
-  @JsonKey(fromJson: _parseRate)
-  double get rate;
+  @JsonKey(name: 'rate', fromJson: _parseRate)
+  double? get rate;
   @override
   @JsonKey(fromJson: _parseImages)
   List<String> get images;
+  @override
+  @JsonKey(fromJson: _parseDistance)
+  double? get distance;
 
   /// Create a copy of ServiceModel
   /// with the given fields replaced by the non-null parameter values.

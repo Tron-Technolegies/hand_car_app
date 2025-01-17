@@ -1,4 +1,7 @@
 import 'package:hand_car/features/car_service/model/location/location_model.dart';
+import 'package:hand_car/features/car_service/model/service_state/service_state.dart';
+
+
 import 'package:hand_car/features/car_service/service/location/services_locations.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -6,15 +9,12 @@ part 'location_list.g.dart';
 
 @riverpod
 class ServicesNotifier extends _$ServicesNotifier {
+  bool _isLoading = false;
   @override
-   bool _isLoading = false;
-
-  @override
-  ServicesState build() => const ServicesState();
+  ServicesState build() => ServicesState();
 
   Future<void> fetchNearbyServices(double lat, double lng) async {
     if (_isLoading) return; // Prevent multiple simultaneous requests
-    
     _isLoading = true;
     state = state.copyWith(isLoading: true, error: null);
 
@@ -23,7 +23,7 @@ class ServicesNotifier extends _$ServicesNotifier {
       final services = await repository.getNearbyServices(lat, lng);
       
       state = state.copyWith(
-        services: services,
+        services: services ,
         isLoading: false,
       );
     } catch (e) {

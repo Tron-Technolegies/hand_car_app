@@ -226,7 +226,7 @@ abstract class _ServiceLocation implements ServiceLocation {
 
 /// @nodoc
 mixin _$ServicesState {
-  List<ServiceLocation> get services => throw _privateConstructorUsedError;
+  List<ServiceModel> get services => throw _privateConstructorUsedError;
   bool get isLoading => throw _privateConstructorUsedError;
   String? get error => throw _privateConstructorUsedError;
 
@@ -243,7 +243,7 @@ abstract class $ServicesStateCopyWith<$Res> {
           ServicesState value, $Res Function(ServicesState) then) =
       _$ServicesStateCopyWithImpl<$Res, ServicesState>;
   @useResult
-  $Res call({List<ServiceLocation> services, bool isLoading, String? error});
+  $Res call({List<ServiceModel> services, bool isLoading, String? error});
 }
 
 /// @nodoc
@@ -269,7 +269,7 @@ class _$ServicesStateCopyWithImpl<$Res, $Val extends ServicesState>
       services: null == services
           ? _value.services
           : services // ignore: cast_nullable_to_non_nullable
-              as List<ServiceLocation>,
+              as List<ServiceModel>,
       isLoading: null == isLoading
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
@@ -290,7 +290,7 @@ abstract class _$$ServicesStateImplCopyWith<$Res>
       __$$ServicesStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({List<ServiceLocation> services, bool isLoading, String? error});
+  $Res call({List<ServiceModel> services, bool isLoading, String? error});
 }
 
 /// @nodoc
@@ -314,7 +314,7 @@ class __$$ServicesStateImplCopyWithImpl<$Res>
       services: null == services
           ? _value.services
           : services // ignore: cast_nullable_to_non_nullable
-              as List<ServiceLocation>,
+              as List<ServiceModel>,
       isLoading: null == isLoading
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
@@ -335,7 +335,7 @@ class _$ServicesStateImpl implements _ServicesState {
 
   @override
   @JsonKey()
-  final List<ServiceLocation> services;
+  final List<ServiceModel> services;
   @override
   @JsonKey()
   final bool isLoading;
@@ -373,12 +373,12 @@ class _$ServicesStateImpl implements _ServicesState {
 
 abstract class _ServicesState implements ServicesState {
   const factory _ServicesState(
-      {final List<ServiceLocation> services,
+      {final List<ServiceModel> services,
       final bool isLoading,
       final String? error}) = _$ServicesStateImpl;
 
   @override
-  List<ServiceLocation> get services;
+  List<ServiceModel> get services;
   @override
   bool get isLoading;
   @override

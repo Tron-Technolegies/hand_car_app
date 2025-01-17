@@ -1,14 +1,10 @@
 
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:hand_car/features/car_service/controller/location/location_list/location_list.dart';
-import 'package:hand_car/features/car_service/model/location/location_state/location_state.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import 'package:geolocator/geolocator.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:hand_car/features/car_service/model/location/location_state/location_state.dart';
 
 part 'location_notifier.g.dart';
-
-
 
 @riverpod
 class LocationNotifier extends _$LocationNotifier {
@@ -22,68 +18,66 @@ class LocationNotifier extends _$LocationNotifier {
       // Check if location services are enabled
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        throw Exception('Please enable location services');
+        state = state.copyWith(
+          isLoading: false,
+          error: 'Location services are disabled. Please enable location services in your device settings.',
+          isLocationEnabled: false,
+        );
+        return;
       }
 
-      // Check and request location permission
+      // Check location permission
       var permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          throw Exception('Location permission denied');
+          state = state.copyWith(
+            isLoading: false,
+            error: 'Location permissions are denied. Please enable them in your app settings.',
+            isLocationEnabled: false,
+          );
+          return;
         }
       }
 
+      // Handle permanently denied permissions
       if (permission == LocationPermission.deniedForever) {
-        throw Exception('Location permissions are permanently denied. Please enable them in settings.');
-      }
-
-      // Get current position with high accuracy
-      final position = await Geolocator.getCurrentPosition(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-        timeLimit: Duration(seconds: 10),
-      ),
-        
-      );
-
-      // Get detailed address information
-      final List<Placemark> placemarks = await placemarkFromCoordinates(
-        position.latitude,
-        position.longitude,
-      );
-
-      if (placemarks.isNotEmpty) {
-        final place = placemarks[0];
-        final address = _formatAddress(place);
-        
         state = state.copyWith(
-          position: position,
-          address: address,
           isLoading: false,
+          error: 'Location permissions are permanently denied. Please enable them in your app settings.',
+          isLocationEnabled: false,
         );
-
-        // Fetch nearby services after getting location
-        ref.read(servicesNotifierProvider.notifier).fetchNearbyServices(
-          position.latitude,
-          position.longitude,
-        );
+        return;
       }
+
+      // Get current position
+      final position = await Geolocator.getCurrentPosition(
+       locationSettings: LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
+      );
+
+      state = state.copyWith(
+        position: position,
+        isLoading: false,
+        error: null,
+        isLocationEnabled: true,
+      );
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: e.toString(),
+        error: 'Failed to get location: ${e.toString()}',
+        isLocationEnabled: false,
       );
     }
   }
 
-  String _formatAddress(Placemark place) {
-    final components = <String>[];
-    
-    if (place.street?.isNotEmpty ?? false) components.add(place.street!);
-    if (place.locality?.isNotEmpty ?? false) components.add(place.locality!);
-    if (place.country?.isNotEmpty ?? false) components.add(place.country!);
-    
-    return components.join(', ');
+  Future<void> openLocationSettings() async {
+    await Geolocator.openLocationSettings();
+  }
+
+  Future<void> openAppSettings() async {
+    await Geolocator.openAppSettings();
   }
 }
+

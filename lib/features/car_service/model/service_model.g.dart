@@ -17,6 +17,7 @@ _$ServiceModelImpl _$$ServiceModelImplFromJson(Map<String, dynamic> json) =>
       address: json['address'] as String,
       rate: _parseRate(json['rate']),
       images: json['images'] == null ? const [] : _parseImages(json['images']),
+      distance: _parseDistance(json['distance']),
     );
 
 Map<String, dynamic> _$$ServiceModelImplToJson(_$ServiceModelImpl instance) =>
@@ -28,6 +29,7 @@ Map<String, dynamic> _$$ServiceModelImplToJson(_$ServiceModelImpl instance) =>
       if (instance.serviceCategory case final value?) 'service_category': value,
       'service_details': instance.serviceDetails,
       'address': instance.address,
-      'rate': instance.rate,
+      if (instance.rate case final value?) 'rate': value,
       'images': instance.images,
+      if (instance.distance case final value?) 'distance': value,
     };
