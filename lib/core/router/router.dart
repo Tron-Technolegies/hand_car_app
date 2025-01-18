@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hand_car/features/Accessories/view/pages/wishlist_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/forgot_password_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/login_with_phone_and_password_page.dart';
+import 'package:hand_car/features/Authentication/view/pages/otp_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/reset_password_page.dart';
 import 'package:hand_car/features/car_service/model/service_model.dart';
 import 'package:hand_car/features/car_service/view/pages/services_page.dart';
@@ -34,12 +35,20 @@ final onboardingCompletedProvider = StateProvider<bool>((ref) {
   return storage.read('onboardingCompleted') ?? false;
 });
 
+// Provider to track preferred login method
+final loginPreferenceProvider = StateProvider<String>((ref) {
+  final storage = ref.watch(storageProvider);
+  return storage.read('preferredLoginMethod') ?? LoginWithPhoneAndPasswordPage.route;
+});
+
+// Router configuration
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authControllerProvider);
   final onboardingCompleted = ref.watch(onboardingCompletedProvider);
+  final preferredLoginRoute = ref.watch(loginPreferenceProvider);
 
   return GoRouter(
-     navigatorKey: _rootNavigatorKey,
+    navigatorKey: _rootNavigatorKey,
     initialLocation: SplashScreen.route,
     routes: _routes,
     redirect: (context, state) {
@@ -48,38 +57,47 @@ final routerProvider = Provider<GoRouter>((ref) {
         orElse: () => false,
       );
 
+      // Define route matchers
       final isOnboardingRoute = state.matchedLocation == OnbordingScreenPage.route;
       final isLoginRoute = state.matchedLocation == LoginWithPhoneAndPasswordPage.route;
       final isSignupRoute = state.matchedLocation == SignupPage.route;
       final isSplashRoute = state.matchedLocation == SplashScreen.route;
       final isForgotPasswordRoute = state.matchedLocation == ForgotPasswordPage.route;
       final isResetPasswordRoute = state.matchedLocation.startsWith('/reset-password/');
+      final isOtpLoginRoute = state.matchedLocation == LoginPage.route;
+      final isOtpVerificationRoute = state.matchedLocation == OtpPage.route;
+
+      // Group all auth-related routes
+      final isAuthRoute = isLoginRoute || 
+                         isSignupRoute || 
+                         isForgotPasswordRoute || 
+                         isResetPasswordRoute || 
+                         isOtpLoginRoute || 
+                         isOtpVerificationRoute;
 
       // Allow splash screen to show
       if (isSplashRoute) return null;
 
-      // If user is not authenticated and onboarding is not completed
-      if (!onboardingCompleted && !isAuthenticated) {
-        // Allow reset password route even before onboarding
+      // Handle onboarding state
+      if (!onboardingCompleted) {
+        // Allow reset password and verify routes even before onboarding
         if (isResetPasswordRoute) return null;
-        return OnbordingScreenPage.route;
+        // Force onboarding for all other routes
+        return isOnboardingRoute ? null : OnbordingScreenPage.route;
       }
 
-      // If onboarding is completed but user is not authenticated
-      if (onboardingCompleted && !isAuthenticated) {
-        // Allow access to auth-related pages
-        if (isLoginRoute || isSignupRoute || isForgotPasswordRoute || isResetPasswordRoute) {
-          return null;
-        }
-        // Redirect to login for all other routes
-        return LoginWithPhoneAndPasswordPage.route;
+      // Handle unauthenticated state
+      if (!isAuthenticated) {
+        // Allow access to all auth-related pages
+        if (isAuthRoute) return null;
+        // Redirect to preferred login method for all other routes
+        return preferredLoginRoute;
       }
 
-      // If user is authenticated
+      // Handle authenticated state
       if (isAuthenticated) {
         // Redirect from auth pages to home
-        if (isLoginRoute || isSignupRoute || isOnboardingRoute || 
-            isForgotPasswordRoute || isResetPasswordRoute) {
+        if (isAuthRoute || isOnboardingRoute) {
           return NavigationPage.route;
         }
         return null;
@@ -99,8 +117,9 @@ final _routes = [
     builder: (context, state) => const SplashScreen(),
   ),
   GoRoute(
-      path: LoginWithPhoneAndPasswordPage.route,
-      builder: (context, state) => const LoginWithPhoneAndPasswordPage()),
+    path: LoginWithPhoneAndPasswordPage.route,
+    builder: (context, state) => const LoginWithPhoneAndPasswordPage(),
+  ),
   GoRoute(
     path: OnbordingScreenPage.route,
     builder: (context, state) => const OnbordingScreenPage(),
@@ -109,6 +128,12 @@ final _routes = [
     path: LoginPage.route,
     builder: (context, state) => const LoginPage(),
   ),
+ GoRoute(
+  path: '/otp/:phoneOrEmail',
+  builder: (context, state) => OtpPage(
+    phoneOrEmail: state.pathParameters['phoneOrEmail']!,
+  ),
+),
   GoRoute(
     path: SignupPage.route,
     builder: (context, state) => const SignupPage(),
@@ -140,7 +165,9 @@ final _routes = [
     },
   ),
   GoRoute(
-      path: ServicesPage.route, builder: (context, state) => ServicesPage()),
+    path: ServicesPage.route, 
+    builder: (context, state) => ServicesPage(),
+  ),
   GoRoute(
     path: ServiceDetailsPage.route,
     builder: (context, state) {
@@ -158,11 +185,12 @@ final _routes = [
     builder: (context, state) => const CheckOutPage(),
   ),
   GoRoute(
-      path: WishlistScreen.route,
-      builder: (context, state) => const WishlistScreen()),
+    path: WishlistScreen.route,
+    builder: (context, state) => const WishlistScreen(),
+  ),
 ];
 
-/// Custom refresh notifier
+/// Custom refresh notifier for router state
 class RouterRefreshNotifier extends ChangeNotifier {
   RouterRefreshNotifier(Ref ref) {
     ref.listen(authControllerProvider, (_, __) {

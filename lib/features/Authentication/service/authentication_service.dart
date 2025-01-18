@@ -20,8 +20,9 @@ class ApiServiceAuthentication {
               'Accept': 'application/json',
             },
             baseUrl: baseUrl,
-            connectTimeout: const Duration(seconds: 10),
-            receiveTimeout: const Duration(seconds: 10),
+            connectTimeout: const Duration(seconds: 30),
+            receiveTimeout: const Duration(seconds: 30),
+            sendTimeout: const Duration(seconds: 30),
           ),
         ),
         _tokenStorage = TokenStorage() {
@@ -29,7 +30,7 @@ class ApiServiceAuthentication {
   }
 
   void _setupInterceptors() {
-    dio.interceptors.clear(); // Clear any existing interceptors
+    dio.interceptors.clear();
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: _handleRequest,
@@ -65,8 +66,6 @@ class ApiServiceAuthentication {
     if (error.response?.statusCode == 401) {
       try {
         await _refreshToken();
-
-        // Retry the original request with new token
         final newToken = _tokenStorage.getAccessToken();
         if (newToken == null) throw Exception('No access token after refresh');
 
@@ -79,6 +78,30 @@ class ApiServiceAuthentication {
       }
     }
     return handler.next(error);
+  }
+
+  Future<T> _withRetry<T>(Future<T> Function() apiCall) async {
+    int attempts = 0;
+    Duration delay = const Duration(seconds: 2);
+    const maxAttempts = 3;
+
+    while (attempts < maxAttempts) {
+      try {
+        return await apiCall();
+      } on DioException catch (e) {
+        attempts++;
+        if (attempts == maxAttempts || 
+            !(e.type == DioExceptionType.receiveTimeout ||
+              e.type == DioExceptionType.connectionTimeout ||
+              e.type == DioExceptionType.sendTimeout)) {
+          rethrow;
+        }
+        log('Retry attempt $attempts after ${delay.inSeconds}s delay');
+        await Future.delayed(delay);
+        delay *= 2;  // Exponential backoff
+      }
+    }
+    throw Exception('Failed after $maxAttempts attempts');
   }
 
   Future<Response<dynamic>> _retryRequest(
@@ -129,67 +152,68 @@ class ApiServiceAuthentication {
   }
 
   Future<AuthModel> login(String username, String password) async {
-    try {
-      log('LOGIN ATTEMPT - Username: $username, Password: $password');
+    return _withRetry(() async {
+      try {
+        log('LOGIN ATTEMPT - Username: $username');
+        
+        final formData = FormData.fromMap({
+          'username': username,
+          'password': password,
+        });
 
-      // Create FormData object
-      final formData = FormData.fromMap({
-        'username': username,
-        'password': password,
-      });
+        log('Sending FormData: ${formData.fields}');
 
-      log('Sending FormData: ${formData.fields}');
-
-      final response = await dio.post(
-        '/UserLogin',
-        data: formData, // Use formData instead of JSON
-        options: Options(
-          contentType:
-              'multipart/form-data', // Set content type to multipart/form-data
-          headers: {
-            'Accept': 'application/json',
-          },
-        ),
-      );
-
-      log('Login response: ${response.data}');
-
-      if (response.statusCode == 200) {
-        final authModel = AuthModel.fromJson(response.data);
-        await _tokenStorage.saveTokens(
-          accessToken: authModel.accessToken,
-          refreshToken: authModel.refreshToken,
+        final response = await dio.post(
+          '/UserLogin',
+          data: formData,
+          options: Options(
+            contentType: 'multipart/form-data',
+            headers: {'Accept': 'application/json'},
+            receiveTimeout: const Duration(seconds: 45),
+            sendTimeout: const Duration(seconds: 45),
+          ),
         );
-        return authModel;
-      } else {
-        throw Exception(response.data['error'] ?? 'Login failed');
+
+        log('Login response: ${response.data}');
+
+        if (response.statusCode == 200) {
+          final authModel = AuthModel.fromJson(response.data);
+          await _tokenStorage.saveTokens(
+            accessToken: authModel.accessToken,
+            refreshToken: authModel.refreshToken,
+          );
+          return authModel;
+        } else {
+          throw Exception(response.data['error'] ?? 'Login failed');
+        }
+      } on DioException catch (e) {
+        _logDioError(e);
+        throw Exception(_handleDioError(e));
+      } catch (e) {
+        log('Unexpected login error: $e');
+        throw Exception('An unexpected error occurred');
       }
-    } on DioException catch (e) {
-      log('DIO ERROR DETAILS:');
-      log('Type: ${e.type}');
-      log('Error Message: ${e.message}');
-      log('Response Status Code: ${e.response?.statusCode}');
-      log('Response Data: ${e.response?.data}');
-      log('Request Path: ${e.requestOptions.path}');
-      log('Request Data: ${e.requestOptions.data}');
-      final errorMessage = _handleDioError(e);
-      throw Exception(errorMessage);
-    } catch (e) {
-      log('Unexpected login error: $e');
-      throw Exception('An unexpected error occurred');
-    }
+    });
+  }
+
+  void _logDioError(DioException e) {
+    log('DIO ERROR DETAILS:');
+    log('Type: ${e.type}');
+    log('Error Message: ${e.message}');
+    log('Response Status Code: ${e.response?.statusCode}');
+    log('Response Data: ${e.response?.data}');
+    log('Request Path: ${e.requestOptions.path}');
+    log('Request Data: ${e.requestOptions.data}');
   }
 
   Future<void> logout() async {
     try {
       final token = _tokenStorage.getAccessToken();
       if (token != null) {
-        await dio.post(
+        await _withRetry(() => dio.post(
           '/Logout',
-          options: Options(
-            headers: {'Authorization': 'Bearer $token'},
-          ),
-        );
+          options: Options(headers: {'Authorization': 'Bearer $token'}),
+        ));
       }
     } catch (e) {
       log('Logout error: $e');
@@ -203,84 +227,86 @@ class ApiServiceAuthentication {
     dio.options.headers.remove('Authorization');
   }
 
-Future<String> signUp(UserModel user) async {
-  int retryCount = 0;
-  const maxRetries = 3;
-  
-  while (retryCount < maxRetries) {
-    try {
+  Future<String> signUp(UserModel user) async {
+    return _withRetry(() async {
       final response = await dio.post(
         '/signup/',
         data: user.toJson(),
-        options: Options(
-          headers: {'Content-Type': 'application/json'},
-        ),
+        options: Options(headers: {'Content-Type': 'application/json'}),
       );
 
       if (response.statusCode != 200) {
         throw Exception(response.data['error'] ?? 'Signup failed');
       }
       return response.data['message'] ?? 'Signup successful';
-    } on DioException catch (e) {
-      if (e.type == DioExceptionType.receiveTimeout ||
-          e.type == DioExceptionType.connectionTimeout) {
-        retryCount++;
-        if (retryCount == maxRetries) {
-          rethrow;
-        }
-        await Future.delayed(Duration(seconds: 2 * retryCount));
-        continue;
-      }
-      rethrow;
-    }
+    });
   }
-  throw Exception('Failed after $maxRetries retries');
-}
 
   Future<void> requestPasswordReset(String email) async {
-    try {
+    return _withRetry(() async {
       final response = await dio.post(
         '/forgot_password',
         data: {'email': email},
-        options: Options(
-          headers: {'Content-Type': 'application/json'},
-        ),
+        options: Options(headers: {'Content-Type': 'application/json'}),
       );
 
       if (response.statusCode != 200) {
         throw Exception(response.data['error'] ?? 'Failed to send reset email');
       }
-    } on DioException catch (e) {
-      final errorMessage = _handleDioError(e);
-      throw Exception(errorMessage);
-    } catch (e) {
-      log('Password reset request error: $e');
-      throw Exception('An unexpected error occurred');
-    }
+    });
   }
 
   Future<void> resetPassword(String uid, String token, String newPassword) async {
-    try {
+    return _withRetry(() async {
       final response = await dio.post(
         '/reset_password/$uid/$token',
         data: {'new_password': newPassword},
-        options: Options(
-          headers: {'Content-Type': 'application/json'},
-        ),
+        options: Options(headers: {'Content-Type': 'application/json'}),
       );
 
       if (response.statusCode != 200) {
         throw Exception(response.data['error'] ?? 'Failed to reset password');
       }
-    } on DioException catch (e) {
-      final errorMessage = _handleDioError(e);
-      throw Exception(errorMessage);
-    } catch (e) {
-      log('Password reset error: $e');
-      throw Exception('An unexpected error occurred');
-    }
+    });
   }
 
+  Future<void> sendOtp(String phoneNumber) async {
+    return _withRetry(() async {
+      final response = await dio.post(
+        '/send-otp/',
+        data: {'phone': phoneNumber},
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception(response.data['error'] ?? 'Failed to send OTP');
+      }
+    });
+  }
+
+  Future<AuthModel> verifyOtp(String phoneNumber, String otp) async {
+    return _withRetry(() async {
+      final response = await dio.post(
+        '/login-with-otp/',
+        data: {
+          'phone': phoneNumber,
+          'otp': otp,
+        },
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      if (response.statusCode == 200) {
+        final authModel = AuthModel.fromJson(response.data);
+        await _tokenStorage.saveTokens(
+          accessToken: authModel.accessToken,
+          refreshToken: authModel.refreshToken,
+        );
+        return authModel;
+      } else {
+        throw Exception(response.data['error'] ?? 'OTP verification failed');
+      }
+    });
+  }
 
   String _handleDioError(DioException e) {
     if (e.response != null) {
@@ -309,14 +335,17 @@ Future<String> signUp(UserModel user) async {
 
     switch (e.type) {
       case DioExceptionType.connectionTimeout:
+        return 'Connection timeout. Please check your internet and try again.';
       case DioExceptionType.sendTimeout:
-        return 'Connection timeout. Please check your internet';
+        return 'Request timeout. Please try again.';
       case DioExceptionType.receiveTimeout:
-        return 'Server not responding. Please try again later';
+        return 'Server is taking too long to respond. Please try again in a moment.';
+      case DioExceptionType.badResponse:
+        return 'Server returned an invalid response. Please try again.';
       case DioExceptionType.cancel:
-        return 'Request cancelled';
+        return 'Request was cancelled';
       default:
-        return 'Network error. Please check your connection';
+        return 'Network error. Please check your connection and try again';
     }
   }
 

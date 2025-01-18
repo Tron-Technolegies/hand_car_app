@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hand_car/core/router/router.dart';
 import 'package:hand_car/core/widgets/outline_button_widget.dart';
 import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
 import 'package:hand_car/features/Authentication/view/pages/forgot_password_page.dart';
+import 'package:hand_car/features/Authentication/view/pages/login_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/signup_page.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
@@ -14,10 +16,15 @@ import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 
+/// LoginWithPhoneAndPasswordPage handles user authentication using phone number and password
+/// It also provides options to switch to OTP-based login, reset password, and sign up
 class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
   static const route = '/LoginWithPhoneAndPasswordPage';
+  
   const LoginWithPhoneAndPasswordPage({super.key});
 
+  /// Validates phone number based on country code
+  /// Returns error message string if validation fails, null otherwise
   String? validatePhoneNumber(String? value, String countryCode) {
     if (value == null || value.isEmpty) {
       return 'Phone number is required';
@@ -41,7 +48,6 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
           return 'Phone number must be 10 digits';
         }
         break;
-      // Add more country-specific validations as needed
       default:
         if (digitsOnly.length < 8 || digitsOnly.length > 15) {
           return 'Invalid phone number length';
@@ -51,19 +57,27 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
     return null;
   }
 
+  /// Validates password
+  /// Returns error message string if validation fails, null otherwise
   String? validatePassword(String? value) {
     if (value == null || value.isEmpty) {
       return 'Password is required';
     }
-    return null; // Return null if validation passes
+    if (value.length < 6) {
+      return 'Password must be at least 6 characters';
+    }
+    return null;
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Form controllers and state
     final phoneController = useTextEditingController();
     final passwordController = useTextEditingController();
     final formKey = useState(GlobalKey<FormState>());
     final isPasswordVisible = useState(false);
+
+    // Default country selection (India)
     final selectedCountry = useState<Country>(Country(
       phoneCode: '91',
       countryCode: 'IN',
@@ -77,8 +91,73 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
       e164Key: '',
     ));
 
-    // Watch the login state
+    // Watch auth state for loading and errors
     final loginState = ref.watch(authControllerProvider);
+
+    /// Handles switching to OTP login
+    void switchToOtpLogin() async {
+      // Update login preference in storage
+      final storage = ref.read(storageProvider);
+      await storage.write('preferredLoginMethod', LoginPage.route);
+      
+      // Update login preference state
+      ref.read(loginPreferenceProvider.notifier).state = LoginPage.route;
+      
+      // Navigate to OTP login page
+      if (context.mounted) {
+        context.go(LoginPage.route);
+      }
+    }
+
+    /// Handles the login process
+    Future<void> handleLogin() async {
+      // Validate form fields
+      if (formKey.value.currentState?.validate() ?? false) {
+        // Combine country code with phone number
+        final fullPhoneNumber = '+${selectedCountry.value.phoneCode}${phoneController.text}';
+
+        try {
+          // Attempt login
+          await ref.read(authControllerProvider.notifier).login(
+            fullPhoneNumber,
+            passwordController.text,
+          );
+
+          // Handle specific error states
+          final authState = ref.read(authControllerProvider);
+          authState.whenOrNull(
+            error: (error, stackTrace) {
+              if (error.toString().contains('Invalid login credentials')) {
+                SnackbarUtil.showsnackbar(
+                  message: "Account doesn't exist. Please sign up first.",
+                  showretry: true,
+                );
+              } else if (error.toString().contains('Invalid password')) {
+                SnackbarUtil.showsnackbar(
+                  message: "Invalid password. Please try again.",
+                  showretry: false,
+                );
+              } else {
+                SnackbarUtil.showsnackbar(
+                  message: "Login failed. Please try again.",
+                  showretry: false,
+                );
+              }
+              log('Login error: $error');
+              log('Stack trace: $stackTrace');
+            },
+            data: (_) {
+              SnackbarUtil.showsnackbar(
+                message: "Login Successful",
+                showretry: false,
+              );
+            },
+          );
+        } catch (e) {
+          log('Unexpected error during login: $e');
+        }
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -97,10 +176,26 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Logo
                     Center(
                       child: SvgPicture.asset(Assets.icons.handCarIcon),
                     ),
                     SizedBox(height: context.space.space_200),
+
+                    // Quick OTP Login Option
+                    Center(
+                      child: TextButton.icon(
+                        onPressed: switchToOtpLogin,
+                        icon: const Icon(Icons.message),
+                        label: const Text('Login with OTP instead'),
+                        style: TextButton.styleFrom(
+                          foregroundColor: context.colors.primary,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: context.space.space_200),
+
+                    // Phone Number Section
                     Padding(
                       padding: EdgeInsets.only(left: context.space.space_200),
                       child: Text(
@@ -110,8 +205,7 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                     ),
                     SizedBox(height: context.space.space_200),
                     Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: context.space.space_200),
+                      padding: EdgeInsets.symmetric(horizontal: context.space.space_200),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -133,8 +227,7 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                                 );
                               },
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                 child: Center(
                                   child: Text(
                                     '+${selectedCountry.value.phoneCode}',
@@ -145,7 +238,8 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                             ),
                           ),
                           SizedBox(width: context.space.space_100),
-                          // Phone Number Field
+                          
+                          // Phone Number Input
                           Expanded(
                             child: TextFormField(
                               controller: phoneController,
@@ -160,13 +254,14 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                                 value,
                                 '+${selectedCountry.value.phoneCode}',
                               ),
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
+                              autovalidateMode: AutovalidateMode.onUserInteraction,
                             ),
                           ),
                         ],
                       ),
                     ),
+
+                    // Password Section
                     SizedBox(height: context.space.space_200),
                     Padding(
                       padding: EdgeInsets.only(left: context.space.space_200),
@@ -177,8 +272,7 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                     ),
                     SizedBox(height: context.space.space_200),
                     Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: context.space.space_200),
+                      padding: EdgeInsets.symmetric(horizontal: context.space.space_200),
                       child: TextFormField(
                         controller: passwordController,
                         obscureText: !isPasswordVisible.value,
@@ -188,135 +282,102 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                           prefixIcon: const Icon(Icons.lock),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              isPasswordVisible.value
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
+                              isPasswordVisible.value ? Icons.visibility : Icons.visibility_off,
                             ),
                             onPressed: () {
-                              isPasswordVisible.value =
-                                  !isPasswordVisible.value;
+                              isPasswordVisible.value = !isPasswordVisible.value;
                             },
                           ),
-                          hintText:
-                              'Min. 6 characters with number and capital letter',
+                          hintText: 'Min. 6 characters with number and capital letter',
                         ),
                         validator: validatePassword,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                       ),
                     ),
+
+                    // Action Buttons
                     SizedBox(height: context.space.space_200),
                     Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: context.space.space_200),
+                      padding: EdgeInsets.symmetric(horizontal: context.space.space_200),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           OutlineButtonWidget(
                             label: 'Cancel',
                             onTap: () {
-                              // Clear form and validation states
                               formKey.value.currentState?.reset();
                               phoneController.clear();
                               passwordController.clear();
                             },
                           ),
-                          // Inside the onTap of ButtonWidget in LoginWithPhoneAndPasswordPage
-
                           ButtonWidget(
-                            label: loginState.isLoading
-                                ? "Logging in..."
-                                : "Login",
-                            onTap: () async {
-                              // Validate all form fields
-                              if (formKey.value.currentState?.validate() ??
-                                  false) {
-                                // Combine country code with phone number
-                                final fullPhoneNumber =
-                                    '+${selectedCountry.value.phoneCode}${phoneController.text}';
-
-                                try {
-                                  // Proceed with login
-                                  await ref
-                                      .read(authControllerProvider.notifier)
-                                      .login(
-                                        fullPhoneNumber,
-                                        passwordController.text,
-                                      );
-
-                                  // Check for specific error states
-                                  final authState =
-                                      ref.read(authControllerProvider);
-                                  authState.whenOrNull(
-                                    error: (error, stackTrace) {
-                                      // Check for specific error types
-                                      if (error.toString().contains(
-                                          'Invalid login credentials')) {
-                                        SnackbarUtil.showsnackbar(
-                                          message:
-                                              "Account doesn't exist. Please sign up first.",
-                                          showretry: true,
-                                        );
-                                      } else if (error
-                                          .toString()
-                                          .contains('Invalid password')) {
-                                        SnackbarUtil.showsnackbar(
-                                          message:
-                                              "Invalid password. Please try again.",
-                                          showretry: false,
-                                        );
-                                      } else {
-                                        SnackbarUtil.showsnackbar(
-                                          message:
-                                              "Login failed. Please try again.",
-                                          showretry: false,
-                                        );
-                                      }
-                                      log('Login error: $error');
-                                      log('Login stack trace: $stackTrace');
-                                    },
-                                  );
-                                } catch (e) {
-                                  // Handle any unexpected errors
-                                  SnackbarUtil.showsnackbar(
-                                    message: "Login Successful",
-                                    showretry: false,
-                                  );
-                                  log('Unexpected error during login: $e');
-                                }
+                            label: loginState.isLoading ? "Logging in..." : "Login",
+                            onTap: () {
+                              if (!loginState.isLoading) {
+                                handleLogin();
                               }
                             },
                           ),
                         ],
                       ),
                     ),
+
+                    // Additional Options
                     SizedBox(height: context.space.space_200),
                     Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: context.space.space_200),
+                      padding: EdgeInsets.symmetric(horizontal: context.space.space_200),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           TextButton(
-                            onPressed: () {
-                              context.push(ForgotPasswordPage.route);
-                            },
+                            onPressed: () => context.push(ForgotPasswordPage.route),
                             child: Text(
                               "Forgot Password?",
-                              style: context.typography.bodyMedium
-                                  .copyWith(color: context.colors.primaryTxt),
+                              style: context.typography.bodyMedium.copyWith(
+                                color: context.colors.primaryTxt,
+                              ),
                             ),
                           ),
                           TextButton(
-                            onPressed: () {
-                              context.push(SignupPage.route);
-                            },
+                            onPressed: () => context.push(SignupPage.route),
                             child: Text(
                               "Sign Up",
-                              style: context.typography.bodyMedium
-                                  .copyWith(color: context.colors.primaryTxt),
+                              style: context.typography.bodyMedium.copyWith(
+                                color: context.colors.primaryTxt,
+                              ),
                             ),
                           ),
                         ],
+                      ),
+                    ),
+
+                    // Alternative Login Option
+                    SizedBox(height: context.space.space_200),
+                    Row(
+                      children: [
+                        const Expanded(child: Divider()),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: context.space.space_200),
+                          child: Text(
+                            'OR',
+                            style: context.typography.bodyMedium.copyWith(
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                        const Expanded(child: Divider()),
+                      ],
+                    ),
+                    SizedBox(height: context.space.space_200),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: context.space.space_200),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: OutlineButtonWidget(
+                          label: 'Login with OTP',
+                          onTap: switchToOtpLogin,
+                       
+                        ),
                       ),
                     ),
                   ],

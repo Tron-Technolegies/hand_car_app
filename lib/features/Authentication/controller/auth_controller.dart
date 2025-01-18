@@ -140,6 +140,42 @@ class AuthController extends _$AuthController {
     }
   }
 
+  Future<void> sendOtp(String phoneNumber) async {
+    try {
+      state = const AsyncValue.loading();
+      
+      final authService = ref.read(apiServiceProvider);
+      await authService.sendOtp(phoneNumber);
+      
+      // Keep current state after successful OTP send
+      state = state;
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+      rethrow;
+    }
+  }
+
+  Future<void> verifyOtp(String phoneNumber, String otp) async {
+    try {
+      state = const AsyncValue.loading();
+      
+      final authService = ref.read(apiServiceProvider);
+      final authModel = await authService.verifyOtp(phoneNumber, otp);
+      
+      // Save tokens
+      await ref.read(tokenStorageProvider).saveTokens(
+        accessToken: authModel.accessToken,
+        refreshToken: authModel.refreshToken,
+      );
+      
+      // Update state with successful login
+      state = AsyncValue.data(authModel);
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+      rethrow;
+    }
+  }
+
   // Helper method to check authentication status
   Future<bool> isAuthenticated() async {
     final authState = await future;

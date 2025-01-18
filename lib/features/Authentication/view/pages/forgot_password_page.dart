@@ -38,6 +38,11 @@ class ForgotPasswordPage extends HookConsumerWidget {
         await ref
             .read(authControllerProvider.notifier)
             .requestPasswordReset(emailController.text.trim());
+
+
+        
+        emailController.clear();
+        formKey.value.currentState!.reset();
         
         if (context.mounted) {
           SnackbarUtil.showsnackbar(
