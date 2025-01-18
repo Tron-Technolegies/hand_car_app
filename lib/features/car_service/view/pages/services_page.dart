@@ -184,7 +184,7 @@ class ServicesPage extends HookConsumerWidget {
           if (locationState.error != null)
             Container(
               padding: EdgeInsets.all(context.space.space_200),
-              color: Colors.red.withOpacity(0.1),
+              color: Colors.red.withValues(alpha: 0.1),
               child: Text(
                 locationState.error!,
                 style: context.typography.bodyMedium.copyWith(

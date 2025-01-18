@@ -6,13 +6,13 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/widgets/outline_button_widget.dart';
 import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
+import 'package:hand_car/features/Authentication/view/pages/forgot_password_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/signup_page.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
-
 
 class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
   static const route = '/LoginWithPhoneAndPasswordPage';
@@ -22,10 +22,10 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
     if (value == null || value.isEmpty) {
       return 'Phone number is required';
     }
-    
+
     // Remove any non-digit characters
     final digitsOnly = value.replaceAll(RegExp(r'[^\d]'), '');
-    
+
     // Check if the number has the correct length based on country
     switch (countryCode) {
       case '+91': // India
@@ -47,16 +47,16 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
           return 'Invalid phone number length';
         }
     }
-    
+
     return null;
   }
 
-String? validatePassword(String? value) {
+  String? validatePassword(String? value) {
     if (value == null || value.isEmpty) {
       return 'Password is required';
     }
-    return null;  // Return null if validation passes
-}
+    return null; // Return null if validation passes
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -76,7 +76,7 @@ String? validatePassword(String? value) {
       displayNameNoCountryCode: 'India (IN)',
       e164Key: '',
     ));
-    
+
     // Watch the login state
     final loginState = ref.watch(authControllerProvider);
 
@@ -133,7 +133,8 @@ String? validatePassword(String? value) {
                                 );
                               },
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
                                 child: Center(
                                   child: Text(
                                     '+${selectedCountry.value.phoneCode}',
@@ -159,7 +160,8 @@ String? validatePassword(String? value) {
                                 value,
                                 '+${selectedCountry.value.phoneCode}',
                               ),
-                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
                             ),
                           ),
                         ],
@@ -191,10 +193,12 @@ String? validatePassword(String? value) {
                                   : Icons.visibility_off,
                             ),
                             onPressed: () {
-                              isPasswordVisible.value = !isPasswordVisible.value;
+                              isPasswordVisible.value =
+                                  !isPasswordVisible.value;
                             },
                           ),
-                          hintText: 'Min. 6 characters with number and capital letter',
+                          hintText:
+                              'Min. 6 characters with number and capital letter',
                         ),
                         validator: validatePassword,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -218,60 +222,70 @@ String? validatePassword(String? value) {
                           ),
                           // Inside the onTap of ButtonWidget in LoginWithPhoneAndPasswordPage
 
-ButtonWidget(
-  label: loginState.isLoading ? "Logging in..." : "Login",
-  onTap: () async {
-    // Validate all form fields
-    if (formKey.value.currentState?.validate() ?? false) {
-      // Combine country code with phone number
-      final fullPhoneNumber = '+${selectedCountry.value.phoneCode}${phoneController.text}';
-      
-      try {
-        // Proceed with login
-        await ref
-            .read(authControllerProvider.notifier)
-            .login(
-              fullPhoneNumber,
-              passwordController.text,
-            );
+                          ButtonWidget(
+                            label: loginState.isLoading
+                                ? "Logging in..."
+                                : "Login",
+                            onTap: () async {
+                              // Validate all form fields
+                              if (formKey.value.currentState?.validate() ??
+                                  false) {
+                                // Combine country code with phone number
+                                final fullPhoneNumber =
+                                    '+${selectedCountry.value.phoneCode}${phoneController.text}';
 
-        // Check for specific error states
-        final authState = ref.read(authControllerProvider);
-        authState.whenOrNull(
-          error: (error, stackTrace) {
-            // Check for specific error types
-            if (error.toString().contains('Invalid login credentials')) {
-              SnackbarUtil.showsnackbar(
-                message: "Account doesn't exist. Please sign up first.",
-                showretry: true,
-               
-              );
-            } else if (error.toString().contains('Invalid password')) {
-              SnackbarUtil.showsnackbar(
-                message: "Invalid password. Please try again.",
-                showretry: false,
-              );
-            } else {
-              SnackbarUtil.showsnackbar(
-                message: "Login failed. Please try again.",
-                showretry: false,
-              );
-            }
-            log('Login error: $error');
-            log('Login stack trace: $stackTrace');
-          },
-        );
-      } catch (e) {
-        // Handle any unexpected errors
-        SnackbarUtil.showsnackbar(
-          message: "Login Successful",
-          showretry: false,
-        );
-        log('Unexpected error during login: $e');
-      }
-    }
-  },
-),
+                                try {
+                                  // Proceed with login
+                                  await ref
+                                      .read(authControllerProvider.notifier)
+                                      .login(
+                                        fullPhoneNumber,
+                                        passwordController.text,
+                                      );
+
+                                  // Check for specific error states
+                                  final authState =
+                                      ref.read(authControllerProvider);
+                                  authState.whenOrNull(
+                                    error: (error, stackTrace) {
+                                      // Check for specific error types
+                                      if (error.toString().contains(
+                                          'Invalid login credentials')) {
+                                        SnackbarUtil.showsnackbar(
+                                          message:
+                                              "Account doesn't exist. Please sign up first.",
+                                          showretry: true,
+                                        );
+                                      } else if (error
+                                          .toString()
+                                          .contains('Invalid password')) {
+                                        SnackbarUtil.showsnackbar(
+                                          message:
+                                              "Invalid password. Please try again.",
+                                          showretry: false,
+                                        );
+                                      } else {
+                                        SnackbarUtil.showsnackbar(
+                                          message:
+                                              "Login failed. Please try again.",
+                                          showretry: false,
+                                        );
+                                      }
+                                      log('Login error: $error');
+                                      log('Login stack trace: $stackTrace');
+                                    },
+                                  );
+                                } catch (e) {
+                                  // Handle any unexpected errors
+                                  SnackbarUtil.showsnackbar(
+                                    message: "Login Successful",
+                                    showretry: false,
+                                  );
+                                  log('Unexpected error during login: $e');
+                                }
+                              }
+                            },
+                          ),
                         ],
                       ),
                     ),
@@ -283,7 +297,9 @@ ButtonWidget(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              context.push(ForgotPasswordPage.route);
+                            },
                             child: Text(
                               "Forgot Password?",
                               style: context.typography.bodyMedium

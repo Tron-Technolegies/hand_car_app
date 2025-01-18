@@ -110,6 +110,35 @@ class AuthController extends _$AuthController {
       rethrow;
     }
   }
+   Future<void> requestPasswordReset(String email) async {
+    try {
+      state = const AsyncValue.loading();
+      
+      final authService = ref.read(apiServiceProvider);
+      await authService.requestPasswordReset(email);
+      
+      // Keep the current state after successful request
+      state = state;
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+      rethrow;
+    }
+  }
+
+  Future<void> resetPassword(String uid, String token, String newPassword) async {
+    try {
+      state = const AsyncValue.loading();
+      
+      final authService = ref.read(apiServiceProvider);
+      await authService.resetPassword(uid, token, newPassword);
+      
+      // Reset state to null as user needs to login with new password
+      state = const AsyncValue.data(null);
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+      rethrow;
+    }
+  }
 
   // Helper method to check authentication status
   Future<bool> isAuthenticated() async {

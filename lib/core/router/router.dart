@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/features/Accessories/view/pages/wishlist_page.dart';
+import 'package:hand_car/features/Authentication/view/pages/forgot_password_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/login_with_phone_and_password_page.dart';
 import 'package:hand_car/features/car_service/model/service_model.dart';
 import 'package:hand_car/features/car_service/view/pages/services_page.dart';
@@ -37,7 +38,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   final onboardingCompleted = ref.watch(onboardingCompletedProvider);
 
   return GoRouter(
-    navigatorKey: _rootNavigatorKey,
+     navigatorKey: _rootNavigatorKey,
     initialLocation: SplashScreen.route,
     routes: _routes,
     redirect: (context, state) {
@@ -50,6 +51,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isLoginRoute = state.matchedLocation == LoginWithPhoneAndPasswordPage.route;
       final isSignupRoute = state.matchedLocation == SignupPage.route;
       final isSplashRoute = state.matchedLocation == SplashScreen.route;
+      final isForgotPasswordRoute = state.matchedLocation == ForgotPasswordPage.route;
 
       // Allow splash screen to show
       if (isSplashRoute) return null;
@@ -61,8 +63,8 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       // If onboarding is completed but user is not authenticated
       if (onboardingCompleted && !isAuthenticated) {
-        // Allow access to login and signup pages
-        if (isLoginRoute || isSignupRoute) return null;
+        // Allow access to login, signup, and forgot password pages
+        if (isLoginRoute || isSignupRoute || isForgotPasswordRoute) return null;
         // Redirect to login for all other routes
         return LoginWithPhoneAndPasswordPage.route;
       }
@@ -70,7 +72,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       // If user is authenticated
       if (isAuthenticated) {
         // Redirect from auth pages to home
-        if (isLoginRoute || isSignupRoute || isOnboardingRoute) {
+        if (isLoginRoute || isSignupRoute || isOnboardingRoute || isForgotPasswordRoute) {
           return NavigationPage.route;
         }
         return null;
@@ -89,7 +91,9 @@ final _routes = [
     path: SplashScreen.route,
     builder: (context, state) => const SplashScreen(),
   ),
-  GoRoute(path: LoginWithPhoneAndPasswordPage.route, builder: (context, state) => const LoginWithPhoneAndPasswordPage()),
+  GoRoute(
+      path: LoginWithPhoneAndPasswordPage.route,
+      builder: (context, state) => const LoginWithPhoneAndPasswordPage()),
   GoRoute(
     path: OnbordingScreenPage.route,
     builder: (context, state) => const OnbordingScreenPage(),
@@ -101,6 +105,10 @@ final _routes = [
   GoRoute(
     path: SignupPage.route,
     builder: (context, state) => const SignupPage(),
+  ),
+  GoRoute(
+    path: ForgotPasswordPage.route,
+    builder: (context, state) => const ForgotPasswordPage(),
   ),
   GoRoute(
     path: NavigationPage.route,
@@ -117,15 +125,16 @@ final _routes = [
       return AccessoriesDetailsPage(product: product!);
     },
   ),
-  GoRoute(path: ServicesPage.route, builder: (context, state) =>  ServicesPage()),
- GoRoute(
-  path: ServiceDetailsPage.route,
-  builder: (context, state) {
-    final data = state.extra as Map<String, dynamic>;
-    final service = data['service'] as ServiceModel;
-    return ServiceDetailsPage(service: service);
-  },
-),
+  GoRoute(
+      path: ServicesPage.route, builder: (context, state) => ServicesPage()),
+  GoRoute(
+    path: ServiceDetailsPage.route,
+    builder: (context, state) {
+      final data = state.extra as Map<String, dynamic>;
+      final service = data['service'] as ServiceModel;
+      return ServiceDetailsPage(service: service);
+    },
+  ),
   GoRoute(
     path: ShoppingCartScreen.route,
     builder: (context, state) => const ShoppingCartScreen(),

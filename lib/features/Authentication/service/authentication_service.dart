@@ -237,6 +237,51 @@ Future<String> signUp(UserModel user) async {
   throw Exception('Failed after $maxRetries retries');
 }
 
+  Future<void> requestPasswordReset(String email) async {
+    try {
+      final response = await dio.post(
+        '/forgot_password',
+        data: {'email': email},
+        options: Options(
+          headers: {'Content-Type': 'application/json'},
+        ),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception(response.data['error'] ?? 'Failed to send reset email');
+      }
+    } on DioException catch (e) {
+      final errorMessage = _handleDioError(e);
+      throw Exception(errorMessage);
+    } catch (e) {
+      log('Password reset request error: $e');
+      throw Exception('An unexpected error occurred');
+    }
+  }
+
+  Future<void> resetPassword(String uid, String token, String newPassword) async {
+    try {
+      final response = await dio.post(
+        '/reset_password/$uid/$token',
+        data: {'new_password': newPassword},
+        options: Options(
+          headers: {'Content-Type': 'application/json'},
+        ),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception(response.data['error'] ?? 'Failed to reset password');
+      }
+    } on DioException catch (e) {
+      final errorMessage = _handleDioError(e);
+      throw Exception(errorMessage);
+    } catch (e) {
+      log('Password reset error: $e');
+      throw Exception('An unexpected error occurred');
+    }
+  }
+
+
   String _handleDioError(DioException e) {
     if (e.response != null) {
       final statusCode = e.response?.statusCode;

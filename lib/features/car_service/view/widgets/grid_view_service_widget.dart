@@ -14,26 +14,28 @@ class GridViewServicesWidget extends StatelessWidget {
     required this.locationServices,
   });
 
-  String? _getDistance(String vendorName) {
-    if (locationServices.isEmpty) return null;
+  // String? _getDistance(String vendorName) {
+  //   if (locationServices.isEmpty) return null;
 
-    final locationService = locationServices.firstWhere(
-      (service) => service.vendorName == vendorName,
-      orElse: () => ServiceModel(
-        id: -1,
-        vendorName: '',
-        phoneNumber: '',
-        whatsappNumber: '',
-        serviceDetails: '',
-        address: '',
-        rate: null,
-      ),
-    );
+  //   final locationService = locationServices.firstWhere(
+  //     (service) => service.vendorName == vendorName,
+  //     orElse: () => ServiceModel(
+  //       id: -1,
+  //       vendorName: '',
+  //       phoneNumber: '',
+  //       whatsappNumber: '',
+  //       serviceDetails: '',
+  //       address: '',
+  //       rate: null,
+  //     ),
+  //   );
 
-    if (locationService.distance == null ||
-        locationService.distance == double.infinity) return null;
-    return '${locationService.distance!.toStringAsFixed(1)} km';
-  }
+  //   if (locationService.distance == null ||
+  //       locationService.distance == double.infinity) {
+  //     return null;
+  //   }
+  //   return '${locationService.distance!.toStringAsFixed(1)} km';
+  // }
 
   @override
   Widget build(BuildContext context) {
