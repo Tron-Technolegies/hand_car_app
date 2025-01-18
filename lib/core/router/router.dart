@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hand_car/features/Accessories/view/pages/wishlist_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/forgot_password_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/login_with_phone_and_password_page.dart';
+import 'package:hand_car/features/Authentication/view/pages/reset_password_page.dart';
 import 'package:hand_car/features/car_service/model/service_model.dart';
 import 'package:hand_car/features/car_service/view/pages/services_page.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -52,19 +53,24 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isSignupRoute = state.matchedLocation == SignupPage.route;
       final isSplashRoute = state.matchedLocation == SplashScreen.route;
       final isForgotPasswordRoute = state.matchedLocation == ForgotPasswordPage.route;
+      final isResetPasswordRoute = state.matchedLocation.startsWith('/reset-password/');
 
       // Allow splash screen to show
       if (isSplashRoute) return null;
 
       // If user is not authenticated and onboarding is not completed
       if (!onboardingCompleted && !isAuthenticated) {
+        // Allow reset password route even before onboarding
+        if (isResetPasswordRoute) return null;
         return OnbordingScreenPage.route;
       }
 
       // If onboarding is completed but user is not authenticated
       if (onboardingCompleted && !isAuthenticated) {
-        // Allow access to login, signup, and forgot password pages
-        if (isLoginRoute || isSignupRoute || isForgotPasswordRoute) return null;
+        // Allow access to auth-related pages
+        if (isLoginRoute || isSignupRoute || isForgotPasswordRoute || isResetPasswordRoute) {
+          return null;
+        }
         // Redirect to login for all other routes
         return LoginWithPhoneAndPasswordPage.route;
       }
@@ -72,7 +78,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       // If user is authenticated
       if (isAuthenticated) {
         // Redirect from auth pages to home
-        if (isLoginRoute || isSignupRoute || isOnboardingRoute || isForgotPasswordRoute) {
+        if (isLoginRoute || isSignupRoute || isOnboardingRoute || 
+            isForgotPasswordRoute || isResetPasswordRoute) {
           return NavigationPage.route;
         }
         return null;
@@ -109,6 +116,13 @@ final _routes = [
   GoRoute(
     path: ForgotPasswordPage.route,
     builder: (context, state) => const ForgotPasswordPage(),
+  ),
+  GoRoute(
+    path: ResetPasswordPage.route,
+    builder: (context, state) => ResetPasswordPage(
+      uid: state.pathParameters['uid']!,
+      token: state.pathParameters['token']!,
+    ),
   ),
   GoRoute(
     path: NavigationPage.route,
