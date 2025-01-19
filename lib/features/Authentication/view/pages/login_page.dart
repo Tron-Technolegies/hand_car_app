@@ -8,7 +8,7 @@ import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
 import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
 import 'package:hand_car/features/Authentication/view/pages/login_with_phone_and_password_page.dart';
-import 'package:hand_car/features/Authentication/view/pages/otp_page.dart';
+
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -21,18 +21,20 @@ class LoginPage extends HookConsumerWidget {
     final controller = useTextEditingController();
     final isLoading = useState(false);
     final isMounted = useIsMounted();
-    
+
     // Watch auth state for loading status
     final authState = ref.watch(authControllerProvider);
 
     /// Switches to phone/password login
     Future<void> switchToPhoneLogin() async {
       if (!isMounted()) return;
-      
+
       final storage = ref.read(storageProvider);
-      await storage.write('preferredLoginMethod', LoginWithPhoneAndPasswordPage.route);
-      ref.read(loginPreferenceProvider.notifier).state = LoginWithPhoneAndPasswordPage.route;
-      
+      await storage.write(
+          'preferredLoginMethod', LoginWithPhoneAndPasswordPage.route);
+      ref.read(loginPreferenceProvider.notifier).state =
+          LoginWithPhoneAndPasswordPage.route;
+
       if (isMounted() && context.mounted) {
         context.go(LoginWithPhoneAndPasswordPage.route);
       }
@@ -49,7 +51,7 @@ class LoginPage extends HookConsumerWidget {
     /// Handles sending OTP
     Future<void> handleSendOtp() async {
       if (!isMounted()) return;
-      
+  /// Validate input
       final input = controller.text.trim();
       if (validateInput(input) != null) {
         SnackbarUtil.showsnackbar(
@@ -62,7 +64,7 @@ class LoginPage extends HookConsumerWidget {
       try {
         isLoading.value = true;
         await ref.read(authControllerProvider.notifier).sendOtp(input);
-        
+
         if (isMounted() && context.mounted) {
           // Navigate to OTP verification page
           context.push('/otp/$input');
@@ -101,15 +103,17 @@ class LoginPage extends HookConsumerWidget {
             ),
             SizedBox(height: context.space.space_200),
             Center(
+              //
               child: Text(
-                "Login or signup with email or\nmobile number",
+                "Login Account With Mobile Number",
                 style: context.typography.h3,
                 textAlign: TextAlign.center,
               ),
             ),
             SizedBox(height: context.space.space_200),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: context.space.space_200),
+              padding:
+                  EdgeInsets.symmetric(horizontal: context.space.space_200),
               child: TextField(
                 controller: controller,
                 decoration: const InputDecoration(
@@ -125,14 +129,15 @@ class LoginPage extends HookConsumerWidget {
             ),
             SizedBox(height: context.space.space_200),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: context.space.space_200),
+              padding:
+                  EdgeInsets.symmetric(horizontal: context.space.space_200),
               child: SizedBox(
                 width: double.infinity,
                 height: 60,
                 child: ButtonWidget(
-                  label: isLoading.value || authState.isLoading 
-                    ? "Sending OTP..." 
-                    : "Generate OTP",
+                  label: isLoading.value || authState.isLoading
+                      ? "Sending OTP..."
+                      : "Generate OTP",
                   onTap: () {
                     if (!(isLoading.value || authState.isLoading)) {
                       handleSendOtp();
