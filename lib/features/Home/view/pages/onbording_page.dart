@@ -24,7 +24,7 @@ class OnbordingScreenPage extends ConsumerWidget {
         final storage = ref.read(storageProvider);
         await storage.write('onboardingCompleted', true);
         ref.read(onboardingCompletedProvider.notifier).state = true;
-        
+
         if (context.mounted) {
           context.go(LoginWithPhoneAndPasswordPage.route);
         }
@@ -33,7 +33,7 @@ class OnbordingScreenPage extends ConsumerWidget {
         backgroundColor: context.colors.primary,
       ),
       skipTextButton: Text(
-        'Use OTP Login',
+        'Skip',
         style: TextStyle(
           fontSize: 16,
           color: context.colors.primary,
@@ -52,7 +52,7 @@ class OnbordingScreenPage extends ConsumerWidget {
         final storage = ref.read(storageProvider);
         await storage.write('onboardingCompleted', true);
         ref.read(onboardingCompletedProvider.notifier).state = true;
-        
+
         if (context.mounted) {
           context.go(LoginPage.route);
         }
@@ -94,7 +94,8 @@ class OnbordingScreenPage extends ConsumerWidget {
       speed: 1.8,
       pageBodies: [
         Container(
-          padding: EdgeInsets.symmetric(horizontal: context.space.space_100 * 5),
+          padding:
+              EdgeInsets.symmetric(horizontal: context.space.space_100 * 5),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -150,7 +151,8 @@ class OnbordingScreenPage extends ConsumerWidget {
           ),
         ),
         Container(
-          padding: EdgeInsets.symmetric(horizontal: context.space.space_100 * 5),
+          padding:
+              EdgeInsets.symmetric(horizontal: context.space.space_100 * 5),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -173,7 +175,8 @@ class OnbordingScreenPage extends ConsumerWidget {
           ),
         ),
         Container(
-          padding: EdgeInsets.symmetric(horizontal: context.space.space_100 * 5),
+          padding:
+              EdgeInsets.symmetric(horizontal: context.space.space_100 * 5),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
