@@ -23,7 +23,9 @@ mixin _$UserModel {
   String get name => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
   String get phone => throw _privateConstructorUsedError;
-  String get password => throw _privateConstructorUsedError;
+  String? get address => throw _privateConstructorUsedError;
+  String? get password => throw _privateConstructorUsedError;
+  String? get profileImage => throw _privateConstructorUsedError;
 
   /// Serializes this UserModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -40,7 +42,13 @@ abstract class $UserModelCopyWith<$Res> {
   factory $UserModelCopyWith(UserModel value, $Res Function(UserModel) then) =
       _$UserModelCopyWithImpl<$Res, UserModel>;
   @useResult
-  $Res call({String name, String email, String phone, String password});
+  $Res call(
+      {String name,
+      String email,
+      String phone,
+      String? address,
+      String? password,
+      String? profileImage});
 }
 
 /// @nodoc
@@ -61,7 +69,9 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
     Object? name = null,
     Object? email = null,
     Object? phone = null,
-    Object? password = null,
+    Object? address = freezed,
+    Object? password = freezed,
+    Object? profileImage = freezed,
   }) {
     return _then(_value.copyWith(
       name: null == name
@@ -76,10 +86,18 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
           ? _value.phone
           : phone // ignore: cast_nullable_to_non_nullable
               as String,
-      password: null == password
+      address: freezed == address
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as String?,
+      password: freezed == password
           ? _value.password
           : password // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
+      profileImage: freezed == profileImage
+          ? _value.profileImage
+          : profileImage // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -92,7 +110,13 @@ abstract class _$$UserModelImplCopyWith<$Res>
       __$$UserModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String name, String email, String phone, String password});
+  $Res call(
+      {String name,
+      String email,
+      String phone,
+      String? address,
+      String? password,
+      String? profileImage});
 }
 
 /// @nodoc
@@ -111,7 +135,9 @@ class __$$UserModelImplCopyWithImpl<$Res>
     Object? name = null,
     Object? email = null,
     Object? phone = null,
-    Object? password = null,
+    Object? address = freezed,
+    Object? password = freezed,
+    Object? profileImage = freezed,
   }) {
     return _then(_$UserModelImpl(
       name: null == name
@@ -126,10 +152,18 @@ class __$$UserModelImplCopyWithImpl<$Res>
           ? _value.phone
           : phone // ignore: cast_nullable_to_non_nullable
               as String,
-      password: null == password
+      address: freezed == address
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as String?,
+      password: freezed == password
           ? _value.password
           : password // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
+      profileImage: freezed == profileImage
+          ? _value.profileImage
+          : profileImage // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -141,7 +175,9 @@ class _$UserModelImpl implements _UserModel {
       {required this.name,
       required this.email,
       required this.phone,
-      required this.password});
+      this.address,
+      this.password,
+      this.profileImage});
 
   factory _$UserModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$UserModelImplFromJson(json);
@@ -153,11 +189,15 @@ class _$UserModelImpl implements _UserModel {
   @override
   final String phone;
   @override
-  final String password;
+  final String? address;
+  @override
+  final String? password;
+  @override
+  final String? profileImage;
 
   @override
   String toString() {
-    return 'UserModel(name: $name, email: $email, phone: $phone, password: $password)';
+    return 'UserModel(name: $name, email: $email, phone: $phone, address: $address, password: $password, profileImage: $profileImage)';
   }
 
   @override
@@ -168,13 +208,17 @@ class _$UserModelImpl implements _UserModel {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.phone, phone) || other.phone == phone) &&
+            (identical(other.address, address) || other.address == address) &&
             (identical(other.password, password) ||
-                other.password == password));
+                other.password == password) &&
+            (identical(other.profileImage, profileImage) ||
+                other.profileImage == profileImage));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, name, email, phone, password);
+  int get hashCode => Object.hash(
+      runtimeType, name, email, phone, address, password, profileImage);
 
   /// Create a copy of UserModel
   /// with the given fields replaced by the non-null parameter values.
@@ -197,7 +241,9 @@ abstract class _UserModel implements UserModel {
       {required final String name,
       required final String email,
       required final String phone,
-      required final String password}) = _$UserModelImpl;
+      final String? address,
+      final String? password,
+      final String? profileImage}) = _$UserModelImpl;
 
   factory _UserModel.fromJson(Map<String, dynamic> json) =
       _$UserModelImpl.fromJson;
@@ -209,7 +255,11 @@ abstract class _UserModel implements UserModel {
   @override
   String get phone;
   @override
-  String get password;
+  String? get address;
+  @override
+  String? get password;
+  @override
+  String? get profileImage;
 
   /// Create a copy of UserModel
   /// with the given fields replaced by the non-null parameter values.
