@@ -242,6 +242,39 @@ class ApiServiceAuthentication {
     });
   }
 
+  Future<UserModel> updateUserProfile(UserModel updatedProfile) async {
+  return _withRetry(() async {
+    try {
+      final formData = FormData.fromMap({
+        'first_name': updatedProfile.name.split(' ').first,
+        'last_name': updatedProfile.name.split(' ').length > 1 
+            ? updatedProfile.name.split(' ').skip(1).join(' ') 
+            : '',
+        'email': updatedProfile.email,
+        if (updatedProfile.profileImage != null)
+          'profile_image': await MultipartFile.fromFile(updatedProfile.profileImage!),
+      });
+
+      final response = await dio.post(
+        '/edit-user-profile',
+        data: formData,
+        options: Options(
+          contentType: 'multipart/form-data',
+          headers: {'Accept': 'application/json'},
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return UserModel.fromJson(response.data['user']);
+      } else {
+        throw Exception(response.data['error'] ?? 'Profile update failed');
+      }
+    } on DioException catch (e) {
+      throw Exception(_handleDioError(e));
+    }
+  });
+}
+
   Future<void> requestPasswordReset(String email) async {
     return _withRetry(() async {
       final response = await dio.post(
