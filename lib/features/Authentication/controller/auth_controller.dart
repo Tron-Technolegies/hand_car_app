@@ -176,6 +176,28 @@ class AuthController extends _$AuthController {
     }
   }
 
+Future<void> updateProfile(UserModel updatedProfile) async {
+    try {
+      state = const AsyncValue.loading();
+      
+      // Get the current auth model first
+      final currentState = state.value;
+      if (currentState == null) {
+        throw Exception('Not authenticated');
+      }
+      
+      // Update profile but maintain the current auth tokens
+      await ref.read(apiServiceProvider).updateUserProfile(updatedProfile);
+      
+      // Keep the existing auth state since we're just updating profile
+      state = AsyncValue.data(currentState);
+      
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+      rethrow;
+    }
+}
+
   // Helper method to check authentication status
   Future<bool> isAuthenticated() async {
     final authState = await future;

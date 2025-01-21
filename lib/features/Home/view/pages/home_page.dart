@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/bottom_nav_controller.dart';
-import 'package:hand_car/features/Home/view/widgets/accessories_ads_home_page_widget.dart';
-import 'package:hand_car/features/Home/view/widgets/brand_wised_card_widget.dart';
 import 'package:hand_car/features/Home/view/widgets/carousel_slider_widget.dart';
 import 'package:hand_car/features/Home/view/widgets/container_for_home_page.dart';
 import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
@@ -59,15 +57,15 @@ class HomePage extends ConsumerWidget {
               width: 550,
             ),
           ),
-          ContainerForHomePage(
-            text1: "Explore Best car Accessories  ",
-            text2: "From Top Brands",
-            text3: "View Products",
-            image: "assets/images/accessories.png",
-            onTap: () {
-              ref.read(navigationProvider.notifier).changeSelectedItemIndex(1);
-            },
-          ),
+          // ContainerForHomePage(
+          //   text1: "Explore Best car Accessories  ",
+          //   text2: "From Top Brands",
+          //   text3: "View Products",
+          //   image: "assets/images/accessories.png",
+          //   onTap: () {
+          //     ref.read(navigationProvider.notifier).changeSelectedItemIndex(1);
+          //   },
+          // ),
           SizedBox(
             height: context.space.space_100,
           ),
@@ -100,33 +98,33 @@ class HomePage extends ConsumerWidget {
           SizedBox(
             height: context.space.space_300,
           ),
-          RichText(
-              text: TextSpan(children: [
-            TextSpan(
-                text: "Today's Deals ",
-                style: context.typography.h3
-                    .copyWith(color: context.colors.primaryTxt)),
-            TextSpan(
-              text: "Up to 60% off",
-              style:
-                  context.typography.h3.copyWith(color: context.colors.primary),
-            )
-          ])),
+          // RichText(
+          //     text: TextSpan(children: [
+          //   TextSpan(
+          //       text: "Today's Deals ",
+          //       style: context.typography.h3
+          //           .copyWith(color: context.colors.primaryTxt)),
+          //   TextSpan(
+          //     text: "Up to 60% off",
+          //     style:
+          //         context.typography.h3.copyWith(color: context.colors.primary),
+          //   )
+          // ])),
+          // SizedBox(
+          //   height: context.space.space_200,
+          // ),
+          // const AccessoriesAdsHomePageWidget(),
           SizedBox(
             height: context.space.space_200,
           ),
-          const AccessoriesAdsHomePageWidget(),
-          SizedBox(
-            height: context.space.space_200,
-          ),
-          Text(
-            "Find Accessories by Brands",
-            style: context.typography.h3,
-          ),
-          SizedBox(
-            height: context.space.space_200,
-          ),
-          const BrandWisedCardWidget(),
+          // Text(
+          //   "Find Accessories by Brands",
+          //   style: context.typography.h3,
+          // ),
+          // SizedBox(
+          //   height: context.space.space_200,
+          // ),
+          // const BrandWisedCardWidget(),
           SizedBox(
             height: context.space.space_200,
           ),
