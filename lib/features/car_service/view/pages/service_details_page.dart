@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -5,6 +7,7 @@ import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hand_car/features/car_service/model/rating/service_rating.dart';
 import 'package:hand_car/features/car_service/model/service_model.dart';
+import 'package:hand_car/features/car_service/service/log_intreaction/service_interaction_service.dart';
 import 'package:hand_car/features/car_service/view/widgets/review/review_list_widget.dart';
 import 'package:hand_car/features/car_service/view/widgets/review/service_review_widget.dart';
 import 'package:hand_car/features/car_service/view/widgets/services_list_widget.dart';
@@ -29,43 +32,80 @@ class ServiceDetailsPage extends ConsumerWidget {
     return Uri.decodeComponent(cleanedUrl);
   }
 
-  Future<void> makePhoneCall(ServiceModel service) async {
-    final Uri launchUri = Uri(
-      scheme: 'tel',
-      path: service.phoneNumber,
+   Future<void> makePhoneCall(BuildContext context, WidgetRef ref, ServiceModel service) async {
+  final Uri launchUri = Uri(
+    scheme: 'tel',
+    path: service.phoneNumber,
+  );
+
+  try {
+    if (await canLaunchUrl(launchUri)) {
+      // Log the interaction
+      final success = await ref.read(
+        logInteractionProvider(service.id.toString(), 'CALL').future,
+      );
+
+      if (success) {
+        log('Call interaction logged successfully');
+      } else {
+        log('Failed to log call interaction');
+      }
+
+      // Launch phone call regardless of logging success
+      await launchUrl(launchUri);
+    } else {
+      throw Exception('Could not launch phone call');
+    }
+  } catch (e) {
+    log('Error in makePhoneCall: $e');
+    SnackbarUtil.showsnackbar(
+      message: "Could not make phone call",
+      showretry: true,
     );
-
-    try {
-      if (await canLaunchUrl(launchUri)) {
-        await launchUrl(launchUri);
-      } else {
-        throw Exception('Could not launch $service');
-      }
-    } catch (e) {
-      SnackbarUtil.showsnackbar(
-        message: "Could not make phone call",
-        showretry: true,
-      );
-    }
   }
-  // In your service details page
+}
 
-  Future<void> launchWhatsApp(ServiceModel service) async {
-    final whatsappUrl = Uri.parse("https://wa.me/${service.phoneNumber}");
+Future<void> launchWhatsApp(BuildContext context, WidgetRef ref, ServiceModel service) async {
+  final whatsappUrl = Uri.parse("https://wa.me/${service.phoneNumber}");
 
-    try {
-      if (await canLaunchUrl(whatsappUrl)) {
-        await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
-      } else {
-        throw Exception('Could not launch WhatsApp');
-      }
-    } catch (e) {
-      SnackbarUtil.showsnackbar(
-        message: "Could not launch WhatsApp",
-        showretry: true,
+  try {
+    if (await canLaunchUrl(whatsappUrl)) {
+      // Log the interaction
+      final success = await ref.read(
+        logInteractionProvider(service.id.toString(), 'WHATSAPP').future,
       );
+
+      if (success) {
+        log('WhatsApp interaction logged successfully');
+      } else {
+        log('Failed to log WhatsApp interaction');
+      }
+
+      // Launch WhatsApp regardless of logging success
+      await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
+    } else {
+      throw Exception('Could not launch WhatsApp');
     }
+  } catch (e) {
+    log('Error in launchWhatsApp: $e');
+    SnackbarUtil.showsnackbar(
+      message: "Could not launch WhatsApp",
+      showretry: true,
+    );
   }
+}
+
+// Optional: Add feedback for successful interactions
+void _showInteractionSuccess(BuildContext context, String action) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text('Successfully initiated $action'),
+      duration: const Duration(seconds: 2),
+      behavior: SnackBarBehavior.floating,
+    ),
+  );
+}
+
 
   @override
   Widget build(BuildContext context, ref) {
@@ -239,7 +279,7 @@ class ServiceDetailsPage extends ConsumerWidget {
                           ],
                         ),
                         child: IconButton(
-                          onPressed: () => launchWhatsApp(service),
+                          onPressed: () => launchWhatsApp(context, ref, service),
                           icon: const Icon(
                             FontAwesomeIcons.whatsapp,
                             color: Colors.green,
@@ -272,7 +312,7 @@ class ServiceDetailsPage extends ConsumerWidget {
                         ],
                       ),
                       child: IconButton(
-                        onPressed: () => makePhoneCall(service),
+                        onPressed: () => makePhoneCall(context, ref, service),
                         icon: const Icon(
                           FontAwesomeIcons.phone,
                           color: Colors.black,
@@ -334,13 +374,11 @@ class ServiceDetailsPage extends ConsumerWidget {
                   serviceId: service.id.toString(),
                   serviceName: service.vendorName,
                 )),
-            SizedBox(
-                height: context.space.space_500 * 8.2,
-                child: ReviewsList(
-                  vendorName:
-                      service.vendorName, // Change from service.id.toString()
-                  serviceId: service.id,
-                )),
+            ReviewsList(
+              vendorName:
+                  service.vendorName, // Change from service.id.toString()
+              serviceId: service.id,
+            ),
           ],
         ),
       ),

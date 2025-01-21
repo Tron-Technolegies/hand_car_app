@@ -10,38 +10,89 @@ class ServicesLocations {
 
   ServicesLocations(this._dio);
 
-  Future<List<ServiceModel>> getNearbyServices(
-    double lat, 
-    double lng, 
-    [double radius = 10]
-  ) async {
-    try {
-      final response = await _dio.get(
-        '/get_nearby_services',
-        queryParameters: {
-          'lat': lat.toString(),
-          'lng': lng.toString(),
-          'radius': radius.toString(),
-        },
-      );
+  Future<List<ServiceModel>> getNearbyServices({
+  required double lat,
+  required double lng,
+  double radius = 10,
+}) async {
+  try {
+    final response = await _dio.get(
+      '/get_nearby_services',
+      options: Options(
+        receiveTimeout: const Duration(seconds: 10),
+        sendTimeout: const Duration(seconds: 10),
+        validateStatus: (status) => status! < 500, // Accept all responses below 500
+      ),
+      queryParameters: {
+        'lat': lat,  // No need to convert to string, Dio handles this
+        'lng': lng,
+        'radius': radius,
+      },
+    );
 
-      if (response.statusCode == 200 && response.data['services'] != null) {
-        final List<dynamic> services = response.data['services'];
-        return services.map((service) => ServiceModel.fromJson(service)).toList();
+    // Check if response is successful and has valid data
+    if (response.statusCode == 200) {
+      final services = response.data['services'] as List<dynamic>?;
+      
+      if (services == null || services.isEmpty) {
+        return []; // Return empty list instead of throwing exception
       }
-      throw Exception('Failed to fetch services');
-    } on DioException catch (e) {
-      if (e.type == DioExceptionType.connectionTimeout) {
-        throw Exception('Connection timeout. Please check your internet connection.');
-      } else if (e.type == DioExceptionType.receiveTimeout) {
-        throw Exception('Server is taking too long to respond. Please try again.');
-      } else {
-        throw Exception('Network error: ${e.message}');
-      }
-    } catch (e) {
-      throw Exception('Unexpected error: $e');
+
+      return services
+          .where((service) => service != null) // Filter out null services
+          .map((service) {
+            try {
+              return ServiceModel.fromJson(service);
+            } catch (e) {
+              print('Error parsing service: $e');
+              return null;
+            }
+          })
+          .whereType<ServiceModel>() // Remove any null values from parsing errors
+          .toList();
     }
+
+    throw DioException(
+      requestOptions: response.requestOptions,
+      response: response,
+      message: 'Failed to fetch services: ${response.statusCode}',
+    );
+
+  } on DioException catch (e) {
+    String errorMessage;
+    
+    switch (e.type) {
+      case DioExceptionType.connectionTimeout:
+      case DioExceptionType.sendTimeout:
+        errorMessage = 'Connection timeout. Please check your internet connection.';
+        break;
+      case DioExceptionType.receiveTimeout:
+        errorMessage = 'Server is taking too long to respond. Please try again.';
+        break;
+      case DioExceptionType.badResponse:
+        // Handle specific HTTP error codes
+        if (e.response?.statusCode == 500) {
+          errorMessage = 'Server error. Please try again later.';
+        } else {
+          errorMessage = 'Network error: ${e.response?.statusMessage ?? 'Unknown error'}';
+        }
+        break;
+      case DioExceptionType.connectionError:
+        errorMessage = 'No internet connection. Please check your network.';
+        break;
+      default:
+        errorMessage = 'Network error: ${e.message}';
+    }
+    
+    print('Service fetch error: $errorMessage');
+    print('Error details: $e');
+    throw Exception(errorMessage);
+    
+  } catch (e) {
+    print('Unexpected error while fetching services: $e');
+    throw Exception('Unexpected error occurred. Please try again.');
   }
+}
 }
 
 @riverpod

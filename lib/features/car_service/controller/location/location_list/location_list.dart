@@ -1,5 +1,4 @@
 import 'package:hand_car/features/car_service/model/location/location_model.dart';
-import 'package:hand_car/features/car_service/model/service_state/service_state.dart';
 
 
 import 'package:hand_car/features/car_service/service/location/services_locations.dart';
@@ -20,7 +19,7 @@ class ServicesNotifier extends _$ServicesNotifier {
 
     try {
       final repository = ref.read(servicesLocationsProvider);
-      final services = await repository.getNearbyServices(lat, lng);
+      final services = await repository.getNearbyServices(lat: lat, lng: lng);
       
       state = state.copyWith(
         services: services ,

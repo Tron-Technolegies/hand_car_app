@@ -54,18 +54,18 @@ class AutoPartsPage extends HookWidget {
               SizedBox(height: context.space.space_200),
               ItemCodeSearch(),
               SizedBox(height: context.space.space_200),
-              Text(
-                "Reliable Performance, Guaranteed:",
-                style: context.typography.buttonTxt,
-              ),
-              Text(
-                "Discover top-tier spare parts engineered to ",
-                style: context.typography.buttonTxt,
-              ),
-              Text(
-                "elevate your driving experience. ",
-                style: context.typography.buttonTxt,
-              ),
+              // Text(
+              //   "Reliable Performance, Guaranteed:",
+              //   style: context.typography.buttonTxt,
+              // ),
+              // Text(
+              //   "Discover top-tier spare parts engineered to ",
+              //   style: context.typography.buttonTxt,
+              // ),
+              // Text(
+              //   "elevate your driving experience. ",
+              //   style: context.typography.buttonTxt,
+              // ),
               SizedBox(height: context.space.space_200),
               Image.asset(
                 Assets.images.imgSpareScreen.path,

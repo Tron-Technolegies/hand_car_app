@@ -90,15 +90,15 @@ class ApiServiceAuthentication {
         return await apiCall();
       } on DioException catch (e) {
         attempts++;
-        if (attempts == maxAttempts || 
+        if (attempts == maxAttempts ||
             !(e.type == DioExceptionType.receiveTimeout ||
-              e.type == DioExceptionType.connectionTimeout ||
-              e.type == DioExceptionType.sendTimeout)) {
+                e.type == DioExceptionType.connectionTimeout ||
+                e.type == DioExceptionType.sendTimeout)) {
           rethrow;
         }
         log('Retry attempt $attempts after ${delay.inSeconds}s delay');
         await Future.delayed(delay);
-        delay *= 2;  // Exponential backoff
+        delay *= 2; // Exponential backoff
       }
     }
     throw Exception('Failed after $maxAttempts attempts');
@@ -155,7 +155,7 @@ class ApiServiceAuthentication {
     return _withRetry(() async {
       try {
         log('LOGIN ATTEMPT - Username: $username');
-        
+
         final formData = FormData.fromMap({
           'username': username,
           'password': password,
@@ -211,9 +211,9 @@ class ApiServiceAuthentication {
       final token = _tokenStorage.getAccessToken();
       if (token != null) {
         await _withRetry(() => dio.post(
-          '/Logout',
-          options: Options(headers: {'Authorization': 'Bearer $token'}),
-        ));
+              '/Logout',
+              options: Options(headers: {'Authorization': 'Bearer $token'}),
+            ));
       }
     } catch (e) {
       log('Logout error: $e');
@@ -230,7 +230,7 @@ class ApiServiceAuthentication {
   Future<String> signUp(UserModel user) async {
     return _withRetry(() async {
       final response = await dio.post(
-        '/signup/',
+        '/signup',
         data: user.toJson(),
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
@@ -256,7 +256,8 @@ class ApiServiceAuthentication {
     });
   }
 
-  Future<void> resetPassword(String uid, String token, String newPassword) async {
+  Future<void> resetPassword(
+      String uid, String token, String newPassword) async {
     return _withRetry(() async {
       final response = await dio.post(
         '/reset_password/$uid/$token',

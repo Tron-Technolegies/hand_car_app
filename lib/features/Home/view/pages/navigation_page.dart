@@ -52,12 +52,16 @@ class NavigationPage extends HookConsumerWidget {
         children: [
           /// Auto Parts Page
           const AutoPartsPage(),
-        /// Accessories Page
+
+          /// Accessories Page
           const AccessoriesPage(),
+
           /// Home Page
           const HomePage(),
+
           /// Services Page
           ServicesPage(),
+
           /// Subscription Page
           const SubscriptionPage()
         ],
@@ -67,6 +71,7 @@ class NavigationPage extends HookConsumerWidget {
             .read(navigationProvider.notifier)
             .changeSelectedItemIndex(index),
       ),
+
       /// Bottom Navigation
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: context.colors.primary,

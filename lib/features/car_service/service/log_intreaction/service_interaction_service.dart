@@ -1,4 +1,4 @@
-
+import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
@@ -6,19 +6,19 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'service_interaction_service.g.dart';
 
-
 class ServiceInteractionApi {
   final Dio _dio;
 
-  ServiceInteractionApi() : _dio = Dio(BaseOptions(
-    baseUrl: baseUrl,
-    connectTimeout: const Duration(seconds: 5),
-    receiveTimeout: const Duration(seconds: 3),
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    },
-  )) {
+  ServiceInteractionApi()
+      : _dio = Dio(BaseOptions(
+          baseUrl: baseUrl,
+          connectTimeout: const Duration(seconds: 5),
+          receiveTimeout: const Duration(seconds: 3),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        )) {
     _setupInterceptors();
   }
 
@@ -37,33 +37,45 @@ class ServiceInteractionApi {
     );
   }
 
-  Future<bool> logServiceInteraction(String serviceId, String action) async {
+  Future<bool> logInteraction(String serviceId, String action) async {
     try {
-      final FormData formData = FormData.fromMap({
+      log('Logging interaction - serviceId: $serviceId, action: $action');
+
+      // Create form data
+      final formData = FormData.fromMap({
         'action': action,
         'service_id': serviceId,
       });
 
       final response = await _dio.post(
-        '/log-service-interaction/',
+        '/log_service_interaction',
         data: formData,
       );
 
-      return response.statusCode == 201;
+      log('Log interaction response: ${response.data}');
+
+      if (response.statusCode == 201) {
+        log('Interaction logged successfully');
+        return true;
+      } else {
+        log('Failed to log interaction: ${response.data['error']}');
+        return false;
+      }
     } catch (e) {
+      log('Error logging interaction: $e');
       return false;
     }
   }
 }
 
 @riverpod
-ServiceInteractionApi serviceInteractionApi( ref) {
+ServiceInteractionApi serviceInteractionApi(ref) {
   return ServiceInteractionApi();
 }
 
 @riverpod
 Future<bool> logInteraction(
-   ref,
+  ref,
   String serviceId,
   String action,
 ) async {
