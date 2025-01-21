@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/snackbar.dart';
+import 'package:hand_car/features/car_service/controller/rating/service_rating_controller.dart';
 import 'package:hand_car/features/car_service/model/rating/service_rating.dart';
 import 'package:hand_car/features/car_service/model/service_model.dart';
 import 'package:hand_car/features/car_service/service/log_intreaction/service_interaction_service.dart';
@@ -32,80 +33,81 @@ class ServiceDetailsPage extends ConsumerWidget {
     return Uri.decodeComponent(cleanedUrl);
   }
 
-   Future<void> makePhoneCall(BuildContext context, WidgetRef ref, ServiceModel service) async {
-  final Uri launchUri = Uri(
-    scheme: 'tel',
-    path: service.phoneNumber,
-  );
-
-  try {
-    if (await canLaunchUrl(launchUri)) {
-      // Log the interaction
-      final success = await ref.read(
-        logInteractionProvider(service.id.toString(), 'CALL').future,
-      );
-
-      if (success) {
-        log('Call interaction logged successfully');
-      } else {
-        log('Failed to log call interaction');
-      }
-
-      // Launch phone call regardless of logging success
-      await launchUrl(launchUri);
-    } else {
-      throw Exception('Could not launch phone call');
-    }
-  } catch (e) {
-    log('Error in makePhoneCall: $e');
-    SnackbarUtil.showsnackbar(
-      message: "Could not make phone call",
-      showretry: true,
+  Future<void> makePhoneCall(
+      BuildContext context, WidgetRef ref, ServiceModel service) async {
+    final Uri launchUri = Uri(
+      scheme: 'tel',
+      path: service.phoneNumber,
     );
-  }
-}
 
-Future<void> launchWhatsApp(BuildContext context, WidgetRef ref, ServiceModel service) async {
-  final whatsappUrl = Uri.parse("https://wa.me/${service.phoneNumber}");
+    try {
+      if (await canLaunchUrl(launchUri)) {
+        // Log the interaction
+        final success = await ref.read(
+          logInteractionProvider(service.id.toString(), 'CALL').future,
+        );
 
-  try {
-    if (await canLaunchUrl(whatsappUrl)) {
-      // Log the interaction
-      final success = await ref.read(
-        logInteractionProvider(service.id.toString(), 'WHATSAPP').future,
-      );
+        if (success) {
+          log('Call interaction logged successfully');
+        } else {
+          log('Failed to log call interaction');
+        }
 
-      if (success) {
-        log('WhatsApp interaction logged successfully');
+        // Launch phone call regardless of logging success
+        await launchUrl(launchUri);
       } else {
-        log('Failed to log WhatsApp interaction');
+        throw Exception('Could not launch phone call');
       }
-
-      // Launch WhatsApp regardless of logging success
-      await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
-    } else {
-      throw Exception('Could not launch WhatsApp');
+    } catch (e) {
+      log('Error in makePhoneCall: $e');
+      SnackbarUtil.showsnackbar(
+        message: "Could not make phone call",
+        showretry: true,
+      );
     }
-  } catch (e) {
-    log('Error in launchWhatsApp: $e');
-    SnackbarUtil.showsnackbar(
-      message: "Could not launch WhatsApp",
-      showretry: true,
-    );
   }
-}
+
+  Future<void> launchWhatsApp(
+      BuildContext context, WidgetRef ref, ServiceModel service) async {
+    final whatsappUrl = Uri.parse("https://wa.me/${service.phoneNumber}");
+
+    try {
+      if (await canLaunchUrl(whatsappUrl)) {
+        // Log the interaction
+        final success = await ref.read(
+          logInteractionProvider(service.id.toString(), 'WHATSAPP').future,
+        );
+
+        if (success) {
+          log('WhatsApp interaction logged successfully');
+        } else {
+          log('Failed to log WhatsApp interaction');
+        }
+
+        // Launch WhatsApp regardless of logging success
+        await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
+      } else {
+        throw Exception('Could not launch WhatsApp');
+      }
+    } catch (e) {
+      log('Error in launchWhatsApp: $e');
+      SnackbarUtil.showsnackbar(
+        message: "Could not launch WhatsApp",
+        showretry: true,
+      );
+    }
+  }
 
 // Optional: Add feedback for successful interactions
-void _showInteractionSuccess(BuildContext context, String action) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text('Successfully initiated $action'),
-      duration: const Duration(seconds: 2),
-      behavior: SnackBarBehavior.floating,
-    ),
-  );
-}
-
+  void _showInteractionSuccess(BuildContext context, String action) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Successfully initiated $action'),
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context, ref) {
@@ -233,6 +235,7 @@ void _showInteractionSuccess(BuildContext context, String action) {
             ],
 
             // Title and Rating
+            // Title and Rating Row
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -244,11 +247,56 @@ void _showInteractionSuccess(BuildContext context, String action) {
                     ),
                   ),
                 ),
-                Row(
-                  children: [
-                    const Icon(Icons.star, color: Colors.yellow),
-                    Text('4.0', style: context.typography.bodyLarge),
-                  ],
+                Consumer(
+                  builder: (context, ref, child) {
+                    final ratingAsync =
+                        ref.watch(serviceRatingControllerProvider);
+
+                    return ratingAsync.when(
+                      data: (ratingList) {
+                        final totalReviews = ratingList.ratings.length;
+                        final averageRating = ratingList.ratings.isEmpty
+                            ? 0.0
+                            : ratingList.ratings.fold(
+                                    0, (sum, rating) => sum + rating.rating) /
+                                totalReviews;
+
+                        return Row(
+                          children: [
+                            const Icon(Icons.star, color: Colors.amber),
+                            const SizedBox(width: 4),
+                            Text(
+                              averageRating.toStringAsFixed(1),
+                              style: context.typography.bodyLarge,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '($totalReviews)',
+                              style: context.typography.bodyMedium.copyWith(
+                                color:
+                                    context.colors.primaryTxt.withValues(alpha:0.6),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                      loading: () => const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                      error: (_, __) => Row(
+                        children: [
+                          const Icon(Icons.star, color: Colors.grey),
+                          const SizedBox(width: 4),
+                          Text(
+                            '0.0',
+                            style: context.typography.bodyLarge,
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -279,7 +327,8 @@ void _showInteractionSuccess(BuildContext context, String action) {
                           ],
                         ),
                         child: IconButton(
-                          onPressed: () => launchWhatsApp(context, ref, service),
+                          onPressed: () =>
+                              launchWhatsApp(context, ref, service),
                           icon: const Icon(
                             FontAwesomeIcons.whatsapp,
                             color: Colors.green,

@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
+import 'package:hand_car/features/car_service/controller/rating/service_rating_controller.dart';
 
 import 'package:hand_car/features/car_service/model/service_model.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class ServiceCardWidget extends StatelessWidget {
+class ServiceCardWidget extends ConsumerWidget {
   final ServiceModel service;
 
   const ServiceCardWidget({
@@ -14,7 +16,7 @@ class ServiceCardWidget extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
     return GestureDetector(
       onTap: () => _navigateToDetails(context),
       child: Container(
@@ -107,19 +109,50 @@ class ServiceCardWidget extends StatelessWidget {
                       //     color: context.colors.primary,
                       //   ),
                       // ),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.star_rounded,
-                            color: Colors.amber,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '4.0',
-                            style: context.typography.bodyMedium,
-                          ),
-                        ],
+                      Consumer(
+                        builder: (context, ref, child) {
+                          final ratingAsync =
+                              ref.watch(serviceRatingControllerProvider);
+
+                          return ratingAsync.when(
+                            data: (ratingList) {
+                              final totalReviews = ratingList.ratings.length;
+                              final averageRating = ratingList.ratings.isEmpty
+                                  ? 0.0
+                                  : ratingList.ratings.fold(
+                                          0,
+                                          (sum, rating) =>
+                                              sum + rating.rating) /
+                                      totalReviews;
+
+                              return Row(
+                                children: [
+                                  const Icon(Icons.star, color: Colors.amber),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    averageRating.toStringAsFixed(1),
+                                    style: context.typography.bodyLarge,
+                                  ),
+                                ],
+                              );
+                            },
+                            loading: () => const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                            error: (_, __) => Row(
+                              children: [
+                                const Icon(Icons.star, color: Colors.grey),
+                                const SizedBox(width: 4),
+                                Text(
+                                  '0.0',
+                                  style: context.typography.bodyLarge,
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
