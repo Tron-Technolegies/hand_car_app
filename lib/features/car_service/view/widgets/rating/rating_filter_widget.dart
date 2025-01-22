@@ -3,48 +3,52 @@ import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/car_service/controller/rating/rating_filter/rating_filter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+// lib/features/car_service/view/widgets/filter/rating_filter_widget.dart
+
+
 class RatingFilterWidget extends ConsumerWidget {
   const RatingFilterWidget({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final selectedRating = ref.watch(ratingFilterControllerProvider);
-
     return Container(
       padding: EdgeInsets.all(context.space.space_200),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha:0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            'Filter by Rating',
-            style: context.typography.bodyMedium,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Filter by Rating',
+                style: context.typography.bodyLargeSemiBold,
+              ),
+              IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: const Icon(Icons.close),
+              ),
+            ],
           ),
           const SizedBox(height: 16),
           Wrap(
             spacing: 8,
+            runSpacing: 8,
             children: [
-              _buildRatingChip(context, ref, null, 'All'),
-              ...List.generate(5, (index) {
-                final rating = 5 - index;
-                return _buildRatingChip(
+              _buildFilterOption(context, ref, null, 'All'),
+              ...List.generate(
+                5,
+                (index) => _buildFilterOption(
                   context,
                   ref,
-                  rating.toDouble(),
-                  '$rating★ & up',
-                );
-              }),
+                  (5 - index).toDouble(),
+                  '${5 - index}★ & up',
+                ),
+              ),
             ],
           ),
         ],
@@ -52,7 +56,7 @@ class RatingFilterWidget extends ConsumerWidget {
     );
   }
 
-  Widget _buildRatingChip(
+  Widget _buildFilterOption(
     BuildContext context,
     WidgetRef ref,
     double? rating,

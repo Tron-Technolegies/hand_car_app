@@ -68,6 +68,8 @@ class ServicesPage extends HookConsumerWidget {
       );
     }
 
+    
+
     void onItemTapped(int index, String category) {
       buttonIndex.value = index;
       pageController.animateToPage(
