@@ -3,19 +3,17 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
-
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
 import 'package:hand_car/features/car_service/controller/car_service_controller.dart';
 import 'package:hand_car/features/car_service/controller/filter_categories/service_filter.dart';
 import 'package:hand_car/features/car_service/controller/location/location_list/location_list.dart';
 import 'package:hand_car/features/car_service/controller/location/location_notifier/location_notifier.dart';
-
+import 'package:hand_car/features/car_service/controller/rating/rating_filter/rating_filter.dart';
 import 'package:hand_car/features/car_service/view/widgets/grid/location_based_grid_view.dart';
-
 import 'package:hand_car/features/car_service/view/widgets/map/location_search_widget.dart';
 import 'package:hand_car/features/car_service/view/widgets/map/location_widget.dart';
-
+import 'package:hand_car/features/car_service/view/widgets/rating/rating_filter_widget.dart';
 import 'package:hand_car/features/car_service/view/widgets/services_icon_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -51,6 +49,7 @@ class ServicesPage extends HookConsumerWidget {
     final categoriesAsync = ref.watch(serviceCategoryControllerProvider);
     final locationState = ref.watch(locationNotifierProvider);
     final servicesState = ref.watch(servicesNotifierProvider);
+    final selectedRating = ref.watch(ratingFilterControllerProvider);
 
     void scrollToIndex(int index) {
       final screenWidth = MediaQuery.of(context).size.width;
@@ -68,8 +67,6 @@ class ServicesPage extends HookConsumerWidget {
       );
     }
 
-    
-
     void onItemTapped(int index, String category) {
       buttonIndex.value = index;
       pageController.animateToPage(
@@ -84,6 +81,71 @@ class ServicesPage extends HookConsumerWidget {
       }
 
       scrollToIndex(index);
+    }
+
+    void showFilterBottomSheet() {
+      showModalBottomSheet(
+        context: context,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        ),
+        builder: (context) => Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const RatingFilterWidget(),
+              const SizedBox(height: 16),
+            ],
+          ),
+        ),
+      );
+    }
+
+    Widget buildFilterChip() {
+      if (selectedRating == null) {
+        return const Icon(
+          Icons.filter_alt_outlined,
+          size: 24,
+          color: Colors.black,
+        );
+      }
+
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: context.colors.primary.withValues(alpha:0.1),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.star,
+              size: 16,
+              color: context.colors.primary,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              '${selectedRating.toInt()}+',
+              style: context.typography.bodySmall.copyWith(
+                color: context.colors.primary,
+              ),
+            ),
+          ],
+        ),
+      );
     }
 
     Widget buildNearbyServicesList() {
@@ -137,7 +199,6 @@ class ServicesPage extends HookConsumerWidget {
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () {
                     // Handle service selection
-                    // You might want to navigate to service details page
                   },
                 ),
               );
@@ -162,11 +223,18 @@ class ServicesPage extends HookConsumerWidget {
         ),
         centerTitle: true,
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Icons.filter_alt_sharp,
-              color: context.colors.primaryTxt,
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(8),
+                onTap: showFilterBottomSheet,
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  child: buildFilterChip(),
+                ),
+              ),
             ),
           ),
           IconButton(
@@ -186,7 +254,7 @@ class ServicesPage extends HookConsumerWidget {
           if (locationState.error != null)
             Container(
               padding: EdgeInsets.all(context.space.space_200),
-              color: Colors.red.withValues(alpha: 0.1),
+              color: Colors.red.withValues(alpha:0.1),
               child: Text(
                 locationState.error!,
                 style: context.typography.bodyMedium.copyWith(
@@ -206,7 +274,7 @@ class ServicesPage extends HookConsumerWidget {
                 borderRadius: BorderRadius.circular(8),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
+                    color: Colors.black.withValues(alpha:0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),

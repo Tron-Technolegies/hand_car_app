@@ -20,14 +20,14 @@ class LoginPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = useTextEditingController();
     final isLoading = useState(false);
-    final isMounted = useIsMounted();
+    final isMounted = context.mounted;
 
     // Watch auth state for loading status
     final authState = ref.watch(authControllerProvider);
 
     /// Switches to phone/password login
     Future<void> switchToPhoneLogin() async {
-      if (!isMounted()) return;
+      if (!isMounted) return;
 
       final storage = ref.read(storageProvider);
       await storage.write(
@@ -35,7 +35,7 @@ class LoginPage extends HookConsumerWidget {
       ref.read(loginPreferenceProvider.notifier).state =
           LoginWithPhoneAndPasswordPage.route;
 
-      if (isMounted() && context.mounted) {
+      if (isMounted && context.mounted) {
         context.go(LoginWithPhoneAndPasswordPage.route);
       }
     }
@@ -50,7 +50,7 @@ class LoginPage extends HookConsumerWidget {
 
     /// Handles sending OTP
     Future<void> handleSendOtp() async {
-      if (!isMounted()) return;
+      if (!isMounted) return;
   /// Validate input
       final input = controller.text.trim();
       if (validateInput(input) != null) {
@@ -65,19 +65,19 @@ class LoginPage extends HookConsumerWidget {
         isLoading.value = true;
         await ref.read(authControllerProvider.notifier).sendOtp(input);
 
-        if (isMounted() && context.mounted) {
+        if (isMounted && context.mounted) {
           // Navigate to OTP verification page
           context.push('/otp/$input');
         }
       } catch (e) {
-        if (isMounted()) {
+        if (isMounted) {
           SnackbarUtil.showsnackbar(
             message: e.toString(),
             showretry: true,
           );
         }
       } finally {
-        if (isMounted()) {
+        if (isMounted) {
           isLoading.value = false;
         }
       }

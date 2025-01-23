@@ -98,7 +98,7 @@ class EditProfileScreen extends HookConsumerWidget {
                     controller: nameController,
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: context.colors.primaryTxt.withOpacity(0.05),
+                      fillColor: context.colors.primaryTxt.withValues(alpha:0.05),
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 24.0,
                         vertical: 16.0,
@@ -122,7 +122,7 @@ class EditProfileScreen extends HookConsumerWidget {
                     controller: emailController,
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: context.colors.primaryTxt.withOpacity(0.05),
+                      fillColor: context.colors.primaryTxt.withValues(alpha:0.05),
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 24.0,
                         vertical: 16.0,
@@ -146,7 +146,7 @@ class EditProfileScreen extends HookConsumerWidget {
                     controller: phoneController,
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: context.colors.primaryTxt.withOpacity(0.05),
+                      fillColor: context.colors.primaryTxt.withValues(alpha:0.05),
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 24.0,
                         vertical: 16.0,

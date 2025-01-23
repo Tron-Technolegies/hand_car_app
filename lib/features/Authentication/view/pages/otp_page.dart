@@ -160,8 +160,8 @@ class OtpPage extends HookConsumerWidget {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: context.space.space_200),
               child: ElevatedButton(
-                child: Text(authState.isLoading ? "Verifying..." : "Verify & Continue"),
                 onPressed: authState.isLoading ? null : verifyOtp,
+                child: Text(authState.isLoading ? "Verifying..." : "Verify & Continue"),
               ),
             ),
             SizedBox(height: context.space.space_200),

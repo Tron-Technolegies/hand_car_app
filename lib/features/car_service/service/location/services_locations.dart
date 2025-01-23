@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
 import 'package:hand_car/features/car_service/model/service_model.dart';
@@ -44,7 +46,7 @@ class ServicesLocations {
             try {
               return ServiceModel.fromJson(service);
             } catch (e) {
-              print('Error parsing service: $e');
+              log('Error parsing service: $e');
               return null;
             }
           })
@@ -84,12 +86,12 @@ class ServicesLocations {
         errorMessage = 'Network error: ${e.message}';
     }
     
-    print('Service fetch error: $errorMessage');
-    print('Error details: $e');
+    log('Service fetch error: $errorMessage');
+    log('Error details: $e');
     throw Exception(errorMessage);
     
   } catch (e) {
-    print('Unexpected error while fetching services: $e');
+    log('Unexpected error while fetching services: $e');
     throw Exception('Unexpected error occurred. Please try again.');
   }
 }

@@ -1,5 +1,5 @@
 import 'dart:developer';
-import 'dart:math' as Math;
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -36,17 +36,17 @@ class ProductCard extends HookConsumerWidget {
     final maxQuantity = 10;
     final quantity = useState<int>(currentQuantity < 1 ? 1 : currentQuantity);
     final isUpdating = useState(false);
-    final isMounted = useIsMounted();
+    final isMounted = context.mounted;
 
     // Generate list of quantities, ensuring current quantity is included
     final quantities = List<int>.generate(
-      Math.max(maxQuantity, quantity.value),
+      math.max(maxQuantity, quantity.value),
       (i) => i + 1,
-    ).take(Math.max(maxQuantity, quantity.value)).toList();
+    ).take(math.max(maxQuantity, quantity.value)).toList();
 
     // Create a safe setState function
     void safeSetState(bool value) {
-      if (isMounted()) {
+      if (isMounted) {
         isUpdating.value = value;
       }
     }
@@ -182,7 +182,7 @@ class ProductCard extends HookConsumerWidget {
                                       try {
                                         safeSetState(true);
                                         await onQuantityChanged!(newValue);
-                                        if (isMounted()) {
+                                        if (isMounted) {
                                           quantity.value = newValue;
                                           SnackbarUtil.showsnackbar(
                                             message:
@@ -191,7 +191,7 @@ class ProductCard extends HookConsumerWidget {
                                           );
                                         }
                                       } catch (e) {
-                                        if (isMounted()) {
+                                        if (isMounted) {
                                           SnackbarUtil.showsnackbar(
                                             message:
                                                 "Failed to update quantity: ${e.toString()}",
