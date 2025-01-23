@@ -33,70 +33,49 @@ class ServiceDetailsPage extends ConsumerWidget {
     return Uri.decodeComponent(cleanedUrl);
   }
 
-  Future<void> makePhoneCall(
-      BuildContext context, WidgetRef ref, ServiceModel service) async {
-    final Uri launchUri = Uri(
-      scheme: 'tel',
-      path: service.phoneNumber,
+  Future<void> makePhoneCall(BuildContext context, WidgetRef ref, ServiceModel service) async {
+ final Uri launchUri = Uri(scheme: 'tel', path: service.phoneNumber);
+
+ try {
+   if (await canLaunchUrl(launchUri)) {
+     await ref.read(serviceInteractionApiProvider).logInteraction(
+       service.id.toString(),
+       'CALL'
+     );
+     await launchUrl(launchUri);
+   } else {
+     throw Exception('Could not launch phone call');
+   }
+ } catch (e) {
+   log('Error in makePhoneCall: $e');
+   SnackbarUtil.showsnackbar(
+     message: "Could not make phone call",
+     showretry: true,
+   );
+ }
+}
+ 
+Future<void> launchWhatsApp(BuildContext context, WidgetRef ref, ServiceModel service) async {
+  final whatsappUrl = Uri.parse("https://wa.me/${service.phoneNumber}");
+  
+  try {
+    if (await canLaunchUrl(whatsappUrl)) {
+      await ref.read(serviceInteractionApiProvider).logInteraction(
+        service.id.toString(), 
+        'WHATSAPP'
+      );
+      await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
+    } else {
+      throw Exception('Could not launch WhatsApp');
+    }
+  } catch (e) {
+    log('Error in launchWhatsApp: $e');
+    SnackbarUtil.showsnackbar(
+      message: "Could not launch WhatsApp",
+      showretry: true,
     );
-
-    try {
-      if (await canLaunchUrl(launchUri)) {
-        // Log the interaction
-        final success = await ref.read(
-          logInteractionProvider(service.id.toString(), 'CALL').future,
-        );
-
-        if (success) {
-          log('Call interaction logged successfully');
-        } else {
-          log('Failed to log call interaction');
-        }
-
-        // Launch phone call regardless of logging success
-        await launchUrl(launchUri);
-      } else {
-        throw Exception('Could not launch phone call');
-      }
-    } catch (e) {
-      log('Error in makePhoneCall: $e');
-      SnackbarUtil.showsnackbar(
-        message: "Could not make phone call",
-        showretry: true,
-      );
-    }
   }
-
-  Future<void> launchWhatsApp(
-      BuildContext context, WidgetRef ref, ServiceModel service) async {
-    final whatsappUrl = Uri.parse("https://wa.me/${service.phoneNumber}");
-
-    try {
-      if (await canLaunchUrl(whatsappUrl)) {
-        // Log the interaction
-        final success = await ref.read(
-          logInteractionProvider(service.id.toString(), 'WHATSAPP').future,
-        );
-
-        if (success) {
-          log('WhatsApp interaction logged successfully');
-        } else {
-          log('Failed to log WhatsApp interaction');
-        }
-
-        // Launch WhatsApp regardless of logging success
-        await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
-      } else {
-        throw Exception('Could not launch WhatsApp');
-      }
-    } catch (e) {
-      log('Error in launchWhatsApp: $e');
-      SnackbarUtil.showsnackbar(
-        message: "Could not launch WhatsApp",
-        showretry: true,
-      );
-    }
-  }
+}
 
 // Optional: Add feedback for successful interactions
   void _showInteractionSuccess(BuildContext context, String action) {
