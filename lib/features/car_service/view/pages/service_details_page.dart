@@ -79,13 +79,10 @@ Future<void> launchWhatsApp(BuildContext context, WidgetRef ref, ServiceModel se
 
 // Optional: Add feedback for successful interactions
   void _showInteractionSuccess(BuildContext context, String action) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Successfully initiated $action'),
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
+   SnackbarUtil.showsnackbar(
+     message: "Successfully $action",
+     showretry: false
+   );
   }
 
   @override

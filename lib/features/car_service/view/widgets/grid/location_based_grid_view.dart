@@ -104,9 +104,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 //   }
 // }
 
-
-
-
 class LocationBasedGridView extends HookConsumerWidget {
   final List<ServiceModel> services;
   final String categoryName;
@@ -122,14 +119,6 @@ class LocationBasedGridView extends HookConsumerWidget {
     final servicesState = ref.watch(servicesNotifierProvider);
     final selectedRating = ref.watch(ratingFilterControllerProvider);
 
-    // Filter services by category and rating
-    List<ServiceModel> filteredServices = services
-        .where((service) => service.serviceCategory == categoryName)
-        .where((service) => 
-          selectedRating == null || 
-          (service.rate != null && service.rate! >= selectedRating))
-        .toList();
-
     if (servicesState.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -143,52 +132,42 @@ class LocationBasedGridView extends HookConsumerWidget {
       );
     }
 
-    // If we have nearby services, filter and sort them
+    // Filter services by category and rating
+    List<ServiceModel> filteredServices = services
+        .where((service) => service.serviceCategory == categoryName)
+        .where((service) {
+          if (selectedRating == null) return true;
+          if (service.rate == null) return false;
+          double normalizedRate = service.rate! > 5 ? service.rate! / 1000 : service.rate!;
+          return normalizedRate >= selectedRating;
+        }).toList();
+
+    // Handle nearby services
     if (servicesState.services.isNotEmpty) {
       final nearbyServices = filteredServices.where((service) {
-        final matchingService = servicesState.services.firstWhere(
-          (nearbyService) => nearbyService.vendorName == service.vendorName,
-          orElse: () => service,
-        );
-        return matchingService.distance != null;
+        return servicesState.services.any((s) => 
+          s.vendorName == service.vendorName && s.distance != null);
       }).toList();
 
-      // Sort by rate and distance
       nearbyServices.sort((a, b) {
-        // First compare by rate if filtering is active
         if (selectedRating != null) {
-          final rateA = a.rate ?? 0.0;
-          final rateB = b.rate ?? 0.0;
+          final rateA = (a.rate ?? 0) > 5 ? (a.rate ?? 0) / 1000 : (a.rate ?? 0);
+          final rateB = (b.rate ?? 0) > 5 ? (b.rate ?? 0) / 1000 : (b.rate ?? 0);
           final rateComparison = rateB.compareTo(rateA);
           if (rateComparison != 0) return rateComparison;
         }
 
-        // Then sort by distance
-        final distanceA = servicesState.services
-            .firstWhere(
-              (s) => s.vendorName == a.vendorName,
-              orElse: () => a,
-            )
-            .distance ??
-            double.infinity;
-
-        final distanceB = servicesState.services
-            .firstWhere(
-              (s) => s.vendorName == b.vendorName,
-              orElse: () => b,
-            )
-            .distance ??
-            double.infinity;
-
+        final distanceA = _getServiceDistance(a, servicesState.services);
+        final distanceB = _getServiceDistance(b, servicesState.services);
         return distanceA.compareTo(distanceB);
       });
 
       if (nearbyServices.isEmpty) {
         return Center(
           child: Text(
-            selectedRating != null
-                ? 'No $categoryName services with ${selectedRating.toInt()}+ stars available in this location'
-                : 'No $categoryName services available in the selected location',
+            selectedRating != null 
+              ? 'No $categoryName services with ${selectedRating.toInt()}+ stars nearby'
+              : 'No $categoryName services available nearby',
             style: context.typography.bodyLarge,
             textAlign: TextAlign.center,
           ),
@@ -201,15 +180,19 @@ class LocationBasedGridView extends HookConsumerWidget {
       );
     }
 
-    // If no location selected or no nearby services, show filtered services
-    filteredServices.sort((a, b) => (b.rate ?? 0.0).compareTo(a.rate ?? 0.0));
+    // Handle non-nearby services
+    filteredServices.sort((a, b) {
+      final rateA = (a.rate ?? 0) > 5 ? (a.rate ?? 0) / 1000 : (a.rate ?? 0);
+      final rateB = (b.rate ?? 0) > 5 ? (b.rate ?? 0) / 1000 : (b.rate ?? 0);
+      return rateB.compareTo(rateA);
+    });
 
     if (filteredServices.isEmpty) {
       return Center(
         child: Text(
-          selectedRating != null
-              ? 'No $categoryName services with ${selectedRating.toInt()}+ stars available'
-              : 'No $categoryName services available',
+          selectedRating != null 
+            ? 'No $categoryName services with ${selectedRating.toInt()}+ stars available'
+            : 'No $categoryName services available',
           style: context.typography.bodyLarge,
           textAlign: TextAlign.center,
         ),
@@ -220,5 +203,14 @@ class LocationBasedGridView extends HookConsumerWidget {
       services: filteredServices,
       locationServices: const [],
     );
+  }
+
+  double _getServiceDistance(ServiceModel service, List<ServiceModel> locationServices) {
+    return locationServices
+        .firstWhere(
+          (s) => s.vendorName == service.vendorName,
+          orElse: () => service,
+        )
+        .distance ?? double.infinity;
   }
 }

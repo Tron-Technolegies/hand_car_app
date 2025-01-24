@@ -7,7 +7,7 @@ part of 'rating_filter.dart';
 // **************************************************************************
 
 String _$ratingFilterControllerHash() =>
-    r'9dd2a86955c47cc36f80f37a520454707f1b9353';
+    r'9c60a27ad7e92c427a7363422ba8dcfc70590e59';
 
 /// See also [RatingFilterController].
 @ProviderFor(RatingFilterController)

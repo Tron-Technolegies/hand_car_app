@@ -6,9 +6,10 @@ part 'rating_filter.g.dart';
 @riverpod
 class RatingFilterController extends _$RatingFilterController {
   @override
-  double? build() => null;  // null means no filter
+  double? build() => null;
 
   void setRatingFilter(double? rating) {
-    state = rating;
+    // Reset to null if selecting already selected rating
+    state = state == rating ? null : rating;
   }
 }
