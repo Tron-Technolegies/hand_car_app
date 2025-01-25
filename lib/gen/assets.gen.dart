@@ -163,6 +163,12 @@ class $AssetsIconsGen {
   /// File path: assets/icons/ic_painting_service.svg
   String get icPaintingService => 'assets/icons/ic_painting_service.svg';
 
+  /// File path: assets/icons/ic_profile_filled.svg
+  String get icProfileFilled => 'assets/icons/ic_profile_filled.svg';
+
+  /// File path: assets/icons/ic_profile_outline.svg
+  String get icProfileOutline => 'assets/icons/ic_profile_outline.svg';
+
   /// File path: assets/icons/ic_spare_filled.svg
   String get icSpareFilled => 'assets/icons/ic_spare_filled.svg';
 
@@ -253,6 +259,8 @@ class $AssetsIconsGen {
         icHomeFilled,
         icHomeOutline,
         icPaintingService,
+        icProfileFilled,
+        icProfileOutline,
         icSpareFilled,
         icSpareOutline,
         icSparePartsService,

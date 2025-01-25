@@ -56,9 +56,10 @@ class DockingBar extends HookWidget {
               children: [
                 // _buildNavItem(
                 //     'ic_car_seat', 'Accessories', 1, value, handleTap),
-                _buildNavItem('garage', 'Home', 0, value, handleTap),
+                _buildNavItem('ic_home', 'Home', 0, value, handleTap),
                 _buildNavItem('ic_car_service', 'Service', 1, value, handleTap),
                 _buildNavItem('ic_spare', 'Auto Parts', 2, value, handleTap),
+                _buildNavItem('profile', 'Profile', 3, value, handleTap),
 
                 // _buildNavItem(
                 //     'ic_subscription', 'Subscription', 4, value, handleTap),
@@ -117,13 +118,16 @@ class DockingBar extends HookWidget {
               ),
             ),
             if (isSelected) const SizedBox(height: 4),
-            if (isSelected)
-              Text(
-                label,
-                style: context.typography.body.copyWith(
-                  color: context.colors.primary,
-                ),
-              ),
+            Text(
+              label,
+              style: isSelected == true
+                  ? context.typography.body.copyWith(
+                      color: context.colors.primary,
+                    )
+                  : context.typography.body.copyWith(
+                      color: context.colors.primaryTxt,
+                    ),
+            ),
           ],
         ),
       ),

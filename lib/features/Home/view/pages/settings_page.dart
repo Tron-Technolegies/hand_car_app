@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/controller/image_picker_controller.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
 import 'package:hand_car/features/Authentication/view/pages/edit_profile_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/login_with_phone_and_password_page.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
 import 'package:panara_dialogs/panara_dialogs.dart';
 
 class SettingsPage extends ConsumerWidget {
+  static const route = '/settings';
   const SettingsPage({super.key});
 
   @override
@@ -56,7 +57,7 @@ class SettingsPage extends ConsumerWidget {
             ListTile(
               leading: const Icon(Icons.manage_accounts_outlined),
               title: const Text('Manage Account'),
-              onTap: () => context.push(EditProfileScreen.),
+              onTap: () => context.push(EditProfileScreen.route),
             ),
             ListTile(
               leading: const Icon(Icons.info),
@@ -81,9 +82,7 @@ class SettingsPage extends ConsumerWidget {
             ListTile(
               leading: const Icon(Icons.logout_outlined),
               title: const Text('Logout'),
-              onTap: () async {
-                await _showLogoutDialog(context, ref, authState);
-              },
+              onTap: () => _showLogoutDialog(context, ref),
             ),
           ],
         ),
@@ -91,39 +90,40 @@ class SettingsPage extends ConsumerWidget {
     );
   }
 
-  Future<void> _showLogoutDialog(BuildContext context, WidgetRef ref, AuthState authState) async {
-  return PanaraConfirmDialog.show(
-    context,
-    buttonTextColor: context.colors.white,
-    color: context.colors.primary,
-    panaraDialogType: PanaraDialogType.error,
-    title: "Logout Confirmation",
-    message: "Are you sure you want to logout?",
-    confirmButtonText: "Logout",
-    cancelButtonText: "Cancel",
-    onTapCancel: () => Navigator.pop(context),
-    onTapConfirm: () async {
-      Navigator.pop(context);
-      await ref.read(authControllerProvider.notifier).logout();
+  Future<void> _showLogoutDialog(BuildContext context, WidgetRef ref) async {
+    final authController = ref.read(authControllerProvider.notifier);
+    
+    return PanaraConfirmDialog.show(
+      context,
+      buttonTextColor: context.colors.white,
+      color: context.colors.primary,
+      panaraDialogType: PanaraDialogType.error,
+      title: "Logout Confirmation",
+      message: "Are you sure you want to logout?",
+      confirmButtonText: "Logout",
+      cancelButtonText: "Cancel",
+      onTapCancel: () => Navigator.pop(context),
+      onTapConfirm: () async {
+        Navigator.pop(context);
+        await authController.logout();
 
-      if (context.mounted) {
-        if (authState.error != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(authState.error.toString()),
-              backgroundColor: context.colors.primary,
-            ),
-          );
-        } else {
-          context.go(LoginWithPhoneAndPasswordPage.route);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Successfully logged out')),
-          );
+        if (context.mounted) {
+          if (ref.read(authControllerProvider).error != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(ref.read(authControllerProvider).error.toString()),
+                backgroundColor: context.colors.primary,
+              ),
+            );
+          } else {
+            context.go(LoginWithPhoneAndPasswordPage.route);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Successfully logged out')),
+            );
+          }
         }
-      }
-    },
-    barrierDismissible: false,
-  );
-}
+      },
+      barrierDismissible: false,
+    );
   }
-
+}

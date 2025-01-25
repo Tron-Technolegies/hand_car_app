@@ -20,7 +20,7 @@ class ProductSearchContainerWidget extends StatelessWidget {
       final message = Uri.encodeComponent(
           "Hello, I would like to search for spare parts for chassis number: $chassisNumber");
 
-      final whatsappUrl = Uri.parse("https://wa.me/9895499872?text=$message");
+      final whatsappUrl = Uri.parse("https://wa.me/971503507618?text=$message");
 
       if (await canLaunchUrl(whatsappUrl)) {
         await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);

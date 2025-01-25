@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/features/Accessories/view/pages/wishlist_page.dart';
+import 'package:hand_car/features/Authentication/view/pages/edit_profile_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/forgot_password_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/login_with_phone_and_password_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/otp_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/reset_password_page.dart';
+import 'package:hand_car/features/Home/view/pages/settings_page.dart';
 import 'package:hand_car/features/car_service/model/service_model.dart';
 import 'package:hand_car/features/car_service/view/pages/services_page.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -176,7 +178,8 @@ final _routes = [
       return ServiceDetailsPage(service: service);
     },
   ),
-  
+  GoRoute(path: SettingsPage.route, builder: (context, state) => const SettingsPage()), 
+  GoRoute(path: EditProfileScreen.route, builder: (context, state) => const EditProfileScreen()),
   GoRoute(
     path: ShoppingCartScreen.route,
     builder: (context, state) => const ShoppingCartScreen(),

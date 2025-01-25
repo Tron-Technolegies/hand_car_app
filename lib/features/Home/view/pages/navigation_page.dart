@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hand_car/core/utils/bottom_nav_controller.dart';
 import 'package:hand_car/features/Accessories/view/pages/accessories_page.dart';
 import 'package:hand_car/features/Home/view/pages/home_page.dart';
+import 'package:hand_car/features/Home/view/pages/settings_page.dart';
 import 'package:hand_car/features/Home/view/widgets/bottom_app_bar.dart';
 import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
 import 'package:hand_car/features/SpareParts/view/pages/spares_page.dart';
@@ -20,6 +21,7 @@ class NavigationPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
 // Get the navigation state from the provider.
     final navigationState = ref.watch(navigationProvider);
+    final keyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
 
     // Listen for page changes and update the provider.
     useEffect(() {
@@ -54,6 +56,7 @@ class NavigationPage extends HookConsumerWidget {
 
             /// Auto Parts Page
             const AutoPartsPage(),
+            SettingsPage(),
 
             // /// Accessories Page
             // const AccessoriesPage(),
@@ -154,18 +157,20 @@ class NavigationPage extends HookConsumerWidget {
         //     ),
         //   ],
         // ),
-        bottomNavigationBar: Align(
-          alignment: Alignment.bottomCenter,
-          child: Padding(
-            padding: EdgeInsets.only(bottom: 20),
-            child: DockingBar(
-              currentIndex: navigationState.selectedNavBarItemIndex,
-              onTap: (index) => ref
-                  .read(navigationProvider.notifier)
-                  .changeSelectedItemIndex(index),
-              context: context,
-            ),
-          ),
-        ));
+        bottomNavigationBar: keyboardVisible
+            ? null
+            : Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 20),
+                  child: DockingBar(
+                    currentIndex: navigationState.selectedNavBarItemIndex,
+                    onTap: (index) => ref
+                        .read(navigationProvider.notifier)
+                        .changeSelectedItemIndex(index),
+                    context: context,
+                  ),
+                ),
+              ));
   }
 }
