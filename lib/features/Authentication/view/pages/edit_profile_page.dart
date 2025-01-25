@@ -10,6 +10,7 @@ import 'package:hand_car/features/Authentication/view/widgets/user_info_edit_fie
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class EditProfileScreen extends HookConsumerWidget {
+   static String route = '/edit-profile';
   const EditProfileScreen({super.key});
 
   @override

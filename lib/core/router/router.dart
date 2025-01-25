@@ -176,6 +176,7 @@ final _routes = [
       return ServiceDetailsPage(service: service);
     },
   ),
+  
   GoRoute(
     path: ShoppingCartScreen.route,
     builder: (context, state) => const ShoppingCartScreen(),

@@ -20,7 +20,7 @@ class Navigation extends _$Navigation {
   @override
   NavigationState build() {
     return NavigationState(
-      selectedNavBarItemIndex: 2,
+      selectedNavBarItemIndex: 0,
       pageController: PageController(),
     );
   }
