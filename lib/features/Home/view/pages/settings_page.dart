@@ -15,7 +15,7 @@ class SettingsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final image = ref.watch(imagePickerProvider);
-    final authState = ref.watch(authControllerProvider);
+    // final authState = ref.watch(authControllerProvider);
 
     return Scaffold(
       body: SafeArea(
