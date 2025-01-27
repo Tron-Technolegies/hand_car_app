@@ -40,7 +40,8 @@ final onboardingCompletedProvider = StateProvider<bool>((ref) {
 // Provider to track preferred login method
 final loginPreferenceProvider = StateProvider<String>((ref) {
   final storage = ref.watch(storageProvider);
-  return storage.read('preferredLoginMethod') ?? LoginWithPhoneAndPasswordPage.route;
+  return storage.read('preferredLoginMethod') ??
+      LoginWithPhoneAndPasswordPage.route;
 });
 
 // Router configuration
@@ -60,22 +61,26 @@ final routerProvider = Provider<GoRouter>((ref) {
       );
 
       // Define route matchers
-      final isOnboardingRoute = state.matchedLocation == OnbordingScreenPage.route;
-      final isLoginRoute = state.matchedLocation == LoginWithPhoneAndPasswordPage.route;
+      final isOnboardingRoute =
+          state.matchedLocation == OnbordingScreenPage.route;
+      final isLoginRoute =
+          state.matchedLocation == LoginWithPhoneAndPasswordPage.route;
       final isSignupRoute = state.matchedLocation == SignupPage.route;
       final isSplashRoute = state.matchedLocation == SplashScreen.route;
-      final isForgotPasswordRoute = state.matchedLocation == ForgotPasswordPage.route;
-      final isResetPasswordRoute = state.matchedLocation.startsWith('/reset-password/');
+      final isForgotPasswordRoute =
+          state.matchedLocation == ForgotPasswordPage.route;
+      final isResetPasswordRoute =
+          state.matchedLocation.startsWith('/reset-password/');
       final isOtpLoginRoute = state.matchedLocation == LoginPage.route;
       final isOtpVerificationRoute = state.matchedLocation == OtpPage.route;
 
       // Group all auth-related routes
-      final isAuthRoute = isLoginRoute || 
-                         isSignupRoute || 
-                         isForgotPasswordRoute || 
-                         isResetPasswordRoute || 
-                         isOtpLoginRoute || 
-                         isOtpVerificationRoute;
+      final isAuthRoute = isLoginRoute ||
+          isSignupRoute ||
+          isForgotPasswordRoute ||
+          isResetPasswordRoute ||
+          isOtpLoginRoute ||
+          isOtpVerificationRoute;
 
       // Allow splash screen to show
       if (isSplashRoute) return null;
@@ -130,12 +135,12 @@ final _routes = [
     path: LoginPage.route,
     builder: (context, state) => const LoginPage(),
   ),
- GoRoute(
-  path: '/otp/:phoneOrEmail',
-  builder: (context, state) => OtpPage(
-    phoneOrEmail: state.pathParameters['phoneOrEmail']!,
+  GoRoute(
+    path: '/otp/:phoneOrEmail',
+    builder: (context, state) => OtpPage(
+      phoneOrEmail: state.pathParameters['phoneOrEmail']!,
+    ),
   ),
-),
   GoRoute(
     path: SignupPage.route,
     builder: (context, state) => const SignupPage(),
@@ -167,7 +172,7 @@ final _routes = [
     },
   ),
   GoRoute(
-    path: ServicesPage.route, 
+    path: ServicesPage.route,
     builder: (context, state) => ServicesPage(),
   ),
   GoRoute(
@@ -178,8 +183,12 @@ final _routes = [
       return ServiceDetailsPage(service: service);
     },
   ),
-  GoRoute(path: SettingsPage.route, builder: (context, state) => const SettingsPage()), 
-  GoRoute(path: EditProfileScreen.route, builder: (context, state) => const EditProfileScreen()),
+  GoRoute(
+      path: ProfilePage.route,
+      builder: (context, state) => const ProfilePage()),
+  GoRoute(
+      path: EditProfileScreen.route,
+      builder: (context, state) => const EditProfileScreen()),
   GoRoute(
     path: ShoppingCartScreen.route,
     builder: (context, state) => const ShoppingCartScreen(),

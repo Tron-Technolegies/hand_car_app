@@ -19,6 +19,7 @@ class AutoPartsPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       key: scaffoldKey4,
       appBar: AppBar(
         leading: Padding(
@@ -80,7 +81,9 @@ class AutoPartsPage extends HookWidget {
               SizedBox(height: context.space.space_200),
               const GenuinePartsSliderWidget(),
               SizedBox(height: context.space.space_200),
-              SpareMoreWidget()
+              SpareMoreWidget(),
+              SizedBox(height: context.space.space_800),
+              SizedBox(height: context.space.space_800),
             ],
           ),
         ),
