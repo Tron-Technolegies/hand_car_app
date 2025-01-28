@@ -27,8 +27,8 @@ mixin _$ServiceModel {
   String get phoneNumber => throw _privateConstructorUsedError;
   @JsonKey(name: 'whatsapp_number')
   String get whatsappNumber => throw _privateConstructorUsedError;
-  @JsonKey(name: 'service_category')
-  String? get serviceCategory => throw _privateConstructorUsedError;
+  @JsonKey(name: 'service_category', fromJson: _parseCategory)
+  String get serviceCategory => throw _privateConstructorUsedError;
   @JsonKey(name: 'service_details')
   String get serviceDetails => throw _privateConstructorUsedError;
   String get address => throw _privateConstructorUsedError;
@@ -60,7 +60,8 @@ abstract class $ServiceModelCopyWith<$Res> {
       @JsonKey(name: 'vendor_name') String vendorName,
       @JsonKey(name: 'phone_number') String phoneNumber,
       @JsonKey(name: 'whatsapp_number') String whatsappNumber,
-      @JsonKey(name: 'service_category') String? serviceCategory,
+      @JsonKey(name: 'service_category', fromJson: _parseCategory)
+      String serviceCategory,
       @JsonKey(name: 'service_details') String serviceDetails,
       String address,
       @JsonKey(name: 'rate', fromJson: _parseRate) double? rate,
@@ -87,7 +88,7 @@ class _$ServiceModelCopyWithImpl<$Res, $Val extends ServiceModel>
     Object? vendorName = null,
     Object? phoneNumber = null,
     Object? whatsappNumber = null,
-    Object? serviceCategory = freezed,
+    Object? serviceCategory = null,
     Object? serviceDetails = null,
     Object? address = null,
     Object? rate = freezed,
@@ -111,10 +112,10 @@ class _$ServiceModelCopyWithImpl<$Res, $Val extends ServiceModel>
           ? _value.whatsappNumber
           : whatsappNumber // ignore: cast_nullable_to_non_nullable
               as String,
-      serviceCategory: freezed == serviceCategory
+      serviceCategory: null == serviceCategory
           ? _value.serviceCategory
           : serviceCategory // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       serviceDetails: null == serviceDetails
           ? _value.serviceDetails
           : serviceDetails // ignore: cast_nullable_to_non_nullable
@@ -152,7 +153,8 @@ abstract class _$$ServiceModelImplCopyWith<$Res>
       @JsonKey(name: 'vendor_name') String vendorName,
       @JsonKey(name: 'phone_number') String phoneNumber,
       @JsonKey(name: 'whatsapp_number') String whatsappNumber,
-      @JsonKey(name: 'service_category') String? serviceCategory,
+      @JsonKey(name: 'service_category', fromJson: _parseCategory)
+      String serviceCategory,
       @JsonKey(name: 'service_details') String serviceDetails,
       String address,
       @JsonKey(name: 'rate', fromJson: _parseRate) double? rate,
@@ -177,7 +179,7 @@ class __$$ServiceModelImplCopyWithImpl<$Res>
     Object? vendorName = null,
     Object? phoneNumber = null,
     Object? whatsappNumber = null,
-    Object? serviceCategory = freezed,
+    Object? serviceCategory = null,
     Object? serviceDetails = null,
     Object? address = null,
     Object? rate = freezed,
@@ -201,10 +203,10 @@ class __$$ServiceModelImplCopyWithImpl<$Res>
           ? _value.whatsappNumber
           : whatsappNumber // ignore: cast_nullable_to_non_nullable
               as String,
-      serviceCategory: freezed == serviceCategory
+      serviceCategory: null == serviceCategory
           ? _value.serviceCategory
           : serviceCategory // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       serviceDetails: null == serviceDetails
           ? _value.serviceDetails
           : serviceDetails // ignore: cast_nullable_to_non_nullable
@@ -237,7 +239,8 @@ class _$ServiceModelImpl implements _ServiceModel {
       @JsonKey(name: 'vendor_name') required this.vendorName,
       @JsonKey(name: 'phone_number') required this.phoneNumber,
       @JsonKey(name: 'whatsapp_number') required this.whatsappNumber,
-      @JsonKey(name: 'service_category') this.serviceCategory,
+      @JsonKey(name: 'service_category', fromJson: _parseCategory)
+      this.serviceCategory = '',
       @JsonKey(name: 'service_details') required this.serviceDetails,
       required this.address,
       @JsonKey(name: 'rate', fromJson: _parseRate) this.rate,
@@ -259,8 +262,8 @@ class _$ServiceModelImpl implements _ServiceModel {
   @JsonKey(name: 'whatsapp_number')
   final String whatsappNumber;
   @override
-  @JsonKey(name: 'service_category')
-  final String? serviceCategory;
+  @JsonKey(name: 'service_category', fromJson: _parseCategory)
+  final String serviceCategory;
   @override
   @JsonKey(name: 'service_details')
   final String serviceDetails;
@@ -341,7 +344,8 @@ abstract class _ServiceModel implements ServiceModel {
       @JsonKey(name: 'vendor_name') required final String vendorName,
       @JsonKey(name: 'phone_number') required final String phoneNumber,
       @JsonKey(name: 'whatsapp_number') required final String whatsappNumber,
-      @JsonKey(name: 'service_category') final String? serviceCategory,
+      @JsonKey(name: 'service_category', fromJson: _parseCategory)
+      final String serviceCategory,
       @JsonKey(name: 'service_details') required final String serviceDetails,
       required final String address,
       @JsonKey(name: 'rate', fromJson: _parseRate) final double? rate,
@@ -364,8 +368,8 @@ abstract class _ServiceModel implements ServiceModel {
   @JsonKey(name: 'whatsapp_number')
   String get whatsappNumber;
   @override
-  @JsonKey(name: 'service_category')
-  String? get serviceCategory;
+  @JsonKey(name: 'service_category', fromJson: _parseCategory)
+  String get serviceCategory;
   @override
   @JsonKey(name: 'service_details')
   String get serviceDetails;

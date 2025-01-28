@@ -12,7 +12,9 @@ _$ServiceModelImpl _$$ServiceModelImplFromJson(Map<String, dynamic> json) =>
       vendorName: json['vendor_name'] as String,
       phoneNumber: json['phone_number'] as String,
       whatsappNumber: json['whatsapp_number'] as String,
-      serviceCategory: json['service_category'] as String?,
+      serviceCategory: json['service_category'] == null
+          ? ''
+          : _parseCategory(json['service_category']),
       serviceDetails: json['service_details'] as String,
       address: json['address'] as String,
       rate: _parseRate(json['rate']),
@@ -26,7 +28,7 @@ Map<String, dynamic> _$$ServiceModelImplToJson(_$ServiceModelImpl instance) =>
       'vendor_name': instance.vendorName,
       'phone_number': instance.phoneNumber,
       'whatsapp_number': instance.whatsappNumber,
-      if (instance.serviceCategory case final value?) 'service_category': value,
+      'service_category': instance.serviceCategory,
       'service_details': instance.serviceDetails,
       'address': instance.address,
       if (instance.rate case final value?) 'rate': value,

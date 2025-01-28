@@ -15,7 +15,7 @@ class ServicesLocations {
   Future<List<ServiceModel>> getNearbyServices({
   required double lat,
   required double lng,
-  double radius = 10,
+  
 }) async {
   try {
     final response = await _dio.get(
@@ -28,7 +28,7 @@ class ServicesLocations {
       queryParameters: {
         'lat': lat,  // No need to convert to string, Dio handles this
         'lng': lng,
-        'radius': radius,
+       
       },
     );
 

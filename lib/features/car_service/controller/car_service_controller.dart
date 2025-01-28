@@ -20,7 +20,7 @@ class CarServiceController extends _$CarServiceController {
 
   Future<List<ServiceModel>> _fetchServices() async {
     try {
-      return await _service.getService();
+      return await _service.getNearbyServices();
     } catch (e) {
       throw Exception('Failed to fetch services: $e');
     }

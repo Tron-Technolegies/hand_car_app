@@ -1,3 +1,4 @@
+// lib/features/car_service/model/service_model.dart
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'service_model.freezed.dart';
@@ -28,6 +29,12 @@ double? _parseDistance(dynamic distance) {
   return null;
 }
 
+String _parseCategory(dynamic category) {
+  if (category == null) return '';
+  if (category is String) return category;
+  return category.toString();
+}
+
 @freezed
 class ServiceModel with _$ServiceModel {
   const factory ServiceModel({
@@ -35,7 +42,7 @@ class ServiceModel with _$ServiceModel {
     @JsonKey(name: 'vendor_name') required String vendorName,
     @JsonKey(name: 'phone_number') required String phoneNumber,
     @JsonKey(name: 'whatsapp_number') required String whatsappNumber,
-    @JsonKey(name: 'service_category') String? serviceCategory,
+    @JsonKey(name: 'service_category', fromJson: _parseCategory) @Default('') String serviceCategory,
     @JsonKey(name: 'service_details') required String serviceDetails,
     required String address,
     @JsonKey(name: 'rate', fromJson: _parseRate) double? rate,

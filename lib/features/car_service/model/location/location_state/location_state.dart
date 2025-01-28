@@ -5,10 +5,10 @@ part 'location_state.freezed.dart';
 
 
 @freezed
+
 class LocationState with _$LocationState {
   const factory LocationState({
-     Position? position,
-    @Default('') String address,
+    Position? position,
     @Default(false) bool isLoading,
     String? error,
     @Default(false) bool isLocationEnabled,
