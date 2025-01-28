@@ -37,7 +37,8 @@ class DockingBar extends HookWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10)
+            BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1), blurRadius: 10)
           ],
         ),
         child: TweenAnimationBuilder(
@@ -95,8 +96,9 @@ class DockingBar extends HookWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color:
-                    isSelected ? Colors.white : Colors.white.withOpacity(0.8),
+                color: isSelected
+                    ? Colors.white
+                    : Colors.white.withValues(alpha: 0.8),
                 borderRadius: BorderRadius.circular(10),
                 boxShadow: isSelected
                     ? [

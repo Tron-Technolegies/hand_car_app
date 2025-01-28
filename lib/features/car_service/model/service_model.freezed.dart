@@ -28,15 +28,15 @@ mixin _$ServiceModel {
   @JsonKey(name: 'whatsapp_number')
   String get whatsappNumber => throw _privateConstructorUsedError;
   @JsonKey(name: 'service_category', fromJson: _parseCategory)
-  String get serviceCategory => throw _privateConstructorUsedError;
+  String? get serviceCategory => throw _privateConstructorUsedError;
   @JsonKey(name: 'service_details')
   String get serviceDetails => throw _privateConstructorUsedError;
   String get address => throw _privateConstructorUsedError;
-  @JsonKey(name: 'rate', fromJson: _parseRate)
   double? get rate => throw _privateConstructorUsedError;
   @JsonKey(fromJson: _parseImages)
   List<String> get images => throw _privateConstructorUsedError;
-  @JsonKey(fromJson: _parseDistance)
+  double? get latitude => throw _privateConstructorUsedError;
+  double? get longitude => throw _privateConstructorUsedError;
   double? get distance => throw _privateConstructorUsedError;
 
   /// Serializes this ServiceModel to a JSON map.
@@ -61,12 +61,14 @@ abstract class $ServiceModelCopyWith<$Res> {
       @JsonKey(name: 'phone_number') String phoneNumber,
       @JsonKey(name: 'whatsapp_number') String whatsappNumber,
       @JsonKey(name: 'service_category', fromJson: _parseCategory)
-      String serviceCategory,
+      String? serviceCategory,
       @JsonKey(name: 'service_details') String serviceDetails,
       String address,
-      @JsonKey(name: 'rate', fromJson: _parseRate) double? rate,
+      double? rate,
       @JsonKey(fromJson: _parseImages) List<String> images,
-      @JsonKey(fromJson: _parseDistance) double? distance});
+      double? latitude,
+      double? longitude,
+      double? distance});
 }
 
 /// @nodoc
@@ -88,11 +90,13 @@ class _$ServiceModelCopyWithImpl<$Res, $Val extends ServiceModel>
     Object? vendorName = null,
     Object? phoneNumber = null,
     Object? whatsappNumber = null,
-    Object? serviceCategory = null,
+    Object? serviceCategory = freezed,
     Object? serviceDetails = null,
     Object? address = null,
     Object? rate = freezed,
     Object? images = null,
+    Object? latitude = freezed,
+    Object? longitude = freezed,
     Object? distance = freezed,
   }) {
     return _then(_value.copyWith(
@@ -112,10 +116,10 @@ class _$ServiceModelCopyWithImpl<$Res, $Val extends ServiceModel>
           ? _value.whatsappNumber
           : whatsappNumber // ignore: cast_nullable_to_non_nullable
               as String,
-      serviceCategory: null == serviceCategory
+      serviceCategory: freezed == serviceCategory
           ? _value.serviceCategory
           : serviceCategory // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       serviceDetails: null == serviceDetails
           ? _value.serviceDetails
           : serviceDetails // ignore: cast_nullable_to_non_nullable
@@ -132,6 +136,14 @@ class _$ServiceModelCopyWithImpl<$Res, $Val extends ServiceModel>
           ? _value.images
           : images // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      latitude: freezed == latitude
+          ? _value.latitude
+          : latitude // ignore: cast_nullable_to_non_nullable
+              as double?,
+      longitude: freezed == longitude
+          ? _value.longitude
+          : longitude // ignore: cast_nullable_to_non_nullable
+              as double?,
       distance: freezed == distance
           ? _value.distance
           : distance // ignore: cast_nullable_to_non_nullable
@@ -154,12 +166,14 @@ abstract class _$$ServiceModelImplCopyWith<$Res>
       @JsonKey(name: 'phone_number') String phoneNumber,
       @JsonKey(name: 'whatsapp_number') String whatsappNumber,
       @JsonKey(name: 'service_category', fromJson: _parseCategory)
-      String serviceCategory,
+      String? serviceCategory,
       @JsonKey(name: 'service_details') String serviceDetails,
       String address,
-      @JsonKey(name: 'rate', fromJson: _parseRate) double? rate,
+      double? rate,
       @JsonKey(fromJson: _parseImages) List<String> images,
-      @JsonKey(fromJson: _parseDistance) double? distance});
+      double? latitude,
+      double? longitude,
+      double? distance});
 }
 
 /// @nodoc
@@ -179,11 +193,13 @@ class __$$ServiceModelImplCopyWithImpl<$Res>
     Object? vendorName = null,
     Object? phoneNumber = null,
     Object? whatsappNumber = null,
-    Object? serviceCategory = null,
+    Object? serviceCategory = freezed,
     Object? serviceDetails = null,
     Object? address = null,
     Object? rate = freezed,
     Object? images = null,
+    Object? latitude = freezed,
+    Object? longitude = freezed,
     Object? distance = freezed,
   }) {
     return _then(_$ServiceModelImpl(
@@ -203,10 +219,10 @@ class __$$ServiceModelImplCopyWithImpl<$Res>
           ? _value.whatsappNumber
           : whatsappNumber // ignore: cast_nullable_to_non_nullable
               as String,
-      serviceCategory: null == serviceCategory
+      serviceCategory: freezed == serviceCategory
           ? _value.serviceCategory
           : serviceCategory // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       serviceDetails: null == serviceDetails
           ? _value.serviceDetails
           : serviceDetails // ignore: cast_nullable_to_non_nullable
@@ -223,6 +239,14 @@ class __$$ServiceModelImplCopyWithImpl<$Res>
           ? _value.images
           : images // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      latitude: freezed == latitude
+          ? _value.latitude
+          : latitude // ignore: cast_nullable_to_non_nullable
+              as double?,
+      longitude: freezed == longitude
+          ? _value.longitude
+          : longitude // ignore: cast_nullable_to_non_nullable
+              as double?,
       distance: freezed == distance
           ? _value.distance
           : distance // ignore: cast_nullable_to_non_nullable
@@ -240,12 +264,14 @@ class _$ServiceModelImpl implements _ServiceModel {
       @JsonKey(name: 'phone_number') required this.phoneNumber,
       @JsonKey(name: 'whatsapp_number') required this.whatsappNumber,
       @JsonKey(name: 'service_category', fromJson: _parseCategory)
-      this.serviceCategory = '',
+      this.serviceCategory,
       @JsonKey(name: 'service_details') required this.serviceDetails,
       required this.address,
-      @JsonKey(name: 'rate', fromJson: _parseRate) this.rate,
+      this.rate,
       @JsonKey(fromJson: _parseImages) this.images = const [],
-      @JsonKey(fromJson: _parseDistance) this.distance});
+      this.latitude,
+      this.longitude,
+      this.distance});
 
   factory _$ServiceModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$ServiceModelImplFromJson(json);
@@ -263,25 +289,27 @@ class _$ServiceModelImpl implements _ServiceModel {
   final String whatsappNumber;
   @override
   @JsonKey(name: 'service_category', fromJson: _parseCategory)
-  final String serviceCategory;
+  final String? serviceCategory;
   @override
   @JsonKey(name: 'service_details')
   final String serviceDetails;
   @override
   final String address;
   @override
-  @JsonKey(name: 'rate', fromJson: _parseRate)
   final double? rate;
   @override
   @JsonKey(fromJson: _parseImages)
   final List<String> images;
   @override
-  @JsonKey(fromJson: _parseDistance)
+  final double? latitude;
+  @override
+  final double? longitude;
+  @override
   final double? distance;
 
   @override
   String toString() {
-    return 'ServiceModel(id: $id, vendorName: $vendorName, phoneNumber: $phoneNumber, whatsappNumber: $whatsappNumber, serviceCategory: $serviceCategory, serviceDetails: $serviceDetails, address: $address, rate: $rate, images: $images, distance: $distance)';
+    return 'ServiceModel(id: $id, vendorName: $vendorName, phoneNumber: $phoneNumber, whatsappNumber: $whatsappNumber, serviceCategory: $serviceCategory, serviceDetails: $serviceDetails, address: $address, rate: $rate, images: $images, latitude: $latitude, longitude: $longitude, distance: $distance)';
   }
 
   @override
@@ -303,6 +331,10 @@ class _$ServiceModelImpl implements _ServiceModel {
             (identical(other.address, address) || other.address == address) &&
             (identical(other.rate, rate) || other.rate == rate) &&
             const DeepCollectionEquality().equals(other.images, images) &&
+            (identical(other.latitude, latitude) ||
+                other.latitude == latitude) &&
+            (identical(other.longitude, longitude) ||
+                other.longitude == longitude) &&
             (identical(other.distance, distance) ||
                 other.distance == distance));
   }
@@ -320,6 +352,8 @@ class _$ServiceModelImpl implements _ServiceModel {
       address,
       rate,
       const DeepCollectionEquality().hash(images),
+      latitude,
+      longitude,
       distance);
 
   /// Create a copy of ServiceModel
@@ -345,12 +379,13 @@ abstract class _ServiceModel implements ServiceModel {
       @JsonKey(name: 'phone_number') required final String phoneNumber,
       @JsonKey(name: 'whatsapp_number') required final String whatsappNumber,
       @JsonKey(name: 'service_category', fromJson: _parseCategory)
-      final String serviceCategory,
+      final String? serviceCategory,
       @JsonKey(name: 'service_details') required final String serviceDetails,
       required final String address,
-      @JsonKey(name: 'rate', fromJson: _parseRate) final double? rate,
+      final double? rate,
       @JsonKey(fromJson: _parseImages) final List<String> images,
-      @JsonKey(fromJson: _parseDistance)
+      final double? latitude,
+      final double? longitude,
       final double? distance}) = _$ServiceModelImpl;
 
   factory _ServiceModel.fromJson(Map<String, dynamic> json) =
@@ -369,20 +404,22 @@ abstract class _ServiceModel implements ServiceModel {
   String get whatsappNumber;
   @override
   @JsonKey(name: 'service_category', fromJson: _parseCategory)
-  String get serviceCategory;
+  String? get serviceCategory;
   @override
   @JsonKey(name: 'service_details')
   String get serviceDetails;
   @override
   String get address;
   @override
-  @JsonKey(name: 'rate', fromJson: _parseRate)
   double? get rate;
   @override
   @JsonKey(fromJson: _parseImages)
   List<String> get images;
   @override
-  @JsonKey(fromJson: _parseDistance)
+  double? get latitude;
+  @override
+  double? get longitude;
+  @override
   double? get distance;
 
   /// Create a copy of ServiceModel
