@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:hand_car/features/car_service/controller/rating/service_rating_controller.dart';
-import 'package:hand_car/features/car_service/view/widgets/review/bottom_sheet_for_write_review_widget.dart';
+import 'package:hand_car/features/car_service/view/widgets/rating/rating_dialoag.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+
 
 
 
@@ -68,13 +70,9 @@ class ServiceReviewWidget extends ConsumerWidget {
                   minimumSize: Size.zero,
                 ),
                 onPressed: () {
-                  showModalBottomSheet(
-                    isScrollControlled: true,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                    ),
+                  showDialog(
                     context: context,
-                    builder: (context) => BottomSheetForWriteReviewWidget(
+                    builder: (context) => RatingDialogWidget(
                       serviceId: serviceId,
                       serviceName: serviceName,
                     ),
