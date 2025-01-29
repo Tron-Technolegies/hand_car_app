@@ -32,6 +32,7 @@ mixin _$ServiceModel {
   @JsonKey(name: 'service_details')
   String get serviceDetails => throw _privateConstructorUsedError;
   String get address => throw _privateConstructorUsedError;
+  @JsonKey(name: 'rate', fromJson: _parseRate)
   double? get rate => throw _privateConstructorUsedError;
   @JsonKey(fromJson: _parseImages)
   List<String> get images => throw _privateConstructorUsedError;
@@ -64,7 +65,7 @@ abstract class $ServiceModelCopyWith<$Res> {
       String? serviceCategory,
       @JsonKey(name: 'service_details') String serviceDetails,
       String address,
-      double? rate,
+      @JsonKey(name: 'rate', fromJson: _parseRate) double? rate,
       @JsonKey(fromJson: _parseImages) List<String> images,
       double? latitude,
       double? longitude,
@@ -169,7 +170,7 @@ abstract class _$$ServiceModelImplCopyWith<$Res>
       String? serviceCategory,
       @JsonKey(name: 'service_details') String serviceDetails,
       String address,
-      double? rate,
+      @JsonKey(name: 'rate', fromJson: _parseRate) double? rate,
       @JsonKey(fromJson: _parseImages) List<String> images,
       double? latitude,
       double? longitude,
@@ -257,21 +258,22 @@ class __$$ServiceModelImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$ServiceModelImpl implements _ServiceModel {
+class _$ServiceModelImpl extends _ServiceModel {
   const _$ServiceModelImpl(
       {required this.id,
       @JsonKey(name: 'vendor_name') required this.vendorName,
-      @JsonKey(name: 'phone_number') required this.phoneNumber,
-      @JsonKey(name: 'whatsapp_number') required this.whatsappNumber,
+      @JsonKey(name: 'phone_number') this.phoneNumber = '',
+      @JsonKey(name: 'whatsapp_number') this.whatsappNumber = '',
       @JsonKey(name: 'service_category', fromJson: _parseCategory)
       this.serviceCategory,
-      @JsonKey(name: 'service_details') required this.serviceDetails,
-      required this.address,
-      this.rate,
+      @JsonKey(name: 'service_details') this.serviceDetails = '',
+      this.address = '',
+      @JsonKey(name: 'rate', fromJson: _parseRate) this.rate,
       @JsonKey(fromJson: _parseImages) this.images = const [],
       this.latitude,
       this.longitude,
-      this.distance});
+      this.distance})
+      : super._();
 
   factory _$ServiceModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$ServiceModelImplFromJson(json);
@@ -294,8 +296,10 @@ class _$ServiceModelImpl implements _ServiceModel {
   @JsonKey(name: 'service_details')
   final String serviceDetails;
   @override
+  @JsonKey()
   final String address;
   @override
+  @JsonKey(name: 'rate', fromJson: _parseRate)
   final double? rate;
   @override
   @JsonKey(fromJson: _parseImages)
@@ -372,21 +376,22 @@ class _$ServiceModelImpl implements _ServiceModel {
   }
 }
 
-abstract class _ServiceModel implements ServiceModel {
+abstract class _ServiceModel extends ServiceModel {
   const factory _ServiceModel(
       {required final int id,
       @JsonKey(name: 'vendor_name') required final String vendorName,
-      @JsonKey(name: 'phone_number') required final String phoneNumber,
-      @JsonKey(name: 'whatsapp_number') required final String whatsappNumber,
+      @JsonKey(name: 'phone_number') final String phoneNumber,
+      @JsonKey(name: 'whatsapp_number') final String whatsappNumber,
       @JsonKey(name: 'service_category', fromJson: _parseCategory)
       final String? serviceCategory,
-      @JsonKey(name: 'service_details') required final String serviceDetails,
-      required final String address,
-      final double? rate,
+      @JsonKey(name: 'service_details') final String serviceDetails,
+      final String address,
+      @JsonKey(name: 'rate', fromJson: _parseRate) final double? rate,
       @JsonKey(fromJson: _parseImages) final List<String> images,
       final double? latitude,
       final double? longitude,
       final double? distance}) = _$ServiceModelImpl;
+  const _ServiceModel._() : super._();
 
   factory _ServiceModel.fromJson(Map<String, dynamic> json) =
       _$ServiceModelImpl.fromJson;
@@ -411,6 +416,7 @@ abstract class _ServiceModel implements ServiceModel {
   @override
   String get address;
   @override
+  @JsonKey(name: 'rate', fromJson: _parseRate)
   double? get rate;
   @override
   @JsonKey(fromJson: _parseImages)
