@@ -1,10 +1,10 @@
 import 'dart:developer';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:hand_car/core/router/user_validation.dart';
 import 'package:hand_car/features/car_service/model/rating/response/rating_response.dart';
 import 'package:hand_car/features/car_service/model/rating/review_list/review_list_model.dart';
 import 'package:hand_car/features/car_service/model/rating/service_rating.dart';
 import 'package:hand_car/features/car_service/service/review/review_service.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'service_rating_controller.g.dart';
 
@@ -19,8 +19,19 @@ class ServiceRatingController extends _$ServiceRatingController {
     return const ServiceRatingList(ratings: []);
   }
 
+  Future<void> refreshRatings() async {
+    if (_currentServiceId == null) {
+      log('Cannot refresh: no service ID available');
+      return;
+    }
+    
+    // Force refresh by temporarily clearing current ID
+    final serviceId = _currentServiceId;
+    _currentServiceId = null;
+    await fetchRatings(serviceId!);
+  }
+
   Future<void> fetchRatings(int serviceId) async {
-    // Avoid duplicate fetches for the same service
     if (_currentServiceId == serviceId && !state.isLoading) {
       return;
     }
@@ -32,7 +43,7 @@ class ServiceRatingController extends _$ServiceRatingController {
       log('Fetching ratings for service ID: $serviceId');
       final ratings = await _reviewService.getServiceRatings(serviceId);
       
-      if (!state.isLoading) return; // Check if state is still valid
+      if (!state.isLoading) return;
       
       state = AsyncValue.data(ratings);
       log('Successfully fetched ${ratings.ratings.length} ratings');
@@ -40,15 +51,6 @@ class ServiceRatingController extends _$ServiceRatingController {
       log('Error fetching ratings: $e\n$stack');
       state = AsyncValue.error(e, stack);
     }
-  }
-
-  Future<void> refreshRatings([int? serviceId]) async {
-    if (serviceId == null && _currentServiceId == null) {
-      log('Cannot refresh: no service ID available');
-      return;
-    }
-
-    await fetchRatings(serviceId ?? _currentServiceId!);
   }
 
   Future<ServiceRatingResponse> submitRating({
@@ -80,7 +82,9 @@ class ServiceRatingController extends _$ServiceRatingController {
       log('Rating submission response: $response');
 
       if (response.error == null) {
-        await fetchRatings(serviceId);
+        log('Rating submitted successfully, refreshing list...');
+        // Refresh the ratings list after successful submission
+        await refreshRatings();
       } else {
         log('Rating submission failed: ${response.error}');
         state = previousState;
@@ -90,14 +94,13 @@ class ServiceRatingController extends _$ServiceRatingController {
     } catch (error) {
       log('Error submitting rating: $error');
       state = previousState;
-      
       return ServiceRatingResponse(
         error: 'Failed to submit rating: ${error.toString()}'
       );
     }
   }
 
-  // Computed getters
+  // Getter methods for computed values
   int get totalRatings {
     return state.whenOrNull(
       data: (ratingList) => ratingList.ratings.length,
@@ -108,12 +111,10 @@ class ServiceRatingController extends _$ServiceRatingController {
     return state.whenOrNull(
       data: (ratingList) {
         if (ratingList.ratings.isEmpty) return 0.0;
-        
         final totalRating = ratingList.ratings.fold<double>(
           0.0,
           (sum, rating) => sum + rating.rating.toDouble(),
         );
-        
         return (totalRating / ratingList.ratings.length).roundToDouble();
       },
     ) ?? 0.0;
@@ -133,50 +134,4 @@ class ServiceRatingController extends _$ServiceRatingController {
       },
     ) ?? {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
   }
-
-  double getRatingPercentage(int stars) {
-    if (totalRatings == 0) return 0.0;
-    final distribution = ratingDistribution;
-    return (distribution[stars] ?? 0) / totalRatings * 100;
-  }
-
-  bool get hasRatings => totalRatings > 0;
-  
-  bool get isLoading => state.isLoading;
-  
-  String? get error => state.error?.toString();
-  
-  void clearError() {
-    if (state.hasError) {
-      state = const AsyncValue.data(ServiceRatingList(ratings: []));
-    }
-  }
-}
-
-// Service-specific provider for individual service ratings
-@riverpod
-Future<ServiceRatingList> serviceRatings(
-   ref,
-  int serviceId,
-) async {
-  final controller = ref.watch(serviceRatingControllerProvider.notifier);
-  await controller.fetchRatings(serviceId);
-  
-  return ref.watch(serviceRatingControllerProvider).valueOrNull ?? 
-         const ServiceRatingList(ratings: []);
-}
-
-// Provider for filtered ratings by vendor name
-@riverpod
-List<ServiceRating> vendorRatings(
-   ref,
-  String vendorName,
-) {
-  final ratingsState = ref.watch(serviceRatingControllerProvider);
-  
-  return ratingsState.whenOrNull(
-    data: (ratingList) => ratingList.ratings
-        .where((rating) => rating.vendorName == vendorName)
-        .toList(),
-  ) ?? [];
 }

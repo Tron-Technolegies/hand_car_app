@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/car_service/controller/rating/service_rating_controller.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -97,11 +96,6 @@ class RatingDialogWidget extends HookConsumerWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all(
-                        context.colors.primaryTxt,
-                      ),
-                    ),
                     onPressed: isSubmitting.value
                         ? null
                         : () async {
@@ -118,13 +112,16 @@ class RatingDialogWidget extends HookConsumerWidget {
 
                             try {
                               final response = await ref
-                                  .read(
-                                      serviceRatingControllerProvider.notifier)
+                                  .read(serviceRatingControllerProvider.notifier)
                                   .submitRating(
                                     serviceId: int.parse(serviceId),
                                     rating: rating.value,
                                     comment: reviewController.text,
                                   );
+                                  
+                              // Explicitly refresh the ratings list
+                              await ref.read(serviceRatingControllerProvider.notifier)
+                                  .refreshRatings();
 
                               if (response.error != null) {
                                 // Show error message if exists
@@ -141,8 +138,7 @@ class RatingDialogWidget extends HookConsumerWidget {
                                 if (context.mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                      content:
-                                          Text('Review submitted successfully'),
+                                      content: Text('Review submitted successfully'),
                                       backgroundColor: Colors.green,
                                     ),
                                   );
@@ -164,9 +160,6 @@ class RatingDialogWidget extends HookConsumerWidget {
                             }
                           },
                     child: Text(
-                      style: context.typography.bodyLargeMedium.copyWith(
-                        color: context.colors.white,
-                      ),
                       isSubmitting.value ? 'Submitting...' : 'Submit',
                     ),
                   ),
@@ -181,8 +174,7 @@ class RatingDialogWidget extends HookConsumerWidget {
 }
 
 // Helper method to show the dialog
-void showRatingDialog(
-  BuildContext context, {
+void showRatingDialog(BuildContext context, {
   required String serviceId,
   required String serviceName,
 }) {
