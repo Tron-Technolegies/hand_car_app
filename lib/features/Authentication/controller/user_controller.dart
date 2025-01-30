@@ -17,6 +17,10 @@ class UserDataProvider extends _$UserDataProvider {
       return null;
     }
   }
+  Future<void> updateUserData(UserModel newData) async {
+    state = const AsyncLoading();
+    state = AsyncData(newData);
+  }
 
   // Method to refresh user data
   Future<void> refresh() async {

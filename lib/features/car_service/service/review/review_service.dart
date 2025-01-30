@@ -10,6 +10,10 @@ class ReviewService {
   final _dio = Dio(BaseOptions(
     baseUrl: baseUrl,
     validateStatus: (status) => status! < 500,
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
   ));
   final _tokenStorage = TokenStorage();
 
@@ -22,28 +26,35 @@ class ReviewService {
         throw Exception('No access token found');
       }
 
-      // Set cookies for authentication
+      // Set both cookie and Authorization header
       _dio.options.headers['Cookie'] = _buildCookieHeader(
         accessToken: accessToken,
         refreshToken: refreshToken,
       );
+      _dio.options.headers['Authorization'] = 'Bearer $accessToken';
 
-      return await request();
-    } on DioException catch (e) {
-      log('DioException in _makeAuthenticatedRequest: ${e.message}');
-      if (e.response?.statusCode == 401 || 
-          e.response?.data?['detail']?.toString().contains('token') == true) {
-        if (await _handleTokenExpiration()) {
-          // Retry with new token
-          return await request();
+      try {
+        return await request();
+      } on DioException catch (e) {
+        if (_isTokenExpiredError(e)) {
+          log('Token expired, attempting refresh...');
+          if (await _handleTokenExpiration()) {
+            // Retry with new token
+            return await request();
+          }
         }
-        throw Exception('Session expired, please login again');
+        rethrow;
       }
-      throw Exception(e.response?.data?['error']?.toString() ?? 'Request failed: ${e.message}');
     } catch (e) {
       log('Error in _makeAuthenticatedRequest: $e');
-      throw Exception('An unexpected error occurred');
+      rethrow;
     }
+  }
+
+  bool _isTokenExpiredError(DioException e) {
+    return e.response?.statusCode == 401 || 
+           e.response?.data?['detail']?.toString().toLowerCase().contains('expired') == true ||
+           e.response?.data?['detail']?.toString().contains('Authentication token not found') == true;
   }
 
   String _buildCookieHeader({
@@ -59,43 +70,50 @@ class ReviewService {
   }
 
   Future<bool> _handleTokenExpiration() async {
-    final refreshToken = _tokenStorage.getRefreshToken();
-    if (refreshToken == null) {
-      await _tokenStorage.clearTokens();
-      return false;
-    }
-
     try {
+      final refreshToken = _tokenStorage.getRefreshToken();
+      if (refreshToken == null) {
+        log('No refresh token available');
+        await _tokenStorage.clearTokens();
+        return false;
+      }
+
+      log('Attempting token refresh');
       final response = await _dio.post(
-        '/api/token/refresh/',
+        '/api/token/refresh',
         data: {'refresh': refreshToken},
         options: Options(
           headers: {
-            'Cookie': 'refresh_token=$refreshToken',
             'Content-Type': 'application/json',
           },
         ),
       );
 
-      if (response.statusCode == 200) {
+      log('Refresh token response: ${response.data}');
+
+      if (response.statusCode == 200 && response.data['access'] != null) {
         final newAccessToken = response.data['access'];
         await _tokenStorage.saveTokens(
           accessToken: newAccessToken,
           refreshToken: refreshToken,
         );
         
-        // Update cookie with new token
+        // Update headers
         _dio.options.headers['Cookie'] = _buildCookieHeader(
           accessToken: newAccessToken,
           refreshToken: refreshToken,
         );
+        _dio.options.headers['Authorization'] = 'Bearer $newAccessToken';
+        
+        log('Token refreshed successfully');
         return true;
       }
       
+      log('Token refresh failed with status: ${response.statusCode}');
       await _tokenStorage.clearTokens();
       return false;
     } catch (e) {
-      log('Token refresh failed: $e');
+      log('Error during token refresh: $e');
       await _tokenStorage.clearTokens();
       return false;
     }
@@ -112,27 +130,22 @@ class ReviewService {
           'rating': rating.rating,
           if (rating.comment?.isNotEmpty ?? false) 'comment': rating.comment,
         },
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-          validateStatus: (status) => true, // Allow all status codes for proper error handling
-        ),
       );
       
       log('Add rating response: ${response.data}');
       
-      // Check for authentication errors
-      if (response.data?['detail']?.toString().contains('token') == true) {
-        return ServiceRatingResponse(
-          error: 'Authentication failed. Please login again.'
-        );
-      }
-      
       if (response.statusCode == 201 || response.statusCode == 200) {
         return ServiceRatingResponse(
           message: response.data['message'] ?? 'Rating added successfully'
+        );
+      }
+      
+      if (_isTokenExpiredError(DioException(
+        requestOptions: response.requestOptions,
+        response: response,
+      ))) {
+        return ServiceRatingResponse(
+          error: 'Session expired. Please login again.'
         );
       }
       
@@ -141,19 +154,16 @@ class ReviewService {
       );
     });
   }
+
   Future<ServiceRatingList> getServiceRatings(int serviceId) async {
-  
+    return _makeAuthenticatedRequest(() async {
+      log('Fetching ratings for service ID: $serviceId');
+
       final response = await _dio.get(
         '/view_service_rating',
         queryParameters: {
           'service_id': serviceId.toString(),
         },
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-        ),
       );
 
       log('API Response Status Code: ${response.statusCode}');
@@ -167,18 +177,15 @@ class ReviewService {
       if (response.statusCode == 200) {
         try {
           final ratingsList = ServiceRatingList.fromJson(response.data);
-          log('Successfully parsed ratings list');
-          log('Number of ratings: ${ratingsList.ratings.length}');
+          log('Successfully parsed ratings list: ${ratingsList.ratings.length} ratings');
           return ratingsList;
         } catch (e) {
           log('Error parsing ratings list: $e');
-          rethrow;
+          throw Exception('Failed to parse ratings data: $e');
         }
       }
 
       throw Exception(response.data['error'] ?? 'Failed to fetch ratings');
-    
+    });
   }
-
-
 }

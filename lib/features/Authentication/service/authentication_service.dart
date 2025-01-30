@@ -266,36 +266,46 @@ class ApiServiceAuthentication {
   Future<UserModel> updateUserProfile(UserModel updatedProfile) async {
     return _withRetry(() async {
       try {
-        final formData = FormData.fromMap({
-          'first_name': updatedProfile.name.split(' ').first,
-          'last_name': updatedProfile.name.split(' ').length > 1
-              ? updatedProfile.name.split(' ').skip(1).join(' ')
-              : '',
-          'email': updatedProfile.email,
-          if (updatedProfile.profileImage != null)
-            'profile_image':
-                await MultipartFile.fromFile(updatedProfile.profileImage!),
-        });
+        // Split the name into first and last name
+        final names = updatedProfile.name.split(' ');
+        final firstName = names.first;
+        final lastName = names.length > 1 ? names.sublist(1).join(' ') : '';
 
         final response = await dio.post(
-          '/edit-user-profile/',
-          data: formData,
+          '/Edit_UserProfile_By_user',  // Updated endpoint URL
+          data: {
+            'first_name': firstName,
+            'last_name': lastName,
+            'email': updatedProfile.email,
+          },
           options: Options(
-            contentType: 'multipart/form-data',
-            headers: {'Accept': 'application/json'},
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
           ),
         );
 
+        log('Update profile response: ${response.data}');
+
         if (response.statusCode == 200) {
-          return UserModel.fromJson(response.data['user']);
+          // Convert the backend response to UserModel format
+          return UserModel(
+            name: '${response.data['user']['first_name']} ${response.data['user']['last_name']}'.trim(),
+            email: response.data['user']['email'],
+            phone: updatedProfile.phone, // Maintain existing phone number as it's not updated
+            address: updatedProfile.address, // Maintain existing address
+          );
         } else {
           throw Exception(response.data['error'] ?? 'Profile update failed');
         }
       } on DioException catch (e) {
+        _logDioError(e);
         throw Exception(_handleDioError(e));
       }
     });
   }
+
 
   Future<void> requestPasswordReset(String email) async {
     return _withRetry(() async {
