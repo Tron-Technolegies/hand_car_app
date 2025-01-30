@@ -23,6 +23,7 @@ class ApiServiceAuthentication {
             connectTimeout: const Duration(seconds: 30),
             receiveTimeout: const Duration(seconds: 30),
             sendTimeout: const Duration(seconds: 30),
+            validateStatus: (status) => true,
           ),
         ),
         _tokenStorage = TokenStorage() {
@@ -33,116 +34,134 @@ class ApiServiceAuthentication {
     dio.interceptors.clear();
     dio.interceptors.add(
       InterceptorsWrapper(
-        onRequest: _handleRequest,
-        onError: _handleError,
+        onRequest: (options, handler) async {
+          final token = _tokenStorage.getAccessToken();
+          if (token != null && token.isNotEmpty) {
+            // Set both cookie and Authorization header
+            options.headers['Cookie'] = 'access_token=$token';
+            options.headers['Authorization'] = 'Bearer $token';
+          }
+          return handler.next(options);
+        },
+        onResponse: (response, handler) async {
+          // Extract tokens from cookies if present
+          String? accessToken =
+              _extractCookie(response.headers['set-cookie'], 'access_token');
+          String? refreshToken =
+              _extractCookie(response.headers['set-cookie'], 'refresh_token');
+
+          if (accessToken != null && refreshToken != null) {
+            await _tokenStorage.saveTokens(
+              accessToken: accessToken,
+              refreshToken: refreshToken,
+            );
+          }
+          return handler.next(response);
+        },
+        onError: (error, handler) async {
+          if (error.response?.statusCode == 401) {
+            try {
+              await _refreshToken();
+              final newToken = _tokenStorage.getAccessToken();
+              if (newToken != null) {
+                error.requestOptions.headers['Cookie'] =
+                    'access_token=$newToken';
+                error.requestOptions.headers['Authorization'] =
+                    'Bearer $newToken';
+                final response = await dio.fetch(error.requestOptions);
+                return handler.resolve(response);
+              }
+            } catch (e) {
+              log('Token refresh failed: $e');
+              await _handleLogout();
+            }
+          }
+          return handler.next(error);
+        },
       ),
     );
   }
 
-  void _handleRequest(
-    RequestOptions options,
-    RequestInterceptorHandler handler,
-  ) async {
+  String? _extractCookie(List<String>? cookies, String key) {
+    if (cookies == null) return null;
+    for (var cookie in cookies) {
+      if (cookie.contains(key)) {
+        final match = RegExp('$key=([^;]*)').firstMatch(cookie);
+        if (match != null) {
+          return match.group(1);
+        }
+      }
+    }
+    return null;
+  }
+
+  Future<UserModel> getCurrentUser() async {
     try {
       final token = _tokenStorage.getAccessToken();
-      if (token != null && token.isNotEmpty) {
-        options.headers['Authorization'] = 'Bearer $token';
+      if (token == null) {
+        throw Exception('No access token available');
       }
-      return handler.next(options);
-    } catch (e) {
-      return handler.reject(
-        DioException(
-          requestOptions: options,
-          error: 'Failed to get access token',
+
+      final response = await dio.get(
+        '/get_logged_in_user',
+        options: Options(
+          headers: {
+            'Cookie': 'access_token=$token',
+            'Authorization': 'Bearer $token',
+            'Accept': 'application/json',
+          },
+          validateStatus: (status) => true,
         ),
       );
-    }
-  }
 
-  Future<void> _handleError(
-    DioException error,
-    ErrorInterceptorHandler handler,
-  ) async {
-    if (error.response?.statusCode == 401) {
-      try {
-        await _refreshToken();
-        final newToken = _tokenStorage.getAccessToken();
-        if (newToken == null) throw Exception('No access token after refresh');
+      log('User data response: ${response.data}');
 
-        final response = await _retryRequest(error.requestOptions, newToken);
-        return handler.resolve(response);
-      } catch (e) {
-        log('Token refresh failed: $e');
-        await _handleLogout();
-        return handler.reject(error);
+      if (response.statusCode == 200) {
+        return UserModel(
+          name: '${response.data['first_name']} ${response.data['last_name']}'
+              .trim(),
+          email: response.data['email'] ?? '',
+          phone: response.data['phone'] ?? '',
+          address: response.data['address'],
+          profileImage: response.data['profile_image'],
+        );
       }
+
+      throw Exception(response.data['detail'] ?? 'Failed to get user details');
+    } on DioException catch (e) {
+      _logDioError(e);
+      throw Exception(_handleDioError(e));
     }
-    return handler.next(error);
-  }
-
-  Future<T> _withRetry<T>(Future<T> Function() apiCall) async {
-    int attempts = 0;
-    Duration delay = const Duration(seconds: 2);
-    const maxAttempts = 3;
-
-    while (attempts < maxAttempts) {
-      try {
-        return await apiCall();
-      } on DioException catch (e) {
-        attempts++;
-        if (attempts == maxAttempts ||
-            !(e.type == DioExceptionType.receiveTimeout ||
-                e.type == DioExceptionType.connectionTimeout ||
-                e.type == DioExceptionType.sendTimeout)) {
-          rethrow;
-        }
-        log('Retry attempt $attempts after ${delay.inSeconds}s delay');
-        await Future.delayed(delay);
-        delay *= 2; // Exponential backoff
-      }
-    }
-    throw Exception('Failed after $maxAttempts attempts');
-  }
-
-  Future<Response<dynamic>> _retryRequest(
-    RequestOptions requestOptions,
-    String newToken,
-  ) async {
-    final options = Options(
-      method: requestOptions.method,
-      headers: {
-        ...requestOptions.headers,
-        'Authorization': 'Bearer $newToken',
-      },
-    );
-
-    return await dio.request(
-      requestOptions.path,
-      options: options,
-      data: requestOptions.data,
-      queryParameters: requestOptions.queryParameters,
-    );
   }
 
   Future<void> _refreshToken() async {
-    final refreshToken = _tokenStorage.getRefreshToken();
-    if (refreshToken == null || refreshToken.isEmpty) {
-      throw Exception('No refresh token available');
-    }
-
     try {
+      final refreshToken = _tokenStorage.getRefreshToken();
+      if (refreshToken == null) {
+        throw Exception('No refresh token available');
+      }
+
       final response = await dio.post(
-        'api/token/refresh/',
-        data: {'refresh_token': refreshToken},
+        '/api/token/refresh',
+        data: {'refresh': refreshToken},
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Cookie': 'refresh_token=$refreshToken',
+          },
+        ),
       );
 
       if (response.statusCode == 200) {
-        log(refreshToken);
-        final authModel = AuthModel.fromJson(response.data);
-        await _tokenStorage.saveTokens(
-          accessToken: authModel.accessToken,
-          refreshToken: authModel.refreshToken,
-        );
+        final accessToken = response.data['access'];
+        if (accessToken != null) {
+          await _tokenStorage.saveTokens(
+            accessToken: accessToken,
+            refreshToken: refreshToken, // Keep existing refresh token
+          );
+        } else {
+          throw Exception('Invalid token refresh response');
+        }
       } else {
         throw Exception('Token refresh failed');
       }
@@ -172,6 +191,7 @@ class ApiServiceAuthentication {
             headers: {'Accept': 'application/json'},
             receiveTimeout: const Duration(seconds: 45),
             sendTimeout: const Duration(seconds: 45),
+            validateStatus: (status) => true,
           ),
         );
 
@@ -196,36 +216,6 @@ class ApiServiceAuthentication {
       }
     });
   }
-  Future<UserModel> getCurrentUser() async {
-    return _withRetry(() async {
-      try {
-        final response = await dio.get(
-          '/get_logged_in_user',
-          options: Options(
-            headers: {
-              'Accept': 'application/json',
-            },
-          ),
-        );
-
-        if (response.statusCode == 200) {
-          // Convert the backend response to match UserModel structure
-          return UserModel(
-            name: '${response.data['first_name']} ${response.data['last_name']}'.trim(),
-            email: response.data['email'] ?? '',
-            phone: response.data['phone'] ?? '',
-            address: response.data['address'],
-            profileImage: response.data['profile_image'],
-          );
-        } else {
-          throw Exception(response.data['error'] ?? 'Failed to get user details');
-        }
-      } on DioException catch (e) {
-        _logDioError(e);
-        throw Exception(_handleDioError(e));
-      }
-    });
-  }
 
   void _logDioError(DioException e) {
     log('DIO ERROR DETAILS:');
@@ -242,7 +232,7 @@ class ApiServiceAuthentication {
       final token = _tokenStorage.getAccessToken();
       if (token != null) {
         await _withRetry(() => dio.post(
-              '/Logout',
+              '/Logout/',
               options: Options(headers: {'Authorization': 'Bearer $token'}),
             ));
       }
@@ -261,7 +251,7 @@ class ApiServiceAuthentication {
   Future<String> signUp(UserModel user) async {
     return _withRetry(() async {
       final response = await dio.post(
-        '/signup',
+        '/signup/',
         data: user.toJson(),
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
@@ -288,7 +278,7 @@ class ApiServiceAuthentication {
         });
 
         final response = await dio.post(
-          '/edit-user-profile',
+          '/edit-user-profile/',
           data: formData,
           options: Options(
             contentType: 'multipart/form-data',
@@ -310,7 +300,7 @@ class ApiServiceAuthentication {
   Future<void> requestPasswordReset(String email) async {
     return _withRetry(() async {
       final response = await dio.post(
-        '/forgot_password',
+        '/forgot_password/',
         data: {'email': email},
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
@@ -325,7 +315,7 @@ class ApiServiceAuthentication {
       String uid, String token, String newPassword) async {
     return _withRetry(() async {
       final response = await dio.post(
-        '/reset_password/$uid/$token',
+        '/reset_password/$uid/$token/',
         data: {'new_password': newPassword},
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
@@ -372,6 +362,30 @@ class ApiServiceAuthentication {
         throw Exception(response.data['error'] ?? 'OTP verification failed');
       }
     });
+  }
+
+  Future<T> _withRetry<T>(Future<T> Function() apiCall) async {
+    int attempts = 0;
+    Duration delay = const Duration(seconds: 2);
+    const maxAttempts = 3;
+
+    while (attempts < maxAttempts) {
+      try {
+        return await apiCall();
+      } on DioException catch (e) {
+        attempts++;
+        if (attempts == maxAttempts ||
+            !(e.type == DioExceptionType.receiveTimeout ||
+                e.type == DioExceptionType.connectionTimeout ||
+                e.type == DioExceptionType.sendTimeout)) {
+          rethrow;
+        }
+        log('Retry attempt $attempts after ${delay.inSeconds}s delay');
+        await Future.delayed(delay);
+        delay *= 2;
+      }
+    }
+    throw Exception('Failed after $maxAttempts attempts');
   }
 
   String _handleDioError(DioException e) {

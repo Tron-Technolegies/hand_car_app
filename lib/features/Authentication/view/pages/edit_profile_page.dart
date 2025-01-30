@@ -10,7 +10,7 @@ import 'package:hand_car/features/Authentication/view/widgets/user_info_edit_fie
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class EditProfileScreen extends HookConsumerWidget {
-   static String route = '/edit-profile';
+  static String route = '/edit-profile';
   const EditProfileScreen({super.key});
 
   @override
@@ -33,8 +33,6 @@ class EditProfileScreen extends HookConsumerWidget {
         // You might need to adjust this based on your actual data structure
         nameController.text = "Current Name"; // Replace with actual user data
         emailController.text = "Current Email";
-        phoneController.text = "Current Phone";
-        addressController.text = "Current Address";
       }
       return null;
     }, [authState]);
@@ -48,8 +46,6 @@ class EditProfileScreen extends HookConsumerWidget {
                   name: nameController.text,
                   email: emailController.text,
                   phone: phoneController.text,
-                  password: "", // Add empty password or handle as needed
-                  address: addressController.text,
                 ),
               );
           if (context.mounted) {
@@ -84,121 +80,101 @@ class EditProfileScreen extends HookConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Form(
             key: formKey,
-            child: Column(
-              children: [
-                ProfilePic(
-                  image: image?.path ?? "default_image_url",
-                  imageUploadBtnPress: () {
-                    ref.read(imagePickerProvider.notifier).pickImage();
-                  },
-                ),
-                const Divider(),
-                UserInfoEditField(
-                  text: "Name",
-                  child: TextFormField(
-                    controller: nameController,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: context.colors.primaryTxt.withValues(alpha:0.05),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 24.0,
-                        vertical: 16.0,
-                      ),
-                      border: const OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.all(Radius.circular(50)),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value?.isEmpty ?? true) {
-                        return 'Please enter your name';
-                      }
-                      return null;
+            child: Center(
+              child: Column(
+                children: [
+                  ProfilePic(
+                    image: image?.path ?? "default_image_url",
+                    imageUploadBtnPress: () {
+                      ref.read(imagePickerProvider.notifier).pickImage();
                     },
                   ),
-                ),
-                UserInfoEditField(
-                  text: "Email",
-                  child: TextFormField(
-                    controller: emailController,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: context.colors.primaryTxt.withValues(alpha:0.05),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 24.0,
-                        vertical: 16.0,
+                  const Divider(),
+                  UserInfoEditField(
+                    text: "Name",
+                    child: TextFormField(
+                      controller: nameController,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor:
+                            context.colors.primaryTxt.withValues(alpha: 0.05),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 24.0,
+                          vertical: 16.0,
+                        ),
+                        border: const OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                        ),
                       ),
-                      border: const OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.all(Radius.circular(50)),
-                      ),
+                      validator: (value) {
+                        if (value?.isEmpty ?? true) {
+                          return 'Please enter your name';
+                        }
+                        return null;
+                      },
                     ),
-                    validator: (value) {
-                      if (value?.isEmpty ?? true) {
-                        return 'Please enter your email';
-                      }
-                      return null;
-                    },
                   ),
-                ),
-                UserInfoEditField(
-                  text: "Phone",
-                  child: TextFormField(
-                    controller: phoneController,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: context.colors.primaryTxt.withValues(alpha:0.05),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 24.0,
-                        vertical: 16.0,
+                  UserInfoEditField(
+                    text: "Email",
+                    child: TextFormField(
+                      controller: emailController,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor:
+                            context.colors.primaryTxt.withValues(alpha: 0.05),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 24.0,
+                          vertical: 16.0,
+                        ),
+                        border: const OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                        ),
                       ),
-                      border: const OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.all(Radius.circular(50)),
-                      ),
+                      validator: (value) {
+                        if (value?.isEmpty ?? true) {
+                          return 'Please enter your email';
+                        }
+                        return null;
+                      },
                     ),
-                    validator: (value) {
-                      if (value?.isEmpty ?? true) {
-                        return 'Please enter your phone number';
-                      }
-                      return null;
-                    },
                   ),
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () => context.pop(),
-                      child: Text(
-                        'Cancel',
-                        style: TextStyle(color: context.colors.primaryTxt),
+                  const SizedBox(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => context.pop(),
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(color: context.colors.primaryTxt),
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    ElevatedButton(
-                      onPressed: isLoading.value ? null : handleSubmit,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: context.colors.primary,
-                        foregroundColor: Colors.white,
-                        minimumSize: const Size(120, 48),
-                        shape: const StadiumBorder(),
+                      const SizedBox(width: 16),
+                      ElevatedButton(
+                        onPressed: isLoading.value ? null : handleSubmit,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: context.colors.primary,
+                          foregroundColor: Colors.white,
+                          minimumSize: const Size(120, 48),
+                          shape: const StadiumBorder(),
+                        ),
+                        child: isLoading.value
+                            ? const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Text('Save'),
                       ),
-                      child: isLoading.value
-                          ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
-                              ),
-                            )
-                          : const Text('Save'),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

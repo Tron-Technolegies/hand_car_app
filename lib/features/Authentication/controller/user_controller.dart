@@ -1,18 +1,40 @@
+import 'package:hand_car/features/Authentication/service/authentication_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:hand_car/features/Authentication/model/user_model.dart';
 
 part 'user_controller.g.dart';
 
+
+
 @riverpod
-class UserController extends _$UserController {
+class UserDataProvider extends _$UserDataProvider {
   @override
-  UserModel? build() => null;
-
-  void setUser(UserModel user) {
-    state = user;
+  Future<UserModel?> build() async {
+    try {
+      final authService = ref.read(apiServiceProvider);
+      return await authService.getCurrentUser();
+    } catch (e) {
+      return null;
+    }
   }
 
-  void clearUser() {
-    state = null;
+  // Method to refresh user data
+  Future<void> refresh() async {
+    state = const AsyncValue.loading();
+    try {
+      final authService = ref.read(apiServiceProvider);
+      final user = await authService.getCurrentUser();
+      state = AsyncValue.data(user);
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    }
   }
+}
+
+// Simple provider just for user name
+@riverpod
+String? userName( ref) {
+  return ref.watch(userDataProviderProvider).whenOrNull(
+    data: (user) => user?.name,
+  );
 }

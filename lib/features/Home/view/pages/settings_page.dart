@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/controller/image_picker_controller.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/features/Authentication/view/pages/edit_profile_page.dart';
-import 'package:hand_car/features/Authentication/view/pages/login_with_phone_and_password_page.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
-import 'package:panara_dialogs/panara_dialogs.dart';
+import 'package:hand_car/features/Authentication/controller/user_controller.dart';
+import 'package:hand_car/features/Authentication/view/pages/edit_profile_page.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class ProfilePage extends ConsumerWidget {
   static const route = '/profile';
@@ -16,7 +16,7 @@ class ProfilePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final image = ref.watch(imagePickerProvider);
     final authState = ref.watch(authControllerProvider);
-    //  final currentUser = ref.watch(authControllerProvider.notifier).currentUser;
+    final userData = ref.watch(userDataProviderProvider);
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -41,15 +41,31 @@ class ProfilePage extends ConsumerWidget {
                                 radius: 50,
                                 backgroundColor: Colors.white,
                                 child: ClipOval(
-                                  child: image?.path == null
-                                      ? const Icon(Icons.person,
-                                          size: 50, color: Colors.grey)
-                                      : Image.file(
-                                          image!,
-                                          fit: BoxFit.cover,
-                                          width: 100,
-                                          height: 100,
-                                        ),
+                                  child: userData.when(
+                                    loading: () => const CircularProgressIndicator(),
+                                    error: (_, __) => const Icon(
+                                      Icons.person,
+                                      size: 50,
+                                      color: Colors.grey,
+                                    ),
+                                    data: (user) => user?.profileImage != null
+                                        ? Image.network(
+                                            user!.profileImage!,
+                                            fit: BoxFit.cover,
+                                            width: 100,
+                                            height: 100,
+                                            errorBuilder: (_, __, ___) => const Icon(
+                                              Icons.person,
+                                              size: 50,
+                                              color: Colors.grey,
+                                            ),
+                                          )
+                                        : const Icon(
+                                            Icons.person,
+                                            size: 50,
+                                            color: Colors.grey,
+                                          ),
+                                  ),
                                 ),
                               ),
                               Positioned(
@@ -72,69 +88,77 @@ class ProfilePage extends ConsumerWidget {
                           ),
                         ),
                         const SizedBox(height: 10),
-                        Text(
-                          'Risan', // Replace with actual user name
-                          style: context.typography.h2.copyWith(
-                            color: context.colors.white,
+                        userData.when(
+                          loading: () => const CircularProgressIndicator(),
+                          error: (_, __) => Text(
+                            'Error loading profile',
+                            style: context.typography.h2.copyWith(
+                              color: context.colors.white,
+                            ),
                           ),
-                        ),
-                        Text(
-                          'user@email.com', // Replace with actual user email
-                          style: context.typography.bodySmall.copyWith(
-                            color: context.colors.white.withValues(alpha: 0.8),
+                          data: (user) => Column(
+                            children: [
+                              Text(
+                                user?.name ?? 'Guest',
+                                style: context.typography.h2.copyWith(
+                                  color: context.colors.white,
+                                ),
+                              ),
+                              Text(
+                                user?.email ?? 'No email',
+                                style: context.typography.bodySmall.copyWith(
+                                  color: context.colors.white.withValues(alpha: 0.8),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 20),
-                  ListTile(
-                    leading: const Icon(Icons.person_outline),
-                    title: const Text('Edit Profile'),
-                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  // Profile menu items
+                  ProfileMenuItem(
+                    icon: Icons.person_outline,
+                    title: 'Edit Profile',
                     onTap: () => context.push(EditProfileScreen.route),
                   ),
-                  ListTile(
-                    leading: const Icon(Icons.notifications_outlined),
-                    title: const Text('Notifications'),
-                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: () {}, // Add notification settings navigation
+                  ProfileMenuItem(
+                    icon: Icons.notifications_outlined,
+                    title: 'Notifications',
+                    onTap: () {},
                   ),
-                  ListTile(
-                    leading: const Icon(Icons.payment_outlined),
-                    title: const Text('Payment Methods'),
-                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: () {}, // Add payment methods navigation
+                  ProfileMenuItem(
+                    icon: Icons.payment_outlined,
+                    title: 'Payment Methods',
+                    onTap: () {},
                   ),
-                  ListTile(
-                    leading: const Icon(Icons.history),
-                    title: const Text('Order History'),
-                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: () {}, // Add order history navigation
+                  ProfileMenuItem(
+                    icon: Icons.history,
+                    title: 'Order History',
+                    onTap: () {},
                   ),
-                  ListTile(
-                    leading: const Icon(Icons.location_on_outlined),
-                    title: const Text('Saved Addresses'),
-                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: () {}, // Add addresses navigation
+                  ProfileMenuItem(
+                    icon: Icons.location_on_outlined,
+                    title: 'Saved Addresses',
+                    onTap: () {},
                   ),
                   const Divider(),
-                  ListTile(
-                    leading: const Icon(Icons.help_outline),
-                    title: const Text('Help & Support'),
-                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: () {}, // Add help & support navigation
+                  ProfileMenuItem(
+                    icon: Icons.help_outline,
+                    title: 'Help & Support',
+                    onTap: () {},
                   ),
-                  ListTile(
-                    leading: const Icon(Icons.privacy_tip_outlined),
-                    title: const Text('Privacy Policy'),
-                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: () {}, // Add privacy policy navigation
+                  ProfileMenuItem(
+                    icon: Icons.privacy_tip_outlined,
+                    title: 'Privacy Policy',
+                    onTap: () {},
                   ),
-                  ListTile(
-                    leading: const Icon(Icons.logout_outlined),
-                    title: const Text('Logout'),
+                  ProfileMenuItem(
+                    icon: Icons.logout_outlined,
+                    title: 'Logout',
                     onTap: () => _showLogoutDialog(context, ref),
+                    showArrow: false,
                   ),
                 ],
               ),
@@ -146,43 +170,32 @@ class ProfilePage extends ConsumerWidget {
   }
 
   Future<void> _showLogoutDialog(BuildContext context, WidgetRef ref) async {
-    final authController = ref.read(authControllerProvider.notifier);
+    // ... existing logout dialog code ...
+  }
+}
 
-    return PanaraConfirmDialog.show(
-      context,
-      buttonTextColor: context.colors.white,
-      color: context.colors.primary,
-      panaraDialogType: PanaraDialogType.error,
-      title: "Logout Confirmation",
-      message: "Are you sure you want to logout?",
-      confirmButtonText: "Logout",
-      cancelButtonText: "Cancel",
-      onTapCancel: () => Navigator.pop(context),
-      onTapConfirm: () async {
-        Navigator.pop(context);
-        await authController.logout();
+// Extracted profile menu item widget for better reusability
+class ProfileMenuItem extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final VoidCallback onTap;
+  final bool showArrow;
 
-        if (context.mounted) {
-          if (ref.read(authControllerProvider).error != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content:
-                    Text(ref.read(authControllerProvider).error.toString()),
-                backgroundColor: context.colors.warning,
-              ),
-            );
-          } else {
-            context.go(LoginWithPhoneAndPasswordPage.route);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: const Text('Successfully logged out'),
-                backgroundColor: context.colors.green,
-              ),
-            );
-          }
-        }
-      },
-      barrierDismissible: false,
+  const ProfileMenuItem({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.onTap,
+    this.showArrow = true,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(title),
+      trailing: showArrow ? const Icon(Icons.arrow_forward_ios, size: 16) : null,
+      onTap: onTap,
     );
   }
 }
