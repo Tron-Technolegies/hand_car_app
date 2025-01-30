@@ -196,6 +196,36 @@ class ApiServiceAuthentication {
       }
     });
   }
+  Future<UserModel> getCurrentUser() async {
+    return _withRetry(() async {
+      try {
+        final response = await dio.get(
+          '/get_logged_in_user',
+          options: Options(
+            headers: {
+              'Accept': 'application/json',
+            },
+          ),
+        );
+
+        if (response.statusCode == 200) {
+          // Convert the backend response to match UserModel structure
+          return UserModel(
+            name: '${response.data['first_name']} ${response.data['last_name']}'.trim(),
+            email: response.data['email'] ?? '',
+            phone: response.data['phone'] ?? '',
+            address: response.data['address'],
+            profileImage: response.data['profile_image'],
+          );
+        } else {
+          throw Exception(response.data['error'] ?? 'Failed to get user details');
+        }
+      } on DioException catch (e) {
+        _logDioError(e);
+        throw Exception(_handleDioError(e));
+      }
+    });
+  }
 
   void _logDioError(DioException e) {
     log('DIO ERROR DETAILS:');

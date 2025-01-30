@@ -16,6 +16,7 @@ class ProfilePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final image = ref.watch(imagePickerProvider);
     final authState = ref.watch(authControllerProvider);
+    //  final currentUser = ref.watch(authControllerProvider.notifier).currentUser;
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -72,7 +73,7 @@ class ProfilePage extends ConsumerWidget {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          'Your Name', // Replace with actual user name
+                          'Risan', // Replace with actual user name
                           style: context.typography.h2.copyWith(
                             color: context.colors.white,
                           ),

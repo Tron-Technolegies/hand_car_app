@@ -24,7 +24,7 @@ class ServiceRatingController extends _$ServiceRatingController {
       log('Cannot refresh: no service ID available');
       return;
     }
-    
+
     // Force refresh by temporarily clearing current ID
     final serviceId = _currentServiceId;
     _currentServiceId = null;
@@ -42,9 +42,9 @@ class ServiceRatingController extends _$ServiceRatingController {
     try {
       log('Fetching ratings for service ID: $serviceId');
       final ratings = await _reviewService.getServiceRatings(serviceId);
-      
+
       if (!state.isLoading) return;
-      
+
       state = AsyncValue.data(ratings);
       log('Successfully fetched ${ratings.ratings.length} ratings');
     } catch (e, stack) {
@@ -62,12 +62,6 @@ class ServiceRatingController extends _$ServiceRatingController {
       return ServiceRatingResponse(error: 'Please login to continue');
     }
 
-    if (rating < 1 || rating > 5) {
-      return ServiceRatingResponse(error: 'Rating must be between 1 and 5');
-    }
-
-    final previousState = state;
-
     try {
       log('Submitting rating for service: $serviceId');
 
@@ -79,59 +73,56 @@ class ServiceRatingController extends _$ServiceRatingController {
         ),
       );
 
-      log('Rating submission response: $response');
-
       if (response.error == null) {
-        log('Rating submitted successfully, refreshing list...');
-        // Refresh the ratings list after successful submission
         await refreshRatings();
-      } else {
-        log('Rating submission failed: ${response.error}');
-        state = previousState;
       }
 
       return response;
-    } catch (error) {
-      log('Error submitting rating: $error');
-      state = previousState;
+    } catch (e) {
+      log('Error submitting rating: $e');
       return ServiceRatingResponse(
-        error: 'Failed to submit rating: ${error.toString()}'
-      );
+          error: e.toString().contains('login')
+              ? 'Please login to continue'
+              : 'Failed to submit rating. Please try again.');
     }
   }
 
   // Getter methods for computed values
   int get totalRatings {
     return state.whenOrNull(
-      data: (ratingList) => ratingList.ratings.length,
-    ) ?? 0;
+          data: (ratingList) => ratingList.ratings.length,
+        ) ??
+        0;
   }
 
   double get averageRating {
     return state.whenOrNull(
-      data: (ratingList) {
-        if (ratingList.ratings.isEmpty) return 0.0;
-        final totalRating = ratingList.ratings.fold<double>(
-          0.0,
-          (sum, rating) => sum + rating.rating.toDouble(),
-        );
-        return (totalRating / ratingList.ratings.length).roundToDouble();
-      },
-    ) ?? 0.0;
+          data: (ratingList) {
+            if (ratingList.ratings.isEmpty) return 0.0;
+            final totalRating = ratingList.ratings.fold<double>(
+              0.0,
+              (sum, rating) => sum + rating.rating.toDouble(),
+            );
+            return (totalRating / ratingList.ratings.length).roundToDouble();
+          },
+        ) ??
+        0.0;
   }
 
   Map<int, int> get ratingDistribution {
     return state.whenOrNull(
-      data: (ratingList) {
-        final distribution = <int, int>{};
-        for (var i = 1; i <= 5; i++) {
-          distribution[i] = 0;
-        }
-        for (final rating in ratingList.ratings) {
-          distribution[rating.rating] = (distribution[rating.rating] ?? 0) + 1;
-        }
-        return distribution;
-      },
-    ) ?? {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
+          data: (ratingList) {
+            final distribution = <int, int>{};
+            for (var i = 1; i <= 5; i++) {
+              distribution[i] = 0;
+            }
+            for (final rating in ratingList.ratings) {
+              distribution[rating.rating] =
+                  (distribution[rating.rating] ?? 0) + 1;
+            }
+            return distribution;
+          },
+        ) ??
+        {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
   }
 }
