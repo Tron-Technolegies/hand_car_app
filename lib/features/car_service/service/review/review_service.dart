@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
 import 'package:hand_car/core/router/user_validation.dart';
@@ -7,122 +9,168 @@ import 'package:hand_car/features/car_service/model/rating/service_rating.dart';
 import 'dart:developer';
 
 class ReviewService {
-  final _dio = Dio(BaseOptions(
-    baseUrl: baseUrl,
-    validateStatus: (status) => status! < 500,
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    },
-  ));
-  final _tokenStorage = TokenStorage();
+  final Dio _dio;
+  final TokenStorage _tokenStorage;
+  bool _isRefreshing = false;
 
-  Future<T> _makeAuthenticatedRequest<T>(Future<T> Function() request) async {
-    try {
-      final accessToken = _tokenStorage.getAccessToken();
-      final refreshToken = _tokenStorage.getRefreshToken();
-      
-      if (accessToken == null) {
-        throw Exception('No access token found');
-      }
+  ReviewService()
+      : _dio = Dio(BaseOptions(
+          baseUrl: baseUrl,
+          validateStatus: (status) => status! < 500,
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        )),
+        _tokenStorage = TokenStorage() {
+    _setupInterceptors();
+  }
 
-      // Set both cookie and Authorization header
-      _dio.options.headers['Cookie'] = _buildCookieHeader(
-        accessToken: accessToken,
-        refreshToken: refreshToken,
-      );
-      _dio.options.headers['Authorization'] = 'Bearer $accessToken';
-
-      try {
-        return await request();
-      } on DioException catch (e) {
-        if (_isTokenExpiredError(e)) {
-          log('Token expired, attempting refresh...');
-          if (await _handleTokenExpiration()) {
-            // Retry with new token
-            return await request();
+  void _setupInterceptors() {
+    _dio.interceptors.clear();
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          if (await _shouldRefreshToken()) {
+            try {
+              await _handleTokenExpiration();
+            } catch (e) {
+              return handler.reject(
+                DioException(
+                  requestOptions: options,
+                  error: 'Token refresh failed',
+                ),
+              );
+            }
           }
-        }
-        rethrow;
-      }
+
+          final accessToken = _tokenStorage.getAccessToken();
+          final refreshToken = _tokenStorage.getRefreshToken();
+
+          if (accessToken != null) {
+            options.headers['Cookie'] = _buildCookieHeader(
+              accessToken: accessToken,
+              refreshToken: refreshToken,
+            );
+            options.headers['Authorization'] = 'Bearer $accessToken';
+          }
+          return handler.next(options);
+        },
+        onError: (error, handler) async {
+          if (_isTokenExpiredError(error) && !_isRefreshing) {
+            try {
+              if (await _handleTokenExpiration()) {
+                final newToken = _tokenStorage.getAccessToken();
+                if (newToken != null) {
+                  error.requestOptions.headers['Cookie'] = _buildCookieHeader(
+                    accessToken: newToken,
+                    refreshToken: _tokenStorage.getRefreshToken(),
+                  );
+                  error.requestOptions.headers['Authorization'] =
+                      'Bearer $newToken';
+                  return handler
+                      .resolve(await _dio.fetch(error.requestOptions));
+                }
+              }
+            } catch (e) {
+              log('Token refresh error: $e');
+            }
+          }
+          return handler.next(error);
+        },
+      ),
+    );
+  }
+
+  Future<bool> _shouldRefreshToken() async {
+    if (!_tokenStorage.hasValidTokens) return false;
+
+    try {
+      final token = _tokenStorage.getAccessToken();
+      if (token == null) return true;
+
+      final parts = token.split('.');
+      if (parts.length != 3) return true;
+
+      final payload = _decodeJwtPayload(parts[1]);
+      final expiration =
+          DateTime.fromMillisecondsSinceEpoch(payload['exp'] * 1000);
+
+      return DateTime.now()
+          .isAfter(expiration.subtract(const Duration(minutes: 5)));
     } catch (e) {
-      log('Error in _makeAuthenticatedRequest: $e');
-      rethrow;
+      return true;
     }
   }
 
-  bool _isTokenExpiredError(DioException e) {
-    return e.response?.statusCode == 401 || 
-           e.response?.data?['detail']?.toString().toLowerCase().contains('expired') == true ||
-           e.response?.data?['detail']?.toString().contains('Authentication token not found') == true;
-  }
+  Map<String, dynamic> _decodeJwtPayload(String str) {
+    try {
+      String normalizedStr = str.replaceAll('-', '+').replaceAll('_', '/');
+      switch (normalizedStr.length % 4) {
+        case 0:
+          break;
+        case 2:
+          normalizedStr += '==';
+          break;
+        case 3:
+          normalizedStr += '=';
+          break;
+        default:
+          throw FormatException('Invalid base64 string');
+      }
 
-  String _buildCookieHeader({
-    required String accessToken,
-    String? refreshToken,
-  }) {
-    final cookies = [
-      'access_token=$accessToken',
-      if (refreshToken != null) 'refresh_token=$refreshToken',
-    ];
-    log('Setting cookies: ${cookies.join('; ')}');
-    return cookies.join('; ');
+      final decoded = utf8.decode(base64Url.decode(normalizedStr));
+      return Map<String, dynamic>.from(jsonDecode(decoded));
+    } catch (e) {
+      throw Exception('Failed to decode JWT payload: $e');
+    }
   }
 
   Future<bool> _handleTokenExpiration() async {
+    if (_isRefreshing) return false;
+    _isRefreshing = true;
+
     try {
       final refreshToken = _tokenStorage.getRefreshToken();
       if (refreshToken == null) {
-        log('No refresh token available');
-        await _tokenStorage.clearTokens();
-        return false;
+        throw Exception('No refresh token available');
       }
 
-      log('Attempting token refresh');
       final response = await _dio.post(
-        '/api/token/refresh',
+        '/refresh_token',
         data: {'refresh': refreshToken},
         options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: {'Content-Type': 'application/json'},
+          extra: {'withCredentials': true},
         ),
       );
 
-      log('Refresh token response: ${response.data}');
+      if (response.statusCode == 200 && response.data != null) {
+        final accessToken = response.data['access'];
+        final newRefreshToken = response.data['refresh'] ?? refreshToken;
 
-      if (response.statusCode == 200 && response.data['access'] != null) {
-        final newAccessToken = response.data['access'];
-        await _tokenStorage.saveTokens(
-          accessToken: newAccessToken,
-          refreshToken: refreshToken,
-        );
-        
-        // Update headers
-        _dio.options.headers['Cookie'] = _buildCookieHeader(
-          accessToken: newAccessToken,
-          refreshToken: refreshToken,
-        );
-        _dio.options.headers['Authorization'] = 'Bearer $newAccessToken';
-        
-        log('Token refreshed successfully');
-        return true;
+        if (accessToken != null) {
+          await _tokenStorage.saveTokens(
+            accessToken: accessToken,
+            refreshToken: newRefreshToken,
+          );
+          return true;
+        }
       }
-      
-      log('Token refresh failed with status: ${response.statusCode}');
-      await _tokenStorage.clearTokens();
       return false;
     } catch (e) {
-      log('Error during token refresh: $e');
+      log('Token refresh error: $e');
       await _tokenStorage.clearTokens();
       return false;
+    } finally {
+      _isRefreshing = false;
     }
   }
 
-  Future<ServiceRatingResponse> addServiceRating(ServiceRatingModel rating) async {
-    return _makeAuthenticatedRequest(() async {
-      log('Sending rating data: ${rating.toJson()}');
-      
+  // Existing methods with updated token handling
+  Future<ServiceRatingResponse> addServiceRating(
+      ServiceRatingModel rating) async {
+    try {
       final response = await _dio.post(
         '/add_service_rating',
         data: {
@@ -131,61 +179,64 @@ class ReviewService {
           if (rating.comment?.isNotEmpty ?? false) 'comment': rating.comment,
         },
       );
-      
-      log('Add rating response: ${response.data}');
-      
+
       if (response.statusCode == 201 || response.statusCode == 200) {
         return ServiceRatingResponse(
-          message: response.data['message'] ?? 'Rating added successfully'
-        );
+            message: response.data['message'] ?? 'Rating added successfully');
       }
-      
-      if (_isTokenExpiredError(DioException(
-        requestOptions: response.requestOptions,
-        response: response,
-      ))) {
-        return ServiceRatingResponse(
-          error: 'Session expired. Please login again.'
-        );
-      }
-      
+
       return ServiceRatingResponse(
-        error: response.data['error'] ?? response.data['detail'] ?? 'Failed to add rating'
-      );
-    });
+          error: response.data['error'] ??
+              response.data['detail'] ??
+              'Failed to add rating');
+    } catch (e) {
+      log('Add rating error: $e');
+      return ServiceRatingResponse(error: 'Failed to add rating: $e');
+    }
   }
 
   Future<ServiceRatingList> getServiceRatings(int serviceId) async {
-    return _makeAuthenticatedRequest(() async {
-      log('Fetching ratings for service ID: $serviceId');
-
+    try {
       final response = await _dio.get(
         '/view_service_rating',
-        queryParameters: {
-          'service_id': serviceId.toString(),
-        },
+        queryParameters: {'service_id': serviceId.toString()},
       );
 
-      log('API Response Status Code: ${response.statusCode}');
-      log('Raw API Response Data: ${response.data}');
-
       if (response.statusCode == 404) {
-        log('No ratings found');
         return const ServiceRatingList(ratings: []);
       }
 
       if (response.statusCode == 200) {
-        try {
-          final ratingsList = ServiceRatingList.fromJson(response.data);
-          log('Successfully parsed ratings list: ${ratingsList.ratings.length} ratings');
-          return ratingsList;
-        } catch (e) {
-          log('Error parsing ratings list: $e');
-          throw Exception('Failed to parse ratings data: $e');
-        }
+        return ServiceRatingList.fromJson(response.data);
       }
 
       throw Exception(response.data['error'] ?? 'Failed to fetch ratings');
-    });
+    } catch (e) {
+      log('Get ratings error: $e');
+      rethrow;
+    }
+  }
+
+  // Helper methods remain the same
+  String _buildCookieHeader(
+      {required String accessToken, String? refreshToken}) {
+    final cookies = [
+      'access_token=$accessToken',
+      if (refreshToken != null) 'refresh_token=$refreshToken',
+    ];
+    return cookies.join('; ');
+  }
+
+  bool _isTokenExpiredError(DioException e) {
+    return e.response?.statusCode == 401 ||
+        e.response?.data?['detail']
+                ?.toString()
+                .toLowerCase()
+                .contains('expired') ==
+            true ||
+        e.response?.data?['detail']
+                ?.toString()
+                .contains('Authentication token not found') ==
+            true;
   }
 }

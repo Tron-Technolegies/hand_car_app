@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
@@ -11,6 +12,7 @@ part 'authentication_service.g.dart';
 class ApiServiceAuthentication {
   final Dio dio;
   final TokenStorage _tokenStorage;
+  bool _isRefreshing = false;
 
   ApiServiceAuthentication()
       : dio = Dio(
@@ -18,12 +20,14 @@ class ApiServiceAuthentication {
             headers: {
               'Content-Type': 'application/json',
               'Accept': 'application/json',
+              'Cache-Control': 'no-cache',
             },
             baseUrl: baseUrl,
             connectTimeout: const Duration(seconds: 30),
             receiveTimeout: const Duration(seconds: 30),
             sendTimeout: const Duration(seconds: 30),
             validateStatus: (status) => true,
+            extra: {'withCredentials': true},
           ),
         ),
         _tokenStorage = TokenStorage() {
@@ -35,16 +39,49 @@ class ApiServiceAuthentication {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
+          // Check if token needs refresh before making request
+          if (await _shouldRefreshToken()) {
+            try {
+              await _refreshToken();
+            } catch (e) {
+              await _handleLogout();
+              return handler.reject(
+                DioException(
+                  requestOptions: options,
+                  error: 'Token refresh failed',
+                ),
+              );
+            }
+          }
+
           final token = _tokenStorage.getAccessToken();
           if (token != null && token.isNotEmpty) {
-            // Set both cookie and Authorization header
             options.headers['Cookie'] = 'access_token=$token';
             options.headers['Authorization'] = 'Bearer $token';
           }
           return handler.next(options);
         },
         onResponse: (response, handler) async {
-          // Extract tokens from cookies if present
+          if (response.statusCode == 401 &&
+              response.data?['detail']?.contains('expired') == true) {
+            try {
+              await _refreshToken();
+              final newToken = _tokenStorage.getAccessToken();
+              if (newToken != null) {
+                return handler
+                    .resolve(await _retryRequest(response.requestOptions));
+              }
+            } catch (e) {
+              await _handleLogout();
+              return handler.reject(
+                DioException(
+                  requestOptions: response.requestOptions,
+                  error: 'Token refresh failed',
+                ),
+              );
+            }
+          }
+
           String? accessToken =
               _extractCookie(response.headers['set-cookie'], 'access_token');
           String? refreshToken =
@@ -61,15 +98,13 @@ class ApiServiceAuthentication {
         onError: (error, handler) async {
           if (error.response?.statusCode == 401) {
             try {
-              await _refreshToken();
-              final newToken = _tokenStorage.getAccessToken();
-              if (newToken != null) {
-                error.requestOptions.headers['Cookie'] =
-                    'access_token=$newToken';
-                error.requestOptions.headers['Authorization'] =
-                    'Bearer $newToken';
-                final response = await dio.fetch(error.requestOptions);
-                return handler.resolve(response);
+              if (!_isRefreshing) {
+                await _refreshToken();
+                final newToken = _tokenStorage.getAccessToken();
+                if (newToken != null) {
+                  return handler
+                      .resolve(await _retryRequest(error.requestOptions));
+                }
               }
             } catch (e) {
               log('Token refresh failed: $e');
@@ -80,6 +115,121 @@ class ApiServiceAuthentication {
         },
       ),
     );
+  }
+
+  Future<Response<dynamic>> _retryRequest(RequestOptions requestOptions) async {
+    final token = _tokenStorage.getAccessToken();
+    final options = Options(
+      method: requestOptions.method,
+      headers: {
+        ...requestOptions.headers,
+        'Cookie': 'access_token=$token',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    return dio.request<dynamic>(
+      requestOptions.path,
+      data: requestOptions.data,
+      queryParameters: requestOptions.queryParameters,
+      options: options,
+    );
+  }
+
+  Future<bool> _shouldRefreshToken() async {
+    if (!_tokenStorage.hasValidTokens) return false;
+
+    try {
+      final accessToken = _tokenStorage.getAccessToken();
+      if (accessToken == null) return true;
+
+      final parts = accessToken.split('.');
+      if (parts.length != 3) return true;
+
+      final payload = _decodeJwtPayload(parts[1]);
+      final expiration =
+          DateTime.fromMillisecondsSinceEpoch(payload['exp'] * 1000);
+
+      // Refresh if token expires in next 5 minutes
+      return DateTime.now()
+          .isAfter(expiration.subtract(const Duration(minutes: 5)));
+    } catch (e) {
+      return true;
+    }
+  }
+
+  Map<String, dynamic> _decodeJwtPayload(String str) {
+    try {
+      String normalizedStr = str.replaceAll('-', '+').replaceAll('_', '/');
+      switch (normalizedStr.length % 4) {
+        case 0:
+          break;
+        case 2:
+          normalizedStr += '==';
+          break;
+        case 3:
+          normalizedStr += '=';
+          break;
+        default:
+          throw FormatException('Invalid base64 string');
+      }
+
+      final decoded = utf8.decode(base64Url.decode(normalizedStr));
+      return Map<String, dynamic>.from(jsonDecode(decoded));
+    } catch (e) {
+      throw Exception('Failed to decode JWT payload: $e');
+    }
+  }
+
+  Future<void> _refreshToken() async {
+    if (_isRefreshing) return;
+    _isRefreshing = true;
+
+    try {
+      final refreshToken = _tokenStorage.getRefreshToken();
+      if (refreshToken == null) {
+        throw Exception('No refresh token available');
+      }
+
+      log('Attempting to refresh token with: $refreshToken');
+
+      final response = await dio.post(
+        '/refresh_token',
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache',
+          },
+          extra: {'withCredentials': true},
+        ),
+        data: {'refresh': refreshToken},
+      );
+
+      log('Refresh token response: ${response.data}');
+
+      if (response.statusCode == 200 && response.data != null) {
+        final accessToken = response.data['access'];
+        final newRefreshToken = response.data['refresh'] ?? refreshToken;
+
+        if (accessToken != null) {
+          await _tokenStorage.saveTokens(
+            accessToken: accessToken,
+            refreshToken: newRefreshToken,
+          );
+          log('Token refresh successful');
+        } else {
+          throw Exception('Invalid refresh response');
+        }
+      } else {
+        throw Exception('Token refresh failed: ${response.statusCode}');
+      }
+    } catch (e) {
+      log('Error refreshing token: $e');
+      await _tokenStorage.clearTokens();
+      throw Exception('Session expired: $e');
+    } finally {
+      _isRefreshing = false;
+    }
   }
 
   String? _extractCookie(List<String>? cookies, String key) {
@@ -93,6 +243,47 @@ class ApiServiceAuthentication {
       }
     }
     return null;
+  }
+
+  // Keep all existing methods (login, getCurrentUser, logout, etc.) but update their implementations to use the new refresh mechanism
+
+  Future<AuthModel> login(String username, String password) async {
+    return _withRetry(() async {
+      try {
+        log('LOGIN ATTEMPT - Username: $username');
+
+        final formData = FormData.fromMap({
+          'username': username,
+          'password': password,
+        });
+
+        final response = await dio.post(
+          '/UserLogin',
+          data: formData,
+          options: Options(
+            contentType: 'multipart/form-data',
+            headers: {'Accept': 'application/json'},
+            validateStatus: (status) => true,
+          ),
+        );
+
+        log('Login response: ${response.data}');
+
+        if (response.statusCode == 200) {
+          final authModel = AuthModel.fromJson(response.data);
+          await _tokenStorage.saveTokens(
+            accessToken: authModel.accessToken,
+            refreshToken: authModel.refreshToken,
+          );
+          return authModel;
+        } else {
+          throw Exception(response.data['error'] ?? 'Login failed');
+        }
+      } catch (e) {
+        log('Login error: $e');
+        rethrow;
+      }
+    });
   }
 
   Future<UserModel> getCurrentUser() async {
@@ -132,89 +323,6 @@ class ApiServiceAuthentication {
       _logDioError(e);
       throw Exception(_handleDioError(e));
     }
-  }
-
-  Future<void> _refreshToken() async {
-    try {
-      final refreshToken = _tokenStorage.getRefreshToken();
-      if (refreshToken == null) {
-        throw Exception('No refresh token available');
-      }
-
-      final response = await dio.post(
-        '/api/token/refresh',
-        data: {'refresh': refreshToken},
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            'Cookie': 'refresh_token=$refreshToken',
-          },
-        ),
-      );
-
-      if (response.statusCode == 200) {
-        final accessToken = response.data['access'];
-        if (accessToken != null) {
-          await _tokenStorage.saveTokens(
-            accessToken: accessToken,
-            refreshToken: refreshToken, // Keep existing refresh token
-          );
-        } else {
-          throw Exception('Invalid token refresh response');
-        }
-      } else {
-        throw Exception('Token refresh failed');
-      }
-    } catch (e) {
-      log('Error refreshing token: $e');
-      throw Exception('Session expired');
-    }
-  }
-
-  Future<AuthModel> login(String username, String password) async {
-    return _withRetry(() async {
-      try {
-        log('LOGIN ATTEMPT - Username: $username');
-
-        final formData = FormData.fromMap({
-          'username': username,
-          'password': password,
-        });
-
-        log('Sending FormData: ${formData.fields}');
-
-        final response = await dio.post(
-          '/UserLogin',
-          data: formData,
-          options: Options(
-            contentType: 'multipart/form-data',
-            headers: {'Accept': 'application/json'},
-            receiveTimeout: const Duration(seconds: 45),
-            sendTimeout: const Duration(seconds: 45),
-            validateStatus: (status) => true,
-          ),
-        );
-
-        log('Login response: ${response.data}');
-
-        if (response.statusCode == 200) {
-          final authModel = AuthModel.fromJson(response.data);
-          await _tokenStorage.saveTokens(
-            accessToken: authModel.accessToken,
-            refreshToken: authModel.refreshToken,
-          );
-          return authModel;
-        } else {
-          throw Exception(response.data['error'] ?? 'Login failed');
-        }
-      } on DioException catch (e) {
-        _logDioError(e);
-        throw Exception(_handleDioError(e));
-      } catch (e) {
-        log('Unexpected login error: $e');
-        throw Exception('An unexpected error occurred');
-      }
-    });
   }
 
   void _logDioError(DioException e) {
@@ -272,7 +380,7 @@ class ApiServiceAuthentication {
         final lastName = names.length > 1 ? names.sublist(1).join(' ') : '';
 
         final response = await dio.post(
-          '/Edit_UserProfile_By_user',  // Updated endpoint URL
+          '/Edit_UserProfile_By_user', // Updated endpoint URL
           data: {
             'first_name': firstName,
             'last_name': lastName,
@@ -291,9 +399,12 @@ class ApiServiceAuthentication {
         if (response.statusCode == 200) {
           // Convert the backend response to UserModel format
           return UserModel(
-            name: '${response.data['user']['first_name']} ${response.data['user']['last_name']}'.trim(),
+            name:
+                '${response.data['user']['first_name']} ${response.data['user']['last_name']}'
+                    .trim(),
             email: response.data['user']['email'],
-            phone: updatedProfile.phone, // Maintain existing phone number as it's not updated
+            phone: updatedProfile
+                .phone, // Maintain existing phone number as it's not updated
             address: updatedProfile.address, // Maintain existing address
           );
         } else {
@@ -305,7 +416,6 @@ class ApiServiceAuthentication {
       }
     });
   }
-
 
   Future<void> requestPasswordReset(String email) async {
     return _withRetry(() async {
