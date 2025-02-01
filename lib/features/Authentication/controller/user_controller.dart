@@ -8,37 +8,36 @@ part 'user_controller.g.dart';
 
 @riverpod
 class UserDataProvider extends _$UserDataProvider {
-  @override
-  Future<UserModel?> build() async {
-    try {
-      final authService = ref.read(apiServiceProvider);
-      return await authService.getCurrentUser();
-    } catch (e) {
-      return null;
-    }
-  }
-  Future<void> updateUserData(UserModel newData) async {
-    state = const AsyncLoading();
-    state = AsyncData(newData);
-  }
+ @override
+ Future<UserModel?> build() async {
+   return _fetchUser();
+ }
 
-  // Method to refresh user data
-  Future<void> refresh() async {
-    state = const AsyncValue.loading();
-    try {
-      final authService = ref.read(apiServiceProvider);
-      final user = await authService.getCurrentUser();
-      state = AsyncValue.data(user);
-    } catch (e) {
-      state = AsyncValue.error(e, StackTrace.current);
-    }
-  }
+ Future<void> updateUserData(UserModel newData) async {
+   state = const AsyncLoading();
+   state = AsyncData(newData);
+ }
+ 
+ Future<void> refresh() async {
+   state = const AsyncLoading();
+   state = AsyncData(await _fetchUser());
+ }
+
+ Future<UserModel?> _fetchUser() async {
+   try {
+     final authService = ref.read(apiServiceProvider);
+     if (!authService.isAuthenticated) return null;
+     return await authService.getCurrentUser();
+   } catch (e, st) {
+     state = AsyncError(e, st);
+     return null;
+   }
+ }
 }
 
-// Simple provider just for user name
 @riverpod
 String? userName( ref) {
-  return ref.watch(userDataProviderProvider).whenOrNull(
-    data: (user) => user?.name,
-  );
+ return ref.watch(userDataProviderProvider).whenOrNull(
+   data: (user) => user?.name,
+ );
 }

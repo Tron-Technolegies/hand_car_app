@@ -22,7 +22,7 @@ final userNameProvider = AutoDisposeProvider<String?>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef UserNameRef = AutoDisposeProviderRef<String?>;
-String _$userDataProviderHash() => r'91ae7a1a094e3de15917634ffe22edefc5ccc198';
+String _$userDataProviderHash() => r'f07d9116494cb2d74de1772a246381f2f6164e65';
 
 /// See also [UserDataProvider].
 @ProviderFor(UserDataProvider)

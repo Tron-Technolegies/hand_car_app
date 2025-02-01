@@ -42,7 +42,8 @@ class ProfilePage extends ConsumerWidget {
                                 backgroundColor: Colors.white,
                                 child: ClipOval(
                                   child: userData.when(
-                                    loading: () => const CircularProgressIndicator(),
+                                    loading: () =>
+                                        const CircularProgressIndicator(),
                                     error: (_, __) => const Icon(
                                       Icons.person,
                                       size: 50,
@@ -54,7 +55,8 @@ class ProfilePage extends ConsumerWidget {
                                             fit: BoxFit.cover,
                                             width: 100,
                                             height: 100,
-                                            errorBuilder: (_, __, ___) => const Icon(
+                                            errorBuilder: (_, __, ___) =>
+                                                const Icon(
                                               Icons.person,
                                               size: 50,
                                               color: Colors.grey,
@@ -89,30 +91,29 @@ class ProfilePage extends ConsumerWidget {
                         ),
                         const SizedBox(height: 10),
                         userData.when(
-                          loading: () => const CircularProgressIndicator(),
-                          error: (_, __) => Text(
-                            'Error loading profile',
-                            style: context.typography.h2.copyWith(
-                              color: context.colors.white,
+                          loading: () =>
+                              const Center(child: CircularProgressIndicator()),
+                          error: (error, stackTrace) => Center(
+                            child: Column(
+                              children: [
+                                Text('Error: $error'),
+                                ElevatedButton(
+                                  onPressed: () =>
+                                      ref.invalidate(userDataProviderProvider),
+                                  child: Text('Retry'),
+                                ),
+                              ],
                             ),
                           ),
-                          data: (user) => Column(
-                            children: [
-                              Text(
-                                user?.name ?? 'Guest',
-                                style: context.typography.h2.copyWith(
-                                  color: context.colors.white,
-                                ),
-                              ),
-                              Text(
-                                user?.email ?? 'No email',
-                                style: context.typography.bodySmall.copyWith(
-                                  color: context.colors.white.withValues(alpha: 0.8),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                          data: (user) => user != null
+                              ? Column(
+                                  children: [
+                                    Text(user.name),
+                                    Text(user.email),
+                                  ],
+                                )
+                              : Text('No user data'),
+                        )
                       ],
                     ),
                   ),
@@ -194,7 +195,8 @@ class ProfileMenuItem extends StatelessWidget {
     return ListTile(
       leading: Icon(icon),
       title: Text(title),
-      trailing: showArrow ? const Icon(Icons.arrow_forward_ios, size: 16) : null,
+      trailing:
+          showArrow ? const Icon(Icons.arrow_forward_ios, size: 16) : null,
       onTap: onTap,
     );
   }

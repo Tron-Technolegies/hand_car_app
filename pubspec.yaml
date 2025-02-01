@@ -51,6 +51,7 @@ dependencies:
   google_nav_bar: ^5.0.7
   line_icons: ^2.0.3
   dot_navigation_bar: ^1.0.2
+  synchronized: ^3.3.0+3
 
 dev_dependencies:
   flutter_test:

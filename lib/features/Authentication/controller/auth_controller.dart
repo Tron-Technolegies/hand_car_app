@@ -1,214 +1,146 @@
-import 'package:hand_car/core/router/user_validation.dart';
 import 'package:hand_car/features/Authentication/controller/user_controller.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:hand_car/core/router/user_validation.dart';
 import 'package:hand_car/features/Authentication/model/auth_model.dart';
 import 'package:hand_car/features/Authentication/model/user_model.dart';
 import 'package:hand_car/features/Authentication/service/authentication_service.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_controller.g.dart';
 
-// Provider for TokenStorage
 final tokenStorageProvider = Provider<TokenStorage>((ref) => TokenStorage());
 
 @riverpod
 class AuthController extends _$AuthController {
-  @override
-  FutureOr<AuthModel?> build() async {
-    try {
-      final tokenStorage = ref.read(tokenStorageProvider);
-      final hasTokens = tokenStorage.hasTokens;
+ @override
+ FutureOr<AuthModel?> build() async {
+   try {
+     final storage = ref.read(tokenStorageProvider);
+     if (storage.hasTokens) {
+       final accessToken = storage.getAccessToken();
+       final refreshToken = storage.getRefreshToken();
+       if (accessToken != null && refreshToken != null) {
+         return AuthModel(
+           accessToken: accessToken,
+           refreshToken: refreshToken,
+           message: 'Restored from storage',
+         );
+       }
+     }
+     return null;
+   } catch (_) {
+     return null;
+   }
+ }
 
-      if (hasTokens) {
-        final accessToken = tokenStorage.getAccessToken();
-        final refreshToken = tokenStorage.getRefreshToken();
+ Future<void> login(String username, String password) async {
+   state = const AsyncValue.loading();
+   try {
+     final authService = ref.read(apiServiceProvider);
+     final authModel = await authService.login(username, password);
+     await ref.read(tokenStorageProvider).saveTokens(
+           accessToken: authModel.accessToken,
+           refreshToken: authModel.refreshToken,
+         );
+     state = AsyncValue.data(authModel);
+   } catch (e, st) {
+     state = AsyncValue.error(e, st);
+     rethrow;
+   }
+ }
 
-        if (accessToken != null && refreshToken != null) {
-          return AuthModel(
-            accessToken: accessToken,
-            refreshToken: refreshToken,
-            message: 'Restored from storage',
-          );
-        }
-      }
-      return null;
-    } catch (e) {
-      // Log error and return null if token restoration fails
-      return null;
-    }
+ Future<void> verifyOtp(String phone, String otp) async {
+   state = const AsyncValue.loading();
+   try {
+     final authModel = await ref.read(apiServiceProvider).verifyOtp(phone, otp);
+     await ref.read(tokenStorageProvider).saveTokens(
+           accessToken: authModel.accessToken,
+           refreshToken: authModel.refreshToken,
+         );
+     state = AsyncValue.data(authModel);
+   } catch (e, st) {
+     state = AsyncValue.error(e, st);
+     rethrow;
+   }
+ }
+
+ Future<void> signup(UserModel user) async {
+   state = const AsyncValue.loading();
+   try {
+     await ref.read(apiServiceProvider).signUp(user);
+     state = const AsyncValue.data(null);
+   } catch (e, st) {
+     state = AsyncValue.error(e, st);
+     rethrow;
+   }
+ }
+
+ Future<void> logout() async {
+  try {
+    final authService = ref.read(apiServiceProvider);
+    state = const AsyncValue.loading();
+    
+    await authService.logout();
+    await ref.read(tokenStorageProvider).clearTokens();
+    
+    state = const AsyncValue.data(null);
+    
+  } catch (error, stack) {
+    // Always clear tokens on logout, even if API call fails
+    await ref.read(tokenStorageProvider).clearTokens();
+    state = AsyncValue.error(error, stack);
   }
+}
 
-  Future<void> login(String username, String password) async {
-    try {
-      state = const AsyncValue.loading();
+ Future<void> updateProfile(UserModel profile) async {
+   state = const AsyncValue.loading();
+   try {
+     final currentState = state.value;
+     if (currentState == null) throw Exception('Not authenticated');
+     
+     final updatedUser = await ref.read(apiServiceProvider).updateUserProfile(profile);
+     ref.read(userDataProviderProvider.notifier).update((_) => updatedUser);
+     state = AsyncValue.data(currentState);
+   } catch (e, st) {
+     state = AsyncValue.error(e, st);
+     rethrow;
+   }
+ }
 
-      // Get auth service instance
-      final authService = ref.read(apiServiceProvider);
+ Future<void> sendOtp(String phone) async {
+   state = const AsyncValue.loading();
+   try {
+     await ref.read(apiServiceProvider).sendOtp(phone);
+     state = state;
+   } catch (e, st) {
+     state = AsyncValue.error(e, st);
+     rethrow;
+   }
+ }
 
-      // Attempt login
-      final authModel = await authService.login(username, password);
+ Future<void> requestPasswordReset(String email) async {
+   state = const AsyncValue.loading();
+   try {
+     await ref.read(apiServiceProvider).requestPasswordReset(email);
+     state = state;
+   } catch (e, st) {
+     state = AsyncValue.error(e, st);
+     rethrow;
+   }
+ }
 
-      // Save tokens if login successful
-      await ref.read(tokenStorageProvider).saveTokens(
-            accessToken: authModel.accessToken,
-            refreshToken: authModel.refreshToken,
-          );
+ Future<void> resetPassword(String uid, String token, String password) async {
+   state = const AsyncValue.loading();
+   try {
+     await ref.read(apiServiceProvider).resetPassword(uid, token, password);
+     state = const AsyncValue.data(null);
+   } catch (e, st) {
+     state = AsyncValue.error(e, st);
+     rethrow;
+   }
+ }
 
-      // Update state with successful login
-      state = AsyncValue.data(authModel);
-    } catch (error, stackTrace) {
-      // Update state with error
-      state = AsyncValue.error(error, stackTrace);
-      rethrow; // Rethrow to allow error handling in UI
-    }
-  }
-
-  Future<void> signup(UserModel user) async {
-    try {
-      state = const AsyncValue.loading();
-
-      // Get auth service instance
-      final authService = ref.read(apiServiceProvider);
-
-      // Attempt signup
-      await authService.signUp(user);
-
-      // Set state to success with no data
-      state = const AsyncValue.data(null);
-    } catch (error, stackTrace) {
-      // Update state with error
-      state = AsyncValue.error(error, stackTrace);
-      rethrow;
-    }
-  }
-
-  Future<void> logout() async {
-    try {
-      state = const AsyncValue.loading();
-
-      // Get auth service instance
-      final authService = ref.read(apiServiceProvider);
-      final tokenStorage = ref.read(tokenStorageProvider);
-
-      // Attempt logout
-      await authService.logout();
-
-      // Clear tokens
-      await tokenStorage.clearTokens();
-
-      // Update state to logged out
-      state = const AsyncValue.data(null);
-    } catch (error, stackTrace) {
-      // Handle logout errors
-      state = AsyncValue.error(error, stackTrace);
-
-      // Still clear tokens even if logout fails
-      try {
-        await ref.read(tokenStorageProvider).clearTokens();
-      } catch (e) {
-        // Log token clearing error but don't change state
-      }
-
-      rethrow;
-    }
-  }
-
-  Future<void> requestPasswordReset(String email) async {
-    try {
-      state = const AsyncValue.loading();
-
-      final authService = ref.read(apiServiceProvider);
-      await authService.requestPasswordReset(email);
-
-      // Keep the current state after successful request
-      state = state;
-    } catch (error, stackTrace) {
-      state = AsyncValue.error(error, stackTrace);
-      rethrow;
-    }
-  }
-
-  Future<void> resetPassword(
-      String uid, String token, String newPassword) async {
-    try {
-      state = const AsyncValue.loading();
-
-      final authService = ref.read(apiServiceProvider);
-      await authService.resetPassword(uid, token, newPassword);
-
-      // Reset state to null as user needs to login with new password
-      state = const AsyncValue.data(null);
-    } catch (error, stackTrace) {
-      state = AsyncValue.error(error, stackTrace);
-      rethrow;
-    }
-  }
-
-  Future<void> sendOtp(String phoneNumber) async {
-    try {
-      state = const AsyncValue.loading();
-
-      final authService = ref.read(apiServiceProvider);
-      await authService.sendOtp(phoneNumber);
-
-      // Keep current state after successful OTP send
-      state = state;
-    } catch (error, stackTrace) {
-      state = AsyncValue.error(error, stackTrace);
-      rethrow;
-    }
-  }
-
-  Future<void> verifyOtp(String phoneNumber, String otp) async {
-    try {
-      state = const AsyncValue.loading();
-
-      final authService = ref.read(apiServiceProvider);
-      final authModel = await authService.verifyOtp(phoneNumber, otp);
-
-      // Save tokens
-      await ref.read(tokenStorageProvider).saveTokens(
-            accessToken: authModel.accessToken,
-            refreshToken: authModel.refreshToken,
-          );
-
-      // Update state with successful login
-      state = AsyncValue.data(authModel);
-    } catch (error, stackTrace) {
-      state = AsyncValue.error(error, stackTrace);
-      rethrow;
-    }
-  }
-
-  Future<void> updateProfile(UserModel updatedProfile) async {
-    try {
-      state = const AsyncValue.loading();
-
-      // Get the current auth model first
-      final currentState = state.value;
-      if (currentState == null) {
-        throw Exception('Not authenticated');
-      }
-
-      // Update profile and get updated user data
-      final updatedUser =
-          await ref.read(apiServiceProvider).updateUserProfile(updatedProfile);
-
-      // Refresh user data in provider
-      ref
-          .read(userDataProviderProvider.notifier)
-          .update((state) => updatedUser);
-
-      // Keep the existing auth state
-      state = AsyncValue.data(currentState);
-    } catch (error, stackTrace) {
-      state = AsyncValue.error(error, stackTrace);
-      rethrow;
-    }
-  }
-
-  // Helper method to check authentication status
-  Future<bool> isAuthenticated() async {
-    final authState = await future;
-    return authState != null;
-  }
+ Future<bool> isAuthenticated() async {
+   final authState = await future;
+   return authState != null;
+ }
 }
