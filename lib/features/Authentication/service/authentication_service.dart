@@ -70,29 +70,29 @@ class ApiServiceAuthentication extends BaseApiService {
   }
 
   Future<UserModel> getCurrentUser() async {
-    return withRetry(() async {
-      try {
-        final response = await dio.get(
-          '/get_logged_in_user',
-          // Remove manual token handling since BaseApiService interceptors handle this
-          options: Options(
-            extra: {
-              'withCredentials': true,
-            },
-          ),
-        );
+  return withRetry(() async {
+    try {
+      log('Fetching current user...');
+      final response = await dio.get(
+        '/get_logged_in_user',
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        ),
+      );
 
-        if (response.statusCode == 200) {
-          log('User data response: ${response.data}');
+      log('Current user response: ${response.data}');
 
-          // Remove duplicate status code check
-          final userData = response.data;
-          // Handle both object and nested formats
-          if (userData is Map<String, dynamic>) {
+      if (response.statusCode == 200 && response.data != null) {
+        final userData = response.data;
+        
+        if (userData is Map<String, dynamic>) {
+          try {
             if (userData.containsKey('first_name')) {
               return UserModel(
-                name:
-                    '${userData['first_name']} ${userData['last_name']}'.trim(),
+                name: '${userData['first_name']} ${userData['last_name']}'.trim(),
                 email: userData['email'] ?? '',
                 phone: userData['phone'] ?? '',
                 address: userData['address'],
@@ -100,23 +100,30 @@ class ApiServiceAuthentication extends BaseApiService {
               );
             }
             return UserModel.fromJson(userData);
+          } catch (e) {
+            log('Error parsing user data: $e');
+            throw Exception('Failed to parse user data');
           }
-          throw Exception('Invalid response format');
         }
-
-        // Use the base service's error handler for consistency
-        throw handleApiError(response);
-      } on DioException catch (e) {
-        if (isTokenExpiredError(e)) {
-          // Let the interceptor handle token refresh and retry
-          rethrow;
-        }
-        throw Exception(e.message ?? 'Failed to get user');
-      } catch (e) {
-        throw Exception('Failed to get user: $e');
+        throw Exception('Invalid response format: ${response.data}');
       }
-    });
-  }
+      throw handleApiError(response);
+    } on DioException catch (e) {
+      log('DioException getting user: ${e.message}');
+      log('DioException response: ${e.response?.data}');
+      
+      if (e.response?.statusCode == 401) {
+        // Token might be invalid/expired
+        await tokenStorage.clearTokens();
+        throw Exception('Authentication failed');
+      }
+      throw Exception(e.message ?? 'Failed to get user');
+    } catch (e) {
+      log('Unexpected error getting user: $e');
+      throw Exception('Failed to get user: $e');
+    }
+  });
+}
 
   Future<String> signUp(UserModel user) async {
     
