@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/controller/image_picker_controller.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
 import 'package:hand_car/features/Authentication/controller/user_controller.dart';
 import 'package:hand_car/features/Authentication/view/pages/edit_profile_page.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -14,8 +12,8 @@ class ProfilePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final image = ref.watch(imagePickerProvider);
-    final authState = ref.watch(authControllerProvider);
+    // final image = ref.watch(imagePickerProvider);
+    // final authState = ref.watch(authControllerProvider);
     final userData = ref.watch(userDataProviderProvider);
 
     return Scaffold(
