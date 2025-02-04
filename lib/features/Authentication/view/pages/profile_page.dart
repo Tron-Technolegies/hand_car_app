@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/controller/image_picker_controller.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
+import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
 import 'package:hand_car/features/Authentication/controller/user_controller.dart';
 import 'package:hand_car/features/Authentication/view/pages/edit_profile_page.dart';
+import 'package:hand_car/features/Authentication/view/pages/login_with_phone_and_password_page.dart';
+import 'package:hand_car/features/Authentication/view/widgets/profile_menu_items_widget.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:panara_dialogs/panara_dialogs.dart';
 
 class ProfilePage extends ConsumerWidget {
   static const route = '/profile';
@@ -13,7 +17,7 @@ class ProfilePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // final image = ref.watch(imagePickerProvider);
-    // final authState = ref.watch(authControllerProvider);
+    final authState = ref.watch(authControllerProvider);
     final userData = ref.watch(userDataProviderProvider);
 
     return Scaffold(
@@ -21,7 +25,7 @@ class ProfilePage extends ConsumerWidget {
         child: Column(
           children: [
             SizedBox(
-              height: 400,
+              height: 600,
               child: ListView(
                 children: [
                   Container(
@@ -122,27 +126,7 @@ class ProfilePage extends ConsumerWidget {
                     title: 'Edit Profile',
                     onTap: () => context.push(EditProfileScreen.route),
                   ),
-                  ProfileMenuItem(
-                    icon: Icons.notifications_outlined,
-                    title: 'Notifications',
-                    onTap: () {},
-                  ),
-                  ProfileMenuItem(
-                    icon: Icons.payment_outlined,
-                    title: 'Payment Methods',
-                    onTap: () {},
-                  ),
-                  ProfileMenuItem(
-                    icon: Icons.history,
-                    title: 'Order History',
-                    onTap: () {},
-                  ),
-                  ProfileMenuItem(
-                    icon: Icons.location_on_outlined,
-                    title: 'Saved Addresses',
-                    onTap: () {},
-                  ),
-                  const Divider(),
+
                   ProfileMenuItem(
                     icon: Icons.help_outline,
                     title: 'Help & Support',
@@ -156,7 +140,51 @@ class ProfilePage extends ConsumerWidget {
                   ProfileMenuItem(
                     icon: Icons.logout_outlined,
                     title: 'Logout',
-                    onTap: () => _showLogoutDialog(context, ref),
+                    onTap: () async {
+                      PanaraConfirmDialog.show(
+                        context,
+                        buttonTextColor: context.colors.white,
+                        color: context.colors.primary,
+                        panaraDialogType: PanaraDialogType.error,
+                        title: "Logout Confirmation",
+                        message: "Are you sure you want to logout?",
+                        confirmButtonText: "Logout",
+                        cancelButtonText: "Cancel",
+                        onTapCancel: () {
+                          Navigator.pop(context); // Close dialog on cancel
+                        },
+                        onTapConfirm: () async {
+                          Navigator.pop(
+                              context); // Close dialog before logging out
+
+                          // Perform logout
+                          await ref
+                              .read(authControllerProvider.notifier)
+                              .logout();
+
+                          if (context.mounted) {
+                            if (authState.error != null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(authState.error.toString()),
+                                  backgroundColor: context.colors.primary,
+                                ),
+                              );
+                            } else {
+                              // Navigate to login screen
+                              context.go(LoginWithPhoneAndPasswordPage.route);
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Successfully logged out'),
+                                ),
+                              );
+                            }
+                          }
+                        },
+                        barrierDismissible: false,
+                      );
+                    },
                     showArrow: false,
                   ),
                 ],
@@ -167,35 +195,7 @@ class ProfilePage extends ConsumerWidget {
       ),
     );
   }
-
-  Future<void> _showLogoutDialog(BuildContext context, WidgetRef ref) async {
-    // ... existing logout dialog code ...
-  }
 }
 
-// Extracted profile menu item widget for better reusability
-class ProfileMenuItem extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final VoidCallback onTap;
-  final bool showArrow;
 
-  const ProfileMenuItem({
-    super.key,
-    required this.icon,
-    required this.title,
-    required this.onTap,
-    this.showArrow = true,
-  });
 
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(title),
-      trailing:
-          showArrow ? const Icon(Icons.arrow_forward_ios, size: 16) : null,
-      onTap: onTap,
-    );
-  }
-}

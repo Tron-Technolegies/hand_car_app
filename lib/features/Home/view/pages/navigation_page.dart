@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hand_car/core/utils/bottom_nav_controller.dart';
 import 'package:hand_car/features/Home/view/pages/home_page.dart';
-import 'package:hand_car/features/Home/view/pages/settings_page.dart';
+import 'package:hand_car/features/Authentication/view/pages/profile_page.dart';
 import 'package:hand_car/features/Home/view/widgets/bottom_app_bar.dart';
 import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
 import 'package:hand_car/features/SpareParts/view/pages/spares_page.dart';

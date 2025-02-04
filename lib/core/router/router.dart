@@ -7,7 +7,7 @@ import 'package:hand_car/features/Authentication/view/pages/forgot_password_page
 import 'package:hand_car/features/Authentication/view/pages/login_with_phone_and_password_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/otp_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/reset_password_page.dart';
-import 'package:hand_car/features/Home/view/pages/settings_page.dart';
+import 'package:hand_car/features/Authentication/view/pages/profile_page.dart';
 import 'package:hand_car/features/car_service/model/service_model.dart';
 import 'package:hand_car/features/car_service/view/pages/services_page.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
