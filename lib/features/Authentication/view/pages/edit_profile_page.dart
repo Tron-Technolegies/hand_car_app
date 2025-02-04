@@ -1,13 +1,18 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/controller/image_picker_controller.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
+import 'package:hand_car/core/utils/snackbar.dart';
+import 'package:hand_car/core/widgets/button_widget.dart';
+import 'package:hand_car/core/widgets/outline_button_widget.dart';
 import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
 import 'package:hand_car/features/Authentication/controller/user_controller.dart';
 import 'package:hand_car/features/Authentication/model/user_model.dart';
-import 'package:hand_car/features/Authentication/view/widgets/profile_pic.dart';
 import 'package:hand_car/features/Authentication/view/widgets/user_info_edit_field.dart';
+import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class EditProfileScreen extends HookConsumerWidget {
@@ -17,8 +22,9 @@ class EditProfileScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final formKey = useMemoized(() => GlobalKey<FormState>());
-    final nameController = useTextEditingController();
-    final emailController = useTextEditingController();
+    // Create controllers using useMemoized to maintain the same instance
+    final nameController = useMemoized(() => TextEditingController());
+    final emailController = useMemoized(() => TextEditingController());
     final isLoading = useState(false);
     final image = ref.watch(imagePickerProvider);
     final mounted = useIsMounted();
@@ -34,16 +40,15 @@ class EditProfileScreen extends HookConsumerWidget {
           emailController.text = user.email;
         }
       });
-      return null;
-    }, [userData]);
 
-    // Clean up controllers
-    useEffect(() {
+      // Cleanup
       return () {
-        nameController.dispose();
-        emailController.dispose();
+        if (mounted()) {
+          nameController.dispose();
+          emailController.dispose();
+        }
       };
-    }, []);
+    }, []); 
 
     Future<void> handleSubmit() async {
       if (!mounted() || !(formKey.currentState?.validate() ?? false)) return;
@@ -58,16 +63,18 @@ class EditProfileScreen extends HookConsumerWidget {
         );
 
         await ref.read(authControllerProvider.notifier).updateProfile(
-          updatedProfile,
-        );
+              updatedProfile,
+            );
 
         if (mounted()) {
           await ref.read(userDataProviderProvider.notifier).refresh();
 
           if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Profile updated successfully')),
-            );
+          SnackbarUtil.showsnackbar(
+            message:
+            'Profile updated successfully',
+            showretry: false,
+          );
             context.pop();
           }
         }
@@ -88,8 +95,6 @@ class EditProfileScreen extends HookConsumerWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Edit Profile'),
-        backgroundColor: context.colors.primary,
-        foregroundColor: Colors.white,
       ),
       body: userData.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -99,13 +104,16 @@ class EditProfileScreen extends HookConsumerWidget {
           child: Form(
             key: formKey,
             child: Column(
+              spacing: context.space.space_200,
               children: [
-                ProfilePic(
-                  image: image?.path ?? user?.profileImage ?? "default_image_url",
-                  imageUploadBtnPress: () {
-                    ref.read(imagePickerProvider.notifier).pickImage();
-                  },
-                ),
+                CircleAvatar(
+                    radius: 50,
+                    backgroundColor: Colors.grey[200],
+                    child: Image.asset(
+                      Assets.images.userAvatar.path,
+                      height: 80,
+                      width: 80,
+                    )),
                 const Divider(),
                 UserInfoEditField(
                   text: "Name",
@@ -113,7 +121,8 @@ class EditProfileScreen extends HookConsumerWidget {
                     controller: nameController,
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: context.colors.primaryTxt.withValues(alpha: 0.05),
+                      fillColor:
+                          context.colors.primaryTxt.withValues(alpha: 0.05),
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 24.0,
                         vertical: 16.0,
@@ -138,7 +147,8 @@ class EditProfileScreen extends HookConsumerWidget {
                     controller: emailController,
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: context.colors.primaryTxt.withValues(alpha: 0.05),
+                      fillColor:
+                          context.colors.primaryTxt.withValues(alpha: 0.05),
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 24.0,
                         vertical: 16.0,
@@ -161,38 +171,54 @@ class EditProfileScreen extends HookConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.end,
+                //   children: [
+                //     TextButton(
+                //       onPressed: () => context.pop(),
+                //       child: Text(
+                //         'Cancel',
+                //         style: TextStyle(color: context.colors.primaryTxt),
+                //       ),
+                //     ),
+                //     const SizedBox(width: 16),
+                //     ElevatedButton(
+                //       onPressed: isLoading.value ? null : handleSubmit,
+                //       style: ElevatedButton.styleFrom(
+                //         backgroundColor: context.colors.primary,
+                //         foregroundColor: Colors.white,
+                //         minimumSize: const Size(120, 48),
+                //         shape: const StadiumBorder(),
+                //       ),
+                //       child: isLoading.value
+                //           ? const SizedBox(
+                //               width: 24,
+                //               height: 24,
+                //               child: CircularProgressIndicator(
+                //                 color: Colors.white,
+                //                 strokeWidth: 2,
+                //               ),
+                //             )
+                //           : const Text('Save'),
+                //     ),
+                //   ],
+                // ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
+                  spacing: context.space.space_200,
                   children: [
-                    TextButton(
-                      onPressed: () => context.pop(),
-                      child: Text(
-                        'Cancel',
-                        style: TextStyle(color: context.colors.primaryTxt),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    ElevatedButton(
-                      onPressed: isLoading.value ? null : handleSubmit,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: context.colors.primary,
-                        foregroundColor: Colors.white,
-                        minimumSize: const Size(120, 48),
-                        shape: const StadiumBorder(),
-                      ),
-                      child: isLoading.value
-                          ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
-                              ),
-                            )
-                          : const Text('Save'),
+                    OutlineButtonWidget(
+                        label: "Cancel", onTap: () => context.pop()),
+                    ButtonWidget(
+                      label: "Save",
+                      onTap: () async {
+                        if (!isLoading.value) {
+                          await handleSubmit();
+                        }
+                      },
                     ),
                   ],
-                ),
+                )
               ],
             ),
           ),

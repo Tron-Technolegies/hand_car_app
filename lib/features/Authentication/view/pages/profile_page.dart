@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hand_car/core/controller/image_picker_controller.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
 import 'package:hand_car/features/Authentication/controller/user_controller.dart';
 import 'package:hand_car/features/Authentication/view/pages/edit_profile_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/login_with_phone_and_password_page.dart';
 import 'package:hand_car/features/Authentication/view/widgets/profile_menu_items_widget.dart';
+import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:panara_dialogs/panara_dialogs.dart';
 
@@ -33,64 +33,14 @@ class ProfilePage extends ConsumerWidget {
                     color: context.colors.primary,
                     child: Column(
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            ref.read(imagePickerProvider.notifier).pickImage();
-                          },
-                          child: Stack(
-                            children: [
-                              CircleAvatar(
-                                radius: 50,
-                                backgroundColor: Colors.white,
-                                child: ClipOval(
-                                  child: userData.when(
-                                    loading: () =>
-                                        const CircularProgressIndicator(),
-                                    error: (_, __) => const Icon(
-                                      Icons.person,
-                                      size: 50,
-                                      color: Colors.grey,
-                                    ),
-                                    data: (user) => user?.profileImage != null
-                                        ? Image.network(
-                                            user!.profileImage!,
-                                            fit: BoxFit.cover,
-                                            width: 100,
-                                            height: 100,
-                                            errorBuilder: (_, __, ___) =>
-                                                const Icon(
-                                              Icons.person,
-                                              size: 50,
-                                              color: Colors.grey,
-                                            ),
-                                          )
-                                        : const Icon(
-                                            Icons.person,
-                                            size: 50,
-                                            color: Colors.grey,
-                                          ),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 0,
-                                right: 0,
-                                child: Container(
-                                  padding: const EdgeInsets.all(4),
-                                  decoration: BoxDecoration(
-                                    color: context.colors.white,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    Icons.camera_alt,
-                                    size: 20,
-                                    color: context.colors.primary,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        CircleAvatar(
+                            radius: 50,
+                            backgroundColor: Colors.white,
+                            child: Image.asset(
+                              Assets.images.userAvatar.path,
+                              height: 80,
+                              width: 80,
+                            )),
                         const SizedBox(height: 10),
                         userData.when(
                           loading: () =>
@@ -110,8 +60,18 @@ class ProfilePage extends ConsumerWidget {
                           data: (user) => user != null
                               ? Column(
                                   children: [
-                                    Text(user.name),
-                                    Text(user.email),
+                                    Text(
+                                      user.name,
+                                      style: context.typography.bodyLarge
+                                          .copyWith(
+                                              color: context.colors.white),
+                                    ),
+                                    Text(
+                                      user.email,
+                                      style: context.typography.bodyLarge
+                                          .copyWith(
+                                              color: context.colors.white),
+                                    ),
                                   ],
                                 )
                               : Text('No user data'),
@@ -196,6 +156,3 @@ class ProfilePage extends ConsumerWidget {
     );
   }
 }
-
-
-

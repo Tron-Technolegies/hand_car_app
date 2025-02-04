@@ -22,7 +22,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    
+
     Future.microtask(() async {
       final authService = ref.read(apiServiceProvider);
       final isAuthenticated = authService.isAuthenticated;
@@ -53,7 +53,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SvgPicture.asset(Assets.icons.handCarIcon),
-            const SizedBox(height: 20),
+            SizedBox(height: context.space.space_250),
             Text(
               "HandCar",
               style: context.typography.h1.copyWith(

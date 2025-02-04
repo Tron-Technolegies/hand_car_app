@@ -381,12 +381,20 @@ class $AssetsImagesGen {
   /// File path: assets/images/person.png
   AssetGenImage get person => const AssetGenImage('assets/images/person.png');
 
+  /// File path: assets/images/person_avatar.jpg
+  AssetGenImage get personAvatar =>
+      const AssetGenImage('assets/images/person_avatar.jpg');
+
   /// File path: assets/images/pioneer.png
   AssetGenImage get pioneer => const AssetGenImage('assets/images/pioneer.png');
 
   /// File path: assets/images/spare_parts.png
   AssetGenImage get spareParts =>
       const AssetGenImage('assets/images/spare_parts.png');
+
+  /// File path: assets/images/user_avatar.png
+  AssetGenImage get userAvatar =>
+      const AssetGenImage('assets/images/user_avatar.png');
 
   /// File path: assets/images/warehouse-female.jpg
   AssetGenImage get warehouseFemale =>
@@ -420,8 +428,10 @@ class $AssetsImagesGen {
         imgSpareScreen,
         painting,
         person,
+        personAvatar,
         pioneer,
         spareParts,
+        userAvatar,
         warehouseFemale
       ];
 }

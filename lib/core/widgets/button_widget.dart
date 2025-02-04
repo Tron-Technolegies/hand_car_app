@@ -9,21 +9,27 @@ class ButtonWidget extends StatelessWidget {
 
   /// Callback to execute when the button is clicked
   final Function() onTap;
+  final Future<void> Function()? onLongPress;
 
   const ButtonWidget(
       {super.key,
       required this.label,
       required this.onTap,
       this.isLoading = false,
-      this.icon})
+      this.icon,
+      this.onLongPress
+      })
       : isDanger = false;
+      
 
   const ButtonWidget.danger(
       {super.key,
       required this.label,
       required this.onTap,
       this.isLoading = false,
-      this.icon})
+      this.icon,
+      this.onLongPress
+      })
       : isDanger = true;
 
   @override

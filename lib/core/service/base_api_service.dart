@@ -34,121 +34,125 @@ class BaseApiService {
   }
 
   void _setupInterceptors() {
-  dio.interceptors.clear();
-  dio.interceptors.add(
-    QueuedInterceptorsWrapper(
-      onRequest: (options, handler) async {
-        try {
-          await _refreshLock.synchronized(() async {
-            final token = tokenStorage.getAccessToken();
-            if (token != null) {
-              // Check if token needs refresh
-              if (await _shouldRefreshToken()) {
-                log('Token needs refresh before request');
-                final success = await _refreshToken();
-                if (!success) {
-                  log('Token refresh failed');
-                  return handler.reject(DioException(
-                    requestOptions: options,
-                    error: 'Token refresh failed',
-                  ));
+    dio.interceptors.clear();
+    dio.interceptors.add(
+      QueuedInterceptorsWrapper(
+        onRequest: (options, handler) async {
+          try {
+            await _refreshLock.synchronized(() async {
+              final token = tokenStorage.getAccessToken();
+              final refreshToken = tokenStorage.getRefreshToken();
+
+              if (token != null) {
+                // Check if token needs refresh
+                if (await _shouldRefreshToken()) {
+                  log('Token needs refresh before request');
+                  final success = await _refreshToken();
+                  if (!success) {
+                    log('Token refresh failed');
+                    return handler.reject(DioException(
+                      requestOptions: options,
+                      error: 'Token refresh failed',
+                    ));
+                  }
+                  // Get new token after refresh
+                  final newToken = tokenStorage.getAccessToken();
+                  if (newToken != null) {
+                    options.headers['Authorization'] = 'Bearer $newToken';
+                    options.headers['Cookie'] = 'access_token=$newToken';
+                  }
+                } else {
+                  // Use existing tokens
+                  options.headers['Authorization'] = 'Bearer $token';
+                  options.headers['Cookie'] =
+                      'access_token=$token; refresh_token=$refreshToken';
                 }
-                // Get new token after refresh
+              }
+              // Always enable credentials
+              options.extra['withCredentials'] = true;
+            });
+            return handler.next(options);
+          } catch (e) {
+            log('Request interceptor error: $e');
+            return handler.reject(DioException(
+              requestOptions: options,
+              error: 'Request preparation failed: $e',
+            ));
+          }
+        },
+        onResponse: (response, handler) {
+          return handler.next(response);
+        },
+        onError: (error, handler) async {
+          if (isTokenExpiredError(error)) {
+            try {
+              final success =
+                  await _refreshLock.synchronized(() => _refreshToken());
+              if (success) {
+                // Retry the failed request with new token
                 final newToken = tokenStorage.getAccessToken();
                 if (newToken != null) {
-                  options.headers['Authorization'] = 'Bearer $newToken';
-                  options.headers['Cookie'] = 'access_token=$newToken';
+                  error.requestOptions.headers['Authorization'] =
+                      'Bearer $newToken';
+                  error.requestOptions.headers['Cookie'] =
+                      'access_token=$newToken';
+
+                  final retryResponse = await dio.fetch(error.requestOptions);
+                  return handler.resolve(retryResponse);
                 }
-              } else {
-                // Use existing token
-                options.headers['Authorization'] = 'Bearer $token';
-                options.headers['Cookie'] = 'access_token=$token';
               }
-              options.extra['withCredentials'] = true;
+              // If refresh failed, clear tokens
+              await tokenStorage.clearTokens();
+            } catch (e) {
+              log('Token refresh error during error handling: $e');
+              await tokenStorage.clearTokens();
             }
-          });
-          return handler.next(options);
-        } catch (e) {
-          log('Request interceptor error: $e');
-          return handler.reject(DioException(
-            requestOptions: options,
-            error: 'Request preparation failed: $e',
-          ));
-        }
-      },
-      onResponse: (response, handler) {
-        return handler.next(response);
-      },
-      onError: (error, handler) async {
-        if (isTokenExpiredError(error)) {
-          try {
-            final success = await _refreshLock.synchronized(() => _refreshToken());
-            if (success) {
-              // Retry the failed request with new token
-              final newToken = tokenStorage.getAccessToken();
-              if (newToken != null) {
-                error.requestOptions.headers['Authorization'] = 'Bearer $newToken';
-                error.requestOptions.headers['Cookie'] = 'access_token=$newToken';
-                
-                final retryResponse = await dio.fetch(error.requestOptions);
-                return handler.resolve(retryResponse);
-              }
-            }
-            // If refresh failed, clear tokens
-            await tokenStorage.clearTokens();
-          } catch (e) {
-            log('Token refresh error during error handling: $e');
-            await tokenStorage.clearTokens();
           }
-        }
-        return handler.next(error);
-      },
-    ),
-  );
-}
-
- 
-
+          return handler.next(error);
+        },
+      ),
+    );
+  }
 
   Future<bool> _shouldRefreshToken() async {
-  if (!tokenStorage.hasValidTokens) return false;
+    if (!tokenStorage.hasValidTokens) return false;
 
-  try {
-    final token = tokenStorage.getAccessToken();
-    if (token == null) return true;
+    try {
+      final token = tokenStorage.getAccessToken();
+      if (token == null) return true;
 
-    final parts = token.split('.');
-    if (parts.length != 3) return true;
+      final parts = token.split('.');
+      if (parts.length != 3) return true;
 
-    final payload = _decodeJwtPayload(parts[1]);
-    final expiration = DateTime.fromMillisecondsSinceEpoch(payload['exp'] * 1000);
-    final now = DateTime.now();
-    
-    // Check if current time is after token expiration
-    if (now.isAfter(expiration)) {
-      log('Token has expired, needs refresh');
+      final payload = _decodeJwtPayload(parts[1]);
+      final expiration =
+          DateTime.fromMillisecondsSinceEpoch(payload['exp'] * 1000);
+      final now = DateTime.now();
+
+      // Check if current time is after token expiration
+      if (now.isAfter(expiration)) {
+        log('Token has expired, needs refresh');
+        return true;
+      }
+
+      // Get remaining time until expiration
+      final timeUntilExpiry = expiration.difference(now);
+
+      // If less than 5 minutes remaining, trigger refresh
+      final shouldRefresh = timeUntilExpiry.inMinutes <= 5;
+
+      log('Token expiration check:'
+          '\nCurrent time: ${now.toIso8601String()}'
+          '\nExpiration time: ${expiration.toIso8601String()}'
+          '\nTime until expiry: ${timeUntilExpiry.inMinutes} minutes'
+          '\nShould refresh: $shouldRefresh');
+
+      return shouldRefresh;
+    } catch (e) {
+      log('Error checking token expiration: $e');
       return true;
     }
-
-    // Get remaining time until expiration
-    final timeUntilExpiry = expiration.difference(now);
-    
-    // If less than 5 minutes remaining, trigger refresh
-    final shouldRefresh = timeUntilExpiry.inMinutes <= 5;
-    
-    log('Token expiration check:'
-        '\nCurrent time: ${now.toIso8601String()}'
-        '\nExpiration time: ${expiration.toIso8601String()}'
-        '\nTime until expiry: ${timeUntilExpiry.inMinutes} minutes'
-        '\nShould refresh: $shouldRefresh');
-
-    return shouldRefresh;
-
-  } catch (e) {
-    log('Error checking token expiration: $e');
-    return true;
   }
-}
 
   Future<bool> _refreshToken() async {
     if (_isRefreshing) {
@@ -170,13 +174,28 @@ class BaseApiService {
         log('Starting token refresh');
         final response = await dio.post(
           '/refresh_token',
-          data: {'refresh': refreshToken},
-          options: Options(headers: {'Content-Type': 'application/json'}),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Cookie': 'refresh_token=$refreshToken',
+            },
+            extra: {
+              'withCredentials': true,
+            },
+          ),
         );
 
         if (response.statusCode == 200 && response.data != null) {
           final accessToken = response.data['access'];
-          final newRefreshToken = response.data['refresh'] ?? refreshToken;
+          // Get refresh token from cookies in response
+          final newRefreshToken = response.headers.map['set-cookie']
+                  ?.firstWhere((cookie) => cookie.startsWith('refresh_token='),
+                      orElse: () => '')
+                  .split(';')
+                  .first
+                  .split('=')
+                  .last ??
+              refreshToken;
 
           if (accessToken != null) {
             await tokenStorage.saveTokens(
