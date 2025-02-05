@@ -17,7 +17,7 @@ class WishlistNotifier extends _$WishlistNotifier {
   @override
   FutureOr<Map<String, WishlistResponse>> build() async {
     // Check authentication
-    if (!TokenStorage().hasTokens) {
+    if (!TokenStorage().hasValidTokens) {
       return {};
     }
 
@@ -38,7 +38,7 @@ class WishlistNotifier extends _$WishlistNotifier {
   }
 
   Future<void> fetchWishlist() async {
-    if (!TokenStorage().hasTokens) {
+    if (!TokenStorage().hasValidTokens) {
       state = const AsyncValue.data({});
       return;
     }
@@ -61,7 +61,7 @@ class WishlistNotifier extends _$WishlistNotifier {
   }
 
   Future<void> addToWishlist(int productId) async {
-    if (!TokenStorage().hasTokens) {
+    if (!TokenStorage().hasValidTokens) {
       throw Exception('Please login to continue');
     }
 
@@ -85,7 +85,7 @@ class WishlistNotifier extends _$WishlistNotifier {
   }
 
   Future<void> removeFromWishlist(String productId) async {
-    if (!TokenStorage().hasTokens) {
+    if (!TokenStorage().hasValidTokens) {
       throw Exception('Please login to continue');
     }
 

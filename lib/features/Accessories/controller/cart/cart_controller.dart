@@ -16,7 +16,7 @@ class CartController extends _$CartController {
   @override
   Future<CartModel> build() async {
     _cartService = CartApiService();
-    if (!TokenStorage().hasTokens) {
+    if (!TokenStorage().hasValidTokens) {
       throw const CartException('Please login to view your cart');
     }
     return _fetchCart();
@@ -26,7 +26,7 @@ class CartController extends _$CartController {
     final previousState = state;
     try {
       // Check authentication first
-      if (!TokenStorage().hasTokens) {
+      if (!TokenStorage().hasValidTokens) {
         throw const CartException('Please login to continue');
       }
 
@@ -65,7 +65,7 @@ class CartController extends _$CartController {
   Future<void> refreshCart() async {
     state = const AsyncValue.loading();
     try {
-      if (!TokenStorage().hasTokens) {
+      if (!TokenStorage().hasValidTokens) {
         throw const CartException('Please login to view your cart');
       }
       final cartResponse = await _fetchCart();

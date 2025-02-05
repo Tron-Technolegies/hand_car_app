@@ -58,7 +58,7 @@ class ServiceRatingController extends _$ServiceRatingController {
     required int rating,
     String? comment,
   }) async {
-    if (!TokenStorage().hasTokens) {
+    if (!TokenStorage().hasValidTokens) {
       return ServiceRatingResponse(error: 'Please login to continue');
     }
 
