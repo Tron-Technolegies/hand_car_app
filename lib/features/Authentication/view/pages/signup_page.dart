@@ -320,7 +320,7 @@
 //     );
 //   }
 // }
-import 'package:country_code_picker/country_code_picker.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
@@ -386,158 +386,133 @@ class SignupPage extends HookConsumerWidget {
           padding: EdgeInsets.all(context.space.space_200),
           child: Form(
             key: formKey.value,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: SvgPicture.asset(Assets.icons.handCarIcon),
-                ),
-                Text("Sign Up", style: context.typography.h1),
-                SizedBox(height: context.space.space_200),
-                Text(
-                  " Name",
-                  style: context.typography.bodyLarge
-                      .copyWith(color: context.colors.primaryTxt),
-                ),
-                SizedBox(height: context.space.space_100),
-                AuthField(
-                  padding: EdgeInsets.all(context.space.space_200),
-                  controller: nameController,
-                  hintText: "Enter Your Name",
-                  keyboardType: TextInputType.name,
-                ),
-                SizedBox(height: context.space.space_200),
-                Text(
-                  " Email",
-                  style: context.typography.bodyLarge
-                      .copyWith(color: context.colors.primaryTxt),
-                ),
-                SizedBox(height: context.space.space_100),
-                AuthField(
-                  padding: EdgeInsets.all(context.space.space_200),
-                  controller: emailController,
-                  hintText: "Enter Your Email",
-                  keyboardType: TextInputType.emailAddress,
-                  validator: validateEmail,
-                ),
-                SizedBox(height: context.space.space_200),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      " Phone Number",
-                      style: context.typography.bodyLarge,
-                    ),
-                    SizedBox(height: context.space.space_200),
-                    // Padding(
-                    //   padding: EdgeInsets.symmetric(
-                    //     horizontal: context.space.space_200,
-                    //   ),
-                    //   child: Row(
-                    //     crossAxisAlignment: CrossAxisAlignment.start,
-                    //     children: [
-                    //       CountryCodePicker(
-                    //         onChanged: (countryCode) {
-                    //           selectedCountryCode.value =
-                    //               countryCode.dialCode?.replaceAll('+', '') ?? '971';
-                    //         },
-                    //         initialSelection: 'AE',
-                    //         favorite: ['+39', 'FR'],
-                    //         showCountryOnly: false,
-                    //         showOnlyCountryWhenClosed: false,
-                    //         alignLeft: false,
-                    //       ),
-                    //       SizedBox(width: context.space.space_100),
-                    //       Expanded(
-                    //         child: AuthField(
-                    //           padding: EdgeInsets.all(context.space.space_200),
-                    //           controller: phoneController,
-                    //           hintText: "Enter Your Phone Number",
-                    //           keyboardType: TextInputType.phone,
-                    //           validator: (value) => validatePhoneNumber(
-                    //             value,
-                    //             selectedCountryCode.value,
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
-                    PhoneAuthField(
-                      controller: phoneController,
-                      onCountryChanged: (countryCode) {
-                        selectedCountryCode.value = countryCode;
-                      },
-                      validator: (value) => validatePhoneNumber(
-                        value,
-                        selectedCountryCode.value,
+            child: Padding(
+              padding:
+                  EdgeInsets.symmetric(horizontal: context.space.space_200),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child:
+                        SvgPicture.asset(Assets.icons.handCarIcon, height: 70),
+                  ),
+                  SizedBox(height: context.space.space_200),
+                  Center(
+                      child: Text("Register Yourself",
+                          style: context.typography.h2)),
+                  SizedBox(height: context.space.space_500 * 2),
+                  Text(
+                    " Name",
+                    style: context.typography.bodyLarge
+                        .copyWith(color: context.colors.primaryTxt),
+                  ),
+                  SizedBox(height: context.space.space_200),
+                  AuthField(
+                    padding: EdgeInsets.all(context.space.space_200),
+                    controller: nameController,
+                    hintText: "Enter Your Name",
+                    keyboardType: TextInputType.name,
+                  ),
+                  SizedBox(height: context.space.space_200),
+                  Text(
+                    " Email",
+                    style: context.typography.bodyLarge
+                        .copyWith(color: context.colors.primaryTxt),
+                  ),
+                  SizedBox(height: context.space.space_200),
+                  AuthField(
+                    padding: EdgeInsets.all(context.space.space_200),
+                    controller: emailController,
+                    hintText: "Enter Your Email",
+                    keyboardType: TextInputType.emailAddress,
+                    validator: validateEmail,
+                  ),
+                  SizedBox(height: context.space.space_200),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        " Phone Number",
+                        style: context.typography.bodyLarge,
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: context.space.space_200),
-                Text(
-                  " Password",
-                  style: context.typography.bodyLarge
-                      .copyWith(color: context.colors.primaryTxt),
-                ),
-                AuthField(
-                  controller: passwordController,
-                  hintText: "Enter Your Password",
-                  keyboardType: TextInputType.visiblePassword,
-                  obscureText: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Password is required';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: context.space.space_200),
-                SizedBox(
-                  width: double.infinity,
-                  child: ButtonWidget(
-                    label: authState.isLoading
-                        ? "Creating Account..."
-                        : "Create Account",
-                    onTap: () async {
-                      // Inside your signup button onTap handler:
-                      if (formKey.value.currentState?.validate() ?? false) {
-                        try {
-                          // Clean phone number
-                          final cleanPhoneNumber = phoneController.text
-                              .replaceAll(RegExp(r'[^\d]'), '');
-                          final fullPhoneNumber =
-                              '${selectedCountryCode.value}$cleanPhoneNumber';
-
-                          ref.read(authControllerProvider.notifier).signup(
-                                UserModel(
-                                  name: nameController.text.trim(),
-                                  email: emailController.text.trim(),
-                                  phone: fullPhoneNumber,
-                                  password: passwordController.text,
-                                ),
-                              );
-
-                          if (context.mounted) {
-                            SnackbarUtil.showsnackbar(
-                              message: "Signup successful! Please login.",
-                              showretry: false,
-                            );
-                            context.push(LoginWithPhoneAndPasswordPage.route);
-                          }
-                        } catch (error) {
-                          SnackbarUtil.showsnackbar(
-                            message: error.toString(),
-                            showretry: false,
-                          );
-                        }
+                      SizedBox(height: context.space.space_200),
+                      PhoneAuthField(
+                        controller: phoneController,
+                        onCountryChanged: (countryCode) {
+                          selectedCountryCode.value = countryCode;
+                        },
+                        validator: (value) => validatePhoneNumber(
+                          value,
+                          selectedCountryCode.value,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: context.space.space_200),
+                  Text(
+                    " Password",
+                    style: context.typography.bodyLarge
+                        .copyWith(color: context.colors.primaryTxt),
+                  ),
+                  SizedBox(height: context.space.space_200),
+                  AuthField(
+                    controller: passwordController,
+                    hintText: "Enter Your Password",
+                    keyboardType: TextInputType.visiblePassword,
+                    obscureText: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Password is required';
                       }
+                      return null;
                     },
                   ),
-                ),
-              ],
+                  SizedBox(height: context.space.space_200),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ButtonWidget(
+                      label: authState.isLoading
+                          ? "Creating Account..."
+                          : "Create Account",
+                      onTap: () async {
+                        // Inside your signup button onTap handler:
+                        if (formKey.value.currentState?.validate() ?? false) {
+                          try {
+                            // Clean phone number
+                            final cleanPhoneNumber = phoneController.text
+                                .replaceAll(RegExp(r'[^\d]'), '');
+                            final fullPhoneNumber =
+                                '${selectedCountryCode.value}$cleanPhoneNumber';
+
+                            ref.read(authControllerProvider.notifier).signup(
+                                  UserModel(
+                                    name: nameController.text.trim(),
+                                    email: emailController.text.trim(),
+                                    phone: fullPhoneNumber,
+                                    password: passwordController.text,
+                                  ),
+                                );
+
+                            if (context.mounted) {
+                              SnackbarUtil.showsnackbar(
+                                message: "Signup successful! Please login.",
+                                showretry: false,
+                              );
+                              context.push(LoginWithPhoneAndPasswordPage.route);
+                            }
+                          } catch (error) {
+                            SnackbarUtil.showsnackbar(
+                              message: error.toString(),
+                              showretry: false,
+                            );
+                          }
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

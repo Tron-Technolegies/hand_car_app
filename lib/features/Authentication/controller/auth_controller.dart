@@ -16,7 +16,7 @@ class AuthController extends _$AuthController {
   FutureOr<AuthModel?> build() async {
     try {
       final storage = ref.read(tokenStorageProvider);
-      if (storage.hasValidTokens) {  // Changed to hasValidTokens
+      if (storage.hasValidTokens) {
         final accessToken = storage.getAccessToken();
         final refreshToken = storage.getRefreshToken();
         
@@ -103,9 +103,7 @@ class AuthController extends _$AuthController {
       log('Logout API error: $e');
     } finally {
       try {
-        // Always clear tokens and state
         await ref.read(tokenStorageProvider).clearTokens();
-       
         state = const AsyncValue.data(null);
       } catch (e, st) {
         log('Error clearing local data: $e');
@@ -148,7 +146,7 @@ class AuthController extends _$AuthController {
     state = const AsyncValue.loading();
     try {
       await ref.read(apiServiceProvider).requestPasswordReset(email);
-      state = state; // Maintain current state
+      state = state;
     } catch (e, st) {
       log('Password reset request error: $e');
       state = AsyncValue.error(e, st);

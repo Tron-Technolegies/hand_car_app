@@ -30,14 +30,7 @@ class AddressApiService {
   Future<T> _makeAuthenticatedRequest<T>(
       Future<T> Function(String token) request) async {
     try {
-      // Check token expiration first
-      if (TokenStorage().isAccessTokenExpired()) {
-        log('Access token expired, attempting refresh');
-        final refreshSuccess = await _refreshToken();
-        if (!refreshSuccess) {
-          throw AddressException('Session expired. Please login again.');
-        }
-      }
+  
 
       final token = await _getToken();
       try {

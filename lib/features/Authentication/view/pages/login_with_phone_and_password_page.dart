@@ -513,156 +513,189 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Login"),
-        centerTitle: true,
-      ),
+      appBar: AppBar(),
       body: Center(
+        // Center the entire content
         child: SingleChildScrollView(
-          child: ConstrainedBox(
+          child: Container(
             constraints: const BoxConstraints(maxWidth: 400),
-            child: Padding(
-              padding: EdgeInsets.all(context.space.space_200),
-              child: Form(
-                key: formKey.value,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: SvgPicture.asset(Assets.icons.handCarIcon),
+            padding: EdgeInsets.symmetric(
+              horizontal: context.space.space_200,
+              vertical: context.space.space_300,
+            ),
+            child: Form(
+              key: formKey.value,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Logo section
+                  Center(
+                    child: SvgPicture.asset(
+                      Assets.icons.handCarIcon,
+                      height: 80, // Fixed height for consistency
                     ),
-                    SizedBox(height: context.space.space_200),
-                    Text(" Phone Number",
-                        style: context.typography.bodyLarge
-                            .copyWith(color: context.colors.primaryTxt)),
-                    SizedBox(height: context.space.space_100),
-               
-                    PhoneAuthField(
-                      controller: phoneController,
-                      onCountryChanged: (countryCode) {
-                        selectedCountryCode.value = countryCode;
-                      },
-                      validator: (value) => validatePhoneNumber(
-                        value,
-                        selectedCountryCode.value,
+                  ),
+                  SizedBox(height: context.space.space_300),
+
+                  // Welcome text
+                  Center(
+                    child: Text(
+                      "Welcome to Hand Car",
+                      style: context.typography.h2,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  SizedBox(height: context.space.space_200),
+                  Center(
+                    child: Text(
+                      "Let’s Sign you in",
+                      style: context.typography.h3,
+                    ),
+                  ),
+                  SizedBox(height: context.space.space_300),
+
+                  // Phone number section
+                  Text(
+                    "Phone Number",
+                    style: context.typography.bodyLarge
+                        .copyWith(color: context.colors.primaryTxt),
+                  ),
+                  SizedBox(height: context.space.space_150),
+                  PhoneAuthField(
+                    controller: phoneController,
+                    onCountryChanged: (countryCode) {
+                      selectedCountryCode.value = countryCode;
+                    },
+                    validator: (value) => validatePhoneNumber(
+                      value,
+                      selectedCountryCode.value,
+                    ),
+                  ),
+                  SizedBox(height: context.space.space_250),
+
+                  // Password section
+                  Text(
+                    "Password",
+                    style: context.typography.bodyLarge
+                        .copyWith(color: context.colors.primaryTxt),
+                  ),
+                  SizedBox(height: context.space.space_150),
+                  AuthField(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: context.space.space_200,
+                      vertical: context.space.space_150,
+                    ),
+                    controller: passwordController,
+                    hintText: "Enter Your Password",
+                    keyboardType: TextInputType.visiblePassword,
+                    isPassword: !isPasswordVisible.value,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        isPasswordVisible.value
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                       ),
+                      onPressed: () {
+                        isPasswordVisible.value = !isPasswordVisible.value;
+                      },
                     ),
-                    SizedBox(height: context.space.space_200),
-                    Text(" Password",
-                        style: context.typography.bodyLarge
-                            .copyWith(color: context.colors.primaryTxt)),
-                    SizedBox(height: context.space.space_100),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: context.space.space_200),
-                      child: AuthField(
-                        padding: EdgeInsets.all(context.space.space_200),
-                        controller: passwordController,
-                        hintText: "Enter Your Password",
-                        keyboardType: TextInputType.visiblePassword,
-                        isPassword: !isPasswordVisible.value,
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            isPasswordVisible.value
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                          ),
-                          onPressed: () {
-                            isPasswordVisible.value = !isPasswordVisible.value;
+                    validator: validatePassword,
+                  ),
+                  SizedBox(height: context.space.space_300),
+
+                  // Action buttons
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment
+                        .spaceBetween, // Changed from spaceAround
+                    children: [
+                      Expanded(
+                        // Added Expanded
+                        child: OutlineButtonWidget(
+                          label: 'Cancel',
+                          onTap: () {
+                            formKey.value.currentState?.reset();
+                            phoneController.clear();
+                            passwordController.clear();
                           },
                         ),
-                        validator: validatePassword,
                       ),
-                    ),
-                    SizedBox(height: context.space.space_200),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: context.space.space_200),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          OutlineButtonWidget(
-                            label: 'Cancel',
-                            onTap: () {
-                              formKey.value.currentState?.reset();
-                              phoneController.clear();
-                              passwordController.clear();
-                            },
-                          ),
-                          ButtonWidget(
-                            label: loginState.isLoading
-                                ? "Logging in..."
-                                : "Login",
-                            onTap: () {
-                              if (!loginState.isLoading) {
-                                handleLogin();
-                              }
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: context.space.space_200),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: context.space.space_200),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          TextButton(
-                            onPressed: () =>
-                                context.push(ForgotPasswordPage.route),
-                            child: Text(
-                              "Forgot Password?",
-                              style: context.typography.bodyMedium.copyWith(
-                                color: context.colors.primaryTxt,
-                              ),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () => context.push(SignupPage.route),
-                            child: Text(
-                              "Sign Up",
-                              style: context.typography.bodyMedium.copyWith(
-                                color: context.colors.primaryTxt,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: context.space.space_200),
-                    Row(
-                      children: [
-                        const Expanded(child: Divider()),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: context.space.space_200),
-                          child: Text(
-                            'OR',
-                            style: context.typography.bodyMedium.copyWith(
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
-                        const Expanded(child: Divider()),
-                      ],
-                    ),
-                    SizedBox(height: context.space.space_200),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: context.space.space_200),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: OutlineButtonWidget(
-                          label: 'Login with OTP',
-                          onTap: switchToOtpLogin,
+                      SizedBox(width: context.space.space_200),
+                      Expanded(
+                        // Added Expanded
+                        child: ButtonWidget(
+                          label:
+                              loginState.isLoading ? "Logging in..." : "Login",
+                          onTap: () {
+                            if (!loginState.isLoading) {
+                              handleLogin();
+                            }
+                          },
                         ),
                       ),
+                    ],
+                  ),
+                  SizedBox(height: context.space.space_250),
+
+                  // Additional options
+                  Row(
+                    mainAxisAlignment:
+                        MainAxisAlignment.end, // Changed from spaceAround
+                    children: [
+                      TextButton(
+                        onPressed: () => context.push(ForgotPasswordPage.route),
+                        child: Text(
+                          "Forgot Password?",
+                          style: context.typography.bodyMedium.copyWith(
+                            color: context.colors.primaryTxt,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: context.space.space_250),
+
+                  // Divider section
+                  Row(
+                    children: [
+                      const Expanded(child: Divider()),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: context.space.space_200,
+                        ),
+                        child: Text(
+                          'OR',
+                          style: context.typography.bodyMedium.copyWith(
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                      const Expanded(child: Divider()),
+                    ],
+                  ),
+                  SizedBox(height: context.space.space_250),
+
+                  // OTP login button
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlineButtonWidget(
+                      label: 'Login with OTP',
+                      onTap: switchToOtpLogin,
                     ),
-                  ],
-                ),
+                  ),
+                  SizedBox(height: context.space.space_250),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Don't have an account?"),
+                      TextButton(
+                        onPressed: () => context.push(SignupPage.route),
+                        child: Text("Sign Up",
+                            style: context.typography.bodyMedium
+                                .copyWith(color: context.colors.warning)),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),
