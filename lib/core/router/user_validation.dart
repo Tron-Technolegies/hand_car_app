@@ -26,6 +26,48 @@ class TokenStorage {
 
   TokenStorage._internal() : _storage = GetStorage();
 
+  Future<void> saveRefreshedAccessToken(String accessToken) async {
+  try {
+    if (accessToken.isEmpty) {
+      throw TokenStorageException('Access token cannot be empty');
+    }
+
+    // Decode and validate new access token
+    final accessPayload = decodeJwtPayload(accessToken.split('.')[1]);
+    final accessExpiry = accessPayload['exp'] * 1000;
+    final userId = accessPayload['user_id'];
+
+    log('Saving refreshed access token:'
+        '\nNew Access Token Expiry: ${DateTime.fromMillisecondsSinceEpoch(accessExpiry)}'
+        '\nUser ID: $userId');
+
+    // Save only the new access token and its expiry
+    await _lock.synchronized(() async {
+      await Future.wait([
+        _storage.write(_accessTokenKey, _encryptToken(accessToken)),
+        _storage.write(_accessExpiryKey, accessExpiry),
+      ]);
+    });
+
+    // Verify the saved access token
+    final savedToken = getAccessToken();
+    if (savedToken == null) {
+      throw TokenStorageException('Failed to retrieve saved access token');
+    }
+
+    // Additional verification of token payload
+    final savedPayload = decodeJwtPayload(savedToken.split('.')[1]);
+    if (savedPayload['user_id'] != userId) {
+      throw TokenStorageException('Token user ID mismatch');
+    }
+
+    log('Refreshed access token saved and verified successfully');
+  } catch (e) {
+    log('Error saving refreshed access token: $e');
+    throw TokenStorageException('Failed to save refreshed access token: $e');
+  }
+}
+
   Future<void> saveTokens({
     required String accessToken,
     required String refreshToken,
@@ -35,7 +77,7 @@ class TokenStorage {
         throw TokenStorageException('Tokens cannot be empty');
       }
 
-      // Decode and validate tokens
+      // Decode and validate both tokens
       final accessPayload = decodeJwtPayload(accessToken.split('.')[1]);
       final refreshPayload = decodeJwtPayload(refreshToken.split('.')[1]);
 
@@ -106,7 +148,8 @@ class TokenStorage {
       if (parts.length != 3) return false;
 
       final payload = decodeJwtPayload(parts[1]);
-      final expiration = DateTime.fromMillisecondsSinceEpoch(payload['exp'] * 1000);
+      final expiration =
+          DateTime.fromMillisecondsSinceEpoch(payload['exp'] * 1000);
       return DateTime.now().isBefore(expiration);
     } catch (e) {
       return false;
@@ -120,7 +163,8 @@ class TokenStorage {
 
       final parts = token.split('.');
       final payload = decodeJwtPayload(parts[1]);
-      final expiration = DateTime.fromMillisecondsSinceEpoch(payload['exp'] * 1000);
+      final expiration =
+          DateTime.fromMillisecondsSinceEpoch(payload['exp'] * 1000);
       final now = DateTime.now();
 
       // Consider token expired if less than threshold minutes remaining
@@ -145,7 +189,8 @@ class TokenStorage {
 
       final parts = token.split('.');
       final payload = decodeJwtPayload(parts[1]);
-      final expiration = DateTime.fromMillisecondsSinceEpoch(payload['exp'] * 1000);
+      final expiration =
+          DateTime.fromMillisecondsSinceEpoch(payload['exp'] * 1000);
       return DateTime.now().isAfter(expiration);
     } catch (e) {
       log('Error checking refresh token expiration: $e');
@@ -160,7 +205,8 @@ class TokenStorage {
 
       final parts = token.split('.');
       final payload = decodeJwtPayload(parts[1]);
-      final expiration = DateTime.fromMillisecondsSinceEpoch(payload['exp'] * 1000);
+      final expiration =
+          DateTime.fromMillisecondsSinceEpoch(payload['exp'] * 1000);
       return expiration.difference(DateTime.now());
     } catch (e) {
       log('Error calculating remaining time: $e');
@@ -192,7 +238,7 @@ class TokenStorage {
   }
 
   String _encryptToken(String token) => base64.encode(utf8.encode(token));
-  
+
   String _decryptToken(String encryptedToken) {
     try {
       return utf8.decode(base64.decode(encryptedToken));
@@ -224,8 +270,10 @@ class TokenStorage {
       final accessToken = getAccessToken();
       final refreshToken = getRefreshToken();
 
-      return accessToken != null && refreshToken != null && 
-             !isAccessTokenExpired() && !isRefreshTokenExpired();
+      return accessToken != null &&
+          refreshToken != null &&
+          !isAccessTokenExpired() &&
+          !isRefreshTokenExpired();
     } catch (e) {
       log('Error checking token validity: $e');
       return false;

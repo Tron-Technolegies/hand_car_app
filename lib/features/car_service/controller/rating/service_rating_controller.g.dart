@@ -7,7 +7,7 @@ part of 'service_rating_controller.dart';
 // **************************************************************************
 
 String _$serviceRatingControllerHash() =>
-    r'4c32f6478f6d5c19ab388c7e72fd658c02a50360';
+    r'110c44a3b7ae3c4efb99eac6e9d3574cfe0799c8';
 
 /// See also [ServiceRatingController].
 @ProviderFor(ServiceRatingController)

@@ -8,7 +8,8 @@ part 'search_location.freezed.dart';
 class LocationSearchResult with _$LocationSearchResult {
   const factory LocationSearchResult({
     required String displayName,
-    @JsonKey(ignore: true) required LatLng latLng,
+    @JsonKey(includeFromJson: false, includeToJson: false)
+    required LatLng latLng,
     String? type,
     String? address,
   }) = _LocationSearchResult;

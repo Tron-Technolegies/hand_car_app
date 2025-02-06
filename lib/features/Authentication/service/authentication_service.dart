@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:hand_car/core/service/base_api_service.dart';
@@ -13,10 +12,8 @@ class ApiServiceAuthentication extends BaseApiService {
 
   bool compareTokens(String accessToken, String refreshToken) {
     try {
-      // Log the full tokens
-      log('Full Tokens Comparison:'
-          '\nAccess Token: $accessToken'
-          '\nRefresh Token: $refreshToken');
+      // Log tokens check start
+      log('Starting token comparison...');
 
       // Split tokens into parts
       final accessParts = accessToken.split('.');
@@ -27,31 +24,28 @@ class ApiServiceAuthentication extends BaseApiService {
         return false;
       }
 
-      // Get the decoded payloads using TokenStorage's method
       final accessPayload = tokenStorage.decodeJwtPayload(accessParts[1]);
       final refreshPayload = tokenStorage.decodeJwtPayload(refreshParts[1]);
 
-      // Log decoded parts
-      log('Decoded Token Parts:'
-          '\nAccess Token Header: ${tokenStorage.decodeJwtPayload(accessParts[0])}'
-          '\nAccess Token Payload: $accessPayload'
-          '\nAccess Token Signature: ${accessParts[2]}'
-          '\n\nRefresh Token Header: ${tokenStorage.decodeJwtPayload(refreshParts[0])}'
-          '\nRefresh Token Payload: $refreshPayload'
-          '\nRefresh Token Signature: ${refreshParts[2]}');
-
-      // Compare key identifiers
+      // Compare user IDs and validate expiration
       bool sameUser = accessPayload['user_id'] == refreshPayload['user_id'];
+      final accessExpiry =
+          DateTime.fromMillisecondsSinceEpoch(accessPayload['exp'] * 1000);
+      final refreshExpiry =
+          DateTime.fromMillisecondsSinceEpoch(refreshPayload['exp'] * 1000);
+      final now = DateTime.now();
 
-      // Log comparison results
+      // Log token details
       log('Token Comparison Results:'
           '\nAccess Token User ID: ${accessPayload['user_id']}'
           '\nRefresh Token User ID: ${refreshPayload['user_id']}'
           '\nTokens match: $sameUser'
-          '\nAccess Token Expiry: ${DateTime.fromMillisecondsSinceEpoch(accessPayload['exp'] * 1000)}'
-          '\nRefresh Token Expiry: ${DateTime.fromMillisecondsSinceEpoch(refreshPayload['exp'] * 1000)}');
+          '\nAccess Token Expiry: $accessExpiry'
+          '\nRefresh Token Expiry: $refreshExpiry');
 
-      return sameUser;
+      return sameUser &&
+          accessExpiry.isAfter(now) &&
+          refreshExpiry.isAfter(now);
     } catch (e) {
       log('Error comparing tokens: $e');
       return false;
@@ -75,40 +69,156 @@ class ApiServiceAuthentication extends BaseApiService {
           headers: {
             'Accept': 'application/json',
           },
+          validateStatus: (status) => true,
         ),
       );
 
-      log('Login response status code: ${response.statusCode}');
-
+      log('Login response status: ${response.statusCode}');
       if (response.statusCode == 200) {
-        log('Login successful, parsing response...');
         final authModel = AuthModel.fromJson(response.data);
 
-        // Add token comparison check
+        // Validate tokens
         if (!compareTokens(authModel.accessToken, authModel.refreshToken)) {
-          log('Warning: Access and Refresh tokens mismatch');
+          log('Warning: Token validation failed');
           throw Exception('Token validation failed');
         }
 
-        log('Saving tokens to storage...');
+        // Save tokens to storage
         await tokenStorage.saveTokens(
           accessToken: authModel.accessToken,
           refreshToken: authModel.refreshToken,
         );
-        
-        // Verify saved tokens
-        if (!tokenStorage.hasValidTokens) {
-          throw Exception('Token verification failed after save');
-        }
 
-        log('Tokens saved and verified successfully');
+        // Update dio default headers
+        _updateDioHeaders(authModel.accessToken);
+
+        log('Login successful - tokens saved and verified');
         return authModel;
       }
 
-      log('Login failed with status code: ${response.statusCode}');
-      log('Error response: ${response.data}');
+      log('Login failed: ${response.data}');
       throw handleApiError(response);
     });
+  }
+
+  Future<UserModel> getCurrentUser() async {
+    return withRetry(() async {
+      try {
+        log('Fetching current user...');
+
+        // Check if tokens are valid
+        if (!tokenStorage.hasValidTokens) {
+          log('No valid tokens available, attempting to refresh');
+
+          // Check if refresh token is expired
+          if (tokenStorage.isRefreshTokenExpired()) {
+            log('Refresh token is expired');
+            await tokenStorage.clearTokens();
+            throw Exception('Authentication expired. Please log in again.');
+          }
+
+          // Attempt to refresh access token
+          final refreshSuccess = await refreshToken();
+          if (!refreshSuccess) {
+            log('Token refresh failed');
+            await tokenStorage.clearTokens();
+            throw Exception(
+                'Failed to refresh authentication. Please log in again.');
+          }
+        }
+
+        // Get the current valid access token after potential refresh
+        final currentToken = tokenStorage.getAccessToken();
+        if (currentToken == null) {
+          log('No valid access token found after refresh');
+          await tokenStorage.clearTokens();
+          throw Exception('Authentication expired. Please log in again.');
+        }
+
+        // Perform user fetch with retry mechanism
+        try {
+          final response = await dio.get(
+            '/get_logged_in_user',
+            options: Options(
+              headers: {
+                'Authorization': 'Bearer $currentToken',
+                'Cookie': 'access_token=$currentToken',
+              },
+              validateStatus: (status) => true,
+              extra: {
+                'withCredentials': true,
+              },
+            ),
+          );
+
+          log('Get user response status: ${response.statusCode}');
+          log('Get user response data: ${response.data}');
+          
+
+          // Handle different response scenarios
+          switch (response.statusCode) {
+            case 200:
+              if (response.data != null) {
+                return _parseUserResponse(response.data);
+              }
+              throw Exception('Empty user data received');
+
+            case 401:
+              log('Authentication failed: ${response.data}');
+              await tokenStorage.clearTokens();
+              throw Exception('Authentication expired. Please log in again.');
+
+            default:
+              log('Unexpected response: ${response.statusCode}');
+              throw handleApiError(response);
+          }
+        } on DioException catch (dioError) {
+          // Handle Dio-specific errors
+          if (dioError.response?.statusCode == 401) {
+            log('Unauthorized access during user fetch');
+            await tokenStorage.clearTokens();
+            throw Exception('Authentication failed. Please log in again.');
+          }
+          rethrow;
+        }
+      } catch (e) {
+        log('Comprehensive error in getCurrentUser: $e');
+
+        // Additional error handling
+        if (e is DioException) {
+          if (e.response?.statusCode == 401) {
+            await tokenStorage.clearTokens();
+          }
+        }
+
+        rethrow;
+      }
+    });
+  }
+
+  // Helper method to update Dio headers
+  void _updateDioHeaders(String token) {
+    dio.options.headers['Authorization'] = 'Bearer $token';
+    dio.options.headers['Cookie'] = 'access_token=$token';
+  }
+
+  // Helper method to parse user response
+  UserModel _parseUserResponse(Map<String, dynamic> userData) {
+    try {
+      if (userData.containsKey('first_name')) {
+        return UserModel(
+          name: '${userData['first_name']} ${userData['last_name']}'.trim(),
+          email: userData['email'] ?? '',
+          phone: userData['phone'] ?? '',
+          address: userData['address'],
+          profileImage: userData['profile_image'],
+        );
+      }
+      return UserModel.fromJson(userData);
+    } catch (e) {
+      log('Error parsing user data: $e');
+      throw Exception('Failed to parse user data');
+    }
   }
 
   Future<AuthModel> verifyOtp(String phoneNumber, String otp) async {
@@ -141,75 +251,6 @@ class ApiServiceAuthentication extends BaseApiService {
       );
       if (response.statusCode != 200) {
         throw handleApiError(response);
-      }
-    });
-  }
-
-  Future<UserModel> getCurrentUser() async {
-    return withRetry(() async {
-      try {
-        log('Fetching current user...');
-        final token = tokenStorage.getAccessToken();
-        if (token == null) {
-          log('No access token found');
-          throw Exception('Authentication token not found');
-        }
-
-        final response = await dio.get(
-          '/get_logged_in_user',
-          options: Options(
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-              'Authorization': 'Bearer $token',
-              'Cookie': 'access_token=$token',
-            },
-            extra: {
-              'withCredentials': true,
-            },
-          ),
-        );
-
-        log('Current user response status: ${response.statusCode}');
-
-        if (response.statusCode == 200 && response.data != null) {
-          final userData = response.data;
-          log('User data received: $userData');
-
-          if (userData is Map<String, dynamic>) {
-            try {
-              if (userData.containsKey('first_name')) {
-                return UserModel(
-                  name: '${userData['first_name']} ${userData['last_name']}'.trim(),
-                  email: userData['email'] ?? '',
-                  phone: userData['phone'] ?? '',
-                  address: userData['address'],
-                  profileImage: userData['profile_image'],
-                );
-              }
-              return UserModel.fromJson(userData);
-            } catch (e) {
-              log('Error parsing user data: $e');
-              throw Exception('Failed to parse user data: $e');
-            }
-          }
-          throw Exception('Invalid response format: ${response.data}');
-        }
-
-        log('Failed to get user data: ${response.data}');
-        throw handleApiError(response);
-      } on DioException catch (e) {
-        log('DioException getting user: ${e.message}');
-        log('DioException response: ${e.response?.data}');
-
-        if (e.response?.statusCode == 401) {
-          await tokenStorage.clearTokens();
-          throw Exception('Authentication failed');
-        }
-        throw Exception(e.message ?? 'Failed to get user');
-      } catch (e) {
-        log('Unexpected error getting user: $e');
-        throw Exception('Failed to get user: $e');
       }
     });
   }
@@ -276,7 +317,9 @@ class ApiServiceAuthentication extends BaseApiService {
 
       if (response.statusCode == 200) {
         return UserModel(
-          name: '${response.data['user']['first_name']} ${response.data['user']['last_name']}'.trim(),
+          name:
+              '${response.data['user']['first_name']} ${response.data['user']['last_name']}'
+                  .trim(),
           email: response.data['user']['email'],
           phone: profile.phone,
           address: profile.address,

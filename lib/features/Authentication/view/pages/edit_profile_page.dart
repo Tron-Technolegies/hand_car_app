@@ -1,4 +1,4 @@
-import 'dart:developer';
+
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -27,7 +27,7 @@ class EditProfileScreen extends HookConsumerWidget {
     final emailController = useMemoized(() => TextEditingController());
     final isLoading = useState(false);
     final image = ref.watch(imagePickerProvider);
-    final mounted = useIsMounted();
+    final mounted = context.mounted;
 
     // Watch user data
     final userData = ref.watch(userDataProviderProvider);
@@ -35,7 +35,7 @@ class EditProfileScreen extends HookConsumerWidget {
     // Initialize controllers with user data
     useEffect(() {
       userData.whenData((user) {
-        if (user != null && mounted()) {
+        if (user != null && mounted) {
           nameController.text = user.name;
           emailController.text = user.email;
         }
@@ -43,7 +43,7 @@ class EditProfileScreen extends HookConsumerWidget {
 
       // Cleanup
       return () {
-        if (mounted()) {
+        if (mounted) {
           nameController.dispose();
           emailController.dispose();
         }
@@ -51,7 +51,7 @@ class EditProfileScreen extends HookConsumerWidget {
     }, []); 
 
     Future<void> handleSubmit() async {
-      if (!mounted() || !(formKey.currentState?.validate() ?? false)) return;
+      if (!mounted || !(formKey.currentState?.validate() ?? false)) return;
 
       isLoading.value = true;
       try {
@@ -66,7 +66,7 @@ class EditProfileScreen extends HookConsumerWidget {
               updatedProfile,
             );
 
-        if (mounted()) {
+        if (mounted) {
           await ref.read(userDataProviderProvider.notifier).refresh();
 
           if (context.mounted) {
@@ -79,13 +79,13 @@ class EditProfileScreen extends HookConsumerWidget {
           }
         }
       } catch (e) {
-        if (mounted() && context.mounted) {
+        if (mounted && context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Error updating profile: $e')),
           );
         }
       } finally {
-        if (mounted()) {
+        if (mounted) {
           isLoading.value = false;
         }
       }

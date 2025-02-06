@@ -53,7 +53,7 @@
         <string>tel</string>
         <string>googlegmail</string>
         <string>mailto</string>
-        <key>keychain-access-groups</key>
+      
     </array>
 
     <key>NSPhotoLibraryUsageDescription</key>

@@ -36,7 +36,6 @@ class SearchNotifier extends _$SearchNotifier {
     }
   }
 
-  @override
   void dispose() {
     _searchService.dispose();
 

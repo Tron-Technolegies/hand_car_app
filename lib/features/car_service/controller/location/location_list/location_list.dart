@@ -1,5 +1,6 @@
 // lib/features/car_service/controller/location/location_list/location_list.dart
-import 'package:hand_car/features/car_service/controller/car_service_controller.dart';
+import 'dart:developer';
+
 import 'package:hand_car/features/car_service/model/location/location_model.dart';
 import 'package:hand_car/features/car_service/model/service_model.dart';
 import 'package:hand_car/features/car_service/service/location/services_locations.dart';
@@ -51,7 +52,7 @@ class ServicesNotifier extends _$ServicesNotifier {
         isLoading: false,
       );
     } catch (e) {
-      print('Error fetching services: $e');
+      log('Error fetching services: $e');
       state = state.copyWith(
         isLoading: false,
         error: 'Failed to fetch nearby services: ${e.toString()}',
