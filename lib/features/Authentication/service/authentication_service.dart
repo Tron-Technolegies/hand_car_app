@@ -153,7 +153,6 @@ class ApiServiceAuthentication extends BaseApiService {
 
           log('Get user response status: ${response.statusCode}');
           log('Get user response data: ${response.data}');
-          
 
           // Handle different response scenarios
           switch (response.statusCode) {
@@ -255,18 +254,48 @@ class ApiServiceAuthentication extends BaseApiService {
     });
   }
 
-  Future<String> signUp(UserModel user) async {
-    return withRetry(() async {
+  Future<void> signUp(UserModel user) async {
+    try {
+      final userData = {
+        'name': user.name,
+        'email': user.email,
+        'phone': user.phone,
+        'password': user.password,
+      };
+
+      log('Sending signup request with data: $userData');
+
       final response = await dio.post(
-        '/signup/',
-        data: user.toJson(),
+        '/signup',
+        data: userData, // Sending as JSON
+        options: Options(
+          contentType:
+              Headers.jsonContentType, // Explicitly set JSON content type
+          headers: {
+            'Accept': 'application/json',
+          },
+          validateStatus: (status) => true,
+        ),
       );
 
-      if (response.statusCode == 200) {
-        return response.data['message'] ?? 'Signup successful';
+      log('Signup response status: ${response.statusCode}');
+      log('Signup response data: ${response.data}');
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        log('Signup successful');
+        return;
       }
+
+      if (response.statusCode == 400) {
+        final errorMessage = response.data['error'] ?? 'Signup failed';
+        throw Exception(errorMessage);
+      }
+
       throw handleApiError(response);
-    });
+    } catch (e) {
+      log('Error during signup: $e');
+      rethrow;
+    }
   }
 
   Future<void> logout() async {
