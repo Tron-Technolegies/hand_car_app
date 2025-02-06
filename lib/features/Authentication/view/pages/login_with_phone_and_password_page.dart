@@ -20,7 +20,7 @@ import 'package:hand_car/gen/assets.gen.dart';
 /// It also provides options to switch to OTP-based login, reset password, and sign up
 class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
   static const route = '/LoginWithPhoneAndPasswordPage';
-  
+
   const LoginWithPhoneAndPasswordPage({super.key});
 
   /// Validates phone number based on country code
@@ -99,10 +99,10 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
       // Update login preference in storage
       final storage = ref.read(storageProvider);
       await storage.write('preferredLoginMethod', LoginPage.route);
-      
+
       // Update login preference state
       ref.read(loginPreferenceProvider.notifier).state = LoginPage.route;
-      
+
       // Navigate to OTP login page
       if (context.mounted) {
         context.go(LoginPage.route);
@@ -114,14 +114,15 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
       // Validate form fields
       if (formKey.value.currentState?.validate() ?? false) {
         // Combine country code with phone number
-        final fullPhoneNumber = '+${selectedCountry.value.phoneCode}${phoneController.text}';
+        final fullPhoneNumber =
+            '+${selectedCountry.value.phoneCode}${phoneController.text}';
 
         try {
           // Attempt login
           await ref.read(authControllerProvider.notifier).login(
-            fullPhoneNumber,
-            passwordController.text,
-          );
+                fullPhoneNumber,
+                passwordController.text,
+              );
 
           // Handle specific error states
           final authState = ref.read(authControllerProvider);
@@ -183,16 +184,7 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                     SizedBox(height: context.space.space_200),
 
                     // Quick OTP Login Option
-                    Center(
-                      child: TextButton.icon(
-                        onPressed: switchToOtpLogin,
-                        icon: const Icon(Icons.message),
-                        label: const Text('Login with OTP instead'),
-                        style: TextButton.styleFrom(
-                          foregroundColor: context.colors.primary,
-                        ),
-                      ),
-                    ),
+
                     SizedBox(height: context.space.space_200),
 
                     // Phone Number Section
@@ -205,7 +197,8 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                     ),
                     SizedBox(height: context.space.space_200),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: context.space.space_200),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: context.space.space_200),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -227,7 +220,8 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                                 );
                               },
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
                                 child: Center(
                                   child: Text(
                                     '+${selectedCountry.value.phoneCode}',
@@ -238,7 +232,7 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                             ),
                           ),
                           SizedBox(width: context.space.space_100),
-                          
+
                           // Phone Number Input
                           Expanded(
                             child: TextFormField(
@@ -254,7 +248,8 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                                 value,
                                 '+${selectedCountry.value.phoneCode}',
                               ),
-                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
                             ),
                           ),
                         ],
@@ -272,7 +267,8 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                     ),
                     SizedBox(height: context.space.space_200),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: context.space.space_200),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: context.space.space_200),
                       child: TextFormField(
                         controller: passwordController,
                         obscureText: !isPasswordVisible.value,
@@ -282,13 +278,17 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                           prefixIcon: const Icon(Icons.lock),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              isPasswordVisible.value ? Icons.visibility : Icons.visibility_off,
+                              isPasswordVisible.value
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
                             ),
                             onPressed: () {
-                              isPasswordVisible.value = !isPasswordVisible.value;
+                              isPasswordVisible.value =
+                                  !isPasswordVisible.value;
                             },
                           ),
-                          hintText: 'Min. 6 characters with number and capital letter',
+                          hintText:
+                              'Min. 6 characters with number and capital letter',
                         ),
                         validator: validatePassword,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -298,7 +298,8 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                     // Action Buttons
                     SizedBox(height: context.space.space_200),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: context.space.space_200),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: context.space.space_200),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -311,7 +312,9 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                             },
                           ),
                           ButtonWidget(
-                            label: loginState.isLoading ? "Logging in..." : "Login",
+                            label: loginState.isLoading
+                                ? "Logging in..."
+                                : "Login",
                             onTap: () {
                               if (!loginState.isLoading) {
                                 handleLogin();
@@ -325,12 +328,14 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                     // Additional Options
                     SizedBox(height: context.space.space_200),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: context.space.space_200),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: context.space.space_200),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           TextButton(
-                            onPressed: () => context.push(ForgotPasswordPage.route),
+                            onPressed: () =>
+                                context.push(ForgotPasswordPage.route),
                             child: Text(
                               "Forgot Password?",
                               style: context.typography.bodyMedium.copyWith(
@@ -357,7 +362,8 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                       children: [
                         const Expanded(child: Divider()),
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: context.space.space_200),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: context.space.space_200),
                           child: Text(
                             'OR',
                             style: context.typography.bodyMedium.copyWith(
@@ -370,13 +376,13 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                     ),
                     SizedBox(height: context.space.space_200),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: context.space.space_200),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: context.space.space_200),
                       child: SizedBox(
                         width: double.infinity,
                         child: OutlineButtonWidget(
                           label: 'Login with OTP',
                           onTap: switchToOtpLogin,
-                       
                         ),
                       ),
                     ),
