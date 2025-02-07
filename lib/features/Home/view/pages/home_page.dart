@@ -32,13 +32,13 @@ class HomePage extends ConsumerWidget {
           padding: EdgeInsets.all(context.space.space_100),
           child: SvgPicture.asset(Assets.icons.handCarIcon),
         ),
-        actions: [
-          IconButton(
-              onPressed: () {
-                scaffoldKey1.currentState?.openDrawer();
-              },
-              icon: const Icon(Icons.menu)),
-        ],
+        // actions: [
+        //   IconButton(
+        //       onPressed: () {
+        //         scaffoldKey1.currentState?.openDrawer();
+        //       },
+        //       icon: const Icon(Icons.menu)),
+        // ],
       ),
       drawer: const DrawerWidget(),
       endDrawerEnableOpenDragGesture: true,
