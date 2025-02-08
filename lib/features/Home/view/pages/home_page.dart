@@ -11,7 +11,7 @@ import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:lottie/lottie.dart';
 
-final GlobalKey<ScaffoldState> scaffoldKey1 = GlobalKey<ScaffoldState>();
+// final GlobalKey<ScaffoldState> scaffoldKey1 = GlobalKey<ScaffoldState>();
 
 class HomePage extends ConsumerWidget {
   static const String route = '/home_page';
@@ -26,7 +26,7 @@ class HomePage extends ConsumerWidget {
   ///
   Widget build(BuildContext context, ref) {
     return Scaffold(
-      key: scaffoldKey1,
+      // key: scaffoldKey1,
       appBar: AppBar(
         leading: Padding(
           padding: EdgeInsets.all(context.space.space_100),

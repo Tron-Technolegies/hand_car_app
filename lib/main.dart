@@ -11,6 +11,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  //Get storage
   await GetStorage.init();
   log('Config: $baseUrl');
   runApp(const ProviderScope(child: MainApp()));
