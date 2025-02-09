@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
@@ -48,7 +46,7 @@ class EditProfileScreen extends HookConsumerWidget {
           emailController.dispose();
         }
       };
-    }, []); 
+    }, []);
 
     Future<void> handleSubmit() async {
       if (!mounted || !(formKey.currentState?.validate() ?? false)) return;
@@ -70,11 +68,10 @@ class EditProfileScreen extends HookConsumerWidget {
           await ref.read(userDataProviderProvider.notifier).refresh();
 
           if (context.mounted) {
-          SnackbarUtil.showsnackbar(
-            message:
-            'Profile updated successfully',
-            showretry: false,
-          );
+            SnackbarUtil.showsnackbar(
+              message: 'Profile updated successfully',
+              showretry: false,
+            );
             context.pop();
           }
         }
@@ -123,9 +120,9 @@ class EditProfileScreen extends HookConsumerWidget {
                       filled: true,
                       fillColor:
                           context.colors.primaryTxt.withValues(alpha: 0.05),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 24.0,
-                        vertical: 16.0,
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: context.space.space_300,
+                        vertical: context.space.space_200,
                       ),
                       border: const OutlineInputBorder(
                         borderSide: BorderSide.none,
