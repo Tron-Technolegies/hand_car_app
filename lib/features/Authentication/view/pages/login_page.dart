@@ -8,6 +8,7 @@ import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
 import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
 import 'package:hand_car/features/Authentication/view/pages/login_with_phone_and_password_page.dart';
+import 'package:hand_car/features/Authentication/view/widgets/phone_auth_widget.dart';
 
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -24,6 +25,8 @@ class LoginPage extends HookConsumerWidget {
 
     // Watch auth state for loading status
     final authState = ref.watch(authControllerProvider);
+
+    final selectedCountryCode = useState('971'); // Default to UAE
 
     /// Switches to phone/password login
     Future<void> switchToPhoneLogin() async {
@@ -48,10 +51,24 @@ class LoginPage extends HookConsumerWidget {
       return null;
     }
 
+    String? validatePhoneNumber(String? value, String countryCode) {
+      if (value == null || value.isEmpty) {
+        return 'Phone number is required';
+      }
+
+      final digitsOnly = value.replaceAll(RegExp(r'[^\d]'), '');
+
+      if (digitsOnly.length < 8 || digitsOnly.length > 15) {
+        return 'Invalid phone number length';
+      }
+      return null;
+    }
+
     /// Handles sending OTP
     Future<void> handleSendOtp() async {
       if (!isMounted) return;
-  /// Validate input
+
+      /// Validate input
       final input = controller.text.trim();
       if (validateInput(input) != null) {
         SnackbarUtil.showsnackbar(
@@ -105,7 +122,7 @@ class LoginPage extends HookConsumerWidget {
             Center(
               //
               child: Text(
-                "Login Account With Mobile Number",
+                "Enter Your Registred Mobile Number",
                 style: context.typography.h3,
                 textAlign: TextAlign.center,
               ),
@@ -114,17 +131,15 @@ class LoginPage extends HookConsumerWidget {
             Padding(
               padding:
                   EdgeInsets.symmetric(horizontal: context.space.space_200),
-              child: TextField(
+              child: PhoneAuthField(
                 controller: controller,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Email or Mobile Number',
-                  prefixIcon: Icon(Icons.person),
-                  hintText: 'Enter email or mobile number',
+                onCountryChanged: (code) {
+                  selectedCountryCode.value = code;
+                },
+                validator: (value) => validatePhoneNumber(
+                  value,
+                  selectedCountryCode.value,
                 ),
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.done,
-                onSubmitted: (_) => handleSendOtp(),
               ),
             ),
             SizedBox(height: context.space.space_200),
