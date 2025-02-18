@@ -3,12 +3,13 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/controller/image_picker_controller.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/core/utils/snackbar.dart';
+
 import 'package:hand_car/core/widgets/button_widget.dart';
 import 'package:hand_car/core/widgets/outline_button_widget.dart';
 import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
 import 'package:hand_car/features/Authentication/controller/user_controller.dart';
 import 'package:hand_car/features/Authentication/model/user_model.dart';
+import 'package:hand_car/features/Authentication/view/pages/profile_page.dart';
 import 'package:hand_car/features/Authentication/view/widgets/user_info_edit_field.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -48,6 +49,7 @@ class EditProfileScreen extends HookConsumerWidget {
       };
     }, []);
 
+    // In your EditProfileScreen
     Future<void> handleSubmit() async {
       if (!mounted || !(formKey.currentState?.validate() ?? false)) return;
 
@@ -68,22 +70,36 @@ class EditProfileScreen extends HookConsumerWidget {
           await ref.read(userDataProviderProvider.notifier).refresh();
 
           if (context.mounted) {
-            SnackbarUtil.showsnackbar(
-              message: 'Profile updated successfully',
-              showretry: false,
+            // Show SnackBar with proper margin and behavior
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text('Profile updated successfully'),
+                behavior: SnackBarBehavior.floating,
+                margin: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).padding.bottom + 80,
+                  left: 16,
+                  right: 16,
+                ),
+              ),
             );
-            context.pop();
+
+            // Navigate after showing SnackBar
+            context.go(ProfilePage.route);
           }
         }
       } catch (e) {
         if (mounted && context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error updating profile: $e')),
+            SnackBar(
+              content: Text('Error updating profile: $e'),
+              behavior: SnackBarBehavior.floating,
+              margin: EdgeInsets.only(
+                bottom: MediaQuery.of(context).padding.bottom + 80,
+                left: 16,
+                right: 16,
+              ),
+            ),
           );
-        }
-      } finally {
-        if (mounted) {
-          isLoading.value = false;
         }
       }
     }
@@ -97,7 +113,7 @@ class EditProfileScreen extends HookConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => Center(child: Text('Error: $error')),
         data: (user) => SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: EdgeInsets.symmetric(horizontal: context.space.space_200),
           child: Form(
             key: formKey,
             child: Column(
@@ -167,39 +183,7 @@ class EditProfileScreen extends HookConsumerWidget {
                     },
                   ),
                 ),
-                const SizedBox(height: 24),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.end,
-                //   children: [
-                //     TextButton(
-                //       onPressed: () => context.pop(),
-                //       child: Text(
-                //         'Cancel',
-                //         style: TextStyle(color: context.colors.primaryTxt),
-                //       ),
-                //     ),
-                //     const SizedBox(width: 16),
-                //     ElevatedButton(
-                //       onPressed: isLoading.value ? null : handleSubmit,
-                //       style: ElevatedButton.styleFrom(
-                //         backgroundColor: context.colors.primary,
-                //         foregroundColor: Colors.white,
-                //         minimumSize: const Size(120, 48),
-                //         shape: const StadiumBorder(),
-                //       ),
-                //       child: isLoading.value
-                //           ? const SizedBox(
-                //               width: 24,
-                //               height: 24,
-                //               child: CircularProgressIndicator(
-                //                 color: Colors.white,
-                //                 strokeWidth: 2,
-                //               ),
-                //             )
-                //           : const Text('Save'),
-                //     ),
-                //   ],
-                // ),
+                SizedBox(height: context.space.space_200),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   spacing: context.space.space_200,
@@ -208,11 +192,11 @@ class EditProfileScreen extends HookConsumerWidget {
                         label: "Cancel", onTap: () => context.pop()),
                     ButtonWidget(
                       label: "Save",
-                      onTap: () async {
-                        if (!isLoading.value) {
-                          await handleSubmit();
-                        }
-                      },
+                      onTap: isLoading.value
+                          ? () {}
+                          : () {
+                              handleSubmit();
+                            },
                     ),
                   ],
                 )
