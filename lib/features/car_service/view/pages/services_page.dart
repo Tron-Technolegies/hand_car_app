@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
+
 import 'package:hand_car/features/car_service/controller/car_service_controller.dart';
 import 'package:hand_car/features/car_service/controller/filter_categories/service_filter.dart';
 import 'package:hand_car/features/car_service/controller/location/location_list/location_list.dart';
@@ -237,16 +237,10 @@ class ServicesPage extends HookConsumerWidget {
               ),
             ),
           ),
-          IconButton(
-            onPressed: () => scaffoldKey3.currentState?.openDrawer(),
-            icon: Icon(
-              Icons.menu,
-              color: context.colors.primaryTxt,
-            ),
-          ),
+      
         ],
       ),
-      drawer: const DrawerWidget(),
+
       endDrawerEnableOpenDragGesture: true,
       body: Column(
         children: [

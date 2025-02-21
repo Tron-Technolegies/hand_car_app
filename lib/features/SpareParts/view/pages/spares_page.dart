@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
 import 'package:hand_car/features/SpareParts/view/widgets/item_code_search.dart';
 import 'package:hand_car/features/SpareParts/view/widgets/product_search_container_widget.dart';
 import 'package:hand_car/features/SpareParts/view/widgets/carousel_slider_for_genuine_spare_widget.dart';
@@ -28,17 +27,17 @@ class AutoPartsPage extends HookWidget {
         ),
         title: Text("Auto Parts", style: context.typography.h3),
         centerTitle: true,
-        actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
-          IconButton(
-              onPressed: () {
-                scaffoldKey4.currentState?.openDrawer();
-              },
-              icon: const Icon(Icons.menu)),
-        ],
+        // actions: [
+        //   IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
+        //   IconButton(
+        //       onPressed: () {
+        //         scaffoldKey4.currentState?.openDrawer();
+        //       },
+        //       icon: const Icon(Icons.menu)),
+        // ],
       ),
-      drawer: const DrawerWidget(),
-      endDrawerEnableOpenDragGesture: true,
+      
+      
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: context.space.space_200),

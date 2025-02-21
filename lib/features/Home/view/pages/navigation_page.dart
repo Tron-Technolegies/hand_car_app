@@ -4,7 +4,6 @@ import 'package:hand_car/core/utils/bottom_nav_controller.dart';
 import 'package:hand_car/features/Home/view/pages/home_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/profile_page.dart';
 import 'package:hand_car/features/Home/view/widgets/bottom_app_bar.dart';
-import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
 import 'package:hand_car/features/SpareParts/view/pages/spares_page.dart';
 import 'package:hand_car/features/car_service/view/pages/services_page.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -45,7 +44,7 @@ class NavigationPage extends HookConsumerWidget {
 
     return Scaffold(
         extendBody: true,
-        drawer: const DrawerWidget(),
+      
         body: PageView(
           controller: navigationState.pageController,
           children: [

@@ -4,7 +4,6 @@ import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/bottom_nav_controller.dart';
 import 'package:hand_car/features/Home/view/widgets/carousel_slider_widget.dart';
 import 'package:hand_car/features/Home/view/widgets/container_for_home_page.dart';
-import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
 import 'package:hand_car/features/Home/view/widgets/home_page_services_widget.dart';
 import 'package:hand_car/features/Home/view/widgets/spare_brands_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
@@ -40,8 +39,8 @@ class HomePage extends ConsumerWidget {
         //       icon: const Icon(Icons.menu)),
         // ],
       ),
-      drawer: const DrawerWidget(),
-      endDrawerEnableOpenDragGesture: true,
+     
+     
       body: SingleChildScrollView(
         child: Column(children: [
           SizedBox(

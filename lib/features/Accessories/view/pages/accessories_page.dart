@@ -16,7 +16,6 @@ import 'package:hand_car/features/Accessories/view/widgets/accessories/accessori
 import 'package:hand_car/features/Accessories/view/widgets/accessories/filter_dialog.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/grid_view_for_accessories_widget.dart';
 import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
-import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:lottie/lottie.dart';
@@ -190,7 +189,7 @@ class AccessoriesPage extends HookConsumerWidget {
             )
           : null,
       // appBar: CustomAppBar(title: 'Accessories'),
-      drawer: const DrawerWidget(),
+  
       endDrawerEnableOpenDragGesture: true,
       body: Column(
         children: [
