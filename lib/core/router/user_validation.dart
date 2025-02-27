@@ -1,13 +1,21 @@
 import 'dart:convert';
 import 'dart:developer';
-
 import 'package:get_storage/get_storage.dart';
-import 'package:hand_car/core/exception/token/token_exception.dart';
 import 'package:synchronized/synchronized.dart';
+
+class TokenStorageException implements Exception {
+  final String message;
+  TokenStorageException(this.message);
+  @override
+  String toString() => message;
+}
 
 class TokenStorage {
   static const String _accessTokenKey = 'access_token';
   static const String _refreshTokenKey = 'refresh_token';
+  static const String _loginTimestampKey = 'login_timestamp';
+  static const int _oneMonthInMillis = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
+  
   final GetStorage _storage;
   static TokenStorage? _instance;
   static final Lock _lock = Lock();
@@ -32,14 +40,17 @@ class TokenStorage {
         throw TokenStorageException('Tokens cannot be empty');
       }
 
+      final loginTimestamp = DateTime.now().millisecondsSinceEpoch;
+
       await _lock.synchronized(() async {
         await Future.wait([
           _storage.write(_accessTokenKey, _encryptToken(accessToken)),
           _storage.write(_refreshTokenKey, _encryptToken(refreshToken)),
+          _storage.write(_loginTimestampKey, loginTimestamp),
         ]);
       });
 
-      log('Tokens saved successfully');
+      log('Tokens and login timestamp saved successfully');
     } catch (e) {
       log('Error saving tokens: $e');
       await clearTokens();
@@ -86,12 +97,26 @@ class TokenStorage {
         await Future.wait([
           _storage.remove(_accessTokenKey),
           _storage.remove(_refreshTokenKey),
+          _storage.remove(_loginTimestampKey),
         ]);
       });
-      log('Tokens cleared successfully');
+      log('Tokens and login timestamp cleared successfully');
     } catch (e) {
       log('Error clearing tokens: $e');
       throw TokenStorageException('Failed to clear tokens: $e');
+    }
+  }
+
+  bool get hasValidLoginPeriod {
+    try {
+      final loginTimestamp = _storage.read<int>(_loginTimestampKey);
+      if (loginTimestamp == null) return false;
+
+      final currentTime = DateTime.now().millisecondsSinceEpoch;
+      return (currentTime - loginTimestamp) <= _oneMonthInMillis;
+    } catch (e) {
+      log('Error checking login period validity: $e');
+      return false;
     }
   }
 
@@ -99,7 +124,7 @@ class TokenStorage {
     try {
       final accessToken = getAccessToken();
       final refreshToken = getRefreshToken();
-      return accessToken != null && refreshToken != null;
+      return accessToken != null && refreshToken != null && hasValidLoginPeriod;
     } catch (e) {
       log('Error checking token validity: $e');
       return false;

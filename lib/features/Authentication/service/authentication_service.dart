@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:hand_car/core/service/base_api_service.dart';
@@ -7,10 +8,24 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'authentication_service.g.dart';
 
-class ApiServiceAuthentication extends BaseApiService {
-  ApiServiceAuthentication() : super();
 
-  
+class ApiServiceAuthentication extends BaseApiService {
+  Timer? _loginCheckTimer;
+
+  ApiServiceAuthentication() : super() {
+    _startLoginPeriodCheck();
+  }
+
+  void _startLoginPeriodCheck() {
+    _loginCheckTimer?.cancel();
+    _loginCheckTimer = Timer.periodic(const Duration(hours: 1), (timer) async {
+      if (!tokenStorage.hasValidLoginPeriod) {
+        log('One month login period expired, logging out user');
+        await logout();
+        timer.cancel();
+      }
+    });
+  }
 
   Future<AuthModel> login(String username, String password) async {
     return withRetry(() async {
@@ -37,14 +52,13 @@ class ApiServiceAuthentication extends BaseApiService {
       if (response.statusCode == 200) {
         final authModel = AuthModel.fromJson(response.data);
 
-        // Save tokens to storage
         await tokenStorage.saveTokens(
           accessToken: authModel.accessToken,
           refreshToken: authModel.refreshToken,
         );
 
-        // Update dio default headers
         _updateDioHeaders(authModel.accessToken);
+        _startLoginPeriodCheck(); // Start timer after successful login
 
         log('Login successful - tokens saved');
         return authModel;
@@ -55,7 +69,6 @@ class ApiServiceAuthentication extends BaseApiService {
     });
   }
 
- 
   Future<UserModel> getCurrentUser() async {
     return withRetry(() async {
       try {
@@ -100,13 +113,11 @@ class ApiServiceAuthentication extends BaseApiService {
     });
   }
 
-  // Helper method to update Dio headers
   void _updateDioHeaders(String token) {
     dio.options.headers['Authorization'] = 'Bearer $token';
     dio.options.headers['Cookie'] = 'access_token=$token';
   }
 
-  // Helper method to parse user response
   UserModel _parseUserResponse(Map<String, dynamic> userData) {
     try {
       if (userData.containsKey('first_name')) {
@@ -125,87 +136,9 @@ class ApiServiceAuthentication extends BaseApiService {
     }
   }
 
-  Future<AuthModel> verifyOtp(String phoneNumber, String otp) async {
-    return withRetry(() async {
-      final response = await dio.post(
-        '/login-with-otp/',
-        data: {
-          'phone': phoneNumber,
-          'otp': otp,
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final authModel = AuthModel.fromJson(response.data);
-        await tokenStorage.saveTokens(
-          accessToken: authModel.accessToken,
-          refreshToken: authModel.refreshToken,
-        );
-        return authModel;
-      }
-      throw handleApiError(response);
-    });
-  }
-
-  Future<void> sendOtp(String phoneNumber) async {
-    return withRetry(() async {
-      final response = await dio.post(
-        '/send-otp/',
-        data: {'phone': phoneNumber},
-      );
-      if (response.statusCode != 200) {
-        throw handleApiError(response);
-      }
-    });
-  }
-
-  Future<void> signUp(UserModel user) async {
-  
-      try {
-        final userData = {
-          'name': user.name,
-          'email': user.email,
-          'phone': user.phone,
-          'password': user.password,
-        };
-
-        log('Sending signup request with data: $userData');
-
-        final response = await dio.post(
-          '/signup',
-          data: userData,  // Sending as JSON
-          options: Options(
-            contentType: Headers.jsonContentType,  // Explicitly set JSON content type
-            headers: {
-              'Accept': 'application/json',
-            },
-            validateStatus: (status) => true,
-          ),
-        );
-
-        log('Signup response status: ${response.statusCode}');
-        log('Signup response data: ${response.data}');
-
-        if (response.statusCode == 201 || response.statusCode == 200) {
-          log('Signup successful');
-          return;
-        }
-
-        if (response.statusCode == 400) {
-          final errorMessage = response.data['error'] ?? 'Signup failed';
-          throw Exception(errorMessage);
-        }
-
-        throw handleApiError(response);
-      } catch (e) {
-        log('Error during signup: $e');
-        rethrow;
-      }
-  
-}
-
   Future<void> logout() async {
     try {
+      _loginCheckTimer?.cancel(); // Cancel the timer on logout
       final token = tokenStorage.getAccessToken();
       if (token != null) {
         final response = await dio.post(
@@ -236,6 +169,84 @@ class ApiServiceAuthentication extends BaseApiService {
     } catch (e) {
       log('Error during logout cleanup: $e');
       throw Exception('Failed to complete logout');
+    }
+  }
+
+  Future<AuthModel> verifyOtp(String phoneNumber, String otp) async {
+    return withRetry(() async {
+      final response = await dio.post(
+        '/login-with-otp/',
+        data: {
+          'phone': phoneNumber,
+          'otp': otp,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final authModel = AuthModel.fromJson(response.data);
+        await tokenStorage.saveTokens(
+          accessToken: authModel.accessToken,
+          refreshToken: authModel.refreshToken,
+        );
+        _startLoginPeriodCheck(); // Start timer after successful OTP login
+        return authModel;
+      }
+      throw handleApiError(response);
+    });
+  }
+
+  Future<void> sendOtp(String phoneNumber) async {
+    return withRetry(() async {
+      final response = await dio.post(
+        '/send-otp/',
+        data: {'phone': phoneNumber},
+      );
+      if (response.statusCode != 200) {
+        throw handleApiError(response);
+      }
+    });
+  }
+
+  Future<void> signUp(UserModel user) async {
+    try {
+      final userData = {
+        'name': user.name,
+        'email': user.email,
+        'phone': user.phone,
+        'password': user.password,
+      };
+
+      log('Sending signup request with data: $userData');
+
+      final response = await dio.post(
+        '/signup',
+        data: userData,
+        options: Options(
+          contentType: Headers.jsonContentType,
+          headers: {
+            'Accept': 'application/json',
+          },
+          validateStatus: (status) => true,
+        ),
+      );
+
+      log('Signup response status: ${response.statusCode}');
+      log('Signup response data: ${response.data}');
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        log('Signup successful');
+        return;
+      }
+
+      if (response.statusCode == 400) {
+        final errorMessage = response.data['error'] ?? 'Signup failed';
+        throw Exception(errorMessage);
+      }
+
+      throw handleApiError(response);
+    } catch (e) {
+      log('Error during signup: $e');
+      rethrow;
     }
   }
 
@@ -288,10 +299,15 @@ class ApiServiceAuthentication extends BaseApiService {
     });
   }
 
+  void dispose() {
+    _loginCheckTimer?.cancel();
+  }
+
   bool get isAuthenticated => tokenStorage.hasValidTokens;
 }
 
+
 @riverpod
-ApiServiceAuthentication apiService(ref) {
+ApiServiceAuthentication apiService( ref) {
   return ApiServiceAuthentication();
 }

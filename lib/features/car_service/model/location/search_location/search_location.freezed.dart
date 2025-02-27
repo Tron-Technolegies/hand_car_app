@@ -17,7 +17,7 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$LocationSearchResult {
   String get displayName => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   LatLng get latLng => throw _privateConstructorUsedError;
   String? get type => throw _privateConstructorUsedError;
   String? get address => throw _privateConstructorUsedError;
@@ -37,7 +37,7 @@ abstract class $LocationSearchResultCopyWith<$Res> {
   @useResult
   $Res call(
       {String displayName,
-      @JsonKey(ignore: true) LatLng latLng,
+      @JsonKey(includeFromJson: false, includeToJson: false) LatLng latLng,
       String? type,
       String? address});
 }
@@ -94,7 +94,7 @@ abstract class _$$LocationSearchResultImplCopyWith<$Res>
   @useResult
   $Res call(
       {String displayName,
-      @JsonKey(ignore: true) LatLng latLng,
+      @JsonKey(includeFromJson: false, includeToJson: false) LatLng latLng,
       String? type,
       String? address});
 }
@@ -143,14 +143,15 @@ class __$$LocationSearchResultImplCopyWithImpl<$Res>
 class _$LocationSearchResultImpl implements _LocationSearchResult {
   const _$LocationSearchResultImpl(
       {required this.displayName,
-      @JsonKey(ignore: true) required this.latLng,
+      @JsonKey(includeFromJson: false, includeToJson: false)
+      required this.latLng,
       this.type,
       this.address});
 
   @override
   final String displayName;
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   final LatLng latLng;
   @override
   final String? type;
@@ -192,14 +193,15 @@ class _$LocationSearchResultImpl implements _LocationSearchResult {
 abstract class _LocationSearchResult implements LocationSearchResult {
   const factory _LocationSearchResult(
       {required final String displayName,
-      @JsonKey(ignore: true) required final LatLng latLng,
+      @JsonKey(includeFromJson: false, includeToJson: false)
+      required final LatLng latLng,
       final String? type,
       final String? address}) = _$LocationSearchResultImpl;
 
   @override
   String get displayName;
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   LatLng get latLng;
   @override
   String? get type;
