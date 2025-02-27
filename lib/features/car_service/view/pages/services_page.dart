@@ -25,11 +25,14 @@ class ServicesPage extends HookConsumerWidget {
   static const String route = '/services_page';
 
   final List<String> images = [
-    Assets.icons.icPaintingService,
-    Assets.icons.icFittingService,
-    Assets.icons.icSparePartsService,
-    Assets.icons.icGeneralCheckupService,
-    Assets.icons.icWashService
+    Assets.icons.acRepair,
+    Assets.icons.breakService,
+    Assets.icons.electronicsService,
+    Assets.icons.tyreService,
+    Assets.icons.generalRepair,
+    Assets.icons.oilChange,
+    Assets.icons.paintingService,
+    Assets.icons.acRepair,
   ];
 
   ServicesPage({super.key});
@@ -248,7 +251,7 @@ class ServicesPage extends HookConsumerWidget {
           if (locationState.error != null)
             Container(
               padding: EdgeInsets.all(context.space.space_200),
-              color: Colors.red.withValues(alpha:0.1),
+              color: Colors.black.withValues(alpha:0.1),
               child: Text(
                 locationState.error!,
                 style: context.typography.bodyMedium.copyWith(

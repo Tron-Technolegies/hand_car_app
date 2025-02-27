@@ -77,13 +77,22 @@ class $AssetsAnimationsGen {
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// File path: assets/icons/ac_repair.svg
+  String get acRepair => 'assets/icons/ac_repair.svg';
+
   /// File path: assets/icons/bosch_logo.png
   AssetGenImage get boschLogo =>
       const AssetGenImage('assets/icons/bosch_logo.png');
 
+  /// File path: assets/icons/break_service.svg
+  String get breakService => 'assets/icons/break_service.svg';
+
   /// File path: assets/icons/brembo_logo.png
   AssetGenImage get bremboLogo =>
       const AssetGenImage('assets/icons/brembo_logo.png');
+
+  /// File path: assets/icons/car-wash_icon.svg
+  String get carWashIcon => 'assets/icons/car-wash_icon.svg';
 
   /// File path: assets/icons/car_washing_station.svg
   String get carWashingStation => 'assets/icons/car_washing_station.svg';
@@ -95,6 +104,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/denso_logo.jpg
   AssetGenImage get densoLogo =>
       const AssetGenImage('assets/icons/denso_logo.jpg');
+
+  /// File path: assets/icons/electronics_service.svg
+  String get electronicsService => 'assets/icons/electronics_service.svg';
 
   /// File path: assets/icons/elring_logo.png
   AssetGenImage get elringLogo =>
@@ -121,6 +133,9 @@ class $AssetsIconsGen {
 
   /// File path: assets/icons/garage_filled.svg
   String get garageFilled => 'assets/icons/garage_filled.svg';
+
+  /// File path: assets/icons/general_repair.svg
+  String get generalRepair => 'assets/icons/general_repair.svg';
 
   /// File path: assets/icons/hand_car_icon.svg
   String get handCarIcon => 'assets/icons/hand_car_icon.svg';
@@ -210,6 +225,12 @@ class $AssetsIconsGen {
   AssetGenImage get nissensLogo =>
       const AssetGenImage('assets/icons/nissens_logo.png');
 
+  /// File path: assets/icons/oil_change.svg
+  String get oilChange => 'assets/icons/oil_change.svg';
+
+  /// File path: assets/icons/painting_service.svg
+  String get paintingService => 'assets/icons/painting_service.svg';
+
   /// File path: assets/icons/phone.png
   AssetGenImage get phone => const AssetGenImage('assets/icons/phone.png');
 
@@ -227,17 +248,24 @@ class $AssetsIconsGen {
   AssetGenImage get totalLogo =>
       const AssetGenImage('assets/icons/total_logo.png');
 
+  /// File path: assets/icons/tyre_service.svg
+  String get tyreService => 'assets/icons/tyre_service.svg';
+
   /// File path: assets/icons/whatsapp.png
   AssetGenImage get whatsapp =>
       const AssetGenImage('assets/icons/whatsapp.png');
 
   /// List of all assets
   List<dynamic> get values => [
+        acRepair,
         boschLogo,
+        breakService,
         bremboLogo,
+        carWashIcon,
         carWashingStation,
         delphiLogo,
         densoLogo,
+        electronicsService,
         elringLogo,
         email,
         fuchsLogo,
@@ -246,6 +274,7 @@ class $AssetsIconsGen {
         g3,
         garage,
         garageFilled,
+        generalRepair,
         handCarIcon,
         handCarLogo,
         icCarSeatFilled,
@@ -273,11 +302,14 @@ class $AssetsIconsGen {
         mannLogo,
         motulLogo,
         nissensLogo,
+        oilChange,
+        paintingService,
         phone,
         profileFilled,
         profileOutline,
         pwrLogo,
         totalLogo,
+        tyreService,
         whatsapp
       ];
 }
