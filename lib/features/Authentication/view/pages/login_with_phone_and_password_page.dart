@@ -1,5 +1,3 @@
-
-
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -14,6 +12,7 @@ import 'package:hand_car/features/Authentication/view/pages/forgot_password_page
 import 'package:hand_car/features/Authentication/view/pages/login_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/signup_page.dart';
 import 'package:hand_car/features/Authentication/view/widgets/phone_auth_widget.dart';
+import 'package:hand_car/features/Home/view/pages/navigation_page.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/snackbar.dart';
@@ -54,7 +53,7 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
     final passwordController = useTextEditingController();
     final formKey = useState(GlobalKey<FormState>());
     final isPasswordVisible = useState(false);
-    final selectedCountryCode = useState('971'); // Default to UAE
+    final selectedCountryCode = useState('971');
 
     final loginState = ref.watch(authControllerProvider);
 
@@ -75,42 +74,62 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
           final fullPhoneNumber =
               '${selectedCountryCode.value}$cleanPhoneNumber';
 
-          await ref.read(authControllerProvider.notifier).login(
-                fullPhoneNumber,
-                passwordController.text,
-              );
+          // Store the mounted state before async operation
+          bool wasSuccessful = false;
 
-          final authState = ref.read(authControllerProvider);
-          authState.whenOrNull(
-            error: (error, stackTrace) {
-              if (error.toString().contains('Invalid login credentials')) {
-                SnackbarUtil.showsnackbar(
-                  message: "Account doesn't exist. Please sign up first.",
-                  showretry: true,
+          // Show loading in UI
+          if (context.mounted) {
+            SnackbarUtil.showsnackbar(
+              message: "Logging in...",
+              showretry: false,
+            );
+          }
+
+          try {
+            await ref.read(authControllerProvider.notifier).login(
+                  fullPhoneNumber,
+                  passwordController.text,
                 );
-              } else if (error.toString().contains('Invalid password')) {
-                SnackbarUtil.showsnackbar(
-                  message: "Invalid password. Please try again.",
-                  showretry: false,
-                );
-              } else {
-                SnackbarUtil.showsnackbar(
-                  message: "Login failed. Please try again.",
-                  showretry: false,
-                );
+            // If we get here without exception, login was successful
+            wasSuccessful = true;
+          } catch (e) {
+            // Handle login errors
+            log('Login error: $e');
+            if (context.mounted) {
+              String errorMessage = "Login failed. Please try again.";
+
+              final errorString = e.toString().toLowerCase();
+              if (errorString.contains('invalid') ||
+                  errorString.contains('not found')) {
+                errorMessage = "Invalid credentials. Please try again.";
               }
-              log('Login error: $error');
-              log('Stack trace: $stackTrace');
-            },
-            data: (_) {
+
               SnackbarUtil.showsnackbar(
-                message: "Login Successful",
+                message: errorMessage,
                 showretry: false,
               );
-            },
-          );
+            }
+            return; // Exit early on error
+          }
+
+          // Handle successful login - only if still mounted
+          if (wasSuccessful && context.mounted) {
+            SnackbarUtil.showsnackbar(
+              message: "Login Successful",
+              showretry: false,
+            );
+            // Navigate using context.go instead of context.push to replace the login screen
+            context.go(NavigationPage.route);
+          }
         } catch (e) {
           log('Unexpected error during login: $e');
+          // Only show snackbar if context is still mounted
+          if (context.mounted) {
+            SnackbarUtil.showsnackbar(
+              message: "An unexpected error occurred",
+              showretry: false,
+            );
+          }
         }
       }
     }

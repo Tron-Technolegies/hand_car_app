@@ -52,6 +52,7 @@ class ForgotPasswordPage extends HookConsumerWidget {
         }
       } catch (e) {
         SnackbarUtil.showsnackbar(
+
           message: e.toString(),
           showretry: true,
         );

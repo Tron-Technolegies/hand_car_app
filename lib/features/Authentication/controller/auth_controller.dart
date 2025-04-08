@@ -37,28 +37,34 @@ class AuthController extends _$AuthController {
   }
 
   Future<void> login(String username, String password) async {
-    state = const AsyncValue.loading();
-    try {
-      final authService = ref.read(apiServiceProvider);
-      final authModel = await authService.login(username, password);
-      
-      log('Login successful, saving tokens');
-      await ref.read(tokenStorageProvider).saveTokens(
-        accessToken: authModel.accessToken,
-        refreshToken: authModel.refreshToken,
-      );
-      
-      state = AsyncValue.data(authModel);
-      
-      // Refresh user data after successful login
-      await ref.read(userDataProviderProvider.notifier).refresh();
-    } catch (e, st) {
-      log('Login error: $e');
-      state = AsyncValue.error(e, st);
-      rethrow;
+  state = const AsyncValue.loading();
+  try {
+    final authService = ref.read(apiServiceProvider);
+    final authModel = await authService.login(username, password);
+    
+    log('Login successful, saving tokens');
+    await ref.read(tokenStorageProvider).saveTokens(
+      accessToken: authModel.accessToken,
+      refreshToken: authModel.refreshToken,
+    );
+    
+    state = AsyncValue.data(authModel);
+    
+    // Refresh user data after successful login
+    await ref.read(userDataProviderProvider.notifier).refresh();
+  } catch (e, st) {
+    log('Login error: $e');
+    state = AsyncValue.error(e, st);
+    
+    // Make sure we're throwing a user-friendly error message
+    if (e is Exception) {
+      rethrow;  // Re-throw existing exception
+    } else {
+      // Convert string or other error types to exception
+      throw Exception(e.toString());
     }
   }
-
+}
   Future<void> verifyOtp(String phone, String otp) async {
     state = const AsyncValue.loading();
     try {
@@ -81,17 +87,34 @@ class AuthController extends _$AuthController {
     }
   }
 
-  Future<void> signup(UserModel user) async {
-    state = const AsyncValue.loading();
-    try {
-      await ref.read(apiServiceProvider).signUp(user);
-      state = const AsyncValue.data(null);
-    } catch (e, st) {
-      log('Signup error: $e');
+Future<bool> signup(UserModel user) async {
+  state = const AsyncValue.loading();
+  
+  try {
+    final authService = ref.read(apiServiceProvider);
+    final response = await authService.signUp(user);
+    
+    // If success, return true
+    state = AsyncValue.data(state.valueOrNull);
+    return true;
+    
+  } catch (e, st) {
+    log('Signup error: $e');
+    
+    // Check for specific error messages
+    String errorMessage = e.toString();
+    if (errorMessage.contains('email already exists') ||
+        errorMessage.contains('phone already exists') ||
+        errorMessage.contains('duplicate')) {
       state = AsyncValue.error(e, st);
-      rethrow;
+      rethrow; // This will be caught in the UI layer
     }
+    
+    // Generic error handling
+    state = AsyncValue.error(e, st);
+    rethrow;
   }
+}
 
   Future<void> logout() async {
     state = const AsyncValue.loading();
