@@ -1,11 +1,10 @@
 import 'dart:developer';
-
 import 'package:hand_car/core/exception/cart/cart_exception.dart';
 import 'package:hand_car/features/Accessories/model/coupon/coupon_model.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:hand_car/features/Accessories/model/cart/cart_model.dart';
 import 'package:hand_car/features/Accessories/services/cart_api_service.dart';
 import 'package:hand_car/core/router/user_validation.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'cart_controller.g.dart';
 
@@ -25,28 +24,19 @@ class CartController extends _$CartController {
   Future<void> addToCart(int productId) async {
     final previousState = state;
     try {
-      // Check authentication first
       if (!TokenStorage().hasValidTokens) {
         throw const CartException('Please login to continue');
       }
-
       log('Adding product to cart: $productId');
-
-      // Make API call first
       final response = await _cartService.addToCart(productId.toString());
-      
-      log('Product added successfully with quantity: ${response.cartQuantity}');
-
-      // Only refresh cart if the addition was successful
+      log('Product added with quantity: ${response.cartQuantity}');
       if (response.isSuccess) {
         await refreshCart();
       } else {
         throw CartException(response.error ?? 'Failed to add item to cart');
       }
-
     } catch (e) {
       log('Error adding to cart: $e');
-      // Restore previous state on error
       state = previousState;
       rethrow;
     }
@@ -58,7 +48,7 @@ class CartController extends _$CartController {
     } catch (e) {
       log('Error fetching cart: $e');
       if (e is CartException) rethrow;
-      throw CartException('Failed to fetch cart: ${e.toString()}');
+      throw CartException('Failed to fetch cart: $e');
     }
   }
 
@@ -75,115 +65,74 @@ class CartController extends _$CartController {
     }
   }
 
-  Future<void> removeFromCart(int productId) async {
+  Future<void> removeFromCart(int cartItemId) async {
     final previousState = state;
     try {
-      // Optimistically update UI
       state.whenData((currentCart) {
         final updatedItems = currentCart.cartItems
-            .where((item) => item.productId != productId)
+            .where((item) => item.productId != cartItemId)
             .toList();
-
         state = AsyncValue.data(currentCart.copyWith(
           cartItems: updatedItems,
           isLoading: true,
         ));
       });
-
-      await _cartService.removeFromCart(productId);
-      
-      if (!state.isLoading) {
-        state = previousState;
-        return;
-      }
-
-      // Force refresh to get updated cart
+      await _cartService.removeFromCart(cartItemId);
       await refreshCart();
     } catch (e) {
-      if (!state.isLoading) return;
       state = previousState;
+      log('Error removing from cart: $e');
       if (e is CartException) rethrow;
-      throw CartException('Failed to remove item: ${e.toString()}');
+      throw CartException('Failed to remove item: $e');
     }
   }
-Future<void> updateQuantity(int productId, int newQuantity) async {
-  if (productId <= 0) {
-    throw CartException('Invalid product ID');
+
+  Future<void> updateQuantity(int cartItemId, int newQuantity) async {
+    if (cartItemId <= 0) {
+      throw CartException('Invalid cart item ID');
+    }
+    if (newQuantity < 1) {
+      throw CartException('Quantity must be at least 1');
+    }
+
+    final previousState = state;
+    try {
+      state.whenData((currentCart) {
+        final updatedItems = currentCart.cartItems.map((item) {
+          if (item.productId == cartItemId) {
+            return item.copyWith(quantity: newQuantity);
+          }
+          return item;
+        }).toList();
+        state = AsyncValue.data(currentCart.copyWith(
+          cartItems: updatedItems,
+          isLoading: true,
+        ));
+      });
+      await _cartService.updateQuantity(cartItemId, newQuantity);
+      await refreshCart();
+    } catch (e) {
+      state = previousState;
+      log('Error updating quantity: $e');
+      rethrow;
+    }
   }
-  
-  if (newQuantity < 1) {
-    throw CartException('Quantity must be at least 1');
-  }
 
-  final previousState = state;
-  try {
-    state.whenData((currentCart) {
-      final currentItem = currentCart.cartItems.firstWhere(
-        (item) => item.productId == productId,
-        orElse: () => throw CartException('Product not found in cart'),
-      );
-
-      // Calculate quantity difference
-      final quantityDiff = newQuantity - currentItem.quantity;
-      
-      if (quantityDiff == 0) return; // No change needed
-      
-      // Optimistically update UI
-      final updatedItems = currentCart.cartItems.map((item) {
-        if (item.productId == productId) {
-          return item.copyWith(quantity: newQuantity);
-        }
-        return item;
-      }).toList();
-
-      state = AsyncValue.data(currentCart.copyWith(
-        cartItems: updatedItems,
-        isLoading: true,
-      ));
-
-      // If quantity increased, we need to add more items
-      if (quantityDiff > 0) {
-        for (var i = 0; i < quantityDiff; i++) {
-          _cartService.addToCart(productId.toString());
-        }
-      }
-      // If quantity decreased, we need to remove items
-      else {
-        
-        // For now, just refresh the cart to sync with server
-      }
-    });
-
-    // Refresh cart to get updated state from server
-    await refreshCart();
-  } catch (e) {
-    log('Error updating quantity: $e');
-    state = previousState;
-    rethrow;
-  }
-}
-
-    void applyCoupon(CouponModel coupon) {
+  void applyCoupon(CouponModel coupon) {
     if (state.value != null) {
       final currentCart = state.value!;
       state = AsyncValue.data(
         CartModel(
           cartItems: currentCart.cartItems,
-         
           appliedCoupon: coupon,
         ),
       );
     }
   }
 
-  /// Calculate Total Amount
   double get cartTotal {
     return state.whenOrNull(
       data: (cart) => cart.discountedTotal,
     ) ?? 0.0;
   }
-
-  // Computed properties
-
-  
 }

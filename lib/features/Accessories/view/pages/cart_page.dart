@@ -15,6 +15,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import 'package:hand_car/features/Accessories/controller/coupon/coupon_controller.dart';
 
+// Add this import if ProductCard is in separate file
+// import 'path_to_your_product_card.dart';
+
 class ShoppingCartScreen extends HookConsumerWidget {
   static const route = '/cart_page';
   const ShoppingCartScreen({super.key});
@@ -45,7 +48,8 @@ class ShoppingCartScreen extends HookConsumerWidget {
                       ),
                       TextButton(
                         onPressed: () {
-                          // Clear cart functionality
+                          // ref.read(cartControllerProvider.notifier).clearCart();
+                          Navigator.pop(context);
                         },
                         child: const Text('Clear'),
                       ),
@@ -94,36 +98,37 @@ class ShoppingCartScreen extends HookConsumerWidget {
                       ),
                       itemBuilder: (context, index) {
                         final item = cart.cartItems[index];
-
-                        // Add a null check and unique key
                         return ProductCard(
                           key: Key(
-                              item.productId?.toString() ?? 'cart_item_$index'),
+                              item.id?.toString() ?? 'cart_item_$index'),
                           currentQuantity: item.quantity,
-                          productId:
-                              item.productId ?? 0, // Provide a default value
+                          cartItemId: item.productId ?? 0,
                           productName: item.productName,
                           price: item.productPrice,
                           image: item.productImage,
+                          // Add if available in your model:
+                          // isAvailable: item.isAvailable,
                           onDelete: () {
-                            // Only attempt to remove if productId is not null
-                            if (item.productId != null) {
-                              ref
-                                  .read(cartControllerProvider.notifier)
-                                  .removeFromCart(item.productId!);
-                            }
-                          },
+                            ref
+                                .read(cartControllerProvider.notifier)
+                                .removeFromCart(item.productId!);
+                                                    },
                           onQuantityChanged: (newQuantity) async {
-                            // Only attempt to update if productId is not null
                             if (item.productId != null) {
                               try {
                                 await ref
                                     .read(cartControllerProvider.notifier)
                                     .updateQuantity(
-                                        item.productId!, newQuantity);
+                                        item.id!, newQuantity);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('Quantity updated')),
+                                );
                               } catch (e) {
-                                SnackbarUtil.showsnackbar(
-                                    message: e.toString(), showretry: false);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text('Error updating quantity')),
+                            );
                               }
                             }
                           },

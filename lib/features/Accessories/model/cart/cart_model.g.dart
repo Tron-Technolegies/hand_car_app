@@ -29,18 +29,22 @@ Map<String, dynamic> _$$CartModelImplToJson(_$CartModelImpl instance) =>
 
 _$CartItemModelImpl _$$CartItemModelImplFromJson(Map<String, dynamic> json) =>
     _$CartItemModelImpl(
-      productId: (json['product_id'] as num?)?.toInt(),
+      id: (json['cart_item_id'] as num).toInt(),
+      productId: (json['product_id'] as num).toInt(),
       productName: json['product_name'] as String,
       productPrice: parseDouble(json['product_price']),
-      quantity: (json['quantity'] as num?)?.toInt() ?? 1,
+      quantity: parseInt(json['quantity']),
       productImage: json['product_image'] as String?,
+      totalPrice: parseDouble(json['total_price']),
     );
 
 Map<String, dynamic> _$$CartItemModelImplToJson(_$CartItemModelImpl instance) =>
     <String, dynamic>{
-      if (instance.productId case final value?) 'product_id': value,
+      'cart_item_id': instance.id,
+      'product_id': instance.productId,
       'product_name': instance.productName,
       'product_price': instance.productPrice,
       'quantity': instance.quantity,
       if (instance.productImage case final value?) 'product_image': value,
+      'total_price': instance.totalPrice,
     };

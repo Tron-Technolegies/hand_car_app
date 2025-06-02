@@ -6,6 +6,23 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'dart:async';
+
+class Debouncer {
+  final Duration duration;
+  Timer? _timer;
+
+  Debouncer(this.duration);
+
+  void run(VoidCallback action) {
+    _timer?.cancel();
+    _timer = Timer(duration, action);
+  }
+
+  void dispose() {
+    _timer?.cancel();
+  }
+}
 
 class ProductCard extends HookConsumerWidget {
   final String productName;
@@ -14,7 +31,7 @@ class ProductCard extends HookConsumerWidget {
   final double price;
   final bool isAvailable;
   final int currentQuantity;
-  final int productId;
+  final int cartItemId; // Changed from productId
   final VoidCallback? onDelete;
   final Future<void> Function(int)? onQuantityChanged;
 
@@ -26,7 +43,7 @@ class ProductCard extends HookConsumerWidget {
     required this.price,
     this.isAvailable = true,
     required this.currentQuantity,
-    required this.productId,
+    required this.cartItemId,
     this.onDelete,
     this.onQuantityChanged,
   });
@@ -36,29 +53,33 @@ class ProductCard extends HookConsumerWidget {
     final maxQuantity = 10;
     final quantity = useState<int>(currentQuantity < 1 ? 1 : currentQuantity);
     final isUpdating = useState(false);
-    final isMounted = context.mounted;
+    final isMounted = useRef(true);
+    final debouncer = useRef(Debouncer(const Duration(milliseconds: 500)));
 
-    // Generate list of quantities, ensuring current quantity is included
+    useEffect(() {
+      return () {
+        isMounted.value = false;
+        debouncer.value.dispose();
+      };
+    }, []);
+
     final quantities = List<int>.generate(
       math.max(maxQuantity, quantity.value),
       (i) => i + 1,
     ).take(math.max(maxQuantity, quantity.value)).toList();
 
-    // Create a safe setState function
     void safeSetState(bool value) {
-      if (isMounted) {
+      if (isMounted.value) {
         isUpdating.value = value;
       }
     }
 
     return Slidable(
-      key: Key(productId.toString()),
+      key: Key(cartItemId.toString()),
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
         dismissible: DismissiblePane(
-          onDismissed: () {
-            _handleDelete(context);
-          },
+          onDismissed: () => _handleDelete(context),
         ),
         children: [
           SlidableAction(
@@ -87,7 +108,6 @@ class ProductCard extends HookConsumerWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Product Image
             ClipRRect(
               borderRadius: BorderRadius.circular(context.space.space_100),
               child: image != null && image!.isNotEmpty
@@ -105,8 +125,6 @@ class ProductCard extends HookConsumerWidget {
                   : _buildPlaceholder(),
             ),
             SizedBox(width: context.space.space_200),
-
-            // Product Details
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,8 +145,6 @@ class ProductCard extends HookConsumerWidget {
                     ),
                   ],
                   SizedBox(height: context.space.space_150),
-
-                  // Price and Quantity Row
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -138,8 +154,6 @@ class ProductCard extends HookConsumerWidget {
                           color: context.colors.green,
                         ),
                       ),
-
-                      // Quantity Dropdown with loading indicator
                       Container(
                         decoration: BoxDecoration(
                           border: Border.all(
@@ -179,28 +193,32 @@ class ProductCard extends HookConsumerWidget {
                                     if (newValue != null &&
                                         !isUpdating.value &&
                                         onQuantityChanged != null) {
-                                      try {
-                                        safeSetState(true);
-                                        await onQuantityChanged!(newValue);
-                                        if (isMounted) {
-                                          quantity.value = newValue;
-                                          SnackbarUtil.showsnackbar(
-                                            message:
-                                                "Quantity updated successfully",
-                                            showretry: false,
-                                          );
+                                      log('Changing quantity to: $newValue for cart item: $cartItemId');
+                                      debouncer.value.run(() async {
+                                        try {
+                                          safeSetState(true);
+                                          await onQuantityChanged!(newValue);
+                                          if (isMounted.value) {
+                                            quantity.value = newValue;
+                                            SnackbarUtil.showsnackbar(
+                                              message: "Quantity updated to $newValue",
+                                              showretry: false,
+                                            );
+                                          }
+                                        } catch (e, stackTrace) {
+                                          if (isMounted.value) {
+                                            log('Quantity update error: $e');
+                                            log('Stack trace: $stackTrace');
+                                            SnackbarUtil.showsnackbar(
+                                              message: "Failed to update quantity: $e",
+                                        
+                                         
+                                            );
+                                          }
+                                        } finally {
+                                          safeSetState(false);
                                         }
-                                      } catch (e) {
-                                        if (isMounted) {
-                                          SnackbarUtil.showsnackbar(
-                                            message:
-                                                "Failed to update quantity: ${e.toString()}",
-                                            showretry: false,
-                                          );
-                                        }
-                                      } finally {
-                                        safeSetState(false);
-                                      }
+                                      });
                                     }
                                   },
                                 ),

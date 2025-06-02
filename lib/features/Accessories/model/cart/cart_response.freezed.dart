@@ -14,6 +14,10 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
+CartResponse _$CartResponseFromJson(Map<String, dynamic> json) {
+  return _CartResponse.fromJson(json);
+}
+
 /// @nodoc
 mixin _$CartResponse {
   String get message => throw _privateConstructorUsedError;
@@ -21,6 +25,9 @@ mixin _$CartResponse {
   int get cartQuantity => throw _privateConstructorUsedError;
   bool get isSuccess => throw _privateConstructorUsedError;
   String? get error => throw _privateConstructorUsedError;
+
+  /// Serializes this CartResponse to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
   /// Create a copy of CartResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -138,7 +145,7 @@ class __$$CartResponseImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
+@JsonSerializable()
 class _$CartResponseImpl implements _CartResponse {
   const _$CartResponseImpl(
       {this.message = '',
@@ -146,6 +153,9 @@ class _$CartResponseImpl implements _CartResponse {
       required this.cartQuantity,
       this.isSuccess = true,
       this.error});
+
+  factory _$CartResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$CartResponseImplFromJson(json);
 
   @override
   @JsonKey()
@@ -177,6 +187,7 @@ class _$CartResponseImpl implements _CartResponse {
             (identical(other.error, error) || other.error == error));
   }
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, message, cartQuantity, isSuccess, error);
@@ -188,6 +199,13 @@ class _$CartResponseImpl implements _CartResponse {
   @pragma('vm:prefer-inline')
   _$$CartResponseImplCopyWith<_$CartResponseImpl> get copyWith =>
       __$$CartResponseImplCopyWithImpl<_$CartResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$CartResponseImplToJson(
+      this,
+    );
+  }
 }
 
 abstract class _CartResponse implements CartResponse {
@@ -197,6 +215,9 @@ abstract class _CartResponse implements CartResponse {
       required final int cartQuantity,
       final bool isSuccess,
       final String? error}) = _$CartResponseImpl;
+
+  factory _CartResponse.fromJson(Map<String, dynamic> json) =
+      _$CartResponseImpl.fromJson;
 
   @override
   String get message;
