@@ -16,7 +16,7 @@ class PlanServices {
 
   static Future<List<PlanModel>> getPlans(String serviceType) async {
     try {
-      log('Fetching plans for service type: $serviceType'); // Debug log
+      log('Fetching plans for service type: $serviceType'); 
       final response = await _dio.get(
         '/view_plans',
         queryParameters: {'service_type': serviceType},

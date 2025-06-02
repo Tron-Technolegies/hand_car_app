@@ -82,9 +82,6 @@ class EditProfileScreen extends HookConsumerWidget {
                 ),
               ),
             );
-
-            // Navigate after showing SnackBar
-            context.go(ProfilePage.route);
           }
         }
       } catch (e) {

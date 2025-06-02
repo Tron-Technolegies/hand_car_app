@@ -99,10 +99,9 @@ class ShoppingCartScreen extends HookConsumerWidget {
                       itemBuilder: (context, index) {
                         final item = cart.cartItems[index];
                         return ProductCard(
-                          key: Key(
-                              item.id?.toString() ?? 'cart_item_$index'),
+                          key: Key(item.id.toString()),
                           currentQuantity: item.quantity,
-                          cartItemId: item.productId ?? 0,
+                          cartItemId: item.productId,
                           productName: item.productName,
                           price: item.productPrice,
                           image: item.productImage,
@@ -111,25 +110,22 @@ class ShoppingCartScreen extends HookConsumerWidget {
                           onDelete: () {
                             ref
                                 .read(cartControllerProvider.notifier)
-                                .removeFromCart(item.productId!);
-                                                    },
+                                .removeFromCart(item.productId);
+                          },
                           onQuantityChanged: (newQuantity) async {
-                            if (item.productId != null) {
-                              try {
-                                await ref
-                                    .read(cartControllerProvider.notifier)
-                                    .updateQuantity(
-                                        item.id!, newQuantity);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text('Quantity updated')),
-                                );
-                              } catch (e) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text('Error updating quantity')),
-                            );
-                              }
+                            try {
+                              await ref
+                                  .read(cartControllerProvider.notifier)
+                                  .updateQuantity(item.id, newQuantity);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Quantity updated')),
+                              );
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Error updating quantity')),
+                              );
                             }
                           },
                         );

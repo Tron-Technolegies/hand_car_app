@@ -5,6 +5,7 @@ import 'package:hand_car/features/Accessories/view/pages/accessories_page.dart';
 import 'package:hand_car/features/Home/view/pages/home_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/profile_page.dart';
 import 'package:hand_car/features/SpareParts/view/pages/spares_page.dart';
+import 'package:hand_car/features/Subscriptions/view/pages/subscription_page.dart';
 import 'package:hand_car/features/car_service/view/pages/services_page.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hand_car/features/Home/view/widgets/bottom_app_bar.dart';
@@ -52,7 +53,9 @@ class NavigationPage extends HookConsumerWidget {
           const AccessoriesPage(), // Index 1
           const HomePage(), // Index 2 (Center)
           const AutoPartsPage(), // Index 3
-          const ProfilePage(), // Index 4
+          // const ProfilePage(),
+          //// Index 4
+          SubscriptionPage()
         ],
         onPageChanged: (index) => ref
             .read(navigationProvider.notifier)

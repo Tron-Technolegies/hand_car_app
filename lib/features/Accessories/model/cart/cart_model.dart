@@ -99,7 +99,7 @@ class CartItemModel with _$CartItemModel {
     if (id == null) return 0;
     if (id is int) return id;
     if (id is String) {
-      return parseInt(id) ?? 0;
+      return parseInt(id);
     }
     return 0;
   }

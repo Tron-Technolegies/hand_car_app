@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'cart_response.freezed.dart';

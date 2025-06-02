@@ -125,7 +125,7 @@ class WishlistServices {
 
     throw Exception(response.data['error'] ?? 'Failed to fetch wishlist');
   } on DioException {
-    // ...
+//
   } catch (e) {
     // ...
   }
