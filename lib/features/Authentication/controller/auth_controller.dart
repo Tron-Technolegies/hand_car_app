@@ -86,36 +86,26 @@ class AuthController extends _$AuthController {
       rethrow;
     }
   }
-
 Future<bool> signup(UserModel user) async {
   state = const AsyncValue.loading();
-  
   try {
     final authService = ref.read(apiServiceProvider);
     final response = await authService.signUp(user);
-    
-    // If success, return true
     state = AsyncValue.data(state.valueOrNull);
     return true;
-    
   } catch (e, st) {
     log('Signup error: $e');
-    
-    // Check for specific error messages
     String errorMessage = e.toString();
     if (errorMessage.contains('email already exists') ||
         errorMessage.contains('phone already exists') ||
         errorMessage.contains('duplicate')) {
       state = AsyncValue.error(e, st);
-      rethrow; // This will be caught in the UI layer
+      rethrow;
     }
-    
-    // Generic error handling
     state = AsyncValue.error(e, st);
     rethrow;
   }
 }
-
   Future<void> logout() async {
     state = const AsyncValue.loading();
     try {

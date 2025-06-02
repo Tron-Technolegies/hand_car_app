@@ -28,17 +28,19 @@ class DockingBar extends HookWidget {
     }
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Container(
         clipBehavior: Clip.antiAlias,
         width: double.infinity,
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1), blurRadius: 10)
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 10,
+            ),
           ],
         ),
         child: TweenAnimationBuilder(
@@ -49,21 +51,17 @@ class DockingBar extends HookWidget {
           curve: animationCompleted.value ? Curves.elasticOut : Curves.easeOut,
           onEnd: () {
             animationCompleted.value = true;
-            tweenController.value = Tween(begin: 1.5, end: 1.0);
+            tweenController.value = Tween(begin: 1.2, end: 1.0);
           },
           builder: (context, value, child) {
             return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Changed to spaceEvenly for better alignment
               children: [
-                // _buildNavItem(
-                //     'ic_car_seat', 'Accessories', 1, value, handleTap),
-                _buildNavItem('ic_home', 'Home', 0, value, handleTap),
-                _buildNavItem('ic_car_service', 'Service', 1, value, handleTap),
-                _buildNavItem('ic_spare', 'Auto Parts', 2, value, handleTap),
-                _buildNavItem('profile', 'Profile', 3, value, handleTap),
-
-                // _buildNavItem(
-                //     'ic_subscription', 'Subscription', 4, value, handleTap),
+                _buildNavItem('ic_car_service', 'Service', 0, value, handleTap),
+                _buildNavItem('ic_car_seat', 'Accessories', 1, value, handleTap),
+                _buildNavItem('garage', 'Home', 2, value, handleTap),
+                _buildNavItem('ic_spare', 'Auto Parts', 3, value, handleTap),
+                _buildNavItem('profile', 'Profile', 4, value, handleTap),
               ],
             );
           },
@@ -84,17 +82,17 @@ class DockingBar extends HookWidget {
     }
 
     return Transform(
-      alignment: Alignment.bottomCenter,
+      alignment: Alignment.center, // Adjusted for better centering
       transform: Matrix4.identity()
         ..scale(isSelected ? value : 1.0)
-        ..translate(0.0, isSelected ? 80.0 * (1 - value) : 0.0),
+        ..translate(0.0, isSelected ? -8.0 * (1 - value) : 0.0), // Reduced translation for subtle effect
       child: GestureDetector(
         onTap: () => onTapItem(index),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(10), // Slightly reduced padding
               decoration: BoxDecoration(
                 color: isSelected
                     ? Colors.white
@@ -103,8 +101,9 @@ class DockingBar extends HookWidget {
                 boxShadow: isSelected
                     ? [
                         BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.1),
-                            blurRadius: 5)
+                          color: Colors.black.withValues(alpha: 0.1),
+                          blurRadius: 5,
+                        ),
                       ]
                     : null,
               ),
@@ -119,10 +118,10 @@ class DockingBar extends HookWidget {
                 ),
               ),
             ),
-            if (isSelected) const SizedBox(height: 4),
+            const SizedBox(height: 4),
             Text(
               label,
-              style: isSelected == true
+              style: isSelected
                   ? context.typography.body.copyWith(
                       color: context.colors.primary,
                     )

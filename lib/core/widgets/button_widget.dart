@@ -8,7 +8,8 @@ class ButtonWidget extends StatelessWidget {
   final Icon? icon;
 
   /// Callback to execute when the button is clicked
-  final Function() onTap;
+  final Function()? onTap;
+
   final Future<void> Function()? onLongPress;
 
   const ButtonWidget(

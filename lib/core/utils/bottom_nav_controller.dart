@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -12,7 +11,7 @@ class NavigationState with _$NavigationState {
   const factory NavigationState({
     required int selectedNavBarItemIndex,
     required PageController pageController,
-  }) = _BottomNavBarState;
+  }) = _NavigationState;
 }
 
 @riverpod
@@ -20,13 +19,13 @@ class Navigation extends _$Navigation {
   @override
   NavigationState build() {
     return NavigationState(
-      selectedNavBarItemIndex: 0,
-      pageController: PageController(),
+      selectedNavBarItemIndex: 2, // Start on HomePage (center)
+      pageController: PageController(initialPage: 2),
     );
   }
 
   /// Change the page in the page view
-  void jumpToPage(int pageIndex) async {
+  void jumpToPage(int pageIndex) {
     state.pageController.jumpToPage(pageIndex);
   }
 

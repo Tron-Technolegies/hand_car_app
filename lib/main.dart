@@ -6,12 +6,12 @@ import 'package:get_storage/get_storage.dart';
 import 'package:hand_car/config.dart';
 import 'package:hand_car/core/router/router.dart';
 import 'package:hand_car/core/theme/light_theme.dart';
+import 'package:hand_car/core/utils/custom_toast.dart'; // Import for navigatorKey
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  //Get storage
   await GetStorage.init();
   log('Config: $baseUrl');
   runApp(const ProviderScope(child: MainApp()));
@@ -27,10 +27,12 @@ class MainApp extends ConsumerWidget {
     final router = ref.watch(routerProvider);
 
     return MaterialApp.router(
+      
       title: 'Hand Car',
       debugShowCheckedModeBanner: false,
       theme: lightTheme,
       scaffoldMessengerKey: scaffoldMessengerKey,
+      // Add navigatorKey for CustomToast
       routerConfig: router,
     );
   }

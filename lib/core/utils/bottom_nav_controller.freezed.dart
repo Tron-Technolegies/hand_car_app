@@ -67,22 +67,22 @@ class _$NavigationStateCopyWithImpl<$Res, $Val extends NavigationState>
 }
 
 /// @nodoc
-abstract class _$$BottomNavBarStateImplCopyWith<$Res>
+abstract class _$$NavigationStateImplCopyWith<$Res>
     implements $NavigationStateCopyWith<$Res> {
-  factory _$$BottomNavBarStateImplCopyWith(_$BottomNavBarStateImpl value,
-          $Res Function(_$BottomNavBarStateImpl) then) =
-      __$$BottomNavBarStateImplCopyWithImpl<$Res>;
+  factory _$$NavigationStateImplCopyWith(_$NavigationStateImpl value,
+          $Res Function(_$NavigationStateImpl) then) =
+      __$$NavigationStateImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({int selectedNavBarItemIndex, PageController pageController});
 }
 
 /// @nodoc
-class __$$BottomNavBarStateImplCopyWithImpl<$Res>
-    extends _$NavigationStateCopyWithImpl<$Res, _$BottomNavBarStateImpl>
-    implements _$$BottomNavBarStateImplCopyWith<$Res> {
-  __$$BottomNavBarStateImplCopyWithImpl(_$BottomNavBarStateImpl _value,
-      $Res Function(_$BottomNavBarStateImpl) _then)
+class __$$NavigationStateImplCopyWithImpl<$Res>
+    extends _$NavigationStateCopyWithImpl<$Res, _$NavigationStateImpl>
+    implements _$$NavigationStateImplCopyWith<$Res> {
+  __$$NavigationStateImplCopyWithImpl(
+      _$NavigationStateImpl _value, $Res Function(_$NavigationStateImpl) _then)
       : super(_value, _then);
 
   /// Create a copy of NavigationState
@@ -93,7 +93,7 @@ class __$$BottomNavBarStateImplCopyWithImpl<$Res>
     Object? selectedNavBarItemIndex = null,
     Object? pageController = null,
   }) {
-    return _then(_$BottomNavBarStateImpl(
+    return _then(_$NavigationStateImpl(
       selectedNavBarItemIndex: null == selectedNavBarItemIndex
           ? _value.selectedNavBarItemIndex
           : selectedNavBarItemIndex // ignore: cast_nullable_to_non_nullable
@@ -108,8 +108,8 @@ class __$$BottomNavBarStateImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$BottomNavBarStateImpl implements _BottomNavBarState {
-  const _$BottomNavBarStateImpl(
+class _$NavigationStateImpl implements _NavigationState {
+  const _$NavigationStateImpl(
       {required this.selectedNavBarItemIndex, required this.pageController});
 
   @override
@@ -126,7 +126,7 @@ class _$BottomNavBarStateImpl implements _BottomNavBarState {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$BottomNavBarStateImpl &&
+            other is _$NavigationStateImpl &&
             (identical(
                     other.selectedNavBarItemIndex, selectedNavBarItemIndex) ||
                 other.selectedNavBarItemIndex == selectedNavBarItemIndex) &&
@@ -143,15 +143,15 @@ class _$BottomNavBarStateImpl implements _BottomNavBarState {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$BottomNavBarStateImplCopyWith<_$BottomNavBarStateImpl> get copyWith =>
-      __$$BottomNavBarStateImplCopyWithImpl<_$BottomNavBarStateImpl>(
+  _$$NavigationStateImplCopyWith<_$NavigationStateImpl> get copyWith =>
+      __$$NavigationStateImplCopyWithImpl<_$NavigationStateImpl>(
           this, _$identity);
 }
 
-abstract class _BottomNavBarState implements NavigationState {
-  const factory _BottomNavBarState(
+abstract class _NavigationState implements NavigationState {
+  const factory _NavigationState(
       {required final int selectedNavBarItemIndex,
-      required final PageController pageController}) = _$BottomNavBarStateImpl;
+      required final PageController pageController}) = _$NavigationStateImpl;
 
   @override
   int get selectedNavBarItemIndex;
@@ -162,6 +162,6 @@ abstract class _BottomNavBarState implements NavigationState {
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$BottomNavBarStateImplCopyWith<_$BottomNavBarStateImpl> get copyWith =>
+  _$$NavigationStateImplCopyWith<_$NavigationStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
