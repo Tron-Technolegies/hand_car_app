@@ -9,7 +9,6 @@ import 'package:hand_car/core/widgets/outline_button_widget.dart';
 import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
 import 'package:hand_car/features/Authentication/controller/user_controller.dart';
 import 'package:hand_car/features/Authentication/model/user_model.dart';
-import 'package:hand_car/features/Authentication/view/pages/profile_page.dart';
 import 'package:hand_car/features/Authentication/view/widgets/user_info_edit_field.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

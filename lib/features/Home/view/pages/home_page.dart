@@ -78,7 +78,7 @@ class HomePage extends ConsumerWidget {
               onTap: () {
                 ref
                     .read(navigationProvider.notifier)
-                    .changeSelectedItemIndex(1);
+                    .changeSelectedItemIndex(0);
               }),
           SizedBox(
             height: context.space.space_100,
@@ -89,7 +89,7 @@ class HomePage extends ConsumerWidget {
             text3: "Enquire Now",
             image: 'assets/images/spare_parts.png',
             onTap: () {
-              ref.read(navigationProvider.notifier).changeSelectedItemIndex(2);
+              ref.read(navigationProvider.notifier).changeSelectedItemIndex(3);
             },
           ),
           SizedBox(

@@ -6,7 +6,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:hand_car/config.dart';
 import 'package:hand_car/core/router/router.dart';
 import 'package:hand_car/core/theme/light_theme.dart';
-import 'package:hand_car/core/utils/custom_toast.dart'; // Import for navigatorKey
+
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 void main() async {

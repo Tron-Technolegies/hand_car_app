@@ -85,37 +85,36 @@ Future<void> removeFromCart(int cartItemId) async {
     throw CartException('Failed to remove item: $e');
   }
 }
-  Future<void> updateQuantity(int cartItemId, int newQuantity) async {
-    if (cartItemId <= 0) {
-      throw CartException('Invalid cart item ID');
-    }
-    if (newQuantity < 1) {
-      throw CartException('Quantity must be at least 1');
-    }
-
-    final previousState = state;
-    try {
-      state.whenData((currentCart) {
-        final updatedItems = currentCart.cartItems.map((item) {
-          if (item.productId == cartItemId) {
-            return item.copyWith(quantity: newQuantity);
-          }
-          return item;
-        }).toList();
-        state = AsyncValue.data(currentCart.copyWith(
-          cartItems: updatedItems,
-          isLoading: true,
-        ));
-      });
-      await _cartService.updateQuantity(cartItemId, newQuantity);
-      await refreshCart();
-    } catch (e) {
-      state = previousState;
-      log('Error updating quantity: $e');
-      rethrow;
-    }
+ Future<void> updateQuantity(int cartItemId, int newQuantity) async {
+  if (cartItemId <= 0) {
+    throw CartException('Invalid cart item ID');
+  }
+  if (newQuantity < 1) {
+    throw CartException('Quantity must be at least 1');
   }
 
+  final previousState = state;
+  try {
+    state.whenData((currentCart) {
+      final updatedItems = currentCart.cartItems.map((item) {
+        if (item.id == cartItemId) {
+          return item.copyWith(quantity: newQuantity);
+        }
+        return item;
+      }).toList();
+      state = AsyncValue.data(currentCart.copyWith(
+        cartItems: updatedItems,
+        isLoading: true,
+      ));
+    });
+    await _cartService.updateQuantity(cartItemId, newQuantity);
+    await refreshCart();
+  } catch (e) {
+    state = previousState;
+    log('Error updating quantity: $e');
+    rethrow;
+  }
+}
   void applyCoupon(CouponModel coupon) {
     if (state.value != null) {
       final currentCart = state.value!;

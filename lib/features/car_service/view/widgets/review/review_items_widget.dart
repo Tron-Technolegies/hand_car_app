@@ -1,10 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 
 // ReviewItemsWidget For Show In Details Page
 class ReviewItemsWidget extends StatelessWidget {
-   final String username;
+  final String username;
   final String comment;
   final int rating;
 
@@ -12,9 +11,7 @@ class ReviewItemsWidget extends StatelessWidget {
     super.key,
     required this.username,
     required this.rating,
-
     required this.comment,
-  
   });
 
   @override
@@ -27,7 +24,13 @@ class ReviewItemsWidget extends StatelessWidget {
           Row(
             children: [
               // Circle Avatar for Username
-              CircleAvatar(child: Text(username[0])),
+              CircleAvatar(
+                child: Text(
+                  username != null && username.isNotEmpty
+                      ? username[0].toUpperCase()
+                      : 'U',
+                ),
+              ),
               SizedBox(width: context.space.space_100),
               // Username
               Text(username),
@@ -37,7 +40,7 @@ class ReviewItemsWidget extends StatelessWidget {
           ),
           SizedBox(height: context.space.space_100),
           // Date
-       
+
           SizedBox(height: context.space.space_100),
           Row(
             children: List.generate(
@@ -56,10 +59,9 @@ class ReviewItemsWidget extends StatelessWidget {
           ),
           SizedBox(height: context.space.space_100),
           // Review
-       
+
           SizedBox(height: context.space.space_200),
           // Grid view for multiple images
-         
         ],
       ),
     );

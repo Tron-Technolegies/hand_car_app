@@ -51,6 +51,7 @@ class CartSummaryWidget extends StatelessWidget {
                     price: 'AED ${item.productPrice.toStringAsFixed(2)}',
                     quantity: item.quantity,
                     cartItemId: item.id,
+                    imageUrl: item.productImage,
                   );
                 },
               ),
