@@ -101,7 +101,7 @@ class ShoppingCartScreen extends HookConsumerWidget {
                         return ProductCard(
                           key: Key(item.id.toString()),
                           currentQuantity: item.quantity,
-                          cartItemId: item.productId,
+                          cartItemId: item.id,
                           productName: item.productName,
                           price: item.productPrice,
                           image: item.productImage,

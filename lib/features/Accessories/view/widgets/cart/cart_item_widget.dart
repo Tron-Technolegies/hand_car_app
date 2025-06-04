@@ -125,26 +125,27 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 //     );
 //   }
 // }
+
 class CartItemWidget extends HookConsumerWidget {
   const CartItemWidget({
     super.key,
     required this.name,
     required this.price,
     required this.quantity,
-    required this.productId,
+    required this.cartItemId,
     this.imageUrl,
   });
 
   final String name;
   final String price;
   final int quantity;
-  final int productId;
+  final int cartItemId;
   final String? imageUrl;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Dismissible(
-      key: Key('cart_item_$productId'),
+      key: Key('cart_item_$cartItemId'),
       direction: DismissDirection.endToStart,
       background: Container(
         alignment: Alignment.centerRight,
@@ -153,7 +154,7 @@ class CartItemWidget extends HookConsumerWidget {
         child: const Icon(Icons.delete, color: Colors.white),
       ),
       onDismissed: (_) {
-        ref.read(cartControllerProvider.notifier).removeFromCart(productId);
+        ref.read(cartControllerProvider.notifier).removeFromCart(cartItemId);
       },
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: context.space.space_100),

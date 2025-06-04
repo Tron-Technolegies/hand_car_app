@@ -60,7 +60,7 @@ class CartModel with _$CartModel {
 @freezed
 class CartItemModel with _$CartItemModel {
   const factory CartItemModel({
-    @JsonKey(name: 'cart_item_id') required int id, // Maps to backend 'cart_item_id'
+    @JsonKey(name: 'cart_item_id') required int id, 
     @JsonKey(name: 'product_id') required int productId,
     @JsonKey(name: 'product_name') required String productName,
     @JsonKey(name: 'product_price', fromJson: parseDouble) required double productPrice,

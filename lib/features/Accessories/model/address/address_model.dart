@@ -7,8 +7,8 @@ class AddressModel with _$AddressModel {
   const factory AddressModel({
     @JsonKey(
       name: 'id',
-      fromJson: AddressModel._convertToString,
-      toJson: AddressModel._convertToInt
+      fromJson: _convertToString,
+      toJson: _convertToInt
     ) required String id,
     required String street,
     required String city,
@@ -20,13 +20,18 @@ class AddressModel with _$AddressModel {
 
   factory AddressModel.fromJson(Map<String, dynamic> json) =>
       _$AddressModelFromJson(json);
-      
-  // Move the conversion methods inside the class and make them static
-  static String _convertToString(dynamic value) {
-    return value.toString();
-  }
+}
 
-  static int _convertToInt(String value) {
+// Move the conversion methods outside the class as top-level functions
+String _convertToString(dynamic value) {
+  if (value == null) return '';
+  return value.toString();
+}
+
+int _convertToInt(String value) {
+  try {
     return int.parse(value);
+  } catch (e) {
+    return 0; // or throw an exception based on your needs
   }
 }

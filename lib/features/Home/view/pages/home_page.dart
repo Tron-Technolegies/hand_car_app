@@ -6,13 +6,14 @@ import 'package:hand_car/features/Home/view/widgets/accessories_ads_home_page_wi
 import 'package:hand_car/features/Home/view/widgets/brand_wised_card_widget.dart';
 import 'package:hand_car/features/Home/view/widgets/carousel_slider_widget.dart';
 import 'package:hand_car/features/Home/view/widgets/container_for_home_page.dart';
+import 'package:hand_car/features/Home/view/widgets/drawer_widget.dart';
 import 'package:hand_car/features/Home/view/widgets/home_page_services_widget.dart';
 import 'package:hand_car/features/Home/view/widgets/spare_brands_widget.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:lottie/lottie.dart';
 
-// final GlobalKey<ScaffoldState> scaffoldKey1 = GlobalKey<ScaffoldState>();
+final GlobalKey<ScaffoldState> scaffoldKey1 = GlobalKey<ScaffoldState>();
 
 class HomePage extends ConsumerWidget {
   static const String route = '/home_page';
@@ -27,21 +28,21 @@ class HomePage extends ConsumerWidget {
   ///
   Widget build(BuildContext context, ref) {
     return Scaffold(
-      // key: scaffoldKey1,
+      drawer: DrawerWidget(),
+      key: scaffoldKey1,
       appBar: AppBar(
         leading: Padding(
           padding: EdgeInsets.all(context.space.space_100),
           child: SvgPicture.asset(Assets.icons.handCarIcon),
         ),
-        // actions: [
-        //   IconButton(
-        //       onPressed: () {
-        //         scaffoldKey1.currentState?.openDrawer();
-        //       },
-        //       icon: const Icon(Icons.menu)),
-        // ],
+        actions: [
+          IconButton(
+              onPressed: () {
+                scaffoldKey1.currentState?.openDrawer();
+              },
+              icon: const Icon(Icons.menu)),
+        ],
       ),
-
       body: SingleChildScrollView(
         child: Column(children: [
           SizedBox(

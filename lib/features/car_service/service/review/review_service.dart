@@ -7,7 +7,7 @@ import 'package:hand_car/features/car_service/model/rating/service_rating.dart';
 
 class ReviewService extends BaseApiService {
   ReviewService() : super() {
-    // Ensure interceptors are properly set up
+   
     setupInterceptors();
   }
 

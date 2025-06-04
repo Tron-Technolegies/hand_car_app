@@ -64,29 +64,27 @@ class CartController extends _$CartController {
       state = AsyncValue.error(e, stackTrace);
     }
   }
-
-  Future<void> removeFromCart(int cartItemId) async {
-    final previousState = state;
-    try {
-      state.whenData((currentCart) {
-        final updatedItems = currentCart.cartItems
-            .where((item) => item.productId != cartItemId)
-            .toList();
-        state = AsyncValue.data(currentCart.copyWith(
-          cartItems: updatedItems,
-          isLoading: true,
-        ));
-      });
-      await _cartService.removeFromCart(cartItemId);
-      await refreshCart();
-    } catch (e) {
-      state = previousState;
-      log('Error removing from cart: $e');
-      if (e is CartException) rethrow;
-      throw CartException('Failed to remove item: $e');
-    }
+Future<void> removeFromCart(int cartItemId) async {
+  final previousState = state;
+  try {
+    state.whenData((currentCart) {
+      final updatedItems = currentCart.cartItems
+          .where((item) => item.id != cartItemId) 
+          .toList();
+      state = AsyncValue.data(currentCart.copyWith(
+        cartItems: updatedItems,
+        isLoading: true,
+      ));
+    });
+    await _cartService.removeFromCart(cartItemId);
+    await refreshCart();
+  } catch (e) {
+    state = previousState;
+    log('Error removing from cart: $e');
+    if (e is CartException) rethrow;
+    throw CartException('Failed to remove item: $e');
   }
-
+}
   Future<void> updateQuantity(int cartItemId, int newQuantity) async {
     if (cartItemId <= 0) {
       throw CartException('Invalid cart item ID');

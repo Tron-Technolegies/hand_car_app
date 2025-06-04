@@ -20,10 +20,7 @@ AddressModel _$AddressModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$AddressModel {
-  @JsonKey(
-      name: 'id',
-      fromJson: AddressModel._convertToString,
-      toJson: AddressModel._convertToInt)
+  @JsonKey(name: 'id', fromJson: _convertToString, toJson: _convertToInt)
   String get id => throw _privateConstructorUsedError;
   String get street => throw _privateConstructorUsedError;
   String get city => throw _privateConstructorUsedError;
@@ -51,10 +48,7 @@ abstract class $AddressModelCopyWith<$Res> {
       _$AddressModelCopyWithImpl<$Res, AddressModel>;
   @useResult
   $Res call(
-      {@JsonKey(
-          name: 'id',
-          fromJson: AddressModel._convertToString,
-          toJson: AddressModel._convertToInt)
+      {@JsonKey(name: 'id', fromJson: _convertToString, toJson: _convertToInt)
       String id,
       String street,
       String city,
@@ -129,10 +123,7 @@ abstract class _$$AddressModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(
-          name: 'id',
-          fromJson: AddressModel._convertToString,
-          toJson: AddressModel._convertToInt)
+      {@JsonKey(name: 'id', fromJson: _convertToString, toJson: _convertToInt)
       String id,
       String street,
       String city,
@@ -200,10 +191,7 @@ class __$$AddressModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AddressModelImpl implements _AddressModel {
   const _$AddressModelImpl(
-      {@JsonKey(
-          name: 'id',
-          fromJson: AddressModel._convertToString,
-          toJson: AddressModel._convertToInt)
+      {@JsonKey(name: 'id', fromJson: _convertToString, toJson: _convertToInt)
       required this.id,
       required this.street,
       required this.city,
@@ -216,10 +204,7 @@ class _$AddressModelImpl implements _AddressModel {
       _$$AddressModelImplFromJson(json);
 
   @override
-  @JsonKey(
-      name: 'id',
-      fromJson: AddressModel._convertToString,
-      toJson: AddressModel._convertToInt)
+  @JsonKey(name: 'id', fromJson: _convertToString, toJson: _convertToInt)
   final String id;
   @override
   final String street;
@@ -279,10 +264,7 @@ class _$AddressModelImpl implements _AddressModel {
 
 abstract class _AddressModel implements AddressModel {
   const factory _AddressModel(
-      {@JsonKey(
-          name: 'id',
-          fromJson: AddressModel._convertToString,
-          toJson: AddressModel._convertToInt)
+      {@JsonKey(name: 'id', fromJson: _convertToString, toJson: _convertToInt)
       required final String id,
       required final String street,
       required final String city,
@@ -295,10 +277,7 @@ abstract class _AddressModel implements AddressModel {
       _$AddressModelImpl.fromJson;
 
   @override
-  @JsonKey(
-      name: 'id',
-      fromJson: AddressModel._convertToString,
-      toJson: AddressModel._convertToInt)
+  @JsonKey(name: 'id', fromJson: _convertToString, toJson: _convertToInt)
   String get id;
   @override
   String get street;

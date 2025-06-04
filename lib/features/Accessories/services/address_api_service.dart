@@ -30,8 +30,6 @@ class AddressApiService {
   Future<T> _makeAuthenticatedRequest<T>(
       Future<T> Function(String token) request) async {
     try {
-  
-
       final token = await _getToken();
       try {
         return await request(token);
@@ -126,12 +124,37 @@ class AddressApiService {
           throw AddressException('Invalid response format');
         }
 
-        final addressesData = response.data['addresses'] as List;
+        final addressesData = response.data['addresses'];
 
-        return addressesData
-            .map((json) =>
-                AddressModel.fromJson(Map<String, dynamic>.from(json)))
-            .toList();
+        if (addressesData == null) {
+          return []; // Return empty list if no addresses
+        }
+
+        if (addressesData is! List) {
+          throw AddressException('Addresses data is not a list');
+        }
+
+        try {
+          return addressesData
+              .map((json) {
+                // Ensure each item is a Map<String, dynamic>
+                if (json is! Map<String, dynamic>) {
+                  log('Invalid address item: $json');
+                  return null;
+                }
+
+                // Log the individual address for debugging
+                log('Processing address: $json');
+
+                return AddressModel.fromJson(json);
+              })
+              .where((address) => address != null)
+              .cast<AddressModel>()
+              .toList();
+        } catch (e) {
+          log('Error parsing addresses: $e');
+          throw AddressException('Failed to parse address data: $e');
+        }
       }
 
       throw AddressException(

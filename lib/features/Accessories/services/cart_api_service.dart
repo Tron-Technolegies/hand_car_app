@@ -148,11 +148,11 @@ class CartApiService {
     });
   }
 
-  Future<void> removeFromCart(int itemId) async {
+  Future<void> removeFromCart(int cartItemId) async {
     return _makeAuthenticatedRequest(() async {
-      log('Removing item from cart: $itemId');
+      log('Removing item from cart: $cartItemId');
       final response = await _dio.delete(
-        '/removecart/$itemId/',
+        '/removecart/$cartItemId/',
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
       log('Remove from cart response: ${response.data}');

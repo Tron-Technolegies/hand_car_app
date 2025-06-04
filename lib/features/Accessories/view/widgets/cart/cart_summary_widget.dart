@@ -34,7 +34,6 @@ class CartSummaryWidget extends StatelessWidget {
               style: context.typography.h3,
             ),
             SizedBox(height: context.space.space_200),
-            
             ConstrainedBox(
               constraints: BoxConstraints(
                 maxHeight: MediaQuery.of(context).size.height * 0.4,
@@ -51,7 +50,7 @@ class CartSummaryWidget extends StatelessWidget {
                     name: item.productName,
                     price: 'AED ${item.productPrice.toStringAsFixed(2)}',
                     quantity: item.quantity,
-                    productId: item.productId ?? 0, // Use null-aware operator
+                    cartItemId: item.id,
                   );
                 },
               ),
