@@ -21,7 +21,6 @@ class NavigationPage extends HookConsumerWidget {
     final navigationState = ref.watch(navigationProvider);
     final keyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
 
-    // Listen for page changes and update the provider
     useEffect(() {
       navigationState.pageController.addListener(() {
         if (navigationState.pageController.page != null) {
@@ -32,7 +31,7 @@ class NavigationPage extends HookConsumerWidget {
       return () => navigationState.pageController.dispose();
     }, const []);
 
-    // Ensure the controller jumps to the correct page
+
     useEffect(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (navigationState.pageController.hasClients) {
@@ -48,11 +47,11 @@ class NavigationPage extends HookConsumerWidget {
       body: PageView(
         controller: navigationState.pageController,
         children: [
-          ServicesPage(), // Index 0
-          AccessoriesPage(), // Index 1
-          HomePage(), // Index 2
-          AutoPartsPage(), // Index 3
-          ProfilePage(), // Index 4
+          ServicesPage(),
+          AccessoriesPage(),
+          HomePage(),
+          AutoPartsPage(),
+          ProfilePage(),
         ],
         onPageChanged: (index) => ref
             .read(navigationProvider.notifier)
@@ -65,17 +64,8 @@ class NavigationPage extends HookConsumerWidget {
               onTap: (index) => ref
                   .read(navigationProvider.notifier)
                   .changeSelectedItemIndex(index),
-              type:
-                  BottomNavigationBarType.fixed, 
+              type: BottomNavigationBarType.fixed,
               selectedItemColor: context.colors.primary,
-              unselectedItemColor: context.colors.containerShadow,
-              selectedLabelStyle: context.typography.body.copyWith(
-                color: context.colors.primary,
-              ),
-
-              unselectedLabelStyle: context.typography.body.copyWith(
-                color: context.colors.background,
-              ),
               backgroundColor: Colors.white,
               elevation: 10,
               items: [
@@ -134,7 +124,7 @@ class NavigationPage extends HookConsumerWidget {
         colorFilter: ColorFilter.mode(
           isSelected
               ? context.colors.primary
-              : context.colors.containerShadow, // Customize colors as needed
+              : context.colors.primaryTxt,
           BlendMode.srcIn,
         ),
       ),

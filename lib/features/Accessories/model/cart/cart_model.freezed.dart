@@ -237,8 +237,7 @@ CartItemModel _$CartItemModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$CartItemModel {
   @JsonKey(name: 'cart_item_id')
-  int get id =>
-      throw _privateConstructorUsedError; // Maps to backend 'cart_item_id'
+  int get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'product_id')
   int get productId => throw _privateConstructorUsedError;
   @JsonKey(name: 'product_name')
@@ -428,7 +427,6 @@ class _$CartItemModelImpl implements _CartItemModel {
   @override
   @JsonKey(name: 'cart_item_id')
   final int id;
-// Maps to backend 'cart_item_id'
   @override
   @JsonKey(name: 'product_id')
   final int productId;
@@ -511,7 +509,7 @@ abstract class _CartItemModel implements CartItemModel {
 
   @override
   @JsonKey(name: 'cart_item_id')
-  int get id; // Maps to backend 'cart_item_id'
+  int get id;
   @override
   @JsonKey(name: 'product_id')
   int get productId;
