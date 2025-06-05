@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Accessories/controller/address/address_controller.dart';
@@ -25,6 +26,45 @@ class AddressCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final addressController = ref.read(addressControllerProvider.notifier);
     final isSelected = selectedAddress.value == id;
+
+    Future<void> deleteAddress(int id) async {
+      final confirmed = await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Confirm Delete'),
+              content:
+                  const Text('Are you sure you want to delete this address?'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: const Text('Delete'),
+                ),
+              ],
+            ),
+          ) ??
+          false;
+      if (confirmed) {
+        final controller = ref.read(addressControllerProvider.notifier);
+        try {
+          await controller.deleteAddress(id);
+          if (context.mounted) {
+            SnackbarUtil.showsnackbar(
+              message: 'Address deleted successfully',
+            );
+          }
+        } catch (e) {
+          if (context.mounted) {
+            SnackbarUtil.showsnackbar(
+              message: 'Failed to delete address',
+            );
+          }
+        }
+      }
+    }
 
     return GestureDetector(
       onTap: () => selectedAddress.value = id,
@@ -79,7 +119,8 @@ class AddressCard extends ConsumerWidget {
                   TextButton(
                     onPressed: () async {
                       try {
-                        await addressController.setDefaultAddress(int.parse(id));
+                        await addressController
+                            .setDefaultAddress(int.parse(id));
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
@@ -104,6 +145,11 @@ class AddressCard extends ConsumerWidget {
                       style: context.typography.bodySmallMedium,
                     ),
                   ),
+                IconButton(
+                  onPressed: () => deleteAddress(int.parse(id)),
+                  icon: const Icon(Icons.delete),
+                  color: Colors.red,
+                )
               ],
             ),
           ],

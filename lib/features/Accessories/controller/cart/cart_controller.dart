@@ -126,7 +126,27 @@ Future<void> removeFromCart(int cartItemId) async {
       );
     }
   }
-
+Future<String> placeOrder() async {
+  final previousState = state;
+  try {
+    if (!TokenStorage().hasValidTokens) {
+      throw const CartException('Please login to place an order');
+    }
+    
+    state = AsyncValue.loading();
+    final whatsappUrl = await _cartService.placeOrder();
+    
+    // Fetch updated empty cart from server
+    await refreshCart();
+    
+    return whatsappUrl;
+  } catch (e) {
+    state = previousState;
+    log('Error placing order: $e');
+    if (e is CartException) rethrow;
+    throw CartException('Failed to place order: $e');
+  }
+}
   double get cartTotal {
     return state.whenOrNull(
       data: (cart) => cart.discountedTotal,

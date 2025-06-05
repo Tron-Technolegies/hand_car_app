@@ -1,3 +1,4 @@
+
 import 'dart:developer';
 import 'package:hand_car/core/router/user_validation.dart';
 import 'package:hand_car/features/Accessories/model/wishlist/wishlist_model.dart';
@@ -5,11 +6,11 @@ import 'package:hand_car/features/Accessories/services/wishlist_services.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'wishlist_controller.g.dart';
+
 @riverpod
 class WishlistNotifier extends _$WishlistNotifier {
   @override
   FutureOr<Map<String, WishlistResponse>> build() async {
-    // Check authentication
     if (!TokenStorage().hasValidTokens) {
       return {};
     }
@@ -18,10 +19,9 @@ class WishlistNotifier extends _$WishlistNotifier {
       final service = ref.read(wishlistServicesProvider);
       final response = await service.getWishlist();
 
-      // Convert response data to Map with String keys
       final Map<String, WishlistResponse> wishlistMap = {};
       for (var item in response.values) {
-        wishlistMap[item.id.toString()] = item;
+        wishlistMap[item.id.toString()] = item; // Use id
       }
       return wishlistMap;
     } catch (error) {
@@ -43,7 +43,7 @@ class WishlistNotifier extends _$WishlistNotifier {
 
       final Map<String, WishlistResponse> wishlistMap = {};
       for (var item in response.values) {
-        wishlistMap[item.id.toString()] = item;
+        wishlistMap[item.id.toString()] = item; // Use id
       }
       state = AsyncValue.data(wishlistMap);
       log('Wishlist fetched: $wishlistMap');
@@ -58,7 +58,6 @@ class WishlistNotifier extends _$WishlistNotifier {
       throw Exception('Please login to continue');
     }
 
-    // Store current state before loading
     final previousState = state.value ?? {};
     state = const AsyncValue.loading();
     
@@ -73,9 +72,8 @@ class WishlistNotifier extends _$WishlistNotifier {
         return;
       }
 
-      // Ensure we're working with the correct types
       final currentItems = Map<String, WishlistResponse>.from(previousState);
-      final itemKey = response.id.toString();
+      final itemKey = response.id.toString(); // Use id
       currentItems[itemKey] = response;
       
       state = AsyncValue.data(currentItems);
@@ -83,7 +81,6 @@ class WishlistNotifier extends _$WishlistNotifier {
       
     } catch (error, stackTrace) {
       log('Error adding to wishlist: $error');
-      // Restore previous state on error
       state = AsyncValue.data(Map<String, WishlistResponse>.from(previousState));
       state = AsyncValue.error(error, stackTrace);
       rethrow;
@@ -95,7 +92,6 @@ class WishlistNotifier extends _$WishlistNotifier {
       throw Exception('Please login to continue');
     }
 
-    // Store current state before loading
     final previousState = state.value ?? {};
     state = const AsyncValue.loading();
     
@@ -110,16 +106,21 @@ class WishlistNotifier extends _$WishlistNotifier {
         state = AsyncValue.data(currentItems);
         log('Product removed from wishlist successfully');
       } else {
-        // Restore previous state if removal failed
         state = AsyncValue.data(Map<String, WishlistResponse>.from(previousState));
         throw Exception('Failed to remove from wishlist');
       }
     } catch (error, stackTrace) {
       log('Error removing from wishlist: $error');
-      // Restore previous state on error
       state = AsyncValue.data(Map<String, WishlistResponse>.from(previousState));
-      state = AsyncValue.error(error, stackTrace);
-      rethrow;
+      if (error.toString().contains('Product not found in wishlist')) {
+        log('Product not in wishlist, treated as successful removal');
+        final currentItems = Map<String, WishlistResponse>.from(previousState);
+        currentItems.remove(productId);
+        state = AsyncValue.data(currentItems);
+      } else {
+        state = AsyncValue.error(error, stackTrace);
+        rethrow;
+      }
     }
   }
 
@@ -127,8 +128,12 @@ class WishlistNotifier extends _$WishlistNotifier {
     return state.value?.containsKey(productId) ?? false;
   }
 
-  // Helper method to check by int productId
   bool isInWishlistById(int productId) {
     return isInWishlist(productId.toString());
   }
+}
+
+@riverpod
+WishlistServices wishlistServices(ref) {
+  return WishlistServices();
 }

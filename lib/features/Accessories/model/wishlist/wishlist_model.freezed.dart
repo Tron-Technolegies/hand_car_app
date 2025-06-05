@@ -20,7 +20,7 @@ WishlistResponse _$WishlistResponseFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$WishlistResponse {
-  int get id => throw _privateConstructorUsedError;
+  int get id => throw _privateConstructorUsedError; // Product ID
   @JsonKey(name: 'product_name')
   String get productName => throw _privateConstructorUsedError;
   @JsonKey(name: 'product_price', fromJson: WishlistResponse._priceFromJson)
@@ -178,6 +178,7 @@ class _$WishlistResponseImpl implements _WishlistResponse {
 
   @override
   final int id;
+// Product ID
   @override
   @JsonKey(name: 'product_name')
   final String productName;
@@ -248,7 +249,7 @@ abstract class _WishlistResponse implements WishlistResponse {
       _$WishlistResponseImpl.fromJson;
 
   @override
-  int get id;
+  int get id; // Product ID
   @override
   @JsonKey(name: 'product_name')
   String get productName;

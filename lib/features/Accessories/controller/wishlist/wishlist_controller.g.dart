@@ -23,7 +23,7 @@ final wishlistServicesProvider = AutoDisposeProvider<WishlistServices>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef WishlistServicesRef = AutoDisposeProviderRef<WishlistServices>;
-String _$wishlistNotifierHash() => r'e40a9dee10163fcdafa220653e8f0ea20e1f7267';
+String _$wishlistNotifierHash() => r'f453a34d09e5b6d5d923b9be376f8f29502da533';
 
 /// See also [WishlistNotifier].
 @ProviderFor(WishlistNotifier)

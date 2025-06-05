@@ -254,7 +254,7 @@ class AddressApiService {
       log('Deleting address: $id');
 
       final response = await _dio.delete(
-        '/delete_address/$id/',
+        '/delete_address//$id/',
         options: Options(
           headers: _createAuthHeaders(token),
         ),

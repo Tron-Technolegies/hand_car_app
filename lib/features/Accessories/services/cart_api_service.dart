@@ -197,4 +197,31 @@ class CartApiService {
       }
     });
   }
+  Future<String> placeOrder() async {
+  return _makeAuthenticatedRequest(() async {
+    log('Placing order...');
+    final response = await _dio.post(
+      '/place_order/',
+      options: Options(headers: {'Content-Type': 'application/json'}),
+    );
+    log('Place order response: ${response.data}');
+    if (response.statusCode == 200) {
+      try {
+        return response.data['whatsapp_url'] as String;
+      } catch (e) {
+        throw CartException('Invalid response format: $e');
+      }
+    } else {
+      String errorMessage;
+      if (response.data is Map<String, dynamic>) {
+        errorMessage = response.data['error']?.toString() ?? 'Failed to place order';
+      } else if (response.data is String && response.data.contains('<!doctype html>')) {
+        errorMessage = 'Server returned an unexpected HTML response (404 Not Found)';
+      } else {
+        errorMessage = 'Failed to place order: ${response.statusCode}';
+      }
+      throw CartException(errorMessage);
+    }
+  });
+}
 }

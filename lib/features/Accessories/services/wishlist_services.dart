@@ -1,11 +1,10 @@
+
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
 import 'package:hand_car/core/router/user_validation.dart';
 import 'package:hand_car/features/Accessories/model/wishlist/wishlist_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-part 'wishlist_services.g.dart';
 
 
 class WishlistServices {
@@ -38,8 +37,7 @@ class WishlistServices {
       log('Making request to add product $productId to wishlist');
       
       final response = await _dio.post(
-        '/add_to_wishlist/$productId/',  
-        // data: {'product_id': productId},
+        '/add_to_wishlist/$productId/',
         options: Options(headers: _createAuthHeaders(token)),
       );
 
@@ -47,9 +45,7 @@ class WishlistServices {
       log('Add to wishlist response data: ${response.data}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        // Check if the response contains wishlist_item data
         if (response.data is Map && response.data.containsKey('wishlist_item')) {
-
           final wishlistItemData = response.data['wishlist_item'];
           try {
             return WishlistResponse.fromJson(wishlistItemData as Map<String, dynamic>);
@@ -58,13 +54,11 @@ class WishlistServices {
             throw Exception('Invalid response format');
           }
         } else {
-          // Handle case where item already exists (status 200)
           log('Product already in wishlist or response format changed');
-          return null; // This will trigger a refresh of the wishlist
+          return null;
         }
       }
 
-      // Handle error responses
       String errorMessage = 'Failed to add to wishlist';
       if (response.data is Map && response.data.containsKey('error')) {
         errorMessage = response.data['error'].toString();
@@ -93,18 +87,17 @@ class WishlistServices {
     }
   }
 
-  Future<bool> removeFromWishlist(String wishlistItemId) async {
+  Future<bool> removeFromWishlist(String productId) async {
     try {
       final token = TokenStorage().getAccessToken();
       if (token == null) {
         throw Exception('Please login to continue');
       }
 
-      log('Removing wishlist item: $wishlistItemId');
+      log('Removing wishlist item: $productId');
       
-      // Updated URL to match Django endpoint
       final response = await _dio.delete(
-        '/wishlist_items/$wishlistItemId/', 
+        '/remove_wishlist/$productId/',
         options: Options(
           headers: _createAuthHeaders(token),
         ),
@@ -122,7 +115,8 @@ class WishlistServices {
       if (e.response?.statusCode == 401) {
         throw Exception('Please login to continue');
       } else if (e.response?.statusCode == 404) {
-        throw Exception('Item not found in wishlist');
+        log('Product not found in wishlist, treating as successful removal');
+        return true;
       }
       
       String errorMessage = 'Failed to remove from wishlist';
@@ -145,7 +139,7 @@ class WishlistServices {
       }
 
       final response = await _dio.get(
-        '/wishlist_items', 
+        '/wishlist_items/',
         options: Options(
           headers: _createAuthHeaders(token),
         ),
@@ -165,13 +159,12 @@ class WishlistServices {
             try {
               if (item is Map<String, dynamic>) {
                 final wishlistItem = WishlistResponse.fromJson(item);
-                wishlistMap[wishlistItem.id.toString()] = wishlistItem;
+                wishlistMap[wishlistItem.id.toString()] = wishlistItem; // Use id
               } else {
                 log('Skipping invalid item format: $item');
               }
             } catch (e) {
               log('Error parsing wishlist item: $item, Error: $e');
-              // Continue processing other items instead of failing completely
             }
           }
 
@@ -182,7 +175,6 @@ class WishlistServices {
         }
       }
 
-      // Handle error response
       String errorMessage = 'Failed to fetch wishlist';
       if (response.data is Map && response.data.containsKey('error')) {
         errorMessage = response.data['error'].toString();
@@ -203,10 +195,4 @@ class WishlistServices {
       throw Exception('Failed to fetch wishlist');
     }
   }
-}
-
-
-@riverpod
-WishlistServices wishlistServices(ref) {
-  return WishlistServices();
 }

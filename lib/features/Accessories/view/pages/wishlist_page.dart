@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/bottom_nav_controller.dart';
 import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hand_car/features/Accessories/controller/wishlist/wishlist_controller.dart';
+import 'package:hand_car/features/Accessories/model/products/products_model.dart';
+import 'package:hand_car/features/Accessories/view/pages/accessories_details_page.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hand_car/features/Accessories/controller/cart/cart_controller.dart';
 import 'package:hand_car/features/Accessories/model/wishlist/wishlist_model.dart';
@@ -38,7 +41,16 @@ class WishlistScreen extends ConsumerWidget {
                 ),
                 itemBuilder: (context, index) {
                   final item = wishlistItems.values.elementAt(index);
-                  return WishlistGridItem(item: item);
+                  final product = ProductsModel(
+                    category: '',
+                    brand: '',
+                    id: item.id,
+                    name: item.productName,
+                    price: item.productPrice.toString(),
+                    image: item.productImage ?? '',
+                    description: '', // Add default or fetch description if needed
+                  );
+                  return WishlistGridItem(item: item, product: product);
                 },
               );
             },
@@ -55,12 +67,14 @@ class WishlistScreen extends ConsumerWidget {
 
 class WishlistGridItem extends HookConsumerWidget {
   final WishlistResponse item;
+  final ProductsModel product;
   final double width;
   final double aspectRatio;
 
   const WishlistGridItem({
     super.key,
     required this.item,
+    required this.product,
     this.width = 140,
     this.aspectRatio = 0.7,
   });
@@ -71,7 +85,10 @@ class WishlistGridItem extends HookConsumerWidget {
       width: width,
       child: GestureDetector(
         onTap: () {
-          // Navigate to product detail
+          context.push(
+            '${AccessoriesDetailsPage.route}/${product.id}',
+            extra: product,
+          );
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,23 +130,59 @@ class WishlistGridItem extends HookConsumerWidget {
                     color: context.colors.green,
                   ),
                 ),
-                IconButton(
-                  constraints: const BoxConstraints(),
-                  padding: EdgeInsets.zero,
-                  onPressed: () {
-                    ref
-                        .read(cartControllerProvider.notifier)
-                        .addToCart(item.id);
-                    SnackbarUtil.showsnackbar(
-                      message: "Added to cart",
-                      showretry: false,
-                    );
-                  },
-                  icon: Icon(
-                    Icons.shopping_cart_outlined,
-                    color: context.colors.primaryTxt,
-                    size: 20,
-                  ),
+                Row(
+                  children: [
+                    IconButton(
+                      constraints: const BoxConstraints(),
+                      padding: EdgeInsets.zero,
+                      onPressed: () async {
+                        try {
+                          await ref
+                              .read(wishlistNotifierProvider.notifier)
+                              .removeFromWishlist(item.id.toString());
+                          SnackbarUtil.showsnackbar(
+                            message: "${item.productName} removed from wishlist",
+                            showretry: false,
+                          );
+                        } catch (e) {
+                          SnackbarUtil.showsnackbar(
+                            message: "Failed to remove from wishlist: $e",
+                            showretry: false,
+                          );
+                        }
+                      },
+                      icon: Icon(
+                        Icons.favorite,
+                        color: context.colors.primaryTxt,
+                        size: 20,
+                      ),
+                    ),
+                    IconButton(
+                      constraints: const BoxConstraints(),
+                      padding: EdgeInsets.zero,
+                      onPressed: () async {
+                        try {
+                          await ref
+                              .read(cartControllerProvider.notifier)
+                              .addToCart(item.id);
+                          SnackbarUtil.showsnackbar(
+                            message: "${item.productName} added to cart",
+                            showretry: false,
+                          );
+                        } catch (e) {
+                          SnackbarUtil.showsnackbar(
+                            message: "Failed to add to cart: $e",
+                            showretry: false,
+                          );
+                        }
+                      },
+                      icon: Icon(
+                        Icons.shopping_cart_outlined,
+                        color: context.colors.primaryTxt,
+                        size: 20,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -170,7 +223,6 @@ class _EmptyWishlist extends ConsumerWidget {
           ElevatedButton(
             onPressed: () {
               ref.read(navigationProvider.notifier).jumpToPage(1);
-
               Navigator.of(context).pop();
             },
             child: const Text('Continue Shopping'),
