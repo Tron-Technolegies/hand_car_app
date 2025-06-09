@@ -126,7 +126,9 @@ Future<void> removeFromCart(int cartItemId) async {
       );
     }
   }
-Future<String> placeOrder() async {
+
+  // Update placeOrder to accept addressId
+Future<String> placeOrder(String addressId) async {
   final previousState = state;
   try {
     if (!TokenStorage().hasValidTokens) {
@@ -134,7 +136,7 @@ Future<String> placeOrder() async {
     }
     
     state = AsyncValue.loading();
-    final whatsappUrl = await _cartService.placeOrder();
+    final whatsappUrl = await _cartService.placeOrder(addressId); // Pass addressId
     
     // Fetch updated empty cart from server
     await refreshCart();

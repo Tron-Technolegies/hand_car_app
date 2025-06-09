@@ -197,11 +197,14 @@ class CartApiService {
       }
     });
   }
-  Future<String> placeOrder() async {
+  
+  // Update placeOrder method to accept addressId
+Future<String> placeOrder(String addressId) async {
   return _makeAuthenticatedRequest(() async {
-    log('Placing order...');
+    log('Placing order with address: $addressId...');
     final response = await _dio.post(
-      '/place_order/',
+      '/place_order',
+      data: {'address_id': addressId}, // Include address in request
       options: Options(headers: {'Content-Type': 'application/json'}),
     );
     log('Place order response: ${response.data}');

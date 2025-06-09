@@ -13,6 +13,7 @@ import 'package:hand_car/features/Accessories/view/widgets/cart/cart_summary_wid
 import 'package:hand_car/features/Home/view/pages/navigation_page.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:panara_dialogs/panara_dialogs.dart';
+import 'package:url_launcher/url_launcher.dart'; // Add this import for launching WhatsApp URL
 
 class CheckOutPage extends HookConsumerWidget {
   static const route = '/checkout-page';
@@ -24,7 +25,7 @@ class CheckOutPage extends HookConsumerWidget {
     final showAddressForm = useState(false);
     final selectedAddress = useState<String?>(null);
     final isRefreshing = useState(false);
-    
+
     final cartController = ref.watch(cartControllerProvider);
     final addressState = ref.watch(addressControllerProvider);
     final addressController = ref.read(addressControllerProvider.notifier);
@@ -109,28 +110,29 @@ class CheckOutPage extends HookConsumerWidget {
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, _) => Text('Error loading cart: $error'),
               ),
-              
+
               SizedBox(height: context.space.space_200),
               Text(
                 'Select a shipping address',
                 style: context.typography.h3,
               ),
               SizedBox(height: context.space.space_200),
-              
+
               // Address List Section
               Builder(
                 builder: (context) {
                   if (addressState.isLoading || isRefreshing.value) {
                     return const Center(child: CircularProgressIndicator());
                   }
-                  
+
                   if (addressState.error != null) {
                     return Center(
                       child: Column(
                         children: [
                           Text(
                             'Error: ${addressState.error}',
-                            style: context.typography.bodyLarge.copyWith(color: Colors.red),
+                            style: context.typography.bodyLarge
+                                .copyWith(color: Colors.red),
                           ),
                           TextButton(
                             onPressed: refreshAddresses,
@@ -140,7 +142,7 @@ class CheckOutPage extends HookConsumerWidget {
                       ),
                     );
                   }
-                  
+
                   if (addressState.addresses.isEmpty) {
                     return Center(
                       child: Column(
@@ -158,14 +160,14 @@ class CheckOutPage extends HookConsumerWidget {
                       ),
                     );
                   }
-                  
+
                   return Column(
                     children: [
                       ListView.separated(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: addressState.addresses.length,
-                        separatorBuilder: (_, __) => 
+                        separatorBuilder: (_, __) =>
                             SizedBox(height: context.space.space_200),
                         itemBuilder: (context, index) {
                           final address = addressState.addresses[index];
@@ -185,7 +187,7 @@ class CheckOutPage extends HookConsumerWidget {
                   );
                 },
               ),
-              
+
               // Add Address Button
               TextButton.icon(
                 icon: const Icon(Icons.add),
@@ -195,7 +197,7 @@ class CheckOutPage extends HookConsumerWidget {
                   style: context.typography.bodyLarge,
                 ),
               ),
-              
+
               // Address Form
               if (showAddressForm.value) ...[
                 SizedBox(height: context.space.space_200),
@@ -208,35 +210,64 @@ class CheckOutPage extends HookConsumerWidget {
                 ),
                 SizedBox(height: context.space.space_200),
               ],
-              
+
               // Place Order Button
               SizedBox(height: context.space.space_200),
               SizedBox(
                 width: double.infinity,
                 child: ButtonWidget(
                   label: "Place Order",
-                  onTap: () {
+                  onTap: () async {
+                    // Validate address selection
                     if (selectedAddress.value == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
                             'Please select a shipping address',
-                            style: context.typography.bodyMedium.copyWith(color: Colors.white),
+                            style: context.typography.bodyMedium
+                                .copyWith(color: Colors.white),
                           ),
                           backgroundColor: Colors.red,
                         ),
                       );
-                      return;
+                      return; // Exit early if no address selected
                     }
-                    
-                    showModernDialog(
-                      context,
-                      "Order Placed",
-                      "Your order has been placed successfully",
-                      "OK",
-                      () => context.go(NavigationPage.route),
-                      PanaraDialogType.success,
-                    );
+
+                    try {
+                      // Show loading indicator
+                      LoadingOverlay.show(context);
+
+                      // Place order with selected address
+                      await ref
+                          .read(cartControllerProvider.notifier)
+                          .placeOrder(selectedAddress.value!);
+
+                      // Hide loading indicator
+                      LoadingOverlay.hide();
+
+                      // Show success dialog
+                      showModernDialog(
+                        context,
+                        "Order Placed Successfully",
+                        "Your order has been successfully placed. You will receive a confirmation soon. Thank you for shopping with us!",
+                        "Ok",
+                        () => context.go(NavigationPage.route),
+                        PanaraDialogType.success,
+                      );
+                    } catch (e) {
+                      // Hide loading indicator on error
+                      LoadingOverlay.hide();
+
+                      log('Error placing order: $e');
+                      // Show error message
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content:
+                              Text('Failed to place order: ${e.toString()}'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
                   },
                 ),
               ),
@@ -245,5 +276,25 @@ class CheckOutPage extends HookConsumerWidget {
         ),
       ),
     );
+  }
+}
+
+// Updated LoadingOverlay class
+class LoadingOverlay {
+  static OverlayEntry? _overlayEntry;
+
+  static void show(BuildContext context) {
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Container(
+        color: Colors.black.withOpacity(0.3),
+        child: const Center(child: CircularProgressIndicator()),
+      ),
+    );
+    Overlay.of(context).insert(_overlayEntry!);
+  }
+
+  static void hide() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
   }
 }
