@@ -8,8 +8,8 @@ part 'coupon_model.g.dart';
 /// Coupon Model class to get the data from the API
 @freezed
 class CouponModel with _$CouponModel {
-  const CouponModel._(); // Added private constructor for custom getters
-   //Factory constructor to create a CouponModel
+  const CouponModel._(); 
+
   const factory CouponModel({
     
     required int id,

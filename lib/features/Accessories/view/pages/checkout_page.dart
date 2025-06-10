@@ -8,12 +8,12 @@ import 'package:hand_car/core/utils/show_dialoge.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
 import 'package:hand_car/features/Accessories/controller/address/address_controller.dart';
 import 'package:hand_car/features/Accessories/controller/cart/cart_controller.dart';
+import 'package:hand_car/features/Accessories/model/order_response/order_response.dart';
 import 'package:hand_car/features/Accessories/view/widgets/address/address_card_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/address/address_form_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/cart/cart_summary_widget.dart';
 import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
 import 'package:hand_car/features/Authentication/controller/user_controller.dart';
-import 'package:hand_car/features/Authentication/model/user_model.dart';
 import 'package:hand_car/features/Home/view/pages/navigation_page.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:panara_dialogs/panara_dialogs.dart';
@@ -80,6 +80,24 @@ class CheckOutPage extends HookConsumerWidget {
       Future.microtask(() => refreshAddresses());
       return null;
     }, []);
+
+    // Function to create WhatsApp message
+    String createWhatsAppMessage(OrderResponse orderResponse) {
+      final orderDetails = orderResponse.orderDetails;
+      final items = (orderDetails['items'] as List<dynamic>)
+          .map((item) => '- ${item['name']} (Qty: ${item['quantity']}, Price: ${item['price']})')
+          .join('\n');
+      return '''
+Order Confirmation
+Order ID: ${orderResponse.orderId}
+Name: ${orderDetails['name']}
+Address: ${orderDetails['address']}
+Total: ${orderDetails['total_price']}
+Items:
+$items
+Please confirm payment details.
+''';
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -285,41 +303,61 @@ class CheckOutPage extends HookConsumerWidget {
                       final selectedAddressModel = addressState.addresses.firstWhere(
                         (address) => address.id == selectedAddress.value,
                         orElse: () => throw const CartException('Selected address not found'));
-                     
 
                       // Format full address
                       final fullAddress = formatAddress(selectedAddressModel);
+
+                      // Validate contact
+                      final contact = user.phone.isNotEmpty == true ? user.phone : 'Unknown';
+                      if (contact == 'Unknown') {
+                        log('Warning: User phone is empty or null');
+                      }
 
                       // Place order
                       final orderResponse = await ref
                           .read(cartControllerProvider.notifier)
                           .placeOrder(
                             addressId: selectedAddress.value!,
-                            username: user.name, // Map name to username
-                            contact: user.phone, // Map phone to contact
+                            username: user.name,
+                            contact: contact,
                             address: fullAddress,
+                            
                           );
 
                       // Hide loading indicator
                       LoadingOverlay.hide();
 
-                      // Show success dialog with order ID
+                      // Construct WhatsApp URL
+                      final whatsappNumber = '9895499872'; // Replace with your business number, e.g., '+1234567890'
+                      final message = createWhatsAppMessage(orderResponse);
+                      final encodedMessage = Uri.encodeComponent(message);
+                      final whatsappUrl = 'https://wa.me/$whatsappNumber?text=$encodedMessage';
+
+                      // Show success dialog with Make Payment button
                       showModernDialog(
                         context,
                         "Order Placed Successfully",
-                        "Your order (ID: ${orderResponse.orderId}) has been successfully placed. You will receive a confirmation soon. Thank you for shopping with us!",
-                        "Ok",
-                        () => context.go(NavigationPage.route),
+                        "Your order (ID: ${orderResponse.orderId}) has been successfully placed. Proceed to make payment via WhatsApp.",
+                        "Make Payment",
+                        () async {
+                          final uri = Uri.parse(whatsappUrl);
+                          if (await canLaunchUrl(uri)) {
+                            await launchUrl(uri, mode: LaunchMode.externalApplication);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Unable to open WhatsApp',
+                                  style: context.typography.bodyMedium.copyWith(color: Colors.white),
+                                ),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                          context.go(NavigationPage.route);
+                        },
                         PanaraDialogType.success,
                       );
-
-                      // Optionally launch WhatsApp URL if available
-                      // if (orderResponse.whatsappUrl != null) {
-                      //   final uri = Uri.parse(orderResponse.whatsappUrl!);
-                      //   if (await canLaunchUrl(uri)) {
-                      //     await launchUrl(uri, mode: LaunchMode.externalApplication);
-                      //   }
-                      // }
                     } catch (e) {
                       // Hide loading indicator on error
                       LoadingOverlay.hide();
