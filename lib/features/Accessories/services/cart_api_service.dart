@@ -5,6 +5,7 @@ import 'package:hand_car/core/router/user_validation.dart';
 import 'package:hand_car/features/Accessories/model/cart/cart_model.dart';
 import 'package:hand_car/core/exception/cart/cart_exception.dart';
 import 'package:hand_car/features/Accessories/model/cart/cart_response.dart';
+import 'package:hand_car/features/Accessories/model/order_response/order_response.dart';
 
 class CartApiService {
   final _dio = Dio(BaseOptions(
@@ -197,34 +198,79 @@ class CartApiService {
       }
     });
   }
-  
-  // Update placeOrder method to accept addressId
-Future<String> placeOrder(String addressId) async {
-  return _makeAuthenticatedRequest(() async {
-    log('Placing order with address: $addressId...');
-    final response = await _dio.post(
-      '/place_order',
-      data: {'address_id': addressId}, // Include address in request
-      options: Options(headers: {'Content-Type': 'application/json'}),
-    );
-    log('Place order response: ${response.data}');
-    if (response.statusCode == 200) {
-      try {
-        return response.data['whatsapp_url'] as String;
-      } catch (e) {
-        throw CartException('Invalid response format: $e');
+
+  Future<OrderResponse> placeOrder({
+    required String addressId,
+    required String username,
+    required String contact,
+    required String address,
+    required CartModel cart,
+    Map<String, dynamic>? coupon,
+  }) async {
+    return _makeAuthenticatedRequest(() async {
+      log('Placing order with address: $addressId...');
+      // Log raw cart items
+      log('Raw cart items: ${cart.cartItems.map((item) => {
+            'id': item.id,
+            'productId': item.productId,
+            'quantity': item.quantity
+          }).toList()}');
+
+      // Filter out invalid cart items
+      final validCartItems = cart.cartItems
+          .where((item) => item.productId > 0 && item.quantity > 0)
+          .map((item) => {
+                'product_id': item.productId,
+                'quantity': item.quantity,
+              })
+          .toList();
+
+      if (validCartItems.isEmpty) {
+        log('No valid cart items found');
+        throw CartException('No valid items in cart');
       }
-    } else {
-      String errorMessage;
-      if (response.data is Map<String, dynamic>) {
-        errorMessage = response.data['error']?.toString() ?? 'Failed to place order';
-      } else if (response.data is String && response.data.contains('<!doctype html>')) {
-        errorMessage = 'Server returned an unexpected HTML response (404 Not Found)';
+
+      if (validCartItems.length < cart.cartItems.length) {
+        log('Warning: Excluded ${cart.cartItems.length - validCartItems.length} invalid cart items (invalid productId or quantity)');
+      }
+
+      final payload = {
+        'username': username,
+        'contact': contact,
+        'address': address,
+        'cartItems': validCartItems,
+        'totalPrice': cart.discountedTotal,
+        if (coupon != null) 'coupon': coupon,
+      };
+
+      log('Sending payload: $payload');
+      final response = await _dio.post(
+        '/place_order',
+        data: payload,
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+      log('Place order response: ${response.data}');
+
+      if (response.statusCode == 200) {
+        try {
+          return OrderResponse.fromJson(response.data);
+        } catch (e) {
+          throw CartException('Invalid response format: $e');
+        }
       } else {
-        errorMessage = 'Failed to place order: ${response.statusCode}';
+        String errorMessage;
+        if (response.data is Map<String, dynamic>) {
+          errorMessage =
+              response.data['error']?.toString() ?? 'Failed to place order';
+        } else if (response.data is String &&
+            response.data.contains('<!doctype html>')) {
+          errorMessage =
+              'Server returned an unexpected HTML response (404 Not Found)';
+        } else {
+          errorMessage = 'Failed to place order: ${response.statusCode}';
+        }
+        throw CartException(errorMessage);
       }
-      throw CartException(errorMessage);
-    }
-  });
-}
+    });
+  }
 }

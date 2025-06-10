@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hand_car/core/exception/cart/cart_exception.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/show_dialoge.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
@@ -10,10 +11,13 @@ import 'package:hand_car/features/Accessories/controller/cart/cart_controller.da
 import 'package:hand_car/features/Accessories/view/widgets/address/address_card_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/address/address_form_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/cart/cart_summary_widget.dart';
+import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
+import 'package:hand_car/features/Authentication/controller/user_controller.dart';
+import 'package:hand_car/features/Authentication/model/user_model.dart';
 import 'package:hand_car/features/Home/view/pages/navigation_page.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:panara_dialogs/panara_dialogs.dart';
-import 'package:url_launcher/url_launcher.dart'; // Add this import for launching WhatsApp URL
+import 'package:url_launcher/url_launcher.dart';
 
 class CheckOutPage extends HookConsumerWidget {
   static const route = '/checkout-page';
@@ -29,6 +33,8 @@ class CheckOutPage extends HookConsumerWidget {
     final cartController = ref.watch(cartControllerProvider);
     final addressState = ref.watch(addressControllerProvider);
     final addressController = ref.read(addressControllerProvider.notifier);
+    final user = ref.watch(userProvider);
+    final authController = ref.read(authControllerProvider.notifier);
 
     // Set default address as selected when addresses are loaded
     useEffect(() {
@@ -41,6 +47,11 @@ class CheckOutPage extends HookConsumerWidget {
       }
       return null;
     }, [addressState.addresses]);
+
+    // Function to format address from AddressModel
+    String formatAddress(dynamic address) {
+      return '${address.street}, ${address.city}, ${address.state}, ZIP: ${address.zipCode}';
+    }
 
     // Function to handle refresh
     Future<void> refreshAddresses() async {
@@ -218,6 +229,23 @@ class CheckOutPage extends HookConsumerWidget {
                 child: ButtonWidget(
                   label: "Place Order",
                   onTap: () async {
+                    // Check authentication
+                    final isAuthenticated = await authController.isAuthenticated();
+                    if (!isAuthenticated || user == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Please login to place an order',
+                            style: context.typography.bodyMedium
+                                .copyWith(color: Colors.white),
+                          ),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                      context.go('/login');
+                      return;
+                    }
+
                     // Validate address selection
                     if (selectedAddress.value == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -230,40 +258,91 @@ class CheckOutPage extends HookConsumerWidget {
                           backgroundColor: Colors.red,
                         ),
                       );
-                      return; // Exit early if no address selected
+                      return;
+                    }
+
+                    // Validate cart
+                    final cart = cartController.valueOrNull;
+                    if (cart == null || cart.cartItems.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Your cart is empty. Add items to proceed.',
+                            style: context.typography.bodyMedium
+                                .copyWith(color: Colors.white),
+                          ),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                      return;
                     }
 
                     try {
                       // Show loading indicator
                       LoadingOverlay.show(context);
 
-                      // Place order with selected address
-                      await ref
+                      // Find selected address
+                      final selectedAddressModel = addressState.addresses.firstWhere(
+                        (address) => address.id == selectedAddress.value,
+                        orElse: () => throw const CartException('Selected address not found'));
+                     
+
+                      // Format full address
+                      final fullAddress = formatAddress(selectedAddressModel);
+
+                      // Place order
+                      final orderResponse = await ref
                           .read(cartControllerProvider.notifier)
-                          .placeOrder(selectedAddress.value!);
+                          .placeOrder(
+                            addressId: selectedAddress.value!,
+                            username: user.name, // Map name to username
+                            contact: user.phone, // Map phone to contact
+                            address: fullAddress,
+                          );
 
                       // Hide loading indicator
                       LoadingOverlay.hide();
 
-                      // Show success dialog
+                      // Show success dialog with order ID
                       showModernDialog(
                         context,
                         "Order Placed Successfully",
-                        "Your order has been successfully placed. You will receive a confirmation soon. Thank you for shopping with us!",
+                        "Your order (ID: ${orderResponse.orderId}) has been successfully placed. You will receive a confirmation soon. Thank you for shopping with us!",
                         "Ok",
                         () => context.go(NavigationPage.route),
                         PanaraDialogType.success,
                       );
+
+                      // Optionally launch WhatsApp URL if available
+                      // if (orderResponse.whatsappUrl != null) {
+                      //   final uri = Uri.parse(orderResponse.whatsappUrl!);
+                      //   if (await canLaunchUrl(uri)) {
+                      //     await launchUrl(uri, mode: LaunchMode.externalApplication);
+                      //   }
+                      // }
                     } catch (e) {
                       // Hide loading indicator on error
                       LoadingOverlay.hide();
 
                       log('Error placing order: $e');
-                      // Show error message
+                      String errorMessage = 'Failed to place order';
+                      if (e is CartException) {
+                        errorMessage = e.message;
+                        if (errorMessage.contains('Cart is empty')) {
+                          errorMessage = 'Your cart is empty. Add items to proceed.';
+                        } else if (errorMessage.contains('Insufficient stock')) {
+                          errorMessage = 'Some items are out of stock. Please review your cart.';
+                        } else if (errorMessage.contains('Please login')) {
+                          errorMessage = 'Please login to place an order';
+                          context.go('/login');
+                        }
+                      }
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content:
-                              Text('Failed to place order: ${e.toString()}'),
+                          content: Text(
+                            errorMessage,
+                            style: context.typography.bodyMedium.copyWith(color: Colors.white),
+                          ),
                           backgroundColor: Colors.red,
                         ),
                       );

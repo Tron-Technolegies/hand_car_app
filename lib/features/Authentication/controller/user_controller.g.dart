@@ -6,7 +6,7 @@ part of 'user_controller.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$userNameHash() => r'767e427eb18feb8a388a6d49228adcd8ec817c3e';
+String _$userNameHash() => r'4c4d9cd8f176e4c64905b4b2fd4273374dde0ea1';
 
 /// See also [userName].
 @ProviderFor(userName)
@@ -22,7 +22,23 @@ final userNameProvider = AutoDisposeProvider<String?>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef UserNameRef = AutoDisposeProviderRef<String?>;
-String _$userDataProviderHash() => r'f07d9116494cb2d74de1772a246381f2f6164e65';
+String _$userHash() => r'ae66bd71017b32a89e47aeab16b1b0e0d5147630';
+
+/// See also [user].
+@ProviderFor(user)
+final userProvider = AutoDisposeProvider<UserModel?>.internal(
+  user,
+  name: r'userProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$userHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef UserRef = AutoDisposeProviderRef<UserModel?>;
+String _$userDataProviderHash() => r'cb66d97518cfbdd8ca16a65c7332f7148b157e2a';
 
 /// See also [UserDataProvider].
 @ProviderFor(UserDataProvider)

@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:hand_car/core/exception/cart/cart_exception.dart';
 import 'package:hand_car/features/Accessories/model/coupon/coupon_model.dart';
 import 'package:hand_car/features/Accessories/model/cart/cart_model.dart';
+import 'package:hand_car/features/Accessories/model/order_response/order_response.dart';
 import 'package:hand_car/features/Accessories/services/cart_api_service.dart';
 import 'package:hand_car/core/router/user_validation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -127,28 +128,43 @@ Future<void> removeFromCart(int cartItemId) async {
     }
   }
 
-  // Update placeOrder to accept addressId
-Future<String> placeOrder(String addressId) async {
-  final previousState = state;
-  try {
-    if (!TokenStorage().hasValidTokens) {
-      throw const CartException('Please login to place an order');
+  Future<OrderResponse> placeOrder({
+    required String addressId,
+    required String username,
+    required String contact,
+    required String address,
+  }) async {
+    final previousState = state;
+    try {
+      if (!TokenStorage().hasValidTokens) {
+        throw const CartException('Please login to place an order');
+      }
+
+      state = const AsyncValue.loading();
+      final cart = state.valueOrNull ?? const CartModel();
+      if (cart.cartItems.isEmpty) {
+        throw const CartException('Cart is empty. Add items to proceed.');
+      }
+
+      final orderResponse = await _cartService.placeOrder(
+        addressId: addressId,
+        username: username,
+        contact: contact,
+        address: address,
+        cart: cart,
+      );
+
+      // Fetch updated empty cart from server
+      await refreshCart();
+
+      return orderResponse;
+    } catch (e) {
+      state = previousState;
+      log('Error placing order: $e');
+      if (e is CartException) rethrow;
+      throw CartException('Failed to place order: $e');
     }
-    
-    state = AsyncValue.loading();
-    final whatsappUrl = await _cartService.placeOrder(addressId); // Pass addressId
-    
-    // Fetch updated empty cart from server
-    await refreshCart();
-    
-    return whatsappUrl;
-  } catch (e) {
-    state = previousState;
-    log('Error placing order: $e');
-    if (e is CartException) rethrow;
-    throw CartException('Failed to place order: $e');
   }
-}
   double get cartTotal {
     return state.whenOrNull(
       data: (cart) => cart.discountedTotal,
