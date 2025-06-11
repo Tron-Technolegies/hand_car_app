@@ -65,66 +65,69 @@ class CartController extends _$CartController {
       state = AsyncValue.error(e, stackTrace);
     }
   }
-Future<void> removeFromCart(int cartItemId) async {
-  final previousState = state;
-  try {
-    state.whenData((currentCart) {
-      final updatedItems = currentCart.cartItems
-          .where((item) => item.id != cartItemId) 
-          .toList();
-      state = AsyncValue.data(currentCart.copyWith(
-        cartItems: updatedItems,
-        isLoading: true,
-      ));
-    });
-    await _cartService.removeFromCart(cartItemId);
-    await refreshCart();
-  } catch (e) {
-    state = previousState;
-    log('Error removing from cart: $e');
-    if (e is CartException) rethrow;
-    throw CartException('Failed to remove item: $e');
-  }
-}
- Future<void> updateQuantity(int cartItemId, int newQuantity) async {
-  if (cartItemId <= 0) {
-    throw CartException('Invalid cart item ID');
-  }
-  if (newQuantity < 1) {
-    throw CartException('Quantity must be at least 1');
+
+  Future<void> removeFromCart(int cartItemId) async {
+    final previousState = state;
+    try {
+      state.whenData((currentCart) {
+        final updatedItems = currentCart.cartItems
+            .where((item) => item.id != cartItemId)
+            .toList();
+        state = AsyncValue.data(currentCart.copyWith(
+          cartItems: updatedItems,
+          isLoading: true,
+        ));
+      });
+      await _cartService.removeFromCart(cartItemId);
+      await refreshCart();
+    } catch (e) {
+      state = previousState;
+      log('Error removing from cart: $e');
+      if (e is CartException) rethrow;
+      throw CartException('Failed to remove item: $e');
+    }
   }
 
-  final previousState = state;
-  try {
-    state.whenData((currentCart) {
-      final updatedItems = currentCart.cartItems.map((item) {
-        if (item.id == cartItemId) {
-          return item.copyWith(quantity: newQuantity);
-        }
-        return item;
-      }).toList();
-      state = AsyncValue.data(currentCart.copyWith(
-        cartItems: updatedItems,
-        isLoading: true,
-      ));
-    });
-    await _cartService.updateQuantity(cartItemId, newQuantity);
-    await refreshCart();
-  } catch (e) {
-    state = previousState;
-    log('Error updating quantity: $e');
-    rethrow;
+  Future<void> updateQuantity(int cartItemId, int newQuantity) async {
+    if (cartItemId <= 0) {
+      throw CartException('Invalid cart item ID');
+    }
+    if (newQuantity < 1) {
+      throw CartException('Quantity must be at least 1');
+    }
+
+    final previousState = state;
+    try {
+      state.whenData((currentCart) {
+        final updatedItems = currentCart.cartItems.map((item) {
+          if (item.id == cartItemId) {
+            return item.copyWith(quantity: newQuantity);
+          }
+          return item;
+        }).toList();
+        state = AsyncValue.data(currentCart.copyWith(
+          cartItems: updatedItems,
+          isLoading: true,
+        ));
+      });
+      await _cartService.updateQuantity(cartItemId, newQuantity);
+      await refreshCart();
+    } catch (e) {
+      state = previousState;
+      log('Error updating quantity: $e');
+      rethrow;
+    }
   }
-}
-  void applyCoupon(CouponModel coupon) {
+
+  void applyCoupon(CouponModel? coupon) {
     if (state.value != null) {
       final currentCart = state.value!;
       state = AsyncValue.data(
-        CartModel(
-          cartItems: currentCart.cartItems,
+        currentCart.copyWith(
           appliedCoupon: coupon,
         ),
       );
+      log('Coupon applied: ${coupon?.couponCode ?? 'None'}');
     }
   }
 
@@ -146,12 +149,27 @@ Future<void> removeFromCart(int cartItemId) async {
         throw const CartException('Cart is empty. Add items to proceed.');
       }
 
+      final coupon = cart.appliedCoupon != null
+          ? {
+              'id': cart.appliedCoupon!.id,
+              'name': cart.appliedCoupon!.name,
+              'coupon_code': cart.appliedCoupon!.couponCode,
+              'discount_percentage': cart.appliedCoupon!.discountPercentage,
+              'start_date': cart.appliedCoupon!.startDate.toIso8601String(),
+              'end_date': cart.appliedCoupon!.endDate.toIso8601String(),
+              'description': cart.appliedCoupon!.plainDescription,
+            }
+          : null;
+
+      log('Placing order with coupon: $coupon');
+
       final orderResponse = await _cartService.placeOrder(
         addressId: addressId,
         username: username,
         contact: contact,
         address: address,
         cart: cart,
+        coupon: coupon,
       );
 
       // Fetch updated empty cart from server
@@ -165,6 +183,7 @@ Future<void> removeFromCart(int cartItemId) async {
       throw CartException('Failed to place order: $e');
     }
   }
+
   double get cartTotal {
     return state.whenOrNull(
       data: (cart) => cart.discountedTotal,

@@ -1,0 +1,2 @@
+/Users/muhammedrisan/Desktop/tronprojects/hand_car_app/android/app/.cxx/Debug/706d6t13/arm64-v8a/CMakeFiles/rebuild_cache.dir
+/Users/muhammedrisan/Desktop/tronprojects/hand_car_app/android/app/.cxx/Debug/706d6t13/arm64-v8a/CMakeFiles/edit_cache.dir
