@@ -85,16 +85,29 @@ class CheckOutPage extends HookConsumerWidget {
     String createWhatsAppMessage(OrderResponse orderResponse) {
       final orderDetails = orderResponse.orderDetails;
       final items = (orderDetails['items'] as List<dynamic>)
-          .map((item) => '- ${item['name']} (Qty: ${item['quantity']}, Price: ${item['price']})')
+          .map((item) =>
+              '- ${item['name']} (Qty: ${item['quantity']}, Price: ${item['price']})')
           .join('\n');
+      // Extract coupon details
+      final coupon = orderDetails['coupon'] as Map<String, dynamic>?;
+      String couponDetails = '';
+      if (coupon != null) {
+        couponDetails = '''
+Coupon Applied:
+- Name: ${coupon['name']}
+- Code: ${coupon['coupon_code']}
+- Discount: ${coupon['discount_percentage']}%''';
+      }
       return '''
 Order Confirmation
 Order ID: ${orderResponse.orderId}
 Name: ${orderDetails['name']}
+phone: ${orderDetails['phone']}
 Address: ${orderDetails['address']}
 Total: ${orderDetails['total_price']}
 Items:
 $items
+$couponDetails
 Please confirm payment details.
 ''';
     }
@@ -248,7 +261,8 @@ Please confirm payment details.
                   label: "Place Order",
                   onTap: () async {
                     // Check authentication
-                    final isAuthenticated = await authController.isAuthenticated();
+                    final isAuthenticated =
+                        await authController.isAuthenticated();
                     if (!isAuthenticated || user == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -300,15 +314,19 @@ Please confirm payment details.
                       LoadingOverlay.show(context);
 
                       // Find selected address
-                      final selectedAddressModel = addressState.addresses.firstWhere(
-                        (address) => address.id == selectedAddress.value,
-                        orElse: () => throw const CartException('Selected address not found'));
+                      final selectedAddressModel = addressState.addresses
+                          .firstWhere(
+                              (address) => address.id == selectedAddress.value,
+                              orElse: () => throw const CartException(
+                                  'Selected address not found'));
 
                       // Format full address
                       final fullAddress = formatAddress(selectedAddressModel);
 
                       // Validate contact
-                      final contact = user.phone.isNotEmpty == true ? user.phone : 'Unknown';
+                      final contact = user.phone.isNotEmpty == true
+                          ? user.phone
+                          : 'Unknown';
                       if (contact == 'Unknown') {
                         log('Warning: User phone is empty or null');
                       }
@@ -321,17 +339,18 @@ Please confirm payment details.
                             username: user.name,
                             contact: contact,
                             address: fullAddress,
-                            
                           );
 
                       // Hide loading indicator
                       LoadingOverlay.hide();
 
                       // Construct WhatsApp URL
-                      final whatsappNumber = '9895499872'; // Replace with your business number, e.g., '+1234567890'
+                      final whatsappNumber =
+                          '9895499872'; // Replace with your business number, e.g., '+1234567890'
                       final message = createWhatsAppMessage(orderResponse);
                       final encodedMessage = Uri.encodeComponent(message);
-                      final whatsappUrl = 'https://wa.me/$whatsappNumber?text=$encodedMessage';
+                      final whatsappUrl =
+                          'https://wa.me/$whatsappNumber?text=$encodedMessage';
 
                       // Show success dialog with Make Payment button
                       showModernDialog(
@@ -342,13 +361,15 @@ Please confirm payment details.
                         () async {
                           final uri = Uri.parse(whatsappUrl);
                           if (await canLaunchUrl(uri)) {
-                            await launchUrl(uri, mode: LaunchMode.externalApplication);
+                            await launchUrl(uri,
+                                mode: LaunchMode.externalApplication);
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
                                   'Unable to open WhatsApp',
-                                  style: context.typography.bodyMedium.copyWith(color: Colors.white),
+                                  style: context.typography.bodyMedium
+                                      .copyWith(color: Colors.white),
                                 ),
                                 backgroundColor: Colors.red,
                               ),
@@ -367,9 +388,12 @@ Please confirm payment details.
                       if (e is CartException) {
                         errorMessage = e.message;
                         if (errorMessage.contains('Cart is empty')) {
-                          errorMessage = 'Your cart is empty. Add items to proceed.';
-                        } else if (errorMessage.contains('Insufficient stock')) {
-                          errorMessage = 'Some items are out of stock. Please review your cart.';
+                          errorMessage =
+                              'Your cart is empty. Add items to proceed.';
+                        } else if (errorMessage
+                            .contains('Insufficient stock')) {
+                          errorMessage =
+                              'Some items are out of stock. Please review your cart.';
                         } else if (errorMessage.contains('Please login')) {
                           errorMessage = 'Please login to place an order';
                           context.go('/login');
@@ -379,7 +403,8 @@ Please confirm payment details.
                         SnackBar(
                           content: Text(
                             errorMessage,
-                            style: context.typography.bodyMedium.copyWith(color: Colors.white),
+                            style: context.typography.bodyMedium
+                                .copyWith(color: Colors.white),
                           ),
                           backgroundColor: Colors.red,
                         ),
