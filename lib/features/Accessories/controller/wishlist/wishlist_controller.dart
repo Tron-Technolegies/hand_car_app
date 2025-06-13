@@ -56,7 +56,7 @@ class WishlistNotifier extends _$WishlistNotifier {
     }
   }
 
-  Future<void> addToWishlist(int productId) async {
+  Future<void> addToWishlist(int productId, {String? productName}) async {
     if (!TokenStorage().hasValidTokens) {
       state = AsyncValue.error('Please login to continue', StackTrace.current);
       return;
@@ -68,14 +68,17 @@ class WishlistNotifier extends _$WishlistNotifier {
     try {
       log('WishlistNotifier: Adding product to wishlist: $productId');
       final service = ref.read(wishlistServicesProvider);
-      final response = await service.addToWishlist(productId);
+      final response = await service.addToWishlist(productId, productName: productName);
 
+      // Update state with fetched data
       final currentItems = Map<String, WishlistResponse>.from(previousState);
-      final itemKey = response.id.toString();
-      currentItems[itemKey] = response;
+      currentItems[response.id.toString()] = response;
 
       state = AsyncValue.data(currentItems);
-      log('WishlistNotifier: Product added to wishlist: ID ${response.id}');
+
+      // Force refresh to ensure getWishlist data is used
+      await fetchWishlist();
+      log('WishlistNotifier: Product added to wishlist: ID ${response.id}, Name: ${response.productName}');
     } catch (error, stackTrace) {
       log('WishlistNotifier: Error adding to wishlist: $error\n$stackTrace');
       state = AsyncValue.data(Map<String, WishlistResponse>.from(previousState));
@@ -122,13 +125,13 @@ class WishlistNotifier extends _$WishlistNotifier {
     }
   }
 
-  Future<void> toggleWishlist(int productId) async {
+  Future<void> toggleWishlist(int productId, {String? productName}) async {
     final productIdStr = productId.toString();
     final wasInWishlist = isInWishlist(productIdStr);
     if (wasInWishlist) {
       await removeFromWishlist(productIdStr);
     } else {
-      await addToWishlist(productId);
+      await addToWishlist(productId, productName: productName);
     }
     log('WishlistNotifier: Toggled wishlist for product ID: $productId, isInWishlist: ${isInWishlist(productIdStr)}');
   }

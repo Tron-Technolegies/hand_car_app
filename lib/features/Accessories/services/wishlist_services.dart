@@ -1,5 +1,4 @@
 
-// features/Accessories/services/wishlist_services.dart
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
@@ -26,7 +25,7 @@ class WishlistServices {
     };
   }
 
-  Future<WishlistResponse> addToWishlist(int productId) async {
+  Future<WishlistResponse> addToWishlist(int productId, {String? productName}) async {
     try {
       final token = TokenStorage().getAccessToken();
       if (token == null) {
@@ -48,21 +47,38 @@ class WishlistServices {
           if (response.data.containsKey('wishlist_item')) {
             final wishlistItemData = response.data['wishlist_item'];
             try {
-              return WishlistResponse.fromJson(wishlistItemData as Map<String, dynamic>);
+              final wishlistItem = WishlistResponse.fromJson(wishlistItemData as Map<String, dynamic>);
+              log('Parsed WishlistResponse: ${wishlistItem.toJson()}');
+              return wishlistItem;
             } catch (parseError) {
               log('Error parsing wishlist_item: $parseError');
-              throw Exception('Invalid wishlist_item format');
+              throw Exception('Invalid wishlist_item format: $parseError');
             }
           } else if (response.data.containsKey('product_id')) {
-            // Fallback for {message: ..., product_id: ...}
+            final productIdRaw = response.data['product_id'];
+            if (productIdRaw == null) {
+              log('Missing product_id in response');
+              throw Exception('Invalid response format: missing product_id');
+            }
+            // Fetch updated wishlist to get full item data
             try {
-              return WishlistResponse.fromJson({
-                'id': response.data['product_id'],
-                'product_id': response.data['product_id'],
-              });
-            } catch (parseError) {
-              log('Error parsing fallback response: $parseError');
-              throw Exception('Invalid response format');
+              final wishlist = await getWishlist();
+              final wishlistItem = wishlist[productIdRaw.toString()];
+              if (wishlistItem != null) {
+                log('Retrieved wishlist item from getWishlist: ${wishlistItem.toJson()}');
+                return wishlistItem;
+              }
+              log('Wishlist item not found after add, using fallback');
+              return WishlistResponse(
+                id: int.tryParse(productIdRaw.toString()) ?? productId,
+                productName: productName ?? 'Unknown Product',
+                productPrice: null,
+                productImage: null,
+                productDescription: null,
+              );
+            } catch (fetchError) {
+              log('Error fetching wishlist: $fetchError');
+              throw Exception('Failed to fetch wishlist item: $fetchError');
             }
           }
         }
@@ -91,7 +107,7 @@ class WishlistServices {
       throw Exception('Failed to add to wishlist: ${e.message}');
     } catch (e) {
       log('Unexpected error in addToWishlist: $e');
-      throw Exception('Failed to add to wishlist');
+      throw Exception('Failed to add to wishlist: $e');
     }
   }
 
@@ -161,6 +177,7 @@ class WishlistServices {
               if (item is Map<String, dynamic>) {
                 final wishlistItem = WishlistResponse.fromJson(item);
                 wishlistMap[wishlistItem.id.toString()] = wishlistItem;
+                log('Parsed wishlist item: ${wishlistItem.toJson()}');
               } else {
                 log('Skipping invalid item format: $item');
               }
