@@ -1,9 +1,11 @@
 
+// features/Accessories/services/review_api_services.dart
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
 import 'package:hand_car/core/router/user_validation.dart';
 import 'package:hand_car/features/Accessories/model/review/review_model.dart';
+import 'package:hand_car/features/Accessories/model/review/review_response/review_response.dart';
 
 class ReviewApiServices {
   final _dio = Dio(BaseOptions(
@@ -35,14 +37,7 @@ class ReviewApiServices {
         await _handleTokenExpiration();
         return await request();
       }
-      String errorMessage;
-      if (e.response?.data is Map<String, dynamic>) {
-        errorMessage = e.response?.data['error']?.toString() ?? 'Request failed: ${e.message}';
-      } else if (e.response?.data is String && e.response?.data.contains('<!doctype html>')) {
-        errorMessage = 'Server returned an unexpected HTML response (404 Not Found)';
-      } else {
-        errorMessage = 'Request failed: ${e.message}';
-      }
+      String errorMessage = e.response?.data['error']?.toString() ?? 'Request failed: ${e.message}';
       throw Exception(errorMessage);
     } catch (e) {
       log('Unexpected error: $e');
@@ -93,31 +88,29 @@ class ReviewApiServices {
 
       log('Get reviews response: status=${response.statusCode}, data=${response.data}');
       if (response.statusCode == 200) {
-        if (response.data['reviews'] != null) {
-          List<dynamic> reviewsJson = response.data['reviews'];
-          return reviewsJson
-              .map((json) => ReviewModel(
-                    id: json['id'],
-                    rating: json['rating'] is int
-                        ? json['rating']
-                        : int.parse(json['rating'].toString()),
-                    comment: json['comment'],
-                    user: json['user'],
-                  ))
-              .toList();
-        }
-        return [];
+        List<dynamic> reviewsJson = response.data['reviews'] ?? [];
+        return reviewsJson
+            .map((json) => ReviewModel.fromJson({
+                  'id': json['id'],
+                  'rating': json['rating'] is int ? json['rating'] : int.parse(json['rating'].toString()),
+                  'comment': json['comment']?.toString(),
+                  'user': json['user']?.toString(),
+                }))
+            .toList();
       }
-      String errorMessage = response.data['error']?.toString() ?? 'Failed to fetch reviews';
-      throw Exception(errorMessage);
+      throw Exception(response.data['error']?.toString() ?? 'Failed to fetch reviews');
     });
   }
 
-  Future<ReviewModel> addReview({
+  Future<ReviewResponse> addReview({
     required int productId,
     required int rating,
     required String comment,
   }) async {
+    if (!_tokenStorage.hasValidTokens) {
+      return ReviewResponse(error: 'Please login to continue');
+    }
+
     return _makeAuthenticatedRequest(() async {
       log('Adding review for product: $productId');
       final response = await _dio.post(
@@ -131,15 +124,16 @@ class ReviewApiServices {
 
       log('Add review response: status=${response.statusCode}, data=${response.data}');
       if (response.statusCode == 201) {
-        return ReviewModel(
-          id: response.data['review_id'],
-          rating: rating,
-          comment: comment,
-          user: response.data['user'] ?? 'Anonymous',
+        return ReviewResponse(
+          review: ReviewModel.fromJson({
+            'id': response.data['review_id'],
+            'rating': response.data['rating'],
+            'comment': response.data['comment'],
+            'user': response.data['user']?.toString() ?? 'Anonymous',
+          }),
         );
       }
-      String errorMessage = response.data['error']?.toString() ?? 'Failed to add review';
-      throw Exception(errorMessage);
+      return ReviewResponse(error: response.data['error']?.toString() ?? 'Failed to add review');
     });
   }
 }

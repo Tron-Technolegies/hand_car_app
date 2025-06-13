@@ -1,20 +1,22 @@
+
+// features/Accessories/view/pages/accessories_details_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
 import 'package:hand_car/features/Accessories/controller/cart/cart_controller.dart';
+import 'package:hand_car/features/Accessories/controller/review/review_controller.dart';
 import 'package:hand_car/features/Accessories/model/products/products_model.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/bullet_points_widgets.dart';
-
 import 'package:hand_car/features/Accessories/view/widgets/accessories/drop_down_button_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/image_carousel_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/product_section_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/rating_widget.dart';
+import 'package:hand_car/features/Accessories/view/widgets/review/bottom_sheet_for_write_review_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/review/review_list_widget.dart';
-
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-//Accessories Details page
+import 'dart:developer';
 
 class AccessoriesDetailsPage extends HookConsumerWidget {
   static const route = '/accessories-details';
@@ -28,149 +30,224 @@ class AccessoriesDetailsPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final addWishlist = useState(false);
+    final reviewsAsync = ref.watch(reviewControllerProvider);
+
+    useEffect(() {
+      log('AccessoriesDetailsPage: Scheduling fetch reviews for product ID: ${product.id}');
+      Future.microtask(() {
+        ref.read(reviewControllerProvider.notifier).fetchReviews(product.id);
+      });
+      return null;
+    }, [product.id]);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Accessories Details"),
         actions: [
-          IconButton(icon: const Icon(Icons.favorite_border), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.shopping_cart), onPressed: () {}),
+          IconButton(
+            icon: Icon(addWishlist.value ? Icons.favorite : Icons.favorite_border),
+            onPressed: () {
+              addWishlist.value = !addWishlist.value;
+              SnackbarUtil.showsnackbar(
+                message: addWishlist.value
+                    ? '${product.name} added to wishlist'
+                    : '${product.name} removed from wishlist',
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.shopping_cart),
+            onPressed: () {
+              ref.read(cartControllerProvider.notifier).addToCart(product.id);
+              SnackbarUtil.showsnackbar(message: '${product.name} added to cart');
+            },
+          ),
           IconButton(icon: const Icon(Icons.menu), onPressed: () {}),
         ],
       ),
-      body: LayoutBuilder(
+      body: RefreshIndicator(
+        onRefresh: () async {
+          log('AccessoriesDetailsPage: Refreshing reviews for product ID: ${product.id}');
+          await ref.read(reviewControllerProvider.notifier).refreshReviews();
+        },
+        child: LayoutBuilder(
           builder: (context, constraints) => SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(context.space.space_200),
-                      child: Container(
-                        color: context.colors.background,
-                        child: const TextField(
-                          decoration: InputDecoration(
-                            hintText: 'Search accessories',
-                            prefixIcon: Icon(Icons.search),
-                            border: InputBorder.none,
-                          ),
-                        ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(context.space.space_200),
+                  child: Container(
+                    color: context.colors.background,
+                    child: const TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Search accessories',
+                        prefixIcon: Icon(Icons.search),
+                        border: InputBorder.none,
                       ),
                     ),
-                    ImageCarousel(
-                      product: product,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(context.space.space_200),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            product.name,
-                            style: context.typography.bodyLarge,
-                          ),
-                          SizedBox(height: context.space.space_100),
-                          Text(
-                            "Model Number: 'M7899'",
-                            style: context.typography.bodyMedium
-                                .copyWith(color: const Color(0xff7D7D7D)),
-                          ),
-                          SizedBox(height: context.space.space_100),
-                          Text(
-                            'AED ${'400.00'}',
-                            style: TextStyle(
-                                color: context.colors.primaryTxt,
-                                fontSize:
-                                    context.typography.bodyMedium.fontSize,
-                                decoration: TextDecoration.lineThrough),
-                          ),
-                          SizedBox(height: context.space.space_100),
-                          Text(
-                            'AED ${product.price} Inclusive of VAT',
-                            style: context.typography.bodyMedium,
-                          ),
-                          SizedBox(height: context.space.space_100),
-                          // Text(
-                          //   'Saving: AED ${(product.originalPrice != null && product.currentPrice != null) ? (product.originalPrice! - product.currentPrice!).toStringAsFixed(2) : '0.00'}',
-                          //   style: context.typography.bodyMedium
-                          //       .copyWith(color: context.colors.green),
-                          // ),
-                          SizedBox(height: context.space.space_100),
-                          const Text(
-                            'Lowest price in 7 days',
-                            style: TextStyle(color: Colors.orange),
-                          ),
-                          SizedBox(height: context.space.space_200),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: context.space.space_100),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const DropDownButtonWidget(),
-                                SizedBox(
-                                    width: context.space.space_500 * 5,
-                                    child: ButtonWidget(
-                                        label: "Add to Cart",
-                                        onTap: () {
-                                          ref
-                                              .read(cartControllerProvider
-                                                  .notifier)
-                                              .addToCart(product.id);
-                                          SnackbarUtil.showsnackbar(
-                                              message:
-                                                  '${product.name} added to cart');
-                                        })),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: context.space.space_100),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: context.colors.primaryTxt),
-                                      borderRadius: BorderRadius.circular(
-                                          context.space.space_100),
-                                    ),
-                                    child: IconButton(
-                                      onPressed: () {
-                                        addWishlist.value = !addWishlist.value;
-                                      },
-                                      icon: addWishlist.value
-                                          ? const Icon(Icons.favorite_border)
-                                          : const Icon(Icons.favorite),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    ProductSection(title: 'Overview', content: [
+                  ),
+                ),
+                ImageCarousel(product: product),
+                Padding(
+                  padding: EdgeInsets.all(context.space.space_200),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(product.name, style: context.typography.bodyLarge),
+                      SizedBox(height: context.space.space_100),
                       Text(
-                        'Highlights',
-                        style: context.typography.bodyLarge,
+                        "Model Number: 'M7899'",
+                        style: context.typography.bodyMedium.copyWith(color: const Color(0xff7D7D7D)),
                       ),
                       SizedBox(height: context.space.space_100),
-                      Text(product.description),
-                      BulletPoints(product.description
+                      Text(
+                        'AED 400.00',
+                        style: TextStyle(
+                          color: context.colors.primaryTxt,
+                          fontSize: context.typography.bodyMedium.fontSize,
+                          decoration: TextDecoration.lineThrough,
+                        ),
+                      ),
+                      SizedBox(height: context.space.space_100),
+                      Text(
+                        'AED ${product.price} Inclusive of VAT',
+                        style: context.typography.bodyMedium,
+                      ),
+                      SizedBox(height: context.space.space_100),
+                      // Text(
+                      //   'Saving: AED ${(400.00 - product.price).toStringAsFixed(2)}',
+                      //   style: context.typography.bodyMedium.copyWith(color: context.colors.green),
+                      // ),
+                      SizedBox(height: context.space.space_100),
+                      const Text(
+                        'Lowest price in 7 days',
+                        style: TextStyle(color: Colors.orange),
+                      ),
+                      SizedBox(height: context.space.space_200),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: context.space.space_100),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const DropDownButtonWidget(),
+                            SizedBox(
+                              width: context.space.space_500 * 5,
+                              child: ButtonWidget(
+                                label: "Add to Cart",
+                                onTap: () {
+                                  ref.read(cartControllerProvider.notifier).addToCart(product.id);
+                                  SnackbarUtil.showsnackbar(message: '${product.name} added to cart');
+                                },
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: context.space.space_100),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: context.colors.primaryTxt),
+                                  borderRadius: BorderRadius.circular(context.space.space_100),
+                                ),
+                                child: IconButton(
+                                  onPressed: () {
+                                    addWishlist.value = !addWishlist.value;
+                                    SnackbarUtil.showsnackbar(
+                                      message: addWishlist.value
+                                          ? '${product.name} added to wishlist'
+                                          : '${product.name} removed from wishlist',
+                                    );
+                                  },
+                                  icon: Icon(
+                                    addWishlist.value ? Icons.favorite : Icons.favorite_border,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                ProductSection(
+                  title: 'Overview',
+                  content: [
+                    Text('Highlights', style: context.typography.bodyLarge),
+                    SizedBox(height: context.space.space_100),
+                    Text(product.description),
+                    BulletPoints(
+                      product.description
                           .split('. ')
                           .map((e) => e.trim())
                           .where((e) => e.isNotEmpty)
-                          .toList()),
-                    ]),
-                    // ProductSection(title: 'Specifications', content: [
-                    //   ...product.?.map((spec) =>
-                    //     SpecificationItem(spec.key, spec.value)) ??
-                    //   [SpecificationItem('No', 'Specifications')],
-                    // ]),
-               
-                    // SizedBox(
-                    //     height: context.space.space_500 * 8.2,
-                    //     child: ReviewsList()),
+                          .toList(),
+                    ),
                   ],
                 ),
-              )),
+                ProductSection(
+                  title: 'Specifications',
+                  content: [
+                    Text('No specifications available', style: context.typography.bodyMedium),
+                  ],
+                ),
+                ProductSection(
+                  title: 'Write a Review',
+                  content: [
+                    Text(
+                      'Share your experience with ${product.name}',
+                      style: context.typography.bodyMedium,
+                    ),
+                    SizedBox(height: context.space.space_200),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ButtonWidget(
+                        label: 'Add Your Review',
+                        onTap: () {
+                          showModalBottomSheet(
+                            isScrollControlled: true,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                            ),
+                            context: context,
+                            builder: (context) => BottomSheetForWriteAccessoryReviewWidget(
+                              productId: product.id.toString(),
+                              productName: product.name,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                ProductRatingsWidget(
+                  productId: product.id.toString(),
+                  productName: product.name,
+                ),
+                reviewsAsync.when(
+                  loading: () {
+                    log('AccessoriesDetailsPage: Reviews loading state');
+                    return SizedBox(
+                      height: context.space.space_500 * 2,
+                      child: const Center(child: CircularProgressIndicator()),
+                    );
+                  },
+                  error: (e, _) {
+                    log('AccessoriesDetailsPage: Reviews error state: $e');
+                    return SizedBox(
+                      height: context.space.space_500 * 2,
+                      child: Center(child: Text('Error: ${e.toString().replaceFirst('Exception: ', '')}')),
+                    );
+                  },
+                  data: (reviewList) {
+                    log('AccessoriesDetailsPage: Reviews data state: ${reviewList.reviews.length} reviews - ${reviewList.reviews.map((r) => r.toJson()).toList()}');
+                    return ReviewListWidget(reviews: reviewList.reviews);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
