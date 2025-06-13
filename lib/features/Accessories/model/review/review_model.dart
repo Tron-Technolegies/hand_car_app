@@ -10,6 +10,7 @@ class ReviewModel with _$ReviewModel {
     int? id,
     required int rating,
     String? comment,
+    String? user,
   }) = _ReviewModel;
 
   factory ReviewModel.fromJson(Map<String, dynamic> json) => _$ReviewModelFromJson(json);

@@ -61,15 +61,7 @@ class ProductsApiServices {
 
   /// Search products
 
-  Future<SearchResponse> searchProducts(String query) async {
-    try {
-      final response = await _dio
-          .get('/searchproducts/', queryParameters: {'search': query});
-      return SearchResponse.fromJson(response.data);
-    } on DioException catch (e) {
-      throw Exception('Search failed: ${e.message}');
-    }
-  }
+  
 
   //Promoted Brands
   Future<List<PromotedBrandsModel>> getPromotedBrands() async {
@@ -99,6 +91,20 @@ class ProductsApiServices {
   }
 
 // Filtered products
+  
+    Future<SearchResponse> searchProducts(String query) async {
+    try {
+      final response = await _dio.get(
+        '/searchproducts/', 
+        queryParameters: {'search': query}
+      );
+      return SearchResponse.fromJson(response.data);
+    } on DioException catch (e) {
+      throw Exception('Search failed: ${e.message}');
+    }
+  }
+
+  // Fix filtered products response
   Future<List<ProductsModel>> getFilteredProducts(
       Map<String, dynamic> queryParams) async {
     try {
@@ -108,9 +114,10 @@ class ProductsApiServices {
       );
 
       if (response.statusCode == 200) {
-        return (response.data as List)
-            .map((json) => ProductsModel.fromJson(json))
-            .toList();
+        // Handle new response structure
+        final data = response.data as Map<String, dynamic>;
+        final products = data['products'] as List;
+        return products.map((json) => ProductsModel.fromJson(json)).toList();
       } else {
         throw Exception('Failed to fetch filtered products');
       }

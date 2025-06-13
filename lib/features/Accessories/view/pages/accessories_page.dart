@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -84,6 +85,15 @@ class AccessoriesPage extends HookConsumerWidget {
     //cart controller
     final cartItems = ref.watch(cartControllerProvider);
     // final authState = ref.watch(authControllerProvider);
+        final debounceTimer = useState<Timer?>(null);
+    final searchText = useValueListenable(searchTextController); 
+      // Cancel timer on dispose
+    useEffect(() {
+      return () {
+        debounceTimer.value?.cancel();
+        debounceTimer.value = null;
+      };
+    }, []);
 
     //scroll listener to change app bar visibility
     useEffect(() {
@@ -96,6 +106,7 @@ class AccessoriesPage extends HookConsumerWidget {
           appBarVisible.value = true;
         }
       }
+
 
       controller.addListener(onScroll);
       return () => controller.removeListener(onScroll);

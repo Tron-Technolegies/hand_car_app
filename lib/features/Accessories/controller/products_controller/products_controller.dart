@@ -21,13 +21,11 @@ class ProductsController extends _$ProductsController {
       throw Exception('Failed to fetch products: $e');
     }
   }
-  Future<List<ProductsModel>> fetchFilteredProducts([ProductsFilterState? filters]) async {
+
+  Future<List<ProductsModel>> fetchFilteredProducts(
+      ProductsFilterState filters) async {
     try {
       final productsApiService = ref.read(productsApiServiceProvider);
-      
-      if (filters == null) {
-        return await productsApiService.getProducts();
-      }
 
       // Convert filter state to query parameters
       final queryParams = <String, dynamic>{
@@ -36,8 +34,8 @@ class ProductsController extends _$ProductsController {
         if (filters.maxPrice < double.infinity) 'max_price': filters.maxPrice,
         if (filters.brandId != null) 'brand_id': filters.brandId,
         if (filters.minRating > 0) 'min_rating': filters.minRating,
-        if (filters.showNewArrivals) 'new_arrivals': true,
-        if (filters.showBestsellers) 'bestsellers': true,
+        'new_arrivals': filters.showNewArrivals,
+        'bestsellers': filters.showBestsellers,
       };
 
       return await productsApiService.getFilteredProducts(queryParams);
@@ -57,29 +55,22 @@ class ProductsController extends _$ProductsController {
   }
 
   Future<void> searchProducts(String query) async {
+    state = const AsyncValue.loading();
     try {
-      // If query is empty, fetch all products
       if (query.isEmpty) {
-        state = const AsyncValue.loading();
         state = AsyncValue.data(await fetchProducts());
         return;
       }
 
-      // Set loading state
-      state = const AsyncValue.loading();
-
-      // Perform search
       final productsApiService = ref.read(productsApiServiceProvider);
       final searchResult = await productsApiService.searchProducts(query);
 
-      // Update state with search results
+      // Accessories are already parsed as ProductsModel objects
       state = AsyncValue.data(searchResult.accessories);
     } catch (e) {
-      // Handle error state
       state = AsyncValue.error(e, StackTrace.current);
     }
   }
-  
 }
 
 // Separate provider for ProductsApiService
