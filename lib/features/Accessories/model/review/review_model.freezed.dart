@@ -23,6 +23,7 @@ mixin _$ReviewModel {
   int? get id => throw _privateConstructorUsedError;
   int get rating => throw _privateConstructorUsedError;
   String? get comment => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _userFromJson)
   String? get user => throw _privateConstructorUsedError;
 
   /// Serializes this ReviewModel to a JSON map.
@@ -41,7 +42,11 @@ abstract class $ReviewModelCopyWith<$Res> {
           ReviewModel value, $Res Function(ReviewModel) then) =
       _$ReviewModelCopyWithImpl<$Res, ReviewModel>;
   @useResult
-  $Res call({int? id, int rating, String? comment, String? user});
+  $Res call(
+      {int? id,
+      int rating,
+      String? comment,
+      @JsonKey(fromJson: _userFromJson) String? user});
 }
 
 /// @nodoc
@@ -93,7 +98,11 @@ abstract class _$$ReviewModelImplCopyWith<$Res>
       __$$ReviewModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int? id, int rating, String? comment, String? user});
+  $Res call(
+      {int? id,
+      int rating,
+      String? comment,
+      @JsonKey(fromJson: _userFromJson) String? user});
 }
 
 /// @nodoc
@@ -139,7 +148,10 @@ class __$$ReviewModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ReviewModelImpl implements _ReviewModel {
   const _$ReviewModelImpl(
-      {this.id, required this.rating, this.comment, this.user});
+      {this.id,
+      required this.rating,
+      this.comment,
+      @JsonKey(fromJson: _userFromJson) this.user});
 
   factory _$ReviewModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$ReviewModelImplFromJson(json);
@@ -151,6 +163,7 @@ class _$ReviewModelImpl implements _ReviewModel {
   @override
   final String? comment;
   @override
+  @JsonKey(fromJson: _userFromJson)
   final String? user;
 
   @override
@@ -191,10 +204,11 @@ class _$ReviewModelImpl implements _ReviewModel {
 
 abstract class _ReviewModel implements ReviewModel {
   const factory _ReviewModel(
-      {final int? id,
-      required final int rating,
-      final String? comment,
-      final String? user}) = _$ReviewModelImpl;
+          {final int? id,
+          required final int rating,
+          final String? comment,
+          @JsonKey(fromJson: _userFromJson) final String? user}) =
+      _$ReviewModelImpl;
 
   factory _ReviewModel.fromJson(Map<String, dynamic> json) =
       _$ReviewModelImpl.fromJson;
@@ -206,6 +220,7 @@ abstract class _ReviewModel implements ReviewModel {
   @override
   String? get comment;
   @override
+  @JsonKey(fromJson: _userFromJson)
   String? get user;
 
   /// Create a copy of ReviewModel

@@ -10,6 +10,7 @@ import 'package:hand_car/features/Accessories/view/widgets/accessories/bullet_po
 import 'package:hand_car/features/Accessories/view/widgets/accessories/drop_down_button_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/image_carousel_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/product_section_widget.dart';
+import 'package:hand_car/features/Accessories/view/widgets/accessories/rating_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/review/review_list_widget.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -163,15 +164,10 @@ class AccessoriesDetailsPage extends HookConsumerWidget {
                     //     SpecificationItem(spec.key, spec.value)) ??
                     //   [SpecificationItem('No', 'Specifications')],
                     // ]),
+               
                     // SizedBox(
-                    //     height: context.space.space_500 * 9,
-                    //     child: ProductRatingsWidget(
-                    //         rating: product.rating ?? 0.0,
-                    //         totalReviews: product.totalReviews ?? 0,
-                    //         starCounts: product.starCounts ?? [0,0,0,0,0])),
-                    SizedBox(
-                        height: context.space.space_500 * 8.2,
-                        child: ReviewsList()),
+                    //     height: context.space.space_500 * 8.2,
+                    //     child: ReviewsList()),
                   ],
                 ),
               )),

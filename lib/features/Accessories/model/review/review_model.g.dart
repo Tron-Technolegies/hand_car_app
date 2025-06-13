@@ -11,7 +11,7 @@ _$ReviewModelImpl _$$ReviewModelImplFromJson(Map<String, dynamic> json) =>
       id: (json['id'] as num?)?.toInt(),
       rating: (json['rating'] as num).toInt(),
       comment: json['comment'] as String?,
-      user: json['user'] as String?,
+      user: _userFromJson(json['user']),
     );
 
 Map<String, dynamic> _$$ReviewModelImplToJson(_$ReviewModelImpl instance) =>
