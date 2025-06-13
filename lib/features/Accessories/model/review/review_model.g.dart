@@ -9,7 +9,7 @@ part of 'review_model.dart';
 _$ReviewModelImpl _$$ReviewModelImplFromJson(Map<String, dynamic> json) =>
     _$ReviewModelImpl(
       id: (json['id'] as num?)?.toInt(),
-      rating: (json['rating'] as num).toInt(),
+      rating: (json['rating'] as num?)?.toInt(),
       comment: json['comment'] as String?,
       user: _userFromJson(json['user']),
     );
@@ -17,7 +17,7 @@ _$ReviewModelImpl _$$ReviewModelImplFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$$ReviewModelImplToJson(_$ReviewModelImpl instance) =>
     <String, dynamic>{
       if (instance.id case final value?) 'id': value,
-      'rating': instance.rating,
+      if (instance.rating case final value?) 'rating': value,
       if (instance.comment case final value?) 'comment': value,
       if (instance.user case final value?) 'user': value,
     };

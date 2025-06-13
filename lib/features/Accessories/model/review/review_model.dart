@@ -1,3 +1,4 @@
+
 // features/Accessories/model/review/review_model.dart
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -8,13 +9,14 @@ part 'review_model.g.dart';
 class ReviewModel with _$ReviewModel {
   const factory ReviewModel({
     int? id,
-    required int rating,
+    int? rating, // Changed to nullable
     String? comment,
     @JsonKey(fromJson: _userFromJson) String? user,
   }) = _ReviewModel;
 
   factory ReviewModel.fromJson(Map<String, dynamic> json) => _$ReviewModelFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => {
         'id': id,
         'rating': rating,

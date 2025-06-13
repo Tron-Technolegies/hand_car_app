@@ -72,16 +72,19 @@ class ReviewController extends _$ReviewController {
         comment: comment?.trim() ?? '',
       );
 
-      if (response.error == null && response.review != null) {
-        final currentReviews = state.value?.reviews ?? [];
-        state = AsyncValue.data(ReviewList(reviews: [...currentReviews, response.review!]));
-        log('ReviewController: Added review, new count: ${currentReviews.length + 1}, review: ${response.review!.toJson()}');
-        await refreshReviews();
+      if (response.error == null && response.review != null && response.review!.rating != null) {
+        log('ReviewController: Review submitted successfully, review: ${response.review!.toJson()}');
+        await refreshReviews(); // Sync with backend
+      } else if (response.error != null) {
+        log('ReviewController: Review submission failed: ${response.error}');
+      } else {
+        log('ReviewController: Invalid review data received');
+        return ReviewResponse(error: 'Invalid review data received');
       }
 
       return response;
-    } catch (e) {
-      log('ReviewController: Error submitting review: $e');
+    } catch (e, stack) {
+      log('ReviewController: Error submitting review: $e\n$stack');
       return ReviewResponse(
         error: e.toString().contains('login')
             ? 'Please login to continue'
@@ -99,11 +102,13 @@ class ReviewController extends _$ReviewController {
   double get averageRating => state.when(
         data: (reviewList) {
           if (reviewList.reviews.isEmpty) return 0.0;
-          final totalRating = reviewList.reviews.fold<double>(
+          final validReviews = reviewList.reviews.where((review) => review.rating != null);
+          if (validReviews.isEmpty) return 0.0;
+          final totalRating = validReviews.fold<double>(
             0.0,
-            (sum, review) => sum + review.rating.toDouble(),
+            (sum, review) => sum + (review.rating!.toDouble()),
           );
-          return (totalRating / reviewList.reviews.length).roundToDouble();
+          return (totalRating / validReviews.length).roundToDouble();
         },
         loading: () => 0.0,
         error: (_, __) => 0.0,
@@ -112,8 +117,8 @@ class ReviewController extends _$ReviewController {
   Map<int, int> get ratingDistribution => state.when(
         data: (reviewList) {
           final distribution = <int, int>{1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
-          for (final review in reviewList.reviews) {
-            distribution[review.rating] = (distribution[review.rating] ?? 0) + 1;
+          for (final review in reviewList.reviews.where((r) => r.rating != null)) {
+            distribution[review.rating!] = (distribution[review.rating!] ?? 0) + 1;
           }
           return distribution;
         },

@@ -21,7 +21,7 @@ ReviewModel _$ReviewModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$ReviewModel {
   int? get id => throw _privateConstructorUsedError;
-  int get rating => throw _privateConstructorUsedError;
+  int? get rating => throw _privateConstructorUsedError; // Changed to nullable
   String? get comment => throw _privateConstructorUsedError;
   @JsonKey(fromJson: _userFromJson)
   String? get user => throw _privateConstructorUsedError;
@@ -44,7 +44,7 @@ abstract class $ReviewModelCopyWith<$Res> {
   @useResult
   $Res call(
       {int? id,
-      int rating,
+      int? rating,
       String? comment,
       @JsonKey(fromJson: _userFromJson) String? user});
 }
@@ -65,7 +65,7 @@ class _$ReviewModelCopyWithImpl<$Res, $Val extends ReviewModel>
   @override
   $Res call({
     Object? id = freezed,
-    Object? rating = null,
+    Object? rating = freezed,
     Object? comment = freezed,
     Object? user = freezed,
   }) {
@@ -74,10 +74,10 @@ class _$ReviewModelCopyWithImpl<$Res, $Val extends ReviewModel>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
-      rating: null == rating
+      rating: freezed == rating
           ? _value.rating
           : rating // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       comment: freezed == comment
           ? _value.comment
           : comment // ignore: cast_nullable_to_non_nullable
@@ -100,7 +100,7 @@ abstract class _$$ReviewModelImplCopyWith<$Res>
   @useResult
   $Res call(
       {int? id,
-      int rating,
+      int? rating,
       String? comment,
       @JsonKey(fromJson: _userFromJson) String? user});
 }
@@ -119,7 +119,7 @@ class __$$ReviewModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = freezed,
-    Object? rating = null,
+    Object? rating = freezed,
     Object? comment = freezed,
     Object? user = freezed,
   }) {
@@ -128,10 +128,10 @@ class __$$ReviewModelImplCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
-      rating: null == rating
+      rating: freezed == rating
           ? _value.rating
           : rating // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       comment: freezed == comment
           ? _value.comment
           : comment // ignore: cast_nullable_to_non_nullable
@@ -149,7 +149,7 @@ class __$$ReviewModelImplCopyWithImpl<$Res>
 class _$ReviewModelImpl implements _ReviewModel {
   const _$ReviewModelImpl(
       {this.id,
-      required this.rating,
+      this.rating,
       this.comment,
       @JsonKey(fromJson: _userFromJson) this.user});
 
@@ -159,7 +159,8 @@ class _$ReviewModelImpl implements _ReviewModel {
   @override
   final int? id;
   @override
-  final int rating;
+  final int? rating;
+// Changed to nullable
   @override
   final String? comment;
   @override
@@ -205,7 +206,7 @@ class _$ReviewModelImpl implements _ReviewModel {
 abstract class _ReviewModel implements ReviewModel {
   const factory _ReviewModel(
           {final int? id,
-          required final int rating,
+          final int? rating,
           final String? comment,
           @JsonKey(fromJson: _userFromJson) final String? user}) =
       _$ReviewModelImpl;
@@ -216,7 +217,7 @@ abstract class _ReviewModel implements ReviewModel {
   @override
   int? get id;
   @override
-  int get rating;
+  int? get rating; // Changed to nullable
   @override
   String? get comment;
   @override
