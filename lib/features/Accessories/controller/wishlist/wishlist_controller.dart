@@ -7,11 +7,12 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'wishlist_controller.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class WishlistNotifier extends _$WishlistNotifier {
   @override
   FutureOr<Map<String, WishlistResponse>> build() async {
     if (!TokenStorage().hasValidTokens) {
+      log('WishlistNotifier: No valid tokens, returning empty wishlist');
       return {};
     }
 
@@ -21,11 +22,12 @@ class WishlistNotifier extends _$WishlistNotifier {
 
       final Map<String, WishlistResponse> wishlistMap = {};
       for (var item in response.values) {
-        wishlistMap[item.id.toString()] = item; // Use id
+        wishlistMap[item.id.toString()] = item;
       }
+      log('WishlistNotifier: Initialized with ${wishlistMap.length} items');
       return wishlistMap;
-    } catch (error) {
-      log('Error fetching wishlist: $error');
+    } catch (error, stackTrace) {
+      log('WishlistNotifier: Error fetching wishlist: $error\n$stackTrace');
       return {};
     }
   }
@@ -33,6 +35,7 @@ class WishlistNotifier extends _$WishlistNotifier {
   Future<void> fetchWishlist() async {
     if (!TokenStorage().hasValidTokens) {
       state = const AsyncValue.data({});
+      log('WishlistNotifier: No valid tokens, cleared wishlist');
       return;
     }
 
@@ -43,44 +46,38 @@ class WishlistNotifier extends _$WishlistNotifier {
 
       final Map<String, WishlistResponse> wishlistMap = {};
       for (var item in response.values) {
-        wishlistMap[item.id.toString()] = item; // Use id
+        wishlistMap[item.id.toString()] = item;
       }
       state = AsyncValue.data(wishlistMap);
-      log('Wishlist fetched: $wishlistMap');
+      log('WishlistNotifier: Fetched wishlist: ${wishlistMap.length} items');
     } catch (error, stackTrace) {
-      log('Error fetching wishlist: $error');
+      log('WishlistNotifier: Error fetching wishlist: $error\n$stackTrace');
       state = AsyncValue.error(error, stackTrace);
     }
   }
 
   Future<void> addToWishlist(int productId) async {
     if (!TokenStorage().hasValidTokens) {
-      throw Exception('Please login to continue');
+      state = AsyncValue.error('Please login to continue', StackTrace.current);
+      return;
     }
 
     final previousState = state.value ?? {};
     state = const AsyncValue.loading();
-    
+
     try {
-      log('Adding product to wishlist: $productId');
+      log('WishlistNotifier: Adding product to wishlist: $productId');
       final service = ref.read(wishlistServicesProvider);
       final response = await service.addToWishlist(productId);
 
-      if (response == null) {
-        log('No new wishlist item added (possibly already in wishlist)');
-        state = AsyncValue.data(Map<String, WishlistResponse>.from(previousState));
-        return;
-      }
-
       final currentItems = Map<String, WishlistResponse>.from(previousState);
-      final itemKey = response.id.toString(); // Use id
+      final itemKey = response.id.toString();
       currentItems[itemKey] = response;
-      
+
       state = AsyncValue.data(currentItems);
-      log('Product added to wishlist successfully: ID ${response.id}');
-      
+      log('WishlistNotifier: Product added to wishlist: ID ${response.id}');
     } catch (error, stackTrace) {
-      log('Error adding to wishlist: $error');
+      log('WishlistNotifier: Error adding to wishlist: $error\n$stackTrace');
       state = AsyncValue.data(Map<String, WishlistResponse>.from(previousState));
       state = AsyncValue.error(error, stackTrace);
       rethrow;
@@ -89,39 +86,51 @@ class WishlistNotifier extends _$WishlistNotifier {
 
   Future<void> removeFromWishlist(String productId) async {
     if (!TokenStorage().hasValidTokens) {
-      throw Exception('Please login to continue');
+      state = AsyncValue.error('Please login to continue', StackTrace.current);
+      return;
     }
 
     final previousState = state.value ?? {};
     state = const AsyncValue.loading();
-    
+
     try {
-      log('Removing product from wishlist: $productId');
+      log('WishlistNotifier: Removing product from wishlist: $productId');
       final service = ref.read(wishlistServicesProvider);
       final success = await service.removeFromWishlist(productId);
 
+      final currentItems = Map<String, WishlistResponse>.from(previousState);
       if (success) {
-        final currentItems = Map<String, WishlistResponse>.from(previousState);
         currentItems.remove(productId);
         state = AsyncValue.data(currentItems);
-        log('Product removed from wishlist successfully');
+        log('WishlistNotifier: Product removed from wishlist: $productId');
       } else {
-        state = AsyncValue.data(Map<String, WishlistResponse>.from(previousState));
+        state = AsyncValue.data(currentItems);
         throw Exception('Failed to remove from wishlist');
       }
     } catch (error, stackTrace) {
-      log('Error removing from wishlist: $error');
-      state = AsyncValue.data(Map<String, WishlistResponse>.from(previousState));
+      log('WishlistNotifier: Error removing from wishlist: $error\n$stackTrace');
+      final currentItems = Map<String, WishlistResponse>.from(previousState);
       if (error.toString().contains('Product not found in wishlist')) {
-        log('Product not in wishlist, treated as successful removal');
-        final currentItems = Map<String, WishlistResponse>.from(previousState);
+        log('WishlistNotifier: Product not in wishlist, treated as removed');
         currentItems.remove(productId);
         state = AsyncValue.data(currentItems);
       } else {
+        state = AsyncValue.data(currentItems);
         state = AsyncValue.error(error, stackTrace);
-        rethrow;
+        throw error;
       }
     }
+  }
+
+  Future<void> toggleWishlist(int productId) async {
+    final productIdStr = productId.toString();
+    final wasInWishlist = isInWishlist(productIdStr);
+    if (wasInWishlist) {
+      await removeFromWishlist(productIdStr);
+    } else {
+      await addToWishlist(productId);
+    }
+    log('WishlistNotifier: Toggled wishlist for product ID: $productId, isInWishlist: ${isInWishlist(productIdStr)}');
   }
 
   bool isInWishlist(String productId) {

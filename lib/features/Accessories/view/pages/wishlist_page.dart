@@ -1,3 +1,5 @@
+
+// features/Accessories/view/pages/wishlist_screen.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
@@ -45,10 +47,10 @@ class WishlistScreen extends ConsumerWidget {
                     category: '',
                     brand: '',
                     id: item.id,
-                    name: item.productName,
-                    price: item.productPrice.toString(),
+                    name: item.productName ?? 'Unknown Product',
+                    price: item.productPrice?.toStringAsFixed(2) ?? '0.0',
                     image: item.productImage ?? '',
-                    description: '', // Add default or fetch description if needed
+                    description: item.productDescription ?? '',
                   );
                   return WishlistGridItem(item: item, product: product);
                 },
@@ -56,7 +58,29 @@ class WishlistScreen extends ConsumerWidget {
             },
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, stack) => Center(
-              child: Text('Error: ${error.toString()}'),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Failed to load wishlist',
+                    style: context.typography.bodyLarge,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    error.toString().replaceFirst('Exception: ', ''),
+                    style: context.typography.bodyMedium.copyWith(
+                      color: context.colors.warning,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () =>
+                        ref.read(wishlistNotifierProvider.notifier).fetchWishlist(),
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -107,13 +131,17 @@ class WishlistGridItem extends HookConsumerWidget {
                     item.productImage ??
                         'https://media.istockphoto.com/id/1080335414/photo/dash-camera-or-car-video-recorder-in-vehicle-on-the-way.jpg?s=612x612&w=0&k=20&c=dsbQ4zM2K_BJpgqh-khOW9bLj8nDA882LGe7a56poeI=',
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Icon(
+                      Icons.broken_image,
+                      color: context.colors.warning,
+                    ),
                   ),
                 ),
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              item.productName,
+              item.productName ?? 'Unknown Product',
               style: context.typography.bodyMedium,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -123,7 +151,7 @@ class WishlistGridItem extends HookConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "AED ${item.productPrice}",
+                  "AED ${item.productPrice?.toStringAsFixed(2) ?? 'N/A'}",
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -141,7 +169,7 @@ class WishlistGridItem extends HookConsumerWidget {
                               .read(wishlistNotifierProvider.notifier)
                               .removeFromWishlist(item.id.toString());
                           SnackbarUtil.showsnackbar(
-                            message: "${item.productName} removed from wishlist",
+                            message: "${item.productName ?? 'Product'} removed from wishlist",
                             showretry: false,
                           );
                         } catch (e) {
@@ -166,7 +194,7 @@ class WishlistGridItem extends HookConsumerWidget {
                               .read(cartControllerProvider.notifier)
                               .addToCart(item.id);
                           SnackbarUtil.showsnackbar(
-                            message: "${item.productName} added to cart",
+                            message: "${item.productName ?? 'Product'} added to cart",
                             showretry: false,
                           );
                         } catch (e) {
@@ -210,14 +238,14 @@ class _EmptyWishlist extends ConsumerWidget {
           const SizedBox(height: 16),
           Text(
             'Your wishlist is empty',
-            style: Theme.of(context).textTheme.headlineSmall,
+            style: context.typography.bodySmallMedium,
           ),
           const SizedBox(height: 8),
           Text(
             'Save items you want to buy later',
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Colors.grey[600],
-                ),
+            style: context.typography.bodyLarge?.copyWith(
+              color: Colors.grey[600],
+            ),
           ),
           SizedBox(height: context.space.space_200),
           ElevatedButton(

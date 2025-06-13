@@ -22,7 +22,7 @@ class BottomSheetForWriteAccessoryReviewWidget extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final rating = useState<int>(0); // Changed to int with 0 default
+    final rating = useState<int>(0);
     final commentController = useTextEditingController();
     final isSubmitting = useState(false);
 
@@ -146,14 +146,14 @@ class BottomSheetForWriteAccessoryReviewWidget extends HookConsumerWidget {
                             log('BottomSheet: Review submission failed: ${response.error}');
                             SnackbarUtil.showsnackbar(
                               message: response.error!,
-                             
+                            
                             );
                           }
                         } catch (e) {
                           log('BottomSheet: Error submitting review: $e');
                           SnackbarUtil.showsnackbar(
                             message: 'Failed to submit review. Please try again.',
-                           
+                            
                           );
                         } finally {
                           isSubmitting.value = false;

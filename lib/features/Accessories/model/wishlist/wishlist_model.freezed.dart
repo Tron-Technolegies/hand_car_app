@@ -20,11 +20,11 @@ WishlistResponse _$WishlistResponseFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$WishlistResponse {
-  int get id => throw _privateConstructorUsedError; // Product ID
+  int get id => throw _privateConstructorUsedError; // Wishlist item ID
   @JsonKey(name: 'product_name')
-  String get productName => throw _privateConstructorUsedError;
+  String? get productName => throw _privateConstructorUsedError;
   @JsonKey(name: 'product_price', fromJson: WishlistResponse._priceFromJson)
-  double get productPrice => throw _privateConstructorUsedError;
+  double? get productPrice => throw _privateConstructorUsedError;
   @JsonKey(name: 'product_image')
   String? get productImage => throw _privateConstructorUsedError;
   @JsonKey(name: 'product_description')
@@ -48,9 +48,9 @@ abstract class $WishlistResponseCopyWith<$Res> {
   @useResult
   $Res call(
       {int id,
-      @JsonKey(name: 'product_name') String productName,
+      @JsonKey(name: 'product_name') String? productName,
       @JsonKey(name: 'product_price', fromJson: WishlistResponse._priceFromJson)
-      double productPrice,
+      double? productPrice,
       @JsonKey(name: 'product_image') String? productImage,
       @JsonKey(name: 'product_description') String? productDescription});
 }
@@ -71,8 +71,8 @@ class _$WishlistResponseCopyWithImpl<$Res, $Val extends WishlistResponse>
   @override
   $Res call({
     Object? id = null,
-    Object? productName = null,
-    Object? productPrice = null,
+    Object? productName = freezed,
+    Object? productPrice = freezed,
     Object? productImage = freezed,
     Object? productDescription = freezed,
   }) {
@@ -81,14 +81,14 @@ class _$WishlistResponseCopyWithImpl<$Res, $Val extends WishlistResponse>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int,
-      productName: null == productName
+      productName: freezed == productName
           ? _value.productName
           : productName // ignore: cast_nullable_to_non_nullable
-              as String,
-      productPrice: null == productPrice
+              as String?,
+      productPrice: freezed == productPrice
           ? _value.productPrice
           : productPrice // ignore: cast_nullable_to_non_nullable
-              as double,
+              as double?,
       productImage: freezed == productImage
           ? _value.productImage
           : productImage // ignore: cast_nullable_to_non_nullable
@@ -111,9 +111,9 @@ abstract class _$$WishlistResponseImplCopyWith<$Res>
   @useResult
   $Res call(
       {int id,
-      @JsonKey(name: 'product_name') String productName,
+      @JsonKey(name: 'product_name') String? productName,
       @JsonKey(name: 'product_price', fromJson: WishlistResponse._priceFromJson)
-      double productPrice,
+      double? productPrice,
       @JsonKey(name: 'product_image') String? productImage,
       @JsonKey(name: 'product_description') String? productDescription});
 }
@@ -132,8 +132,8 @@ class __$$WishlistResponseImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? productName = null,
-    Object? productPrice = null,
+    Object? productName = freezed,
+    Object? productPrice = freezed,
     Object? productImage = freezed,
     Object? productDescription = freezed,
   }) {
@@ -142,14 +142,14 @@ class __$$WishlistResponseImplCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int,
-      productName: null == productName
+      productName: freezed == productName
           ? _value.productName
           : productName // ignore: cast_nullable_to_non_nullable
-              as String,
-      productPrice: null == productPrice
+              as String?,
+      productPrice: freezed == productPrice
           ? _value.productPrice
           : productPrice // ignore: cast_nullable_to_non_nullable
-              as double,
+              as double?,
       productImage: freezed == productImage
           ? _value.productImage
           : productImage // ignore: cast_nullable_to_non_nullable
@@ -167,9 +167,9 @@ class __$$WishlistResponseImplCopyWithImpl<$Res>
 class _$WishlistResponseImpl implements _WishlistResponse {
   const _$WishlistResponseImpl(
       {required this.id,
-      @JsonKey(name: 'product_name') required this.productName,
+      @JsonKey(name: 'product_name') this.productName,
       @JsonKey(name: 'product_price', fromJson: WishlistResponse._priceFromJson)
-      required this.productPrice,
+      this.productPrice,
       @JsonKey(name: 'product_image') this.productImage,
       @JsonKey(name: 'product_description') this.productDescription});
 
@@ -178,13 +178,13 @@ class _$WishlistResponseImpl implements _WishlistResponse {
 
   @override
   final int id;
-// Product ID
+// Wishlist item ID
   @override
   @JsonKey(name: 'product_name')
-  final String productName;
+  final String? productName;
   @override
   @JsonKey(name: 'product_price', fromJson: WishlistResponse._priceFromJson)
-  final double productPrice;
+  final double? productPrice;
   @override
   @JsonKey(name: 'product_image')
   final String? productImage;
@@ -238,9 +238,9 @@ class _$WishlistResponseImpl implements _WishlistResponse {
 abstract class _WishlistResponse implements WishlistResponse {
   const factory _WishlistResponse(
       {required final int id,
-      @JsonKey(name: 'product_name') required final String productName,
+      @JsonKey(name: 'product_name') final String? productName,
       @JsonKey(name: 'product_price', fromJson: WishlistResponse._priceFromJson)
-      required final double productPrice,
+      final double? productPrice,
       @JsonKey(name: 'product_image') final String? productImage,
       @JsonKey(name: 'product_description')
       final String? productDescription}) = _$WishlistResponseImpl;
@@ -249,13 +249,13 @@ abstract class _WishlistResponse implements WishlistResponse {
       _$WishlistResponseImpl.fromJson;
 
   @override
-  int get id; // Product ID
+  int get id; // Wishlist item ID
   @override
   @JsonKey(name: 'product_name')
-  String get productName;
+  String? get productName;
   @override
   @JsonKey(name: 'product_price', fromJson: WishlistResponse._priceFromJson)
-  double get productPrice;
+  double? get productPrice;
   @override
   @JsonKey(name: 'product_image')
   String? get productImage;

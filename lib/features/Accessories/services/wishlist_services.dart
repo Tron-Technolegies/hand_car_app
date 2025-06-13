@@ -1,10 +1,10 @@
 
+// features/Accessories/services/wishlist_services.dart
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
 import 'package:hand_car/core/router/user_validation.dart';
 import 'package:hand_car/features/Accessories/model/wishlist/wishlist_model.dart';
-
 
 class WishlistServices {
   static final Dio _dio = Dio(
@@ -26,7 +26,7 @@ class WishlistServices {
     };
   }
 
-  Future<WishlistResponse?> addToWishlist(int productId) async {
+  Future<WishlistResponse> addToWishlist(int productId) async {
     try {
       final token = TokenStorage().getAccessToken();
       if (token == null) {
@@ -34,7 +34,7 @@ class WishlistServices {
       }
 
       log('Making request to add product $productId to wishlist');
-      
+
       final response = await _dio.post(
         '/add_to_wishlist/$productId/',
         options: Options(headers: _createAuthHeaders(token)),
@@ -44,31 +44,41 @@ class WishlistServices {
       log('Add to wishlist response data: ${response.data}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        if (response.data is Map && response.data.containsKey('wishlist_item')) {
-          final wishlistItemData = response.data['wishlist_item'];
-          try {
-            return WishlistResponse.fromJson(wishlistItemData as Map<String, dynamic>);
-          } catch (parseError) {
-            log('Error parsing wishlist response: $parseError');
-            throw Exception('Invalid response format');
+        if (response.data is Map) {
+          if (response.data.containsKey('wishlist_item')) {
+            final wishlistItemData = response.data['wishlist_item'];
+            try {
+              return WishlistResponse.fromJson(wishlistItemData as Map<String, dynamic>);
+            } catch (parseError) {
+              log('Error parsing wishlist_item: $parseError');
+              throw Exception('Invalid wishlist_item format');
+            }
+          } else if (response.data.containsKey('product_id')) {
+            // Fallback for {message: ..., product_id: ...}
+            try {
+              return WishlistResponse.fromJson({
+                'id': response.data['product_id'],
+                'product_id': response.data['product_id'],
+              });
+            } catch (parseError) {
+              log('Error parsing fallback response: $parseError');
+              throw Exception('Invalid response format');
+            }
           }
-        } else {
-          log('Product already in wishlist or response format changed');
-          return null;
         }
+        log('Unexpected response format: ${response.data}');
+        throw Exception('Invalid response format');
       }
 
       String errorMessage = 'Failed to add to wishlist';
       if (response.data is Map && response.data.containsKey('error')) {
         errorMessage = response.data['error'].toString();
       }
-      
       throw Exception(errorMessage);
-      
     } on DioException catch (e) {
       log('DioException in addToWishlist: ${e.message}');
       log('Response data: ${e.response?.data}');
-      
+
       if (e.response?.statusCode == 401) {
         throw Exception('Please login to continue');
       } else if (e.response?.statusCode == 404) {
@@ -78,7 +88,6 @@ class WishlistServices {
       } else if (e.response?.data is Map && e.response?.data.containsKey('error')) {
         throw Exception(e.response?.data['error'].toString());
       }
-      
       throw Exception('Failed to add to wishlist: ${e.message}');
     } catch (e) {
       log('Unexpected error in addToWishlist: $e');
@@ -94,35 +103,31 @@ class WishlistServices {
       }
 
       log('Removing wishlist item: $productId');
-      
+
       final response = await _dio.delete(
         '/remove_wishlist/$productId/',
-        options: Options(
-          headers: _createAuthHeaders(token),
-        ),
+        options: Options(headers: _createAuthHeaders(token)),
       );
 
       log('Remove from wishlist response: ${response.statusCode}');
       log('Remove response data: ${response.data}');
-      
+
       return response.statusCode == 200 || response.statusCode == 204;
-      
     } on DioException catch (e) {
       log('DioException in removeFromWishlist: ${e.message}');
       log('Response: ${e.response?.data}');
-      
+
       if (e.response?.statusCode == 401) {
         throw Exception('Please login to continue');
       } else if (e.response?.statusCode == 404) {
         log('Product not found in wishlist, treating as successful removal');
         return true;
       }
-      
+
       String errorMessage = 'Failed to remove from wishlist';
       if (e.response?.data is Map && e.response?.data.containsKey('error')) {
         errorMessage = e.response!.data['error'].toString();
       }
-      
       throw Exception(errorMessage);
     } catch (e) {
       log('Error in removeFromWishlist: $e');
@@ -139,9 +144,7 @@ class WishlistServices {
 
       final response = await _dio.get(
         '/wishlist_items/',
-        options: Options(
-          headers: _createAuthHeaders(token),
-        ),
+        options: Options(headers: _createAuthHeaders(token)),
       );
 
       log('Get wishlist response status: ${response.statusCode}');
@@ -153,12 +156,11 @@ class WishlistServices {
           log('Wishlist items count: ${wishlistData.length}');
 
           final Map<String, WishlistResponse> wishlistMap = {};
-
           for (var item in wishlistData) {
             try {
               if (item is Map<String, dynamic>) {
                 final wishlistItem = WishlistResponse.fromJson(item);
-                wishlistMap[wishlistItem.id.toString()] = wishlistItem; // Use id
+                wishlistMap[wishlistItem.id.toString()] = wishlistItem;
               } else {
                 log('Skipping invalid item format: $item');
               }
@@ -179,15 +181,13 @@ class WishlistServices {
         errorMessage = response.data['error'].toString();
       }
       throw Exception(errorMessage);
-      
     } on DioException catch (e) {
       log('DioException in getWishlist: ${e.message}');
       log('Response: ${e.response?.data}');
-      
+
       if (e.response?.statusCode == 401) {
         throw Exception('Please login to continue');
       }
-      
       throw Exception('Failed to fetch wishlist: ${e.message}');
     } catch (e) {
       log('Unexpected error in getWishlist: $e');

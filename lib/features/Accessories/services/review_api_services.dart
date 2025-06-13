@@ -92,7 +92,7 @@ class ReviewApiServices {
         return reviewsJson
             .map((json) => ReviewModel.fromJson({
                   'id': json['id'],
-                  'rating': json['rating'] is int ? json['rating'] : int.parse(json['rating'].toString()),
+                  'rating': json['rating'] is int ? json['rating'] : int.tryParse(json['rating']?.toString() ?? ''),
                   'comment': json['comment']?.toString(),
                   'user': json['user']?.toString(),
                 }))
@@ -126,10 +126,10 @@ class ReviewApiServices {
       if (response.statusCode == 201) {
         return ReviewResponse(
           review: ReviewModel.fromJson({
-            'id': response.data['review_id'],
-            'rating': response.data['rating'],
-            'comment': response.data['comment'],
-            'user': response.data['user']?.toString() ?? 'Anonymous',
+            'id': response.data['review_id'] ?? 0, // Fallback to 0 if null
+            'rating': rating, // Use input rating as fallback
+            'comment': comment, // Use input comment as fallback
+            'user': response.data['user']?.toString() ?? 'Anonymous', // Fallback to Anonymous
           }),
         );
       }

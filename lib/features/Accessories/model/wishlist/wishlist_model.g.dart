@@ -10,7 +10,7 @@ _$WishlistResponseImpl _$$WishlistResponseImplFromJson(
         Map<String, dynamic> json) =>
     _$WishlistResponseImpl(
       id: (json['id'] as num).toInt(),
-      productName: json['product_name'] as String,
+      productName: json['product_name'] as String?,
       productPrice: WishlistResponse._priceFromJson(json['product_price']),
       productImage: json['product_image'] as String?,
       productDescription: json['product_description'] as String?,
@@ -20,8 +20,8 @@ Map<String, dynamic> _$$WishlistResponseImplToJson(
         _$WishlistResponseImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'product_name': instance.productName,
-      'product_price': instance.productPrice,
+      if (instance.productName case final value?) 'product_name': value,
+      if (instance.productPrice case final value?) 'product_price': value,
       if (instance.productImage case final value?) 'product_image': value,
       if (instance.productDescription case final value?)
         'product_description': value,

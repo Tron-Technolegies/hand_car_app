@@ -23,12 +23,12 @@ final wishlistServicesProvider = AutoDisposeProvider<WishlistServices>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef WishlistServicesRef = AutoDisposeProviderRef<WishlistServices>;
-String _$wishlistNotifierHash() => r'f453a34d09e5b6d5d923b9be376f8f29502da533';
+String _$wishlistNotifierHash() => r'044469595cb27ebd0fc1b09e600a5014985ba4a1';
 
 /// See also [WishlistNotifier].
 @ProviderFor(WishlistNotifier)
-final wishlistNotifierProvider = AutoDisposeAsyncNotifierProvider<
-    WishlistNotifier, Map<String, WishlistResponse>>.internal(
+final wishlistNotifierProvider = AsyncNotifierProvider<WishlistNotifier,
+    Map<String, WishlistResponse>>.internal(
   WishlistNotifier.new,
   name: r'wishlistNotifierProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -38,7 +38,6 @@ final wishlistNotifierProvider = AutoDisposeAsyncNotifierProvider<
   allTransitiveDependencies: null,
 );
 
-typedef _$WishlistNotifier
-    = AutoDisposeAsyncNotifier<Map<String, WishlistResponse>>;
+typedef _$WishlistNotifier = AsyncNotifier<Map<String, WishlistResponse>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -1,5 +1,6 @@
 
 // features/Accessories/view/pages/accessories_details_page.dart
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
@@ -7,6 +8,7 @@ import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
 import 'package:hand_car/features/Accessories/controller/cart/cart_controller.dart';
 import 'package:hand_car/features/Accessories/controller/review/review_controller.dart';
+import 'package:hand_car/features/Accessories/controller/wishlist/wishlist_controller.dart';
 import 'package:hand_car/features/Accessories/model/products/products_model.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/bullet_points_widgets.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/drop_down_button_widget.dart';
@@ -29,41 +31,25 @@ class AccessoriesDetailsPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final addWishlist = useState(false);
+    final debouncer = useRef<Timer?>(null);
     final reviewsAsync = ref.watch(reviewControllerProvider);
+    final wishlistAsync = ref.watch(wishlistNotifierProvider);
+    final isWishlistLoading = useState(false);
 
     useEffect(() {
       log('AccessoriesDetailsPage: Scheduling fetch reviews for product ID: ${product.id}');
-      Future.microtask(() {
-        ref.read(reviewControllerProvider.notifier).fetchReviews(product.id);
+      debouncer.value?.cancel();
+      debouncer.value = Timer(const Duration(milliseconds: 100), () {
+        Future.microtask(() {
+          ref.read(reviewControllerProvider.notifier).fetchReviews(product.id);
+        });
       });
-      return null;
+      return () => debouncer.value?.cancel();
     }, [product.id]);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Accessories Details"),
-        actions: [
-          IconButton(
-            icon: Icon(addWishlist.value ? Icons.favorite : Icons.favorite_border),
-            onPressed: () {
-              addWishlist.value = !addWishlist.value;
-              SnackbarUtil.showsnackbar(
-                message: addWishlist.value
-                    ? '${product.name} added to wishlist'
-                    : '${product.name} removed from wishlist',
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.shopping_cart),
-            onPressed: () {
-              ref.read(cartControllerProvider.notifier).addToCart(product.id);
-              SnackbarUtil.showsnackbar(message: '${product.name} added to cart');
-            },
-          ),
-          IconButton(icon: const Icon(Icons.menu), onPressed: () {}),
-        ],
+        title: Text('${product.name}'),
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -75,19 +61,6 @@ class AccessoriesDetailsPage extends HookConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: EdgeInsets.all(context.space.space_200),
-                  child: Container(
-                    color: context.colors.background,
-                    child: const TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Search accessories',
-                        prefixIcon: Icon(Icons.search),
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                ),
                 ImageCarousel(product: product),
                 Padding(
                   padding: EdgeInsets.all(context.space.space_200),
@@ -115,11 +88,6 @@ class AccessoriesDetailsPage extends HookConsumerWidget {
                         style: context.typography.bodyMedium,
                       ),
                       SizedBox(height: context.space.space_100),
-                      // Text(
-                      //   'Saving: AED ${(400.00 - product.price).toStringAsFixed(2)}',
-                      //   style: context.typography.bodyMedium.copyWith(color: context.colors.green),
-                      // ),
-                      SizedBox(height: context.space.space_100),
                       const Text(
                         'Lowest price in 7 days',
                         style: TextStyle(color: Colors.orange),
@@ -128,17 +96,19 @@ class AccessoriesDetailsPage extends HookConsumerWidget {
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: context.space.space_100),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const DropDownButtonWidget(),
-                            SizedBox(
-                              width: context.space.space_500 * 5,
-                              child: ButtonWidget(
-                                label: "Add to Cart",
-                                onTap: () {
-                                  ref.read(cartControllerProvider.notifier).addToCart(product.id);
-                                  SnackbarUtil.showsnackbar(message: '${product.name} added to cart');
-                                },
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: context.space.space_100),
+                              child: SizedBox(
+                                width: constraints.maxWidth * 0.6,
+                                child: ButtonWidget(
+                                  label: "Add to Cart",
+                                  onTap: () {
+                                    ref.read(cartControllerProvider.notifier).addToCart(product.id);
+                                    SnackbarUtil.showsnackbar(message: '${product.name} added to cart');
+                                  },
+                                ),
                               ),
                             ),
                             Padding(
@@ -148,17 +118,58 @@ class AccessoriesDetailsPage extends HookConsumerWidget {
                                   border: Border.all(color: context.colors.primaryTxt),
                                   borderRadius: BorderRadius.circular(context.space.space_100),
                                 ),
-                                child: IconButton(
-                                  onPressed: () {
-                                    addWishlist.value = !addWishlist.value;
-                                    SnackbarUtil.showsnackbar(
-                                      message: addWishlist.value
-                                          ? '${product.name} added to wishlist'
-                                          : '${product.name} removed from wishlist',
+                                child: wishlistAsync.when(
+                                  data: (wishlist) {
+                                    final isInWishlist = wishlist.containsKey(product.id.toString());
+                                    return IconButton(
+                                      onPressed: isWishlistLoading.value
+                                          ? null
+                                          : () async {
+                                              isWishlistLoading.value = true;
+                                              try {
+                                                await ref.read(wishlistNotifierProvider.notifier).toggleWishlist(product.id);
+                                                SnackbarUtil.showsnackbar(
+                                                  message: isInWishlist
+                                                      ? '${product.name} removed from wishlist'
+                                                      : '${product.name} added to wishlist',
+                                                );
+                                              } catch (e) {
+                                                SnackbarUtil.showsnackbar(
+                                                  message: e.toString().contains('login')
+                                                      ? 'Please login to continue'
+                                                      : 'Failed to update wishlist',
+                                                 
+                                                );
+                                              } finally {
+                                                isWishlistLoading.value = false;
+                                              }
+                                            },
+                                      icon: isWishlistLoading.value
+                                          ? const SizedBox(
+                                              width: 24,
+                                              height: 24,
+                                              child: CircularProgressIndicator(strokeWidth: 2),
+                                            )
+                                          : Icon(
+                                              isInWishlist ? Icons.favorite : Icons.favorite_border,
+                                              color: isInWishlist ? context.colors.warning : null,
+                                            ),
                                     );
                                   },
-                                  icon: Icon(
-                                    addWishlist.value ? Icons.favorite : Icons.favorite_border,
+                                  loading: () => IconButton(
+                                    onPressed: null,
+                                    icon: const SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: CircularProgressIndicator(strokeWidth: 2),
+                                    ),
+                                  ),
+                                  error: (e, _) => IconButton(
+                                    onPressed: null,
+                                    icon: Icon(
+                                      Icons.favorite_border,
+                                      color: context.colors.warning,
+                                    ),
                                   ),
                                 ),
                               ),

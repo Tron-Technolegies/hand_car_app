@@ -9,7 +9,7 @@ import 'package:hand_car/features/Accessories/services/review_api_services.dart'
 
 part 'review_controller.g.dart';
 
-@Riverpod(keepAlive: false)
+@Riverpod(keepAlive: true) // Changed to true for caching
 class ReviewController extends _$ReviewController {
   late final ReviewApiServices _reviewService;
   int? _currentProductId;
@@ -26,24 +26,24 @@ class ReviewController extends _$ReviewController {
       log('ReviewController: Cannot refresh, no product ID available');
       return;
     }
-    final productId = _currentProductId!;
-    _currentProductId = null;
-    await fetchReviews(productId);
+    await fetchReviews(_currentProductId!, forceRefresh: true);
   }
 
-  Future<void> fetchReviews(int productId) async {
-    if (_currentProductId == productId && !state.isLoading) {
-      log('ReviewController: Skipping fetch, already loaded for product ID: $productId');
+  Future<void> fetchReviews(int productId, {bool forceRefresh = false}) async {
+    if (_currentProductId == productId && !forceRefresh && state is AsyncData) {
+      log('ReviewController: Using cached reviews for product ID: $productId');
       return;
     }
 
-    state = const AsyncValue.loading();
-    _currentProductId = productId;
+    if (forceRefresh || _currentProductId != productId) {
+      state = const AsyncValue.loading();
+      _currentProductId = productId;
+    }
 
     try {
       log('ReviewController: Fetching reviews for product ID: $productId');
       final reviews = await _reviewService.getReviews(productId: productId);
-      if (!state.isLoading) {
+      if (!state.isLoading && !forceRefresh) {
         log('ReviewController: State no longer loading, aborting update');
         return;
       }
@@ -72,17 +72,14 @@ class ReviewController extends _$ReviewController {
         comment: comment?.trim() ?? '',
       );
 
-      if (response.error == null && response.review != null && response.review!.rating != null) {
-        log('ReviewController: Review submitted successfully, review: ${response.review!.toJson()}');
-        await refreshReviews(); // Sync with backend
-      } else if (response.error != null) {
-        log('ReviewController: Review submission failed: ${response.error}');
+      if (response.error == null) {
+        log('ReviewController: Review submitted successfully, review: ${response.review?.toJson() ?? 'no review data'}');
+        await fetchReviews(productId, forceRefresh: true); // Always refresh
+        return response;
       } else {
-        log('ReviewController: Invalid review data received');
-        return ReviewResponse(error: 'Invalid review data received');
+        log('ReviewController: Review submission failed: ${response.error}');
+        return ReviewResponse(error: response.error);
       }
-
-      return response;
     } catch (e, stack) {
       log('ReviewController: Error submitting review: $e\n$stack');
       return ReviewResponse(

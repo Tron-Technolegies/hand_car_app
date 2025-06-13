@@ -6,12 +6,12 @@ part of 'review_controller.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$reviewControllerHash() => r'b8fac0860290312c6fa27c429db1fa8a33b0250d';
+String _$reviewControllerHash() => r'aa1976016ad0d7943babf559cd5ce3fc63cc000c';
 
 /// See also [ReviewController].
 @ProviderFor(ReviewController)
 final reviewControllerProvider =
-    AutoDisposeAsyncNotifierProvider<ReviewController, ReviewList>.internal(
+    AsyncNotifierProvider<ReviewController, ReviewList>.internal(
   ReviewController.new,
   name: r'reviewControllerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -21,6 +21,6 @@ final reviewControllerProvider =
   allTransitiveDependencies: null,
 );
 
-typedef _$ReviewController = AutoDisposeAsyncNotifier<ReviewList>;
+typedef _$ReviewController = AsyncNotifier<ReviewList>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
