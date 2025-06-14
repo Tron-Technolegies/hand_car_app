@@ -1,4 +1,3 @@
-
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'filter_products_state.freezed.dart';
@@ -14,6 +13,7 @@ class ProductsFilterState with _$ProductsFilterState {
     @Default(0.0) double minRating,
     @Default(false) bool showNewArrivals,
     @Default(false) bool showBestsellers,
+    String? searchQuery,
   }) = _ProductsFilterState;
 
   factory ProductsFilterState.fromJson(Map<String, dynamic> json) =>

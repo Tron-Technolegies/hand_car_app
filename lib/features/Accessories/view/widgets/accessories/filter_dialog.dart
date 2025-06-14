@@ -1,10 +1,15 @@
-// products_filter_dialog.dart
 import 'package:flutter/material.dart';
 import 'package:hand_car/features/Accessories/controller/products_controller/filtred_products/filter_products_controller.dart';
+import 'package:hand_car/features/Accessories/model/products/filter_products/filter_products_state.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class ProductsFilterDialog extends ConsumerWidget {
-  const ProductsFilterDialog({super.key});
+  final void Function(ProductsFilterState) onApplyFilters;  // Add callback
+  
+  const ProductsFilterDialog({
+    super.key,
+    required this.onApplyFilters,  // Require callback
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -24,7 +29,7 @@ class ProductsFilterDialog extends ConsumerWidget {
               values: RangeValues(
                 filterState.minPrice,
                 filterState.maxPrice == double.infinity 
-                    ? 10000 // Set a reasonable maximum
+                    ? 10000
                     : filterState.maxPrice,
               ),
               min: 0,
@@ -92,6 +97,7 @@ class ProductsFilterDialog extends ConsumerWidget {
         FilledButton(
           onPressed: () {
             Navigator.pop(context);
+            onApplyFilters(filterState);  // Pass filters to callback
           },
           child: const Text('Apply'),
         ),

@@ -22,28 +22,6 @@ class ProductsController extends _$ProductsController {
     }
   }
 
-  Future<List<ProductsModel>> fetchFilteredProducts(
-      ProductsFilterState filters) async {
-    try {
-      final productsApiService = ref.read(productsApiServiceProvider);
-
-      // Convert filter state to query parameters
-      final queryParams = <String, dynamic>{
-        if (filters.categoryId != null) 'category_id': filters.categoryId,
-        if (filters.minPrice > 0) 'min_price': filters.minPrice,
-        if (filters.maxPrice < double.infinity) 'max_price': filters.maxPrice,
-        if (filters.brandId != null) 'brand_id': filters.brandId,
-        if (filters.minRating > 0) 'min_rating': filters.minRating,
-        'new_arrivals': filters.showNewArrivals,
-        'bestsellers': filters.showBestsellers,
-      };
-
-      return await productsApiService.getFilteredProducts(queryParams);
-    } catch (e) {
-      throw Exception('Failed to fetch products: $e');
-    }
-  }
-
   Future<void> applyFilters(ProductsFilterState filters) async {
     state = const AsyncValue.loading();
     try {
@@ -54,21 +32,36 @@ class ProductsController extends _$ProductsController {
     }
   }
 
+  // Add this searchProducts method
   Future<void> searchProducts(String query) async {
     state = const AsyncValue.loading();
     try {
-      if (query.isEmpty) {
-        state = AsyncValue.data(await fetchProducts());
-        return;
-      }
-
       final productsApiService = ref.read(productsApiServiceProvider);
-      final searchResult = await productsApiService.searchProducts(query);
-
-      // Accessories are already parsed as ProductsModel objects
-      state = AsyncValue.data(searchResult.accessories);
+      final filteredProducts = await productsApiService.getFilteredProducts({
+        'search': query,
+      });
+      state = AsyncValue.data(filteredProducts);
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
+    }
+  }
+
+  Future<List<ProductsModel>> fetchFilteredProducts(
+      ProductsFilterState filters) async {
+    try {
+      final productsApiService = ref.read(productsApiServiceProvider);
+      final queryParams = <String, dynamic>{
+        if (filters.categoryId != null) 'category_id': filters.categoryId,
+        if (filters.brandId != null) 'brand_id': filters.brandId,
+        if (filters.minPrice > 0) 'min_price': filters.minPrice,
+        if (filters.maxPrice < double.infinity) 'max_price': filters.maxPrice,
+        if (filters.minRating > 0) 'min_rating': filters.minRating,
+        'bestsellers': filters.showBestsellers.toString(),
+        'new_arrivals': filters.showNewArrivals.toString(),
+      };
+      return await productsApiService.getFilteredProducts(queryParams);
+    } catch (e) {
+      throw Exception('Failed to fetch filtered products: $e');
     }
   }
 }

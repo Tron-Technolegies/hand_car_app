@@ -16,6 +16,7 @@ _$ProductsFilterStateImpl _$$ProductsFilterStateImplFromJson(
       minRating: (json['min_rating'] as num?)?.toDouble() ?? 0.0,
       showNewArrivals: json['show_new_arrivals'] as bool? ?? false,
       showBestsellers: json['show_bestsellers'] as bool? ?? false,
+      searchQuery: json['search_query'] as String?,
     );
 
 Map<String, dynamic> _$$ProductsFilterStateImplToJson(
@@ -28,4 +29,5 @@ Map<String, dynamic> _$$ProductsFilterStateImplToJson(
       'min_rating': instance.minRating,
       'show_new_arrivals': instance.showNewArrivals,
       'show_bestsellers': instance.showBestsellers,
+      if (instance.searchQuery case final value?) 'search_query': value,
     };

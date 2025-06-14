@@ -27,6 +27,7 @@ mixin _$ProductsFilterState {
   double get minRating => throw _privateConstructorUsedError;
   bool get showNewArrivals => throw _privateConstructorUsedError;
   bool get showBestsellers => throw _privateConstructorUsedError;
+  String? get searchQuery => throw _privateConstructorUsedError;
 
   /// Serializes this ProductsFilterState to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -51,7 +52,8 @@ abstract class $ProductsFilterStateCopyWith<$Res> {
       String? brandId,
       double minRating,
       bool showNewArrivals,
-      bool showBestsellers});
+      bool showBestsellers,
+      String? searchQuery});
 }
 
 /// @nodoc
@@ -76,6 +78,7 @@ class _$ProductsFilterStateCopyWithImpl<$Res, $Val extends ProductsFilterState>
     Object? minRating = null,
     Object? showNewArrivals = null,
     Object? showBestsellers = null,
+    Object? searchQuery = freezed,
   }) {
     return _then(_value.copyWith(
       categoryId: freezed == categoryId
@@ -106,6 +109,10 @@ class _$ProductsFilterStateCopyWithImpl<$Res, $Val extends ProductsFilterState>
           ? _value.showBestsellers
           : showBestsellers // ignore: cast_nullable_to_non_nullable
               as bool,
+      searchQuery: freezed == searchQuery
+          ? _value.searchQuery
+          : searchQuery // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -125,7 +132,8 @@ abstract class _$$ProductsFilterStateImplCopyWith<$Res>
       String? brandId,
       double minRating,
       bool showNewArrivals,
-      bool showBestsellers});
+      bool showBestsellers,
+      String? searchQuery});
 }
 
 /// @nodoc
@@ -148,6 +156,7 @@ class __$$ProductsFilterStateImplCopyWithImpl<$Res>
     Object? minRating = null,
     Object? showNewArrivals = null,
     Object? showBestsellers = null,
+    Object? searchQuery = freezed,
   }) {
     return _then(_$ProductsFilterStateImpl(
       categoryId: freezed == categoryId
@@ -178,6 +187,10 @@ class __$$ProductsFilterStateImplCopyWithImpl<$Res>
           ? _value.showBestsellers
           : showBestsellers // ignore: cast_nullable_to_non_nullable
               as bool,
+      searchQuery: freezed == searchQuery
+          ? _value.searchQuery
+          : searchQuery // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -192,7 +205,8 @@ class _$ProductsFilterStateImpl implements _ProductsFilterState {
       this.brandId,
       this.minRating = 0.0,
       this.showNewArrivals = false,
-      this.showBestsellers = false});
+      this.showBestsellers = false,
+      this.searchQuery});
 
   factory _$ProductsFilterStateImpl.fromJson(Map<String, dynamic> json) =>
       _$$ProductsFilterStateImplFromJson(json);
@@ -216,10 +230,12 @@ class _$ProductsFilterStateImpl implements _ProductsFilterState {
   @override
   @JsonKey()
   final bool showBestsellers;
+  @override
+  final String? searchQuery;
 
   @override
   String toString() {
-    return 'ProductsFilterState(categoryId: $categoryId, minPrice: $minPrice, maxPrice: $maxPrice, brandId: $brandId, minRating: $minRating, showNewArrivals: $showNewArrivals, showBestsellers: $showBestsellers)';
+    return 'ProductsFilterState(categoryId: $categoryId, minPrice: $minPrice, maxPrice: $maxPrice, brandId: $brandId, minRating: $minRating, showNewArrivals: $showNewArrivals, showBestsellers: $showBestsellers, searchQuery: $searchQuery)';
   }
 
   @override
@@ -239,13 +255,15 @@ class _$ProductsFilterStateImpl implements _ProductsFilterState {
             (identical(other.showNewArrivals, showNewArrivals) ||
                 other.showNewArrivals == showNewArrivals) &&
             (identical(other.showBestsellers, showBestsellers) ||
-                other.showBestsellers == showBestsellers));
+                other.showBestsellers == showBestsellers) &&
+            (identical(other.searchQuery, searchQuery) ||
+                other.searchQuery == searchQuery));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, categoryId, minPrice, maxPrice,
-      brandId, minRating, showNewArrivals, showBestsellers);
+      brandId, minRating, showNewArrivals, showBestsellers, searchQuery);
 
   /// Create a copy of ProductsFilterState
   /// with the given fields replaced by the non-null parameter values.
@@ -272,7 +290,8 @@ abstract class _ProductsFilterState implements ProductsFilterState {
       final String? brandId,
       final double minRating,
       final bool showNewArrivals,
-      final bool showBestsellers}) = _$ProductsFilterStateImpl;
+      final bool showBestsellers,
+      final String? searchQuery}) = _$ProductsFilterStateImpl;
 
   factory _ProductsFilterState.fromJson(Map<String, dynamic> json) =
       _$ProductsFilterStateImpl.fromJson;
@@ -291,6 +310,8 @@ abstract class _ProductsFilterState implements ProductsFilterState {
   bool get showNewArrivals;
   @override
   bool get showBestsellers;
+  @override
+  String? get searchQuery;
 
   /// Create a copy of ProductsFilterState
   /// with the given fields replaced by the non-null parameter values.
