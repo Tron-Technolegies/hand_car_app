@@ -89,40 +89,44 @@ class ProductsApiServices {
       throw Exception('Failed to fetch promoted products: $e');
     }
   }
+Future<List<ProductsModel>> getFilteredProducts(Map<String, dynamic> queryParams) async {
+  try {
+    final response = await _dio.get(
+      '/filter_and_search_products', // Also maps to filter_and_search_products
+      queryParameters: queryParams,
+    );
 
-// Filtered products
-  
-    Future<SearchResponse> searchProducts(String query) async {
-    try {
-      final response = await _dio.get(
-        '/searchproducts/', 
-        queryParameters: {'search': query}
-      );
-      return SearchResponse.fromJson(response.data);
-    } on DioException catch (e) {
-      throw Exception('Search failed: ${e.message}');
-    }
-  }
-
-  // Fix filtered products response
-  Future<List<ProductsModel>> getFilteredProducts(
-      Map<String, dynamic> queryParams) async {
-    try {
-      final response = await _dio.get(
-        '/filter/products',
-        queryParameters: queryParams,
-      );
-
-      if (response.statusCode == 200) {
-        // Handle new response structure
-        final data = response.data as Map<String, dynamic>;
-        final products = data['products'] as List;
-        return products.map((json) => ProductsModel.fromJson(json)).toList();
-      } else {
-        throw Exception('Failed to fetch filtered products');
+    if (response.statusCode == 200) {
+      final data = response.data as Map<String, dynamic>;
+      if (data.containsKey('error')) {
+        throw Exception(data['error']);
       }
-    } catch (e) {
-      throw Exception('Error fetching filtered products: $e');
+      final products = data['accessories'] as List;
+      return products.map((json) => ProductsModel.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to fetch filtered products: ${response.statusMessage}');
     }
+  } catch (e) {
+    log('Error fetching filtered products: $e');
+    throw Exception('Error fetching filtered products: $e');
   }
+}
+
+Future<SearchResponse> searchProducts(String query) async {
+  try {
+    final response = await _dio.get(
+      '/searchproducts/',
+      queryParameters: {'search': query},
+    );
+
+    if (response.statusCode == 200) {
+      return SearchResponse.fromJson(response.data);
+    } else {
+      throw Exception('Search failed: ${response.statusMessage}');
+    }
+  } on DioException catch (e) {
+    log('Search error: ${e.message}');
+    throw Exception('Search failed: ${e.message}');
+  }
+}
 }
