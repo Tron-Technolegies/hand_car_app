@@ -28,7 +28,8 @@ import 'package:badges/badges.dart' as badges;
 final GlobalKey<ScaffoldState> scaffoldKey2 = GlobalKey<ScaffoldState>();
 
 // Provider to track selected category name
-final selectedCategoryNameProvider = StateProvider<String?>((ref) => 'All Products');
+final selectedCategoryNameProvider =
+    StateProvider<String?>((ref) => 'All Products');
 final searchQueryProvider = StateProvider<String>((ref) => '');
 
 class AccessoriesPage extends HookConsumerWidget {
@@ -101,9 +102,11 @@ class AccessoriesPage extends HookConsumerWidget {
 
     useEffect(() {
       void onScroll() {
-        if (controller.position.userScrollDirection == ScrollDirection.reverse) {
+        if (controller.position.userScrollDirection ==
+            ScrollDirection.reverse) {
           appBarVisible.value = false;
-        } else if (controller.position.userScrollDirection == ScrollDirection.forward) {
+        } else if (controller.position.userScrollDirection ==
+            ScrollDirection.forward) {
           appBarVisible.value = true;
         }
       }
@@ -141,7 +144,9 @@ class AccessoriesPage extends HookConsumerWidget {
                     if (!isSearching.value) {
                       searchTextController.clear();
                       ref.read(searchQueryProvider.notifier).state = '';
-                      ref.read(productsControllerProvider.notifier).searchProducts('');
+                      ref
+                          .read(productsControllerProvider.notifier)
+                          .searchProducts('');
                     }
                   },
                 ),
@@ -150,10 +155,12 @@ class AccessoriesPage extends HookConsumerWidget {
                     position: badges.BadgePosition.topEnd(end: 0, top: 0),
                     badgeContent: Text(
                       cartItems.when(
-                        data: (cart) => cart.cartItems.fold<int>(
+                        data: (cart) => cart.cartItems
+                            .fold<int>(
                               0,
                               (sum, item) => sum + item.quantity,
-                            ).toString(),
+                            )
+                            .toString(),
                         loading: () => '...',
                         error: (_, __) => '0',
                       ),
@@ -165,7 +172,8 @@ class AccessoriesPage extends HookConsumerWidget {
                     ),
                     badgeStyle: badges.BadgeStyle(
                       badgeColor: Colors.orange,
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 4),
                       elevation: 2,
                     ),
                     child: IconButton(
@@ -189,7 +197,9 @@ class AccessoriesPage extends HookConsumerWidget {
                       context: context,
                       builder: (context) => ProductsFilterDialog(
                         onApplyFilters: (filters) {
-                          ref.read(productsControllerProvider.notifier).applyFilters(filters);
+                          ref
+                              .read(productsControllerProvider.notifier)
+                              .applyFilters(filters);
                         },
                       ),
                     );
@@ -203,7 +213,9 @@ class AccessoriesPage extends HookConsumerWidget {
                         isSearching.value = false;
                         searchTextController.clear();
                         ref.read(searchQueryProvider.notifier).state = '';
-                        ref.read(productsControllerProvider.notifier).searchProducts('');
+                        ref
+                            .read(productsControllerProvider.notifier)
+                            .searchProducts('');
                       },
                     )
                   : Padding(
@@ -226,7 +238,8 @@ class AccessoriesPage extends HookConsumerWidget {
                     ...categories,
                   ];
                   return ListView.separated(
-                    separatorBuilder: (context, index) => const SizedBox(width: 10),
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(width: 10),
                     scrollDirection: Axis.horizontal,
                     itemCount: allCategories.length,
                     itemBuilder: (context, index) {
@@ -241,12 +254,18 @@ class AccessoriesPage extends HookConsumerWidget {
                             duration: const Duration(milliseconds: 300),
                             curve: Curves.easeInOut,
                           );
-                          ref.read(selectedCategoryNameProvider.notifier).state = category.name;
-                          
+                          ref
+                              .read(selectedCategoryNameProvider.notifier)
+                              .state = category.name;
+
                           // Apply category filter (null for "All Products")
-                          ref.read(productsControllerProvider.notifier).applyFilters(
+                          ref
+                              .read(productsControllerProvider.notifier)
+                              .applyFilters(
                                 ProductsFilterState(
-                                  categoryId: category.id == 0 ? null : category.id.toString(),
+                                  categoryId: category.id == 0
+                                      ? null
+                                      : category.id.toString(),
                                 ),
                               );
                         },
@@ -254,11 +273,13 @@ class AccessoriesPage extends HookConsumerWidget {
                     },
                   );
                 },
-                error: (error, _) => Center(child: Lottie.asset(Assets.animations.error)),
+                error: (error, _) =>
+                    Center(child: Lottie.asset(Assets.animations.error)),
                 loading: () => const Center(child: CircularProgressIndicator()),
               ),
             ),
           ),
+          // In the AccessoriesPage widget
           Expanded(
             child: PageView.builder(
               controller: pageController,
@@ -266,29 +287,50 @@ class AccessoriesPage extends HookConsumerWidget {
                 currentPage.value = index;
                 category.whenOrNull(
                   data: (categories) {
-                    final allCategories = [Category(id: 0, name: 'All Products'), ...categories];
-                    ref.read(selectedCategoryNameProvider.notifier).state = allCategories[index].name;
-                    
+                    final allCategories = [
+                      Category(id: 0, name: 'All Products'),
+                      ...categories
+                    ];
+                    ref.read(selectedCategoryNameProvider.notifier).state =
+                        allCategories[index].name;
+
                     // Apply category filter
                     ref.read(productsControllerProvider.notifier).applyFilters(
                           ProductsFilterState(
-                            categoryId: allCategories[index].id == 0 ? null : allCategories[index].id.toString(),
+                            categoryId: allCategories[index].id == 0
+                                ? null
+                                : allCategories[index].id.toString(),
                           ),
                         );
                   },
                 );
               },
-              itemCount: category.whenOrNull(data: (categories) => categories.length + 1) ?? 0,
+              itemCount: category.whenOrNull(
+                      data: (categories) => categories.length + 1) ??
+                  0,
               itemBuilder: (context, index) {
                 return category.when(
                   data: (categories) {
-                    final allCategories = [Category(id: 0, name: 'All Products'), ...categories];
+                    final allCategories = [
+                      Category(id: 0, name: 'All Products'),
+                      ...categories
+                    ];
                     final selectedCategory = allCategories[index];
                     return products.when(
                       data: (productsList) {
+                        // Filter products by category name
+                        List<ProductsModel> filteredProducts = productsList;
+
+                        if (selectedCategory.id != 0) {
+                          filteredProducts = filteredProducts
+                              .where((product) =>
+                                  product.category == selectedCategory.name)
+                              .toList();
+                        }
+
                         return GridViewBuilderAccessoriesWidget(
                           categoryName: selectedCategory.name,
-                          products: productsList,
+                          products: filteredProducts,
                           onProductTap: (product) {
                             context.push(
                               '${AccessoriesDetailsPage.route}/${product.id}',
@@ -297,12 +339,16 @@ class AccessoriesPage extends HookConsumerWidget {
                           },
                         );
                       },
-                      loading: () => const Center(child: CircularProgressIndicator()),
-                      error: (error, _) => Center(child: Lottie.asset(Assets.animations.error)),
+                      loading: () =>
+                          const Center(child: CircularProgressIndicator()),
+                      error: (error, _) =>
+                          Center(child: Lottie.asset(Assets.animations.error)),
                     );
                   },
-                  loading: () => const Center(child: CircularProgressIndicator()),
-                  error: (error, _) => Center(child: Lottie.asset(Assets.animations.error)),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (error, _) =>
+                      Center(child: Lottie.asset(Assets.animations.error)),
                 );
               },
             ),
