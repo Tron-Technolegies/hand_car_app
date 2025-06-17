@@ -1,107 +1,217 @@
 import 'package:flutter/material.dart';
-import 'package:hand_car/features/Accessories/controller/products_controller/filtred_products/filter_products_controller.dart';
 import 'package:hand_car/features/Accessories/model/products/filter_products/filter_products_state.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class ProductsFilterDialog extends ConsumerWidget {
-  final void Function(ProductsFilterState) onApplyFilters;  // Add callback
+class ProductsFilterDialog extends StatefulWidget {
+  final void Function(ProductsFilterState) onApplyFilters;
   
   const ProductsFilterDialog({
     super.key,
-    required this.onApplyFilters,  // Require callback
+    required this.onApplyFilters,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final filterState = ref.watch(productsFilterNotifierProvider);
-    final filterNotifier = ref.read(productsFilterNotifierProvider.notifier);
+  State<ProductsFilterDialog> createState() => _ProductsFilterDialogState();
+}
 
-    return AlertDialog(
-      title: const Text('Filter Products'),
-      content: SingleChildScrollView(
+class _ProductsFilterDialogState extends State<ProductsFilterDialog> {
+  final Map<String, bool> _brandSelections = {
+    'Brand1': true,
+    'JBL': false,
+    'brand2': false,
+  };
+
+  final TextEditingController _minPriceController = TextEditingController();
+  final TextEditingController _maxPriceController = TextEditingController();
+
+  @override
+  void dispose() {
+    _minPriceController.dispose();
+    _maxPriceController.dispose();
+    super.dispose();
+  }
+
+  void _applyFilters() {
+    final filters = ProductsFilterState(
+      brandId: _brandSelections.entries
+          .where((e) => e.value)
+          .map((e) => e.key)
+          .join(','),
+      minPrice: double.tryParse(_minPriceController.text) ?? 0,
+      maxPrice: double.tryParse(_maxPriceController.text) ?? double.infinity,
+    );
+    
+    widget.onApplyFilters(filters);
+    Navigator.pop(context);
+  }
+
+  void _clearAll() {
+    setState(() {
+      for (var key in _brandSelections.keys) {
+        _brandSelections[key] = false;
+      }
+      _minPriceController.clear();
+      _maxPriceController.clear();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Price Range Slider
-            const Text('Price Range'),
-            RangeSlider(
-              values: RangeValues(
-                filterState.minPrice,
-                filterState.maxPrice == double.infinity 
-                    ? 10000
-                    : filterState.maxPrice,
+            // Header
+            Padding(
+              padding: const EdgeInsets.only(top: 8, bottom: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Filter',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
               ),
-              min: 0,
-              max: 10000,
-              divisions: 100,
-              labels: RangeLabels(
-                filterState.minPrice.toStringAsFixed(2),
-                filterState.maxPrice == double.infinity 
-                    ? 'Max'
-                    : filterState.maxPrice.toStringAsFixed(2),
+            ),
+            
+            // Brand Section
+            const Padding(
+              padding: EdgeInsets.only(bottom: 8),
+              child: Text(
+                'Brand',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
-              onChanged: (RangeValues values) {
-                filterNotifier.updatePriceRange(values.start, values.end);
-              },
             ),
-
+            
+            ..._brandSelections.entries.map((entry) {
+              return CheckboxListTile(
+                title: Text(entry.key),
+                value: entry.value,
+                onChanged: (value) {
+                  setState(() {
+                    _brandSelections[entry.key] = value!;
+                  });
+                },
+                controlAffinity: ListTileControlAffinity.leading,
+                contentPadding: EdgeInsets.zero,
+                dense: true,
+              );
+            }).toList(),
+            
             const SizedBox(height: 16),
-
-            // Rating Slider
-            const Text('Minimum Rating'),
-            Slider(
-              value: filterState.minRating,
-              min: 0,
-              max: 5,
-              divisions: 5,
-              label: filterState.minRating.toString(),
-              onChanged: (value) {
-                filterNotifier.updateRating(value);
-              },
+            
+            // Price Section
+            const Padding(
+              padding: EdgeInsets.only(bottom: 8),
+              child: Text(
+                'Price AED',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
             ),
-
-            const SizedBox(height: 16),
-
-            // New Arrivals Switch
-            SwitchListTile(
-              title: const Text('New Arrivals'),
-              value: filterState.showNewArrivals,
-              onChanged: (bool value) {
-                filterNotifier.toggleNewArrivals(value);
-              },
+            
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _minPriceController,
+                    decoration: InputDecoration(
+                      hintText: 'Min',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 14),
+                    ),
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
+                
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: Text('TO'),
+                ),
+                
+                Expanded(
+                  child: TextField(
+                    controller: _maxPriceController,
+                    decoration: InputDecoration(
+                      hintText: 'Max',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 14),
+                    ),
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
+              ],
             ),
-
-            // Bestsellers Switch
-            SwitchListTile(
-              title: const Text('Bestsellers Only'),
-              value: filterState.showBestsellers,
-              onChanged: (bool value) {
-                filterNotifier.toggleBestsellers(value);
-              },
+            
+            const SizedBox(height: 24),
+            
+            // Action Buttons
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: _clearAll,
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      side: const BorderSide(color: Colors.grey),
+                    ),
+                    child: const Text(
+                      'Clear All',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                ),
+                
+                const SizedBox(width: 16),
+                
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _applyFilters,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF146EB4), // Amazon blue
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    child: const Text(
+                      'Apply',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ],
             ),
+            
+            const SizedBox(height: 8),
           ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () {
-            filterNotifier.resetFilters();
-          },
-          child: const Text('Reset'),
-        ),
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
-        ),
-        FilledButton(
-          onPressed: () {
-            Navigator.pop(context);
-            onApplyFilters(filterState);  // Pass filters to callback
-          },
-          child: const Text('Apply'),
-        ),
-      ],
     );
   }
 }

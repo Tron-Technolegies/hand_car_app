@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/controller/image_picker_controller.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
+import 'package:hand_car/features/Accessories/view/pages/my_orders_page.dart';
 import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
+import 'package:hand_car/features/Authentication/controller/user_controller.dart';
 import 'package:hand_car/features/Authentication/view/pages/edit_profile_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/login_with_phone_and_password_page.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -16,6 +18,8 @@ class DrawerWidget extends ConsumerWidget {
     final image = ref.watch(imagePickerProvider);
     final authState = ref.watch(authControllerProvider);
 
+    final userData = ref.watch(userDataProviderProvider);
+
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -26,42 +30,79 @@ class DrawerWidget extends ConsumerWidget {
             ),
             child: Column(
               children: [
-                GestureDetector(
-                  onTap: () {
-                    ref.read(imagePickerProvider.notifier).pickImage();
-                  },
-                  child: CircleAvatar(
-                    radius: 50,
-                    child: ClipOval(
-                      child: image?.path == null
-                          ? Container()
-                          : Image.file(
-                              image!,
-                              fit: BoxFit.cover,
-                              width: 100,
-                              height: 100,
-                            ),
+                // GestureDetector(
+                //   onTap: () {
+                //     ref.read(imagePickerProvider.notifier).pickImage();
+                //   },
+                //   child: CircleAvatar(
+                //     radius: 50,
+                //     child: ClipOval(
+                //       child: image?.path == null
+                //           ? Container()
+                //           : Image.file(
+                //               image!,
+                //               fit: BoxFit.cover,
+                //               width: 100,
+                //               height: 100,
+                //             ),
+                //     ),
+                //   ),
+                // ),
+                CircleAvatar(
+                  radius: 30,
+                  child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Image.network(
+                        'https://cdn-icons-png.freepik.com/256/13806/13806897.png?ga=GA1.1.934021275.1724508943&semt=ais_incoming'),
+                  ),
+                ),
+                userData.when(
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (error, stackTrace) => Center(
+                    child: Column(
+                      children: [
+                        Text('Error: $error'),
+                        ElevatedButton(
+                          onPressed: () =>
+                              ref.invalidate(userDataProviderProvider),
+                          child: Text('Retry'),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-                Text(
-                  'Muhammed Risan',
-                  style: context.typography.h2.copyWith(
-                    color: context.colors.white,
-                  ),
-                ),
+                  data: (user) => user != null
+                      ? Column(
+                          children: [
+                            Text(
+                              user.name,
+                              style: context.typography.bodyLarge
+                                  .copyWith(color: context.colors.white),
+                            ),
+                            Text(
+                              user.email,
+                              style: context.typography.bodyLarge
+                                  .copyWith(color: context.colors.white),
+                            ),
+                          ],
+                        )
+                      : Text('No user data'),
+                )
               ],
             ),
           ),
           ListTile(
             leading: const Icon(Icons.manage_accounts_outlined),
-            title: const Text('Manage Account'),
+            title:  Text('Manage Account'),
             onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => EditProfileScreen(),
-                  ));
+              context.push(EditProfileScreen.route);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.shopping_cart_outlined),
+            title: const Text('My Orders'),
+            onTap: () {
+           context.push(MyOrdersPage.route);
             },
           ),
           ListTile(

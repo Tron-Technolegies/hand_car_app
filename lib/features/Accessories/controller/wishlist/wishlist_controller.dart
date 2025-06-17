@@ -120,7 +120,7 @@ class WishlistNotifier extends _$WishlistNotifier {
       } else {
         state = AsyncValue.data(currentItems);
         state = AsyncValue.error(error, stackTrace);
-        throw error;
+        rethrow;
       }
     }
   }

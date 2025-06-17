@@ -11,7 +11,6 @@ import 'package:hand_car/features/Accessories/controller/review/review_controlle
 import 'package:hand_car/features/Accessories/controller/wishlist/wishlist_controller.dart';
 import 'package:hand_car/features/Accessories/model/products/products_model.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/bullet_points_widgets.dart';
-import 'package:hand_car/features/Accessories/view/widgets/accessories/drop_down_button_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/image_carousel_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/product_section_widget.dart';
 import 'package:hand_car/features/Accessories/view/widgets/accessories/rating_widget.dart';
@@ -49,7 +48,7 @@ class AccessoriesDetailsPage extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('${product.name}'),
+        title: Text(product.name),
       ),
       body: RefreshIndicator(
         onRefresh: () async {

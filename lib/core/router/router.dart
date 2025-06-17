@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hand_car/features/Accessories/view/pages/my_orders_page.dart';
 import 'package:hand_car/features/Accessories/view/pages/wishlist_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/edit_profile_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/forgot_password_page.dart';
@@ -201,6 +202,8 @@ final _routes = [
     path: WishlistScreen.route,
     builder: (context, state) => const WishlistScreen(),
   ),
+  GoRoute(
+      path: MyOrdersPage.route, builder: (context, state) => MyOrdersPage()),
 ];
 
 /// Custom refresh notifier for router state

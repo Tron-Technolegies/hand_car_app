@@ -81,8 +81,8 @@ class AccessoriesPage extends HookConsumerWidget {
     final products = ref.watch(productsControllerProvider);
     final cartItems = ref.watch(cartControllerProvider);
     final debounceTimer = useState<Timer?>(null);
-    final searchQuery = ref.watch(searchQueryProvider);
-    final selectedCategory = ref.watch(selectedCategoryNameProvider);
+    ref.watch(searchQueryProvider);
+    ref.watch(selectedCategoryNameProvider);
 
     // Debounced search
     void onSearchChanged(String query) {

@@ -7,6 +7,7 @@ import 'package:hand_car/features/Accessories/view/pages/accessories_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/profile_page.dart';
 import 'package:hand_car/features/Home/view/pages/home_page.dart';
 import 'package:hand_car/features/SpareParts/view/pages/spares_page.dart';
+import 'package:hand_car/features/Subscriptions/view/pages/subscription_page.dart';
 import 'package:hand_car/features/car_service/view/pages/services_page.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -31,7 +32,6 @@ class NavigationPage extends HookConsumerWidget {
       return () => navigationState.pageController.dispose();
     }, const []);
 
-
     useEffect(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (navigationState.pageController.hasClients) {
@@ -51,7 +51,7 @@ class NavigationPage extends HookConsumerWidget {
           AccessoriesPage(),
           HomePage(),
           AutoPartsPage(),
-          ProfilePage(),
+          SubscriptionPage(),
         ],
         onPageChanged: (index) => ref
             .read(navigationProvider.notifier)
@@ -95,8 +95,8 @@ class NavigationPage extends HookConsumerWidget {
                 ),
                 _buildNavItem(
                   context: context,
-                  iconName: 'profile',
-                  label: 'Profile',
+                  iconName: 'ic_subscription',
+                  label: 'Subscription',
                   isSelected: navigationState.selectedNavBarItemIndex == 4,
                 ),
               ],
@@ -122,9 +122,7 @@ class NavigationPage extends HookConsumerWidget {
         iconPath,
         height: 24,
         colorFilter: ColorFilter.mode(
-          isSelected
-              ? context.colors.primary
-              : context.colors.primaryTxt,
+          isSelected ? context.colors.primary : context.colors.primaryTxt,
           BlendMode.srcIn,
         ),
       ),

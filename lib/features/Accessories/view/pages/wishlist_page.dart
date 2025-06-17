@@ -243,7 +243,7 @@ class _EmptyWishlist extends ConsumerWidget {
           const SizedBox(height: 8),
           Text(
             'Save items you want to buy later',
-            style: context.typography.bodyLarge?.copyWith(
+            style: context.typography.bodyLarge.copyWith(
               color: Colors.grey[600],
             ),
           ),
