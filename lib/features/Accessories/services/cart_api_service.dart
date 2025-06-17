@@ -239,7 +239,7 @@ class CartApiService {
         'contact': contact,
         'address': address,
         'cartItems': validCartItems,
-        'totalPrice': cart.discountedTotal,
+        'totalPrice': cart.totalAmount,
         if (coupon != null) 'coupon': coupon,
       };
 

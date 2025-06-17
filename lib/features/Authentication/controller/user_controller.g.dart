@@ -6,7 +6,7 @@ part of 'user_controller.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$userNameHash() => r'4c4d9cd8f176e4c64905b4b2fd4273374dde0ea1';
+String _$userNameHash() => r'b74118963f46ba2e620cf472fc98bef4bd778407';
 
 /// See also [userName].
 @ProviderFor(userName)
@@ -22,7 +22,7 @@ final userNameProvider = AutoDisposeProvider<String?>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef UserNameRef = AutoDisposeProviderRef<String?>;
-String _$userHash() => r'ae66bd71017b32a89e47aeab16b1b0e0d5147630';
+String _$userHash() => r'9ac328b5014c7e30be942cc98c774ab2e5e14d8a';
 
 /// See also [user].
 @ProviderFor(user)
