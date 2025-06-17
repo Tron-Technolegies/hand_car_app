@@ -58,7 +58,7 @@ class ApiServiceAuthentication extends BaseApiService {
         );
 
         _updateDioHeaders(authModel.accessToken);
-        _startLoginPeriodCheck(); // Start timer after successful login
+        _startLoginPeriodCheck(); 
 
         log('Login successful - tokens saved');
         return authModel;
@@ -124,7 +124,7 @@ class ApiServiceAuthentication extends BaseApiService {
         return UserModel(
           name: '${userData['first_name']} ${userData['last_name']}'.trim(),
           email: userData['email'] ?? '',
-          phone: userData['phone'] ?? '',
+          phone: userData['username'] ?? '',
           address: userData['address'],
           profileImage: userData['profile_image'],
         );
