@@ -324,9 +324,7 @@ Please confirm payment details.
                       final fullAddress = formatAddress(selectedAddressModel);
 
                       // Validate contact
-                      final contact = user.phone.isNotEmpty == true
-                          ? user.phone
-                          : 'Unknown';
+                      final contact = user.phone.isNotEmpty == true ? user.phone : 'Unknown';
                       if (contact == 'Unknown') {
                         log('Warning: User phone is empty or null');
                       }
@@ -337,7 +335,7 @@ Please confirm payment details.
                           .placeOrder(
                             addressId: selectedAddress.value!,
                             username: user.name,
-                            contact: contact,
+                            contact: user.phone,
                             address: fullAddress,
                           );
 

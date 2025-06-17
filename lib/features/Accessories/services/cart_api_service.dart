@@ -6,6 +6,7 @@ import 'package:hand_car/features/Accessories/model/cart/cart_model.dart';
 import 'package:hand_car/core/exception/cart/cart_exception.dart';
 import 'package:hand_car/features/Accessories/model/cart/cart_response.dart';
 import 'package:hand_car/features/Accessories/model/order_response/order_response.dart';
+import 'package:hand_car/features/Accessories/model/orders/order_model.dart';
 
 class CartApiService {
   final _dio = Dio(BaseOptions(
@@ -273,4 +274,30 @@ class CartApiService {
       }
     });
   }
+  Future<List<OrderSummary>> getMyOrders() async {
+  return _makeAuthenticatedRequest(() async {
+    log('Fetching orders from $baseUrl/my_orders');
+    final response = await _dio.get(
+      '/my_orders',
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      ),
+    );
+    log('My orders response: ${response.data}');
+    
+    if (response.statusCode == 200) {
+      try {
+        final List<dynamic> ordersJson = response.data['orders'];
+        return ordersJson.map((json) => OrderSummary.fromJson(json)).toList();
+      } catch (e) {
+        throw CartException('Failed to parse orders: $e');
+      }
+    } else {
+      throw CartException('Failed to fetch orders: ${response.statusCode}');
+    }
+  });
+}
 }
