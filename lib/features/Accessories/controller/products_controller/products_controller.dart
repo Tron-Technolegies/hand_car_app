@@ -1,3 +1,4 @@
+import 'package:hand_car/features/Accessories/model/products/brand/brand_model.dart';
 import 'package:hand_car/features/Accessories/model/products/filter_products/filter_products_state.dart';
 import 'package:hand_car/features/Accessories/model/products/products_model.dart';
 import 'package:hand_car/features/Accessories/services/products_service.dart';
@@ -52,7 +53,7 @@ class ProductsController extends _$ProductsController {
       final productsApiService = ref.read(productsApiServiceProvider);
       final queryParams = <String, dynamic>{
         if (filters.categoryId != null) 'category_id': filters.categoryId,
-        if (filters.brandId != null) 'brand_id': filters.brandId,
+        'brand_id': filters.selectedBrandIds,
         if (filters.minPrice > 0) 'min_price': filters.minPrice,
         if (filters.maxPrice < double.infinity) 'max_price': filters.maxPrice,
         if (filters.minRating > 0) 'min_rating': filters.minRating,
@@ -64,6 +65,15 @@ class ProductsController extends _$ProductsController {
       throw Exception('Failed to fetch filtered products: $e');
     }
   }
+ // In ProductsController
+Future<List<BrandModel>> getBrands() async {
+  try {
+    final response = ref.read(productsApiServiceProvider);
+    return await response.getAllBrands();
+  } catch(e) {
+    throw Exception('Failed to fetch brands: $e');
+  }
+}
 }
 
 // Separate provider for ProductsApiService

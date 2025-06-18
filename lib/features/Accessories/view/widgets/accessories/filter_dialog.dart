@@ -1,28 +1,35 @@
-import 'package:flutter/material.dart';
-import 'package:hand_car/features/Accessories/model/products/filter_products/filter_products_state.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'dart:ffi';
 
-class ProductsFilterDialog extends StatefulWidget {
-  final void Function(ProductsFilterState) onApplyFilters;
-  
-  const ProductsFilterDialog({
-    super.key,
-    required this.onApplyFilters,
-  });
+import 'package:flutter/material.dart';
+import 'package:hand_car/features/Accessories/controller/products_controller/filtred_products/filter_products_controller.dart';
+import 'package:hand_car/features/Accessories/model/products/filter_products/filter_products_state.dart';
+import 'package:hand_car/features/Accessories/services/products_service.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:hand_car/features/Accessories/model/products/brand/brand_model.dart';
+
+class ProductsFilterDialog extends ConsumerStatefulWidget {
+
+  const ProductsFilterDialog( {super.key,});
 
   @override
-  State<ProductsFilterDialog> createState() => _ProductsFilterDialogState();
+  ConsumerState<ProductsFilterDialog> createState() => _ProductsFilterDialogState();
 }
 
-class _ProductsFilterDialogState extends State<ProductsFilterDialog> {
-  final Map<String, bool> _brandSelections = {
-    'Brand1': true,
-    'JBL': false,
-    'brand2': false,
-  };
-
+class _ProductsFilterDialogState extends ConsumerState<ProductsFilterDialog> {
   final TextEditingController _minPriceController = TextEditingController();
   final TextEditingController _maxPriceController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _initializePrices();
+  }
+
+  void _initializePrices() {
+    final filter = ref.read(productsFilterNotifierProvider);
+    _minPriceController.text = filter.minPrice > 0 ? filter.minPrice.toStringAsFixed(0) : '';
+    _maxPriceController.text = filter.maxPrice < double.infinity ? filter.maxPrice.toStringAsFixed(0) : '';
+  }
 
   @override
   void dispose() {
@@ -31,32 +38,12 @@ class _ProductsFilterDialogState extends State<ProductsFilterDialog> {
     super.dispose();
   }
 
-  void _applyFilters() {
-    final filters = ProductsFilterState(
-      brandId: _brandSelections.entries
-          .where((e) => e.value)
-          .map((e) => e.key)
-          .join(','),
-      minPrice: double.tryParse(_minPriceController.text) ?? 0,
-      maxPrice: double.tryParse(_maxPriceController.text) ?? double.infinity,
-    );
-    
-    widget.onApplyFilters(filters);
-    Navigator.pop(context);
-  }
-
-  void _clearAll() {
-    setState(() {
-      for (var key in _brandSelections.keys) {
-        _brandSelections[key] = false;
-      }
-      _minPriceController.clear();
-      _maxPriceController.clear();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final filterState = ref.watch(productsFilterNotifierProvider);
+    final notifier = ref.read(productsFilterNotifierProvider.notifier);
+    final brandsAsync = ref.watch(brandsProvider);
+
     return Material(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -102,20 +89,12 @@ class _ProductsFilterDialogState extends State<ProductsFilterDialog> {
               ),
             ),
             
-            ..._brandSelections.entries.map((entry) {
-              return CheckboxListTile(
-                title: Text(entry.key),
-                value: entry.value,
-                onChanged: (value) {
-                  setState(() {
-                    _brandSelections[entry.key] = value!;
-                  });
-                },
-                controlAffinity: ListTileControlAffinity.leading,
-                contentPadding: EdgeInsets.zero,
-                dense: true,
-              );
-            }).toList(),
+            // Brand List with loading states
+            brandsAsync.when(
+              data: (brands) => _buildBrandList(brands, filterState, notifier),
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, _) => Text('Error: $error'),
+            ),
             
             const SizedBox(height: 16),
             
@@ -178,7 +157,11 @@ class _ProductsFilterDialogState extends State<ProductsFilterDialog> {
               children: [
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: _clearAll,
+                    onPressed: () {
+                      notifier.resetFilters();
+                      _minPriceController.clear();
+                      _maxPriceController.clear();
+                    },
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       side: const BorderSide(color: Colors.grey),
@@ -194,9 +177,15 @@ class _ProductsFilterDialogState extends State<ProductsFilterDialog> {
                 
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: _applyFilters,
+                    onPressed: () {
+                      final min = double.tryParse(_minPriceController.text) ?? 0;
+                      final max = double.tryParse(_maxPriceController.text) ?? double.infinity;
+                      notifier.updatePriceRange(min, max);
+                      notifier.applyFilters();
+                      Navigator.pop(context);
+                    },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF146EB4), // Amazon blue
+                      backgroundColor: const Color(0xFF146EB4),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
                     child: const Text(
@@ -214,4 +203,27 @@ class _ProductsFilterDialogState extends State<ProductsFilterDialog> {
       ),
     );
   }
+
+  Widget _buildBrandList(
+    List<BrandModel> brands,
+    ProductsFilterState filterState,
+    ProductsFilterNotifier notifier,
+  ) {
+    return Column(
+      children: brands.map((brand) {
+        return CheckboxListTile(
+          title: Text(brand.name),
+          value: filterState.selectedBrandIds.contains(brand.id),
+          onChanged: (value) => notifier.toggleBrand(brand.id, value ?? false),
+          controlAffinity: ListTileControlAffinity.leading,
+          contentPadding: EdgeInsets.zero,
+          dense: true,
+        );
+      }).toList(),
+    );
+  }
 }
+final brandsProvider = FutureProvider.autoDispose<List<BrandModel>>((ref) async {
+  final productService = ProductsApiServices();
+  return await productService.getAllBrands();
+});

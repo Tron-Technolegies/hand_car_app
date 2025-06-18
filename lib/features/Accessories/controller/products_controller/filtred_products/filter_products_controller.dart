@@ -4,7 +4,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'filter_products_controller.g.dart';
 
-
 @riverpod
 class ProductsFilterNotifier extends _$ProductsFilterNotifier {
   @override
@@ -12,38 +11,28 @@ class ProductsFilterNotifier extends _$ProductsFilterNotifier {
     return const ProductsFilterState();
   }
 
-  void updateCategory(String? categoryId) {
-    state = state.copyWith(categoryId: categoryId);
-    _refreshProducts();
+  // Updated brand handling methods
+  void toggleBrand(String brandId, bool selected) {
+    final brands = List<String>.from(state.selectedBrandIds);
+    
+    if (selected) {
+      brands.add(brandId);
+    } else {
+      brands.remove(brandId);
+    }
+    
+    state = state.copyWith(selectedBrandIds: brands);
   }
 
   void updatePriceRange(double min, double max) {
     state = state.copyWith(minPrice: min, maxPrice: max);
-    _refreshProducts();
-  }
-
-  void updateBrand(String? brandId) {
-    state = state.copyWith(brandId: brandId);
-    _refreshProducts();
-  }
-
-  void updateRating(double rating) {
-    state = state.copyWith(minRating: rating);
-    _refreshProducts();
-  }
-
-  void toggleNewArrivals(bool value) {
-    state = state.copyWith(showNewArrivals: value);
-    _refreshProducts();
-  }
-
-  void toggleBestsellers(bool value) {
-    state = state.copyWith(showBestsellers: value);
-    _refreshProducts();
   }
 
   void resetFilters() {
     state = const ProductsFilterState();
+  }
+
+  void applyFilters() {
     _refreshProducts();
   }
 

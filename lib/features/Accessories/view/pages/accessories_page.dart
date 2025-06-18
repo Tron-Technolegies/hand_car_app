@@ -196,11 +196,8 @@ class AccessoriesPage extends HookConsumerWidget {
                     showDialog(
                       context: context,
                       builder: (context) => ProductsFilterDialog(
-                        onApplyFilters: (filters) {
-                          ref
-                              .read(productsControllerProvider.notifier)
-                              .applyFilters(filters);
-                        },
+         
+                      
                       ),
                     );
                   },

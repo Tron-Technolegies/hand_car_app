@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
+import 'package:hand_car/features/Accessories/model/products/brand/brand_model.dart';
 import 'package:hand_car/features/Accessories/model/products/products_model.dart';
 import 'package:hand_car/features/Accessories/model/products/promoted_brands/promoted_brands_model.dart';
 import 'package:hand_car/features/Accessories/model/products/promoted_products/promoted_products_model.dart';
@@ -58,7 +59,6 @@ class ProductsApiServices {
     }
   }
 
-
   Future<List<PromotedBrandsModel>> getPromotedBrands() async {
     try {
       final response =
@@ -84,31 +84,59 @@ class ProductsApiServices {
       throw Exception('Failed to fetch promoted products: $e');
     }
   }
-Future<List<ProductsModel>> getFilteredProducts(Map<String, dynamic> queryParams) async {
-  try {
-    final response = await _dio.get(
-      '/view_products',  // Use correct endpoint
-      queryParameters: queryParams,
-    );
 
+  Future<List<ProductsModel>> getFilteredProducts(
+      Map<String, dynamic> queryParams) async {
+    try {
+      final response = await _dio.get(
+        '/view_products', // Use correct endpoint
+        queryParameters: queryParams,
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data as Map<String, dynamic>;
+        final List<dynamic> productList = data['product']; // Correct key
+        return productList.map((dynamic item) {
+          final json = Map<String, dynamic>.from(item);
+          final modifiedJson = {
+            ...json,
+            'discount_percentage': json['discount_percentage'] ?? 0,
+            'is_bestseller': json['is_bestseller'] ?? false,
+            'description': json['description'] ?? '',
+          };
+          return ProductsModel.fromJson(modifiedJson);
+        }).toList();
+      } else {
+        throw Exception('Failed to fetch products: ${response.statusMessage}');
+      }
+    } on DioException catch (e) {
+      throw Exception('Dio error: ${e.message}');
+    }
+  }
+
+
+ Future<List<BrandModel>> getAllBrands() async {
+  try {
+    final response = await _dio.get('/view_brand');
     if (response.statusCode == 200) {
+      log('API Response: ${response.data}');
       final data = response.data as Map<String, dynamic>;
-      final List<dynamic> productList = data['product'];  // Correct key
-      return productList.map((dynamic item) {
+      // FIX: Changed key from 'brand' to 'brands'
+      final List<dynamic> brandList = data['brands']; 
+      return brandList.map((dynamic item) {
         final json = Map<String, dynamic>.from(item);
-        final modifiedJson = {
-          ...json,
-          'discount_percentage': json['discount_percentage'] ?? 0,
-          'is_bestseller': json['is_bestseller'] ?? false,
-          'description': json['description'] ?? '',
-        };
-        return ProductsModel.fromJson(modifiedJson);
+        // FIX: Convert int id to String
+        json['id'] = json['id'].toString(); 
+        return BrandModel.fromJson(json);
       }).toList();
     } else {
-      throw Exception('Failed to fetch products: ${response.statusMessage}');
+      log('API Response: ${response.data}');
+      throw Exception('Failed to fetch brands: ${response.statusMessage}');
     }
   } on DioException catch (e) {
     throw Exception('Dio error: ${e.message}');
+  } catch (e) {
+    throw Exception('Failed to fetch brands: $e');
   }
 }
 }
