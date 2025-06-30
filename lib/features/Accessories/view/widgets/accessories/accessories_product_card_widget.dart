@@ -31,6 +31,7 @@ class AccessoriesProductCardWidget extends ConsumerWidget {
           padding: EdgeInsets.symmetric(horizontal: context.space.space_100),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

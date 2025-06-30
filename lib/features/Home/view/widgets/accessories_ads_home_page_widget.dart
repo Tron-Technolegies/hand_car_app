@@ -69,8 +69,9 @@ class AccessoriesAdsHomePageWidget extends ConsumerWidget {
                 border: Border.all(color: context.colors.background),
               ),
               child: Padding(
-                padding:
-                    EdgeInsets.symmetric(horizontal: context.space.space_100),
+                padding: EdgeInsets.symmetric(
+                    horizontal: context.space.space_100,
+                    vertical: context.space.space_100),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -127,13 +128,6 @@ class AccessoriesAdsHomePageWidget extends ConsumerWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: context.space.space_50),
-                    Text(
-                      product.description,
-                      style: context.typography.bodyMedium
-                          .copyWith(color: context.colors.primaryTxt),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
                     SizedBox(height: context.space.space_50),
                     RatingBar.builder(
                       itemBuilder: (item, index) => const Icon(

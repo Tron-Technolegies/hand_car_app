@@ -55,8 +55,8 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
     if (value == null || value.isEmpty) {
       return 'Password is required';
     }
-    if (value.length < 6) {
-      return 'Password must be at least 6 characters';
+    if (value.isEmpty) {
+      return 'Please enter Your password ';
     }
     return null;
   }
@@ -68,7 +68,8 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
     final formKey = useState(GlobalKey<FormState>());
     final isPasswordVisible = useState(false);
     final selectedCountryCode = useState('971');
-    final debouncer = useRef(Debouncer(duration: const Duration(milliseconds: 300)));
+    final debouncer =
+        useRef(Debouncer(duration: const Duration(milliseconds: 300)));
 
     final loginState = ref.watch(authControllerProvider);
 
@@ -255,13 +256,13 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
                     ],
                   ),
                   SizedBox(height: context.space.space_250),
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlineButtonWidget(
-                      label: 'Login with OTP',
-                      onTap: switchToOtpLogin,
-                    ),
-                  ),
+                  // SizedBox(
+                  //   width: double.infinity,
+                  //   child: OutlineButtonWidget(
+                  //     label: 'Login with OTP',
+                  //     onTap: switchToOtpLogin,
+                  //   ),
+                  // ),
                   SizedBox(height: context.space.space_250),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

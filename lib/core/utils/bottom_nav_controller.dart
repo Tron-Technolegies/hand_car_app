@@ -19,7 +19,7 @@ class Navigation extends _$Navigation {
   @override
   NavigationState build() {
     return NavigationState(
-      selectedNavBarItemIndex: 2, // Start on HomePage (center)
+      selectedNavBarItemIndex: 2, 
       pageController: PageController(initialPage: 2),
     );
   }

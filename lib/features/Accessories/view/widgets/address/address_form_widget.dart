@@ -162,8 +162,8 @@ class AddressForm extends HookConsumerWidget {
                   ),
                   items: const [
                     DropdownMenuItem(value: 'UAE', child: Text('UAE')),
-                    DropdownMenuItem(value: 'Qatar', child: Text('Qatar')),
-                    DropdownMenuItem(value: 'Canada', child: Text('Canada')),
+                    // DropdownMenuItem(value: 'Qatar', child: Text('Qatar')),
+                    // DropdownMenuItem(value: 'Canada', child: Text('Canada')),
                   ],
                   onChanged: (value) {
                     countryValue.value = value;

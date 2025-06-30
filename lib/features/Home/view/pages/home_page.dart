@@ -116,7 +116,7 @@ class HomePage extends ConsumerWidget {
           ),
           const AccessoriesAdsHomePageWidget(),
           SizedBox(
-            height: context.space.space_200,
+            height: context.space.space_500,
           ),
           Text(
             "Find Accessories by Brands",
