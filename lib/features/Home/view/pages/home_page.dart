@@ -78,7 +78,7 @@ class HomePage extends ConsumerWidget {
               onTap: () {
                 ref
                     .read(navigationProvider.notifier)
-                    .changeSelectedItemIndex(0);
+                    .changeSelectedItemIndex(3);
               }),
           SizedBox(
             height: context.space.space_100,
@@ -89,7 +89,7 @@ class HomePage extends ConsumerWidget {
             text3: "Enquire Now",
             image: 'assets/images/spare_parts.png',
             onTap: () {
-              ref.read(navigationProvider.notifier).changeSelectedItemIndex(3);
+              ref.read(navigationProvider.notifier).changeSelectedItemIndex(0);
             },
           ),
           SizedBox(
@@ -173,7 +173,10 @@ class HomePage extends ConsumerWidget {
             "Curated Original Spare Parts",
             style: context.typography.h3,
           ),
-          const SpareBrandsWidget()
+          const SpareBrandsWidget(),
+          SizedBox(
+            height: context.space.space_800 * 2,
+          ),
         ]),
       ),
     );
