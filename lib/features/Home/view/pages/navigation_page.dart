@@ -46,10 +46,10 @@ class NavigationPage extends HookConsumerWidget {
       body: PageView(
         controller: navigationState.pageController,
         children: [
-          ServicesPage(),
+          AutoPartsPage(),
           AccessoriesPage(),
           HomePage(),
-          AutoPartsPage(),
+          ServicesPage(),
           SubscriptionPage(),
         ],
         onPageChanged: (index) => ref
@@ -70,8 +70,8 @@ class NavigationPage extends HookConsumerWidget {
               items: [
                 _buildNavItem(
                   context: context,
-                  iconName: 'ic_car_service',
-                  label: 'Service',
+                  iconName: 'ic_spare',
+                  label: 'Auto Parts',
                   isSelected: navigationState.selectedNavBarItemIndex == 0,
                 ),
                 _buildNavItem(
@@ -88,8 +88,8 @@ class NavigationPage extends HookConsumerWidget {
                 ),
                 _buildNavItem(
                   context: context,
-                  iconName: 'ic_spare',
-                  label: 'Auto Parts',
+                  iconName: 'ic_car_service',
+                  label: 'Service',
                   isSelected: navigationState.selectedNavBarItemIndex == 3,
                 ),
                 _buildNavItem(

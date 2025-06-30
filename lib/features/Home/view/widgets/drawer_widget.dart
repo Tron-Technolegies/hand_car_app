@@ -15,7 +15,7 @@ class DrawerWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final image = ref.watch(imagePickerProvider);
+    ref.watch(imagePickerProvider);
     final authState = ref.watch(authControllerProvider);
 
     final userData = ref.watch(userDataProviderProvider);
