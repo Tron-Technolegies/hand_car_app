@@ -28,22 +28,34 @@ class AddressController extends _$AddressController {
  ///Add Address Function
 
 Future<void> addAddress({
-  required String street,
-  required String city,
-  required String state,
-  required String zipCode,
-  required String country,
-  bool isDefault = false,
+    required String name,
+    required String phone,
+    required String street,
+    required String buildingName,
+    required String floorApartmentNo,
+     String? landmark,
+    required String city,
+    required String areaDistrict,
+    required String zipCode,
+    required String country,
+    required String addressType,
+    bool isDefault = false,
 }) async {
   _updateState((state) => state.copyWith(isLoading: true, error: null));
 
   try {
     final response = await _apiService.addAddress(
+      name: name,
+      phone: phone,
       street: street,
+      buildingName: buildingName,
+      floorApartmentNo: floorApartmentNo,
+      landmark: landmark??'',
       city: city,
-      state: state,
+      areaDistrict: areaDistrict,
       zipCode: zipCode,
       country: country,
+      addressType: addressType,
       isDefault: isDefault,
     );
 

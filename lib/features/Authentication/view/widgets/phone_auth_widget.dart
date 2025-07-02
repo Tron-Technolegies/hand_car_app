@@ -20,6 +20,7 @@ class PhoneAuthField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AuthField(
+      
       controller: controller,
       hintText: "Enter Your Phone Number",
       keyboardType: TextInputType.phone,

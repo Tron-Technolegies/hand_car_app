@@ -216,8 +216,8 @@ Please confirm payment details.
                           return AddressCard(
                             key: ValueKey(address.id),
                             name: address.street,
-                            address: '${address.city}, ${address.state}',
-                            poBox: 'ZIP: ${address.zipCode}',
+                            address: '${address.city}, ${address.areaDistrict}',
+                            poBox: address.city,
                             selectedAddress: selectedAddress,
                             id: address.id,
                             isDefault: address.isDefault,
@@ -324,7 +324,9 @@ Please confirm payment details.
                       final fullAddress = formatAddress(selectedAddressModel);
 
                       // Validate contact
-                      final contact = user.phone.isNotEmpty == true ? user.phone : 'Unknown';
+                      final contact = user.phone.isNotEmpty == true
+                          ? user.phone
+                          : 'Unknown';
                       if (contact == 'Unknown') {
                         log('Warning: User phone is empty or null');
                       }

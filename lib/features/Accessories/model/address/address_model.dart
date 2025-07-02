@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 part 'address_model.freezed.dart';
 part 'address_model.g.dart';
@@ -5,16 +7,20 @@ part 'address_model.g.dart';
 @freezed
 class AddressModel with _$AddressModel {
   const factory AddressModel({
-    @JsonKey(
-      name: 'id',
-      fromJson: _convertToString,
-      toJson: _convertToInt
-    ) required String id,
+    @JsonKey(name: 'id', fromJson: _convertToString, toJson: _convertToInt)
+    required String id,
+    required String name,
+    @JsonKey(name: "phone_number") required String phoneNumber,
     required String street,
+
+    @JsonKey(name: 'building_name') required String buildingName,
+    @JsonKey(name: 'floor_apartment_no') required String floorApartmentNo,
+    String? landmark,
     required String city,
-    required String state,
-    @JsonKey(name: 'zip_code') required String zipCode,
+    @JsonKey(name: 'area_district') required String areaDistrict,
     required String country,
+    @JsonKey(name: 'address_type') required String addressType,
+
     @JsonKey(name: 'is_default') @Default(false) bool isDefault,
   }) = _AddressModel;
 

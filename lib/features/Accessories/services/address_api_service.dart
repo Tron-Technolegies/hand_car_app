@@ -163,11 +163,17 @@ class AddressApiService {
   }
 
   Future<AddressResponse> addAddress({
+    required String name,
+    required String phone,
     required String street,
+    required String buildingName,
+    required String floorApartmentNo,
+    required String landmark,
     required String city,
-    required String state,
+    required String areaDistrict,
     required String zipCode,
     required String country,
+    required String addressType,
     bool isDefault = false,
   }) async {
     return _makeAuthenticatedRequest((token) async {
@@ -176,11 +182,16 @@ class AddressApiService {
       final response = await _dio.post(
         '/add_address',
         data: {
+          'name': name,
+          'phone_number': phone,
           'street': street,
+          'building_name': buildingName,
+          'floor_apartment_no': floorApartmentNo,
+          'landmark': landmark,
           'city': city,
-          'state': state,
-          'zip_code': zipCode,
+          'area_district': areaDistrict,
           'country': country,
+          'address_type': addressType,
           'is_default': isDefault,
         },
         options: Options(
