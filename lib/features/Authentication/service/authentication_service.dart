@@ -278,7 +278,7 @@ class ApiServiceAuthentication extends BaseApiService {
   Future<void> requestPasswordReset(String email) async {
     return withRetry(() async {
       final response = await dio.post(
-        '/forgot_password/',
+        '/send_otp_forget_password',
         data: {'email': email},
       );
       if (response.statusCode != 200) {
@@ -287,11 +287,32 @@ class ApiServiceAuthentication extends BaseApiService {
     });
   }
 
-  Future<void> resetPassword(String uid, String token, String password) async {
+  // Verify OTP
+  Future<void> verifyOtpForResetPassword(String email, String otp) async {
     return withRetry(() async {
       final response = await dio.post(
-        '/reset_password/$uid/$token/',
-        data: {'new_password': password},
+        '/verify_otp_forget_password',
+        data: {
+          'email': email,
+          'otp': otp,
+        },
+      );
+      if (response.statusCode != 200) {
+        throw handleApiError(response);
+      }
+    });
+  }
+
+  // Reset password after OTP verification
+  Future<void> resetPassword(String email, String newPassword, String confirmPassword) async {
+    return withRetry(() async {
+      final response = await dio.post(
+        '/rreset_password_with_otp',
+        data: {
+          'email': email,
+          'new_password': newPassword,
+          'confirm_password': confirmPassword,
+        },
       );
       if (response.statusCode != 200) {
         throw handleApiError(response);

@@ -5,21 +5,17 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/core/utils/snackbar.dart';
-
 import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
 import 'package:hand_car/features/Authentication/model/auth_model.dart';
-import 'package:hand_car/features/Home/view/pages/navigation_page.dart';
+import 'package:hand_car/features/Authentication/view/pages/reset_password_page.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class OtpPage extends HookConsumerWidget {
-  static const route = '/otp';
-  final String phoneOrEmail;
-  
-  const OtpPage({
-    super.key,
-    required this.phoneOrEmail,
-  });
+class ForgotPasswordOtpPage extends HookConsumerWidget {
+  static const route = '/forgot-password-otp';
+  final String email;
+
+  const ForgotPasswordOtpPage({super.key, required this.email});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -29,17 +25,11 @@ class OtpPage extends HookConsumerWidget {
     // Watch auth state
     final authState = ref.watch(authControllerProvider);
 
-    // Listen to auth state changes for navigation
+    // Listen to auth state changes for errors only
     ref.listen<AsyncValue<AuthModel?>>(
       authControllerProvider,
       (_, state) {
         state.whenOrNull(
-          data: (auth) {
-            if (auth != null) {
-              // Navigate to main app on successful authentication
-              context.go(NavigationPage.route);
-            }
-          },
           error: (error, _) {
             SnackbarUtil.showsnackbar(
               message: error.toString(),
@@ -60,10 +50,17 @@ class OtpPage extends HookConsumerWidget {
       }
 
       try {
-        await ref.read(authControllerProvider.notifier).verifyOtp(
-          phoneOrEmail,
-          otpCode.value,
-        );
+        await ref.read(authControllerProvider.notifier).verifyResetPasswordOtp(
+              email,
+              otpCode.value,
+            );
+        if (context.mounted) {
+          SnackbarUtil.showsnackbar(
+            message: "OTP verified successfully",
+            showretry: false,
+          );
+          context.push(ResetPasswordPage.route, extra: {'email': email});
+        }
       } catch (e) {
         SnackbarUtil.showsnackbar(
           message: "Invalid OTP. Please try again.",
@@ -75,8 +72,7 @@ class OtpPage extends HookConsumerWidget {
     Future<void> resendOtp() async {
       try {
         isResending.value = true;
-        // await ref.read(authControllerProvider.notifier).sendOtp(phoneOrEmail);
-        
+        await ref.read(authControllerProvider.notifier).requestPasswordReset(email);
         if (context.mounted) {
           SnackbarUtil.showsnackbar(
             message: "OTP resent successfully",
@@ -117,7 +113,7 @@ class OtpPage extends HookConsumerWidget {
             ),
             SizedBox(height: context.space.space_100),
             Text(
-              "Please enter the verification code sent to\n$phoneOrEmail",
+              "Please enter the verification code sent to\n$email",
               textAlign: TextAlign.center,
               style: context.typography.bodyMedium.copyWith(
                 color: Colors.grey[600],

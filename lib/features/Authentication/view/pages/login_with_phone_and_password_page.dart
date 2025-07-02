@@ -4,12 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hand_car/core/router/router.dart';
 import 'package:hand_car/core/widgets/outline_button_widget.dart';
 import 'package:hand_car/core/widgets/auth_field_widget.dart';
 import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
 import 'package:hand_car/features/Authentication/view/pages/forgot_password_page.dart';
-import 'package:hand_car/features/Authentication/view/pages/login_page.dart';
 import 'package:hand_car/features/Authentication/view/pages/signup_page.dart';
 import 'package:hand_car/features/Authentication/view/widgets/phone_auth_widget.dart';
 import 'package:hand_car/features/Home/view/pages/navigation_page.dart';
@@ -73,14 +71,14 @@ class LoginWithPhoneAndPasswordPage extends HookConsumerWidget {
 
     final loginState = ref.watch(authControllerProvider);
 
-    void switchToOtpLogin() async {
-      final storage = ref.read(storageProvider);
-      await storage.write('preferredLoginMethod', LoginPage.route);
-      ref.read(loginPreferenceProvider.notifier).state = LoginPage.route;
-      if (context.mounted) {
-        context.go(LoginPage.route);
-      }
-    }
+    // void switchToOtpLogin() async {
+    //   final storage = ref.read(storageProvider);
+    //   await storage.write('preferredLoginMethod', LoginPage.route);
+    //   ref.read(loginPreferenceProvider.notifier).state = LoginPage.route;
+    //   if (context.mounted) {
+    //     context.go(LoginPage.route);
+    //   }
+    // }
 
     Future<void> handleLogin() async {
       if (formKey.value.currentState?.validate() ?? false) {

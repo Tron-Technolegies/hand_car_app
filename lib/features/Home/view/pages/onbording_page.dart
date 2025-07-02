@@ -1,10 +1,10 @@
+// lib/features/Home/view/pages/onbording_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_onboarding_slider/flutter_onboarding_slider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/core/router/router.dart';
+import 'package:hand_car/core/router/redirect.dart';
 import 'package:hand_car/features/Authentication/view/pages/login_with_phone_and_password_page.dart';
-import 'package:hand_car/features/Authentication/view/pages/login_page.dart';
 import 'package:hand_car/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:lottie/lottie.dart';
@@ -20,11 +20,7 @@ class OnbordingScreenPage extends ConsumerWidget {
     return OnBoardingSlider(
       finishButtonText: 'Get Started with Phone',
       onFinish: () async {
-        // Handle onboarding completion
-        final storage = ref.read(storageProvider);
-        await storage.write('onboardingCompleted', true);
-        ref.read(onboardingCompletedProvider.notifier).state = true;
-
+        await RedirectRouter.completeOnboarding();
         if (context.mounted) {
           context.go(LoginWithPhoneAndPasswordPage.route);
         }
@@ -49,12 +45,9 @@ class OnbordingScreenPage extends ConsumerWidget {
         ),
       ),
       trailingFunction: () async {
-        final storage = ref.read(storageProvider);
-        await storage.write('onboardingCompleted', true);
-        ref.read(onboardingCompletedProvider.notifier).state = true;
-
+        await RedirectRouter.completeOnboarding();
         if (context.mounted) {
-          context.go(LoginPage.route);
+          context.go(LoginWithPhoneAndPasswordPage.route);
         }
       },
       controllerColor: context.colors.primary,
@@ -94,8 +87,7 @@ class OnbordingScreenPage extends ConsumerWidget {
       speed: 1.8,
       pageBodies: [
         Container(
-          padding:
-              EdgeInsets.symmetric(horizontal: context.space.space_100 * 5),
+          padding: EdgeInsets.symmetric(horizontal: context.space.space_100 * 5),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -151,8 +143,7 @@ class OnbordingScreenPage extends ConsumerWidget {
           ),
         ),
         Container(
-          padding:
-              EdgeInsets.symmetric(horizontal: context.space.space_100 * 5),
+          padding: EdgeInsets.symmetric(horizontal: context.space.space_100 * 5),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -175,8 +166,7 @@ class OnbordingScreenPage extends ConsumerWidget {
           ),
         ),
         Container(
-          padding:
-              EdgeInsets.symmetric(horizontal: context.space.space_100 * 5),
+          padding: EdgeInsets.symmetric(horizontal: context.space.space_100 * 5),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,

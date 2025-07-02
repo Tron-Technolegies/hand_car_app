@@ -1,125 +1,149 @@
-import 'dart:developer';
-import 'package:hand_car/features/Authentication/controller/user_controller.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+// lib/features/Authentication/controller/auth_controller.dart
+import 'dart:developer' as dev;
 import 'package:hand_car/core/router/user_validation.dart';
+import 'package:hand_car/features/Authentication/controller/user_controller.dart';
 import 'package:hand_car/features/Authentication/model/auth_model.dart';
 import 'package:hand_car/features/Authentication/model/user_model.dart';
 import 'package:hand_car/features/Authentication/service/authentication_service.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_controller.g.dart';
 
 final tokenStorageProvider = Provider<TokenStorage>((ref) => TokenStorage());
 
+final isAuthenticatedProvider = StateProvider<bool>((ref) {
+  final authState = ref.watch(authControllerProvider);
+  final userState = ref.watch(userDataProviderProvider);
+  return authState.maybeWhen(
+    data: (authModel) =>
+        authModel != null &&
+        authModel.accessToken.isNotEmpty &&
+        authModel.isAuthenticated &&
+        authModel.isTokenValid &&
+        userState.valueOrNull != null,
+    orElse: () => false,
+  );
+});
+
 @riverpod
 class AuthController extends _$AuthController {
   @override
   FutureOr<AuthModel?> build() async {
+    // Initialize with null state to avoid uninitialized access
+    return null;
+  }
+
+  Future<void> initializeAuth() async {
+    state = const AsyncValue.loading();
     try {
       final storage = ref.read(tokenStorageProvider);
       if (storage.hasValidTokens) {
-        final accessToken = storage.getAccessToken();
-        final refreshToken = storage.getRefreshToken();
-        
-        if (accessToken != null && refreshToken != null) {
-          log('Restoring auth state from storage');
-          return AuthModel(
-            accessToken: accessToken,
-            refreshToken: refreshToken,
-            message: 'Restored from storage',
-          );
+        final accessToken = await storage.getAccessToken();
+        if (accessToken != null) {
+          await fetchCurrentUser(accessToken);
+          return;
         }
       }
-      return null;
-    } catch (e) {
-      log('Error building auth state: $e');
-      return null;
+      state = const AsyncValue.data(null);
+      ref.read(isAuthenticatedProvider.notifier).state = false;
+    } catch (e, st) {
+      dev.log('Error initializing auth: $e', name: 'AuthController');
+      state = AsyncValue.error(e, st);
+      ref.read(isAuthenticatedProvider.notifier).state = false;
+    }
+  }
+
+  Future<void> fetchCurrentUser(String accessToken) async {
+    state = const AsyncValue.loading();
+    try {
+      final user = await ref.read(apiServiceProvider).getCurrentUser();
+      final authModel = AuthModel(
+        accessToken: accessToken,
+        refreshToken: await ref.read(tokenStorageProvider).getRefreshToken() ?? '',
+        message: 'User fetched successfully',
+      );
+      state = AsyncValue.data(authModel);
+      ref.read(isAuthenticatedProvider.notifier).state = true;
+      await ref.read(userDataProviderProvider.notifier).refresh();
+    } catch (e, st) {
+      dev.log('Error fetching user: $e', name: 'AuthController');
+      await ref.read(tokenStorageProvider).clearTokens();
+      state = AsyncValue.error(e, st);
+      ref.read(isAuthenticatedProvider.notifier).state = false;
     }
   }
 
   Future<void> login(String username, String password) async {
-  state = const AsyncValue.loading();
-  try {
-    final authService = ref.read(apiServiceProvider);
-    final authModel = await authService.login(username, password);
-    
-    log('Login successful, saving tokens');
-    await ref.read(tokenStorageProvider).saveTokens(
-      accessToken: authModel.accessToken,
-      refreshToken: authModel.refreshToken,
-    );
-    
-    state = AsyncValue.data(authModel);
-    
-    // Refresh user data after successful login
-    await ref.read(userDataProviderProvider.notifier).refresh();
-  } catch (e, st) {
-    log('Login error: $e');
-    state = AsyncValue.error(e, st);
-    
-    // Make sure we're throwing a user-friendly error message
-    if (e is Exception) {
-      rethrow;  // Re-throw existing exception
-    } else {
-      // Convert string or other error types to exception
-      throw Exception(e.toString());
+    state = const AsyncValue.loading();
+    try {
+      final authService = ref.read(apiServiceProvider);
+      final authModel = await authService.login(username, password);
+      dev.log('Login successful, saving tokens', name: 'AuthController');
+      await ref.read(tokenStorageProvider).saveTokens(
+            accessToken: authModel.accessToken,
+            refreshToken: authModel.refreshToken,
+          );
+      state = AsyncValue.data(authModel);
+      ref.read(isAuthenticatedProvider.notifier).state = true;
+      await ref.read(userDataProviderProvider.notifier).refresh();
+    } catch (e, st) {
+      dev.log('Login error: $e', name: 'AuthController');
+      state = AsyncValue.error(e, st);
+      ref.read(isAuthenticatedProvider.notifier).state = false;
+      rethrow;
     }
   }
-}
+
   Future<void> verifyOtp(String phone, String otp) async {
     state = const AsyncValue.loading();
     try {
       final authModel = await ref.read(apiServiceProvider).verifyOtp(phone, otp);
-      
-      log('OTP verification successful, saving tokens');
+      dev.log('OTP verification successful, saving tokens', name: 'AuthController');
       await ref.read(tokenStorageProvider).saveTokens(
-        accessToken: authModel.accessToken,
-        refreshToken: authModel.refreshToken,
-      );
-      
+            accessToken: authModel.accessToken,
+            refreshToken: authModel.refreshToken,
+          );
       state = AsyncValue.data(authModel);
-      
-      // Refresh user data after successful verification
+      ref.read(isAuthenticatedProvider.notifier).state = true;
       await ref.read(userDataProviderProvider.notifier).refresh();
     } catch (e, st) {
-      log('OTP verification error: $e');
+      dev.log('OTP verification error: $e', name: 'AuthController');
       state = AsyncValue.error(e, st);
       rethrow;
     }
   }
-Future<bool> signup(UserModel user) async {
-  state = const AsyncValue.loading();
-  try {
-    final authService = ref.read(apiServiceProvider);
-    final response = await authService.signUp(user);
-    state = AsyncValue.data(state.valueOrNull);
-    return true;
-  } catch (e, st) {
-    log('Signup error: $e');
-    String errorMessage = e.toString();
-    if (errorMessage.contains('email already exists') ||
-        errorMessage.contains('phone already exists') ||
-        errorMessage.contains('duplicate')) {
+
+  Future<bool> signup(UserModel user) async {
+    state = const AsyncValue.loading();
+    try {
+      final authService = ref.read(apiServiceProvider);
+      await authService.signUp(user);
+      state = AsyncValue.data(state.valueOrNull);
+      return true;
+    } catch (e, st) {
+      dev.log('Signup error: $e', name: 'AuthController');
       state = AsyncValue.error(e, st);
       rethrow;
     }
-    state = AsyncValue.error(e, st);
-    rethrow;
   }
-}
+
   Future<void> logout() async {
     state = const AsyncValue.loading();
     try {
       final authService = ref.read(apiServiceProvider);
       await authService.logout();
-      log('Logout successful, clearing tokens');
+      dev.log('Logout successful, clearing tokens', name: 'AuthController');
     } catch (e) {
-      log('Logout API error: $e');
+      dev.log('Logout API error: $e', name: 'AuthController');
     } finally {
       try {
         await ref.read(tokenStorageProvider).clearTokens();
         state = const AsyncValue.data(null);
+        ref.read(isAuthenticatedProvider.notifier).state = false;
+        await ref.read(userDataProviderProvider.notifier).refresh();
       } catch (e, st) {
-        log('Error clearing local data: $e');
+        dev.log('Error clearing local data: $e', name: 'AuthController');
         state = AsyncValue.error(e, st);
       }
     }
@@ -128,28 +152,15 @@ Future<bool> signup(UserModel user) async {
   Future<void> updateProfile(UserModel profile) async {
     state = const AsyncValue.loading();
     try {
-      final currentState = state.value;
+      final currentState = state.valueOrNull;
       if (currentState == null) {
         throw Exception('Not authenticated');
       }
-      
       final updatedUser = await ref.read(apiServiceProvider).updateUserProfile(profile);
-      await ref.read(userDataProviderProvider.notifier).update((_) => updatedUser);
+      await ref.read(userDataProviderProvider.notifier).updateUserData(updatedUser);
       state = AsyncValue.data(currentState);
     } catch (e, st) {
-      log('Profile update error: $e');
-      state = AsyncValue.error(e, st);
-      rethrow;
-    }
-  }
-
-  Future<void> sendOtp(String phone) async {
-    state = const AsyncValue.loading();
-    try {
-      await ref.read(apiServiceProvider).sendOtp(phone);
-      state = state; // Maintain current state
-    } catch (e, st) {
-      log('Send OTP error: $e');
+      dev.log('Profile update error: $e', name: 'AuthController');
       state = AsyncValue.error(e, st);
       rethrow;
     }
@@ -159,21 +170,34 @@ Future<bool> signup(UserModel user) async {
     state = const AsyncValue.loading();
     try {
       await ref.read(apiServiceProvider).requestPasswordReset(email);
-      state = state;
+      state = const AsyncValue.data(null);
     } catch (e, st) {
-      log('Password reset request error: $e');
+      dev.log('Request password reset error: $e', name: 'AuthController');
       state = AsyncValue.error(e, st);
       rethrow;
     }
   }
 
-  Future<void> resetPassword(String uid, String token, String password) async {
+  Future<void> verifyResetPasswordOtp(String email, String otp) async {
     state = const AsyncValue.loading();
     try {
-      await ref.read(apiServiceProvider).resetPassword(uid, token, password);
+      final result = await ref.read(apiServiceProvider).verifyOtpForResetPassword(email, otp);
+      state = const AsyncValue.data(null);
+      return result;
+    } catch (e, st) {
+      dev.log('Password reset verification error: $e', name: 'AuthController');
+      state = AsyncValue.error(e, st);
+      rethrow;
+    }
+  }
+
+  Future<void> resetPassword(String email, String newPassword, String confirmPassword) async {
+    state = const AsyncValue.loading();
+    try {
+      await ref.read(apiServiceProvider).resetPassword(email, newPassword, confirmPassword);
       state = const AsyncValue.data(null);
     } catch (e, st) {
-      log('Password reset error: $e');
+      dev.log('Password reset error: $e', name: 'AuthController');
       state = AsyncValue.error(e, st);
       rethrow;
     }
@@ -183,9 +207,9 @@ Future<bool> signup(UserModel user) async {
     try {
       final authState = await future;
       final storage = ref.read(tokenStorageProvider);
-      return authState != null && storage.hasValidTokens;
+      return authState != null && await storage.hasValidTokens;
     } catch (e) {
-      log('Authentication check error: $e');
+      dev.log('Authentication check error: $e', name: 'AuthController');
       return false;
     }
   }

@@ -3,7 +3,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/core/router/router.dart';
 import 'package:hand_car/core/utils/snackbar.dart';
 import 'package:hand_car/core/widgets/button_widget.dart';
 import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
@@ -31,13 +30,6 @@ class LoginPage extends HookConsumerWidget {
     /// Switches to phone/password login
     Future<void> switchToPhoneLogin() async {
       if (!isMounted) return;
-
-      final storage = ref.read(storageProvider);
-      await storage.write(
-          'preferredLoginMethod', LoginWithPhoneAndPasswordPage.route);
-      ref.read(loginPreferenceProvider.notifier).state =
-          LoginWithPhoneAndPasswordPage.route;
-
       if (isMounted && context.mounted) {
         context.go(LoginWithPhoneAndPasswordPage.route);
       }
@@ -80,7 +72,7 @@ class LoginPage extends HookConsumerWidget {
 
       try {
         isLoading.value = true;
-        await ref.read(authControllerProvider.notifier).sendOtp(input);
+        // await ref.read(authControllerProvider.notifier).sendOtp(input);
 
         if (isMounted && context.mounted) {
           // Navigate to OTP verification page
