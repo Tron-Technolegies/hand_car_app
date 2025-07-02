@@ -1,5 +1,6 @@
 // lib/features/Authentication/controller/auth_controller.dart
 import 'dart:developer' as dev;
+// import 'dart:ffi'; // This import seems unused and might be causing issues. Removing it.
 import 'package:hand_car/core/router/user_validation.dart';
 import 'package:hand_car/features/Authentication/controller/user_controller.dart';
 import 'package:hand_car/features/Authentication/model/auth_model.dart';
@@ -28,6 +29,8 @@ final isAuthenticatedProvider = StateProvider<bool>((ref) {
 
 @riverpod
 class AuthController extends _$AuthController {
+  String? _passwordResetOtpToken; // This will temporarily hold the OTP token
+
   @override
   FutureOr<AuthModel?> build() async {
     // Initialize with null state to avoid uninitialized access
@@ -39,7 +42,7 @@ class AuthController extends _$AuthController {
     try {
       final storage = ref.read(tokenStorageProvider);
       if (storage.hasValidTokens) {
-        final accessToken = await storage.getAccessToken();
+        final accessToken = storage.getAccessToken();
         if (accessToken != null) {
           await fetchCurrentUser(accessToken);
           return;
@@ -181,20 +184,35 @@ class AuthController extends _$AuthController {
   Future<void> verifyResetPasswordOtp(String email, String otp) async {
     state = const AsyncValue.loading();
     try {
-      final result = await ref.read(apiServiceProvider).verifyOtpForResetPassword(email, otp);
-      state = const AsyncValue.data(null);
-      return result;
+      // Capture the otp_token returned by the service
+      _passwordResetOtpToken = await ref.read(apiServiceProvider).verifyOtpForResetPassword(email, otp);
+      state = const AsyncValue.data(null); // Or some success state
     } catch (e, st) {
-      dev.log('Password reset verification error: $e', name: 'AuthController');
+      dev.log('Verify reset password OTP error: $e', name: 'AuthController');
       state = AsyncValue.error(e, st);
-      rethrow;
+      rethrow; // Re-throw to propagate the error to the UI
     }
   }
 
   Future<void> resetPassword(String email, String newPassword, String confirmPassword) async {
+    // Ensure the OTP token is available before proceeding
+    if (_passwordResetOtpToken == null) {
+      state = AsyncValue.error(
+          'OTP not verified. Please complete OTP verification first.', StackTrace.current);
+      dev.log('Password reset failed: OTP token is null', name: 'AuthController');
+      return;
+    }
+
     state = const AsyncValue.loading();
     try {
-      await ref.read(apiServiceProvider).resetPassword(email, newPassword, confirmPassword);
+      // Pass the stored otp_token to the service method
+      await ref.read(apiServiceProvider).resetPassword(
+            email,
+            newPassword,
+            confirmPassword,
+            _passwordResetOtpToken!, // Use the stored token
+          );
+      _passwordResetOtpToken = null; // Clear the token after successful use
       state = const AsyncValue.data(null);
     } catch (e, st) {
       dev.log('Password reset error: $e', name: 'AuthController');

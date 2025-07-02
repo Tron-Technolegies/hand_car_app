@@ -59,7 +59,9 @@ class ForgotPasswordOtpPage extends HookConsumerWidget {
             message: "OTP verified successfully",
             showretry: false,
           );
-          context.push(ResetPasswordPage.route, extra: {'email': email});
+          if (context.mounted) {
+            context.push(ResetPasswordPage.route, extra: {'email': email});
+          }
         }
       } catch (e) {
         SnackbarUtil.showsnackbar(

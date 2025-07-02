@@ -1,5 +1,4 @@
-import 'dart:math';
-
+// lib/features/Authentication/view/pages/reset_password_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
@@ -9,16 +8,15 @@ import 'package:hand_car/core/widgets/button_widget.dart';
 import 'package:hand_car/features/Authentication/controller/auth_controller.dart';
 import 'package:hand_car/features/Authentication/view/pages/login_with_phone_and_password_page.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'dart:developer' as dev;
 
 class ResetPasswordPage extends HookConsumerWidget {
-  static const route = '/reset-password/:uid/:token';
+  static const route = '/reset-password';
   final String email;
-  final String token;
 
   const ResetPasswordPage({
     super.key,
     required this.email,
-    required this.token,
   });
 
   String? validatePassword(String? value) {
@@ -33,6 +31,7 @@ class ResetPasswordPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    dev.log('ResetPasswordPage: email=$email', name: 'ResetPasswordPage');
     final passwordController = useTextEditingController();
     final confirmPasswordController = useTextEditingController();
     final formKey = useState(GlobalKey<FormState>());
@@ -52,10 +51,20 @@ class ResetPasswordPage extends HookConsumerWidget {
         return;
       }
 
+      if (email.isEmpty) {
+        SnackbarUtil.showsnackbar(
+          message: "Email is missing or invalid",
+          showretry: true,
+        );
+        return;
+      }
+
       try {
-        await ref
-            .read(authControllerProvider.notifier)
-            .resetPassword(email, passwordController.text, confirmPasswordController.text);
+        await ref.read(authControllerProvider.notifier).resetPassword(
+          email,
+          passwordController.text,
+          confirmPasswordController.text,
+        );
         
         if (context.mounted) {
           SnackbarUtil.showsnackbar(
@@ -65,8 +74,9 @@ class ResetPasswordPage extends HookConsumerWidget {
           context.go(LoginWithPhoneAndPasswordPage.route);
         }
       } catch (e) {
+        String errorMessage = e.toString().replaceFirst('Exception: ', '');
         SnackbarUtil.showsnackbar(
-          message: e.toString(),
+          message: errorMessage,
           showretry: true,
         );
       }
@@ -84,7 +94,7 @@ class ResetPasswordPage extends HookConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Enter New Password',
+                'Enter New Password for $email',
                 style: context.typography.h3,
               ),
               SizedBox(height: context.space.space_200),

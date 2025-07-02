@@ -1,4 +1,6 @@
 // lib/core/router/router.dart
+import 'dart:developer' as dev;
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/router/redirect.dart';
@@ -75,12 +77,14 @@ final routerProvider = Provider<GoRouter>((ref) {
           return ForgotPasswordOtpPage(email: email);
         },
       ),
-      GoRoute(
+   GoRoute(
         path: ResetPasswordPage.route,
-        builder: (context, state) => ResetPasswordPage(
-          uid: state.pathParameters['uid']!,
-          token: state.pathParameters['token']!,
-        ),
+        builder: (context, state) {
+          final emailMap = state.extra as Map<String, String>? ?? {};
+          final email = emailMap['email'] ?? '';
+          dev.log('Router: ResetPasswordPage email=$email', name: 'Router');
+          return ResetPasswordPage(email: email);
+        },
       ),
       GoRoute(
         path: NavigationPage.route,
@@ -124,7 +128,6 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: CheckOutPage.route,
         builder: (context, state) {
-
           return CheckOutPage();
         },
       ),

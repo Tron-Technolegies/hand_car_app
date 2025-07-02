@@ -8,7 +8,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'authentication_service.g.dart';
 
-
 class ApiServiceAuthentication extends BaseApiService {
   Timer? _loginCheckTimer;
 
@@ -58,7 +57,7 @@ class ApiServiceAuthentication extends BaseApiService {
         );
 
         _updateDioHeaders(authModel.accessToken);
-        _startLoginPeriodCheck(); 
+        _startLoginPeriodCheck();
 
         log('Login successful - tokens saved');
         return authModel;
@@ -288,7 +287,7 @@ class ApiServiceAuthentication extends BaseApiService {
   }
 
   // Verify OTP
-  Future<void> verifyOtpForResetPassword(String email, String otp) async {
+  Future<String> verifyOtpForResetPassword(String email, String otp) async {
     return withRetry(() async {
       final response = await dio.post(
         '/verify_otp_forget_password',
@@ -297,21 +296,31 @@ class ApiServiceAuthentication extends BaseApiService {
           'otp': otp,
         },
       );
-      if (response.statusCode != 200) {
+      if (response.statusCode == 200) {
+        if (response.data != null && response.data.containsKey('otp_token')) {
+          log('OTP verified successfully, received token: ${response.data['otp_token']}');
+          return response.data['otp_token'];
+        } else {
+          throw Exception('OTP verification successful but no token received.');
+        }
+      } else {
+        log('Error verifying OTP: ${response.data}');
         throw handleApiError(response);
       }
     });
   }
 
   // Reset password after OTP verification
-  Future<void> resetPassword(String email, String newPassword, String confirmPassword) async {
+  Future<void> resetPassword(String email, String newPassword,
+      String confirmPassword, String otpToken) async {
     return withRetry(() async {
       final response = await dio.post(
-        '/rreset_password_with_otp',
+        '/reset_password_with_otp',
         data: {
           'email': email,
           'new_password': newPassword,
           'confirm_password': confirmPassword,
+          'otp_token': otpToken,
         },
       );
       if (response.statusCode != 200) {
@@ -327,8 +336,7 @@ class ApiServiceAuthentication extends BaseApiService {
   bool get isAuthenticated => tokenStorage.hasValidTokens;
 }
 
-
 @riverpod
-ApiServiceAuthentication apiService( ref) {
+ApiServiceAuthentication apiService(ref) {
   return ApiServiceAuthentication();
 }
