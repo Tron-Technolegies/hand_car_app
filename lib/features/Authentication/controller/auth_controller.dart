@@ -207,7 +207,7 @@ class AuthController extends _$AuthController {
     try {
       final authState = await future;
       final storage = ref.read(tokenStorageProvider);
-      return authState != null && await storage.hasValidTokens;
+      return authState != null && storage.hasValidTokens;
     } catch (e) {
       dev.log('Authentication check error: $e', name: 'AuthController');
       return false;

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
@@ -10,12 +12,12 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class ResetPasswordPage extends HookConsumerWidget {
   static const route = '/reset-password/:uid/:token';
-  final String uid;
+  final String email;
   final String token;
 
   const ResetPasswordPage({
     super.key,
-    required this.uid,
+    required this.email,
     required this.token,
   });
 
@@ -53,7 +55,7 @@ class ResetPasswordPage extends HookConsumerWidget {
       try {
         await ref
             .read(authControllerProvider.notifier)
-            .resetPassword(uid, token, passwordController.text);
+            .resetPassword(email, passwordController.text, confirmPasswordController.text);
         
         if (context.mounted) {
           SnackbarUtil.showsnackbar(

@@ -41,7 +41,7 @@ class ForgotPasswordOtpPage extends HookConsumerWidget {
     );
 
     Future<void> verifyOtp() async {
-      if (otpCode.value.length != 6) {
+      if (otpCode.value.length != 4) {
         SnackbarUtil.showsnackbar(
           message: "Please enter complete OTP code",
           showretry: true,
@@ -72,7 +72,9 @@ class ForgotPasswordOtpPage extends HookConsumerWidget {
     Future<void> resendOtp() async {
       try {
         isResending.value = true;
-        await ref.read(authControllerProvider.notifier).requestPasswordReset(email);
+        await ref
+            .read(authControllerProvider.notifier)
+            .requestPasswordReset(email);
         if (context.mounted) {
           SnackbarUtil.showsnackbar(
             message: "OTP resent successfully",
@@ -121,7 +123,7 @@ class ForgotPasswordOtpPage extends HookConsumerWidget {
             ),
             SizedBox(height: context.space.space_200),
             OtpTextField(
-              numberOfFields: 6,
+              numberOfFields: 4,
               borderColor: context.colors.primary,
               focusedBorderColor: context.colors.primary,
               showFieldAsBox: true,
@@ -154,10 +156,12 @@ class ForgotPasswordOtpPage extends HookConsumerWidget {
             ),
             SizedBox(height: context.space.space_200),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: context.space.space_200),
+              padding:
+                  EdgeInsets.symmetric(horizontal: context.space.space_200),
               child: ElevatedButton(
                 onPressed: authState.isLoading ? null : verifyOtp,
-                child: Text(authState.isLoading ? "Verifying..." : "Verify & Continue"),
+                child: Text(
+                    authState.isLoading ? "Verifying..." : "Verify & Continue"),
               ),
             ),
             SizedBox(height: context.space.space_200),
