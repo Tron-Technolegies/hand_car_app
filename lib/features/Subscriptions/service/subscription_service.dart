@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:hand_car/config.dart';
+import 'package:hand_car/core/router/user_validation.dart';
 import 'package:hand_car/features/Subscriptions/model/subscription_model.dart';
 
 class SubscriptionService {
@@ -10,10 +11,23 @@ class SubscriptionService {
     validateStatus: (status) => status! < 500, // Accept all status codes less than 500
   ));
 
-   Future<SubscriptionModel> getSubscription() async {
-    final response = await dio.get('/subscribe/');
-    return SubscriptionModel.fromJson(response.data);
+  
+  Future<Map<String, dynamic>> getSubscriptionStatus() async {
+    try {
+      final token =TokenStorage().getAccessToken();
+      if (token == null) {
+        throw Exception('Please login to continue');
+      }
+      final response = await dio.get(
+        '/subscribe/',
+        options: Options(headers: {
+          'Authorization': 'Bearer $token',
+        }),
+      );
+      return response.data as Map<String, dynamic>;
+    } on DioException catch (e) {
+      throw Exception('Failed to fetch subscription status: ${e.message}');
+    }
   }
-
  
 }

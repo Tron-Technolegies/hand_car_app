@@ -24,7 +24,7 @@ final addressApiServiceProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef AddressApiServiceRef = AutoDisposeProviderRef<AddressApiService>;
-String _$addressControllerHash() => r'8358d38b7976200a80faff4afad409f0c6345944';
+String _$addressControllerHash() => r'f06fa498a3cb2d9e7797713a735407e8f5ca1580';
 
 /// See also [AddressController].
 @ProviderFor(AddressController)

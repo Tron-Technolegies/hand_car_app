@@ -24,4 +24,5 @@ class PlanNotifier extends _$PlanNotifier {
       throw Exception('Failed to fetch plans: $e');
     }
   }
+  
 }

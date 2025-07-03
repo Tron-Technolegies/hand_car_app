@@ -9,13 +9,12 @@ class PlansContainer extends HookConsumerWidget {
   final String planName;
   final String price;
   final String description;
-  final String duration; 
+  final String duration;
   final Color color;
   final Color textColor1;
   final Color textColor2;
   final Color containerColor;
   final Widget? child;
-
 
   const PlansContainer({
     super.key,
@@ -61,6 +60,25 @@ class PlansContainer extends HookConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (duration == '12') ...[
+              Center(
+                child: RichText(
+                  text: TextSpan(
+                    text: 'Save 10% off ',
+                    style: context.typography.bodyMedium
+                        .copyWith(color: context.colors.green),
+                    children: [
+                      TextSpan(
+                        text: ' on 12 months subscription',
+                        style: context.typography.bodyMedium
+                            .copyWith(color: context.colors.primaryTxt),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: context.space.space_250),
+            ],
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -78,11 +96,11 @@ class PlansContainer extends HookConsumerWidget {
                 text: 'AED $price ',
                 style: context.typography.h2,
                 children: [
-                  TextSpan(
-                    text: '/$duration months',
-                    style: context.typography.bodyMedium
-                        .copyWith(color: context.colors.primaryTxt),
-                  ),
+                  // TextSpan(
+                  //   text: '/$duration months',
+                  //   style: context.typography.bodyMedium
+                  //       .copyWith(color: context.colors.primaryTxt),
+                  // ),
                 ],
               ),
             ),
@@ -103,25 +121,6 @@ class PlansContainer extends HookConsumerWidget {
               },
             ),
             SizedBox(height: context.space.space_250),
-            if (duration == 6) ...[
-              Center(
-                child: RichText(
-                  text: TextSpan(
-                    text: 'Save 10% off ',
-                    style: context.typography.bodyMedium
-                        .copyWith(color: context.colors.green),
-                    children: [
-                      TextSpan(
-                        text: ' on 6 months subscription',
-                        style: context.typography.bodyMedium
-                            .copyWith(color: context.colors.primaryTxt),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(height: context.space.space_250),
-            ],
             SizedBox(
               width: double.infinity,
               child: ButtonWidget(
