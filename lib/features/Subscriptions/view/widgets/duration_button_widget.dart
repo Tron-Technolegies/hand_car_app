@@ -14,13 +14,14 @@ class DurationButtons extends StatelessWidget {
   final Color textColor1;
   final Color textColor2;
 
-  DurationButtons(
-      {super.key,
-      required this.selectedIndex,
-      required this.onSelectPlan,
-      required this.containerColor,
-      required this.textColor1,
-      required this.textColor2});
+  DurationButtons({
+    super.key,
+    required this.selectedIndex,
+    required this.onSelectPlan,
+    required this.containerColor,
+    required this.textColor1,
+    required this.textColor2,
+  });
 
   @override
   Widget build(BuildContext context) {

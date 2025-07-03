@@ -8,18 +8,14 @@ import 'package:hand_car/gen/assets.gen.dart';
 
 final GlobalKey<ScaffoldState> scaffoldKey5 = GlobalKey<ScaffoldState>();
 
-/// This is the Subscription Page
 class SubscriptionPage extends HookWidget {
   const SubscriptionPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Tab Controller
     final tabController = useTabController(initialLength: 2);
-    // Active Index
     final activeIndex = useState(0);
 
-    // Tab Changed Listener
     useEffect(() {
       void onTabChanged() {
         activeIndex.value = tabController.index;
@@ -59,7 +55,8 @@ class SubscriptionPage extends HookWidget {
               ? context.colors.primaryTxt
               : context.colors.primary,
           labelStyle: context.typography.bodyLarge,
-          unselectedLabelColor: context.colors.primaryTxt.withValues(alpha:0.5),
+          unselectedLabelColor:
+              context.colors.primaryTxt.withValues(alpha: 0.5),
           unselectedLabelStyle: context.typography.bodyLarge,
           indicatorSize: TabBarIndicatorSize.label,
           tabs: const [
@@ -68,8 +65,6 @@ class SubscriptionPage extends HookWidget {
           ],
         ),
       ),
-      // drawer: const DrawerWidget(),
-      endDrawerEnableOpenDragGesture: true,
       body: TabBarView(
         controller: tabController,
         children: const [

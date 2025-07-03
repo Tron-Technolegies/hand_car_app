@@ -24,50 +24,35 @@ abstract class BasePlanScreen extends HookConsumerWidget {
   Color get secondaryColor;
   Color get containerColor;
 
-  // Duration button colors (override these in subclasses)
+  // Duration button colors
   Color get durationButtonColor;
   Color get durationButtonTextColor1;
   Color get durationButtonTextColor2;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    log('Building BasePlanScreen for service type: $serviceType'); // Debug log
+    log('Building BasePlanScreen for service type: $serviceType');
 
-    // final selectedIndex = useState(0);
     final selectedDurationIndex = useState(0);
     final scrollController = useScrollController();
 
     final plansAsyncValue = ref.watch(planNotifierProvider(serviceType));
 
-    // Scroll to Plan
-    // void scrollToPlan(int index) {
-    //   selectedIndex.value = index;
-    //   scrollController.animateTo(
-    //     index * 650.0,
-    //     duration: const Duration(milliseconds: 500),
-    //     curve: Curves.easeInOut,
-    //   );
-    // }
-
     return Scaffold(
       extendBody: true,
       body: plansAsyncValue.when(
-        loading: () {
-          log('Loading plans...'); // Debug log
-          return const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-               
-                SizedBox(height: 16),
-                Text('Loading plans...'),
-              ],
-            ),
-          );
-        },
+        loading: () => const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: 16),
+              Text('Loading plans...'),
+            ],
+          ),
+        ),
         error: (error, stackTrace) {
-          log('Error loading plans: $error'); // Debug log
-          log('Stack trace: $stackTrace'); // Debug log
+          log('Error loading plans: $error');
+          log('Stack trace: $stackTrace');
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -81,13 +66,27 @@ abstract class BasePlanScreen extends HookConsumerWidget {
           );
         },
         data: (plans) {
-          log('Received ${plans.length} plans'); // Debug log
+          log('Received ${plans.length} plans');
           if (plans.isEmpty) {
-            log('No plans available for $serviceType'); // Debug log
             return const Center(
               child: Text('No plans available for this service type'),
             );
           }
+
+          // Determine target duration based on selection
+          final int targetDuration;
+          if (selectedDurationIndex.value == 0) {
+            targetDuration = 6;
+          } else {
+            targetDuration = 12;
+          }
+
+          log('Selected duration: $targetDuration months');
+          final filteredPlans = plans.where((plan) {
+            // Convert both to integers for comparison
+            final planDuration = int.tryParse(plan.duration.toString());
+            return planDuration == targetDuration;
+          }).toList();
 
           return SingleChildScrollView(
             controller: scrollController,
@@ -95,31 +94,28 @@ abstract class BasePlanScreen extends HookConsumerWidget {
               decoration: BoxDecoration(gradient: backgroundGradient),
               child: SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0), // Adjust padding as needed
+                  padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
                       Text(
                         screenTitle,
                         style: context.typography.h2.copyWith(
-                              color: Colors.white,
-                            ),
+                          color: Colors.white,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 16),
                       Text(
                         screenDescription,
                         style: context.typography.body.copyWith(
-                              color: Colors.white,
-                            ),
+                          color: Colors.white,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 32),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          // Plan Selection Buttons
-              
-                          // Duration Selection Buttons
                           DurationButtons(
                             selectedIndex: selectedDurationIndex.value,
                             onSelectPlan: (index) {
@@ -132,33 +128,39 @@ abstract class BasePlanScreen extends HookConsumerWidget {
                         ],
                       ),
                       const SizedBox(height: 32),
-                      ListView.separated(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: plans.length,
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(height: 16),
-                        itemBuilder: (context, index) {
-                          final plan = plans[index];
-                          log(
-                              'Building plan card for: ${plan.name}'); // Debug log
-
-                          return PlansContainer(
-                            planName: plan.name,
-                            price: plan.price,
-                            duration: plan.duration,
-                            description: plan.description??'',
-                            color: primaryColor,
-                            containerColor: containerColor,
-                            textColor1: primaryColor,
-                            textColor2: secondaryColor,
-                            selectedDuration: selectedDurationIndex.value,
-                            child: index == 1
-                                ? const PopularTextConainerWidget()
-                                : null,
-                          );
-                        },
-                      ),
+                      if (filteredPlans.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.all(32.0),
+                          child: Text(
+                            'No plans available for $targetDuration months',
+                            style: context.typography.bodyLarge
+                                .copyWith(color: Colors.white),
+                          ),
+                        )
+                      else
+                        ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: filteredPlans.length,
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: 16),
+                          itemBuilder: (context, index) {
+                            final plan = filteredPlans[index];
+                            return PlansContainer(
+                              planName: plan.name,
+                              price: plan.price,
+                              duration: plan.duration,
+                              description: plan.description ?? '',
+                              color: primaryColor,
+                              containerColor: containerColor,
+                              textColor1: primaryColor,
+                              textColor2: secondaryColor,
+                              child: index == 1
+                                  ? const PopularTextConainerWidget()
+                                  : null,
+                            );
+                          },
+                        ),
                     ],
                   ),
                 ),
