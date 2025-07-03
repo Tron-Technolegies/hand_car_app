@@ -193,11 +193,11 @@ Please confirm payment details.
                             'No addresses found',
                             style: context.typography.bodyLarge,
                           ),
-                          TextButton.icon(
-                            icon: const Icon(Icons.add),
-                            label: const Text('Add New Address'),
-                            onPressed: () => showAddressForm.value = true,
-                          ),
+                          // TextButton.icon(
+                          //   icon: const Icon(Icons.add),
+                          //   label: const Text('Add New Address'),
+                          //   onPressed: () => showAddressForm.value = true,
+                          // ),
                         ],
                       ),
                     );
@@ -215,12 +215,14 @@ Please confirm payment details.
                           final address = addressState.addresses[index];
                           return AddressCard(
                             key: ValueKey(address.id),
-                            name: address.street,
+                            name: address.name,
+                            phoneNumber: address.phoneNumber,
                             address: '${address.city}, ${address.areaDistrict}',
-                            poBox: address.city,
+                            landmark: address.landmark ?? "",
                             selectedAddress: selectedAddress,
                             id: address.id,
                             isDefault: address.isDefault,
+                            addressType: address.addressType,
                           );
                         },
                       ),

@@ -171,7 +171,7 @@ class AddressApiService {
     required String landmark,
     required String city,
     required String areaDistrict,
-    required String zipCode,
+
     required String country,
     required String addressType,
     bool isDefault = false,

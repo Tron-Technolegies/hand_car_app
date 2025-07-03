@@ -36,7 +36,7 @@ Future<void> addAddress({
      String? landmark,
     required String city,
     required String areaDistrict,
-    required String zipCode,
+
     required String country,
     required String addressType,
     bool isDefault = false,
@@ -53,7 +53,7 @@ Future<void> addAddress({
       landmark: landmark??'',
       city: city,
       areaDistrict: areaDistrict,
-      zipCode: zipCode,
+      
       country: country,
       addressType: addressType,
       isDefault: isDefault,

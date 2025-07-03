@@ -28,21 +28,28 @@ class AddressForm extends HookConsumerWidget {
     final phoneController = useTextEditingController();
     final streetController = useTextEditingController();
     final cityController = useTextEditingController();
-     final buildingNameController = useTextEditingController();
+    final buildingNameController = useTextEditingController();
     final floorAndApartmentController = useTextEditingController();
-    final areacontroller = useTextEditingController();
-    final zipController = useTextEditingController();
-    final countryValue = useState<String?>(null);
-    final cityValue=useState<String?>(null);
+    final landmarkController = useTextEditingController();
+    final areaController = useTextEditingController();
+
+    final countryValue =
+        useState<String>('United Arab Emirates'); // Fixed country
+    final cityValue = useState<String?>(null);
     final isSubmitting = useState(false);
 
     // Clear all form fields
     void clearForm() {
       streetController.clear();
       cityController.clear();
-      areacontroller.clear();
-      zipController.clear();
-      countryValue.value = null;
+      areaController.clear();
+      buildingNameController.clear();
+      floorAndApartmentController.clear();
+      landmarkController.clear();
+      nameController.clear();
+      phoneController.clear();
+
+      cityValue.value = null;
       formKey.currentState?.reset();
     }
 
@@ -73,10 +80,11 @@ class AddressForm extends HookConsumerWidget {
             city: cityValue.value!,
             buildingName: buildingNameController.text.trim(),
             floorApartmentNo: floorAndApartmentController.text.trim(),
-          areaDistrict: areacontroller.text.trim(),
-            zipCode: zipController.text.trim(),
-            country: countryValue.value!,
-            addressType: initialAddress.value == AddressType.home ? 'home' : 'work',
+            areaDistrict: areaController.text.trim(),
+            landmark: landmarkController.text.trim() ?? '',
+            country: countryValue.value,
+            addressType:
+                initialAddress.value == AddressType.home ? 'home' : 'work',
             isDefault: false,
           );
 
@@ -125,7 +133,7 @@ class AddressForm extends HookConsumerWidget {
                   (value?.isEmpty ?? true) ? 'Please enter Your name' : null,
               textInputAction: TextInputAction.next,
             ),
-     
+            SizedBox(height: context.space.space_200),
             TextFormField(
               controller: phoneController,
               decoration: InputDecoration(
@@ -202,13 +210,13 @@ class AddressForm extends HookConsumerWidget {
                 ),
               ),
               validator: (value) => (value?.isEmpty ?? true)
-                  ? 'Please enter  floor & apt no'
+                  ? 'Please enter floor & apt no'
                   : null,
               textInputAction: TextInputAction.next,
             ),
             SizedBox(height: context.space.space_200),
             TextFormField(
-              controller: streetController,
+              controller: landmarkController,
               decoration: InputDecoration(
                 labelText: 'Landmark (Optional)',
                 hintText: 'eg: Dubai Mall',
@@ -216,13 +224,11 @@ class AddressForm extends HookConsumerWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              // validator: (value) =>
-              //     (value?.isEmpty ?? true) ? 'Please enter landmark' : null,
               textInputAction: TextInputAction.next,
             ),
             SizedBox(height: context.space.space_200),
             TextFormField(
-              controller: areacontroller,
+              controller: areaController,
               decoration: InputDecoration(
                 labelText: 'Area/District',
                 hintText: 'eg: Business Bay',
@@ -231,96 +237,61 @@ class AddressForm extends HookConsumerWidget {
                 ),
               ),
               validator: (value) => (value?.isEmpty ?? true)
-                  ? 'Please enter  floor & apt no'
+                  ? 'Please enter area/district'
                   : null,
               textInputAction: TextInputAction.next,
             ),
-
             SizedBox(height: context.space.space_200),
-            Row(
-              children: [
-                Expanded(
-                  child: DropdownButtonFormField<String>(
-                    value: cityValue.value,
-                    decoration: InputDecoration(
-                      hintText: "Select City",
-                      labelText: 'City',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    items: [
-                      DropdownMenuItem(
-                        value: 'Select City',
-                        enabled: false,
-                        child: Text('Select City'),
-                      ),
-                      DropdownMenuItem(value: 'Dubai', child: Text('Dubai')),
-                      DropdownMenuItem(
-                          value: 'Abu Dhabi', child: Text('Abu Dhabi')),
-                      DropdownMenuItem(
-                          value: 'Sharjah', child: Text('Sharjah')),
-                      DropdownMenuItem(value: 'Ajman', child: Text('Ajman')),
-                      DropdownMenuItem(
-                          value: 'Fujairah', child: Text('Fujairah')),
-                      DropdownMenuItem(
-                          value: 'Ras Al Khaimah',
-                          child: Text('Ras Al Khaimah')),
-                      DropdownMenuItem(
-                          value: 'Umm Al Quwain', child: Text('Umm Al Quwain')),
-                      DropdownMenuItem(value: 'Al Ain', child: Text('Al Ain')),
-                      DropdownMenuItem(
-                          value: "Khor Fakkan",
-                          child: Text(
-                            "Khor Fakkan",
-                          )),
-                      DropdownMenuItem(
-                          value: "Dibba Al-Fujairah",
-                          child: Text(
-                            "Dibba Al-Fujairah",
-                          ))
-                    ],
-                    onChanged: (value) {
-                      countryValue.value = value;
-                    },
-                    validator: (value) =>
-                        value == null ? 'Please select city' : null,
-                  ),
+            DropdownButtonFormField<String>(
+              value: cityValue.value,
+              decoration: InputDecoration(
+                hintText: "Select City",
+                labelText: 'City',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                
+              ),
+              items: [
+                DropdownMenuItem(
+                  value: null,
+                  enabled: false,
+                  child: Text('Select City'),
+                ),
+                DropdownMenuItem(value: 'Dubai', child: Text('Dubai')),
+                DropdownMenuItem(value: 'Abu Dhabi', child: Text('Abu Dhabi')),
+                DropdownMenuItem(value: 'Sharjah', child: Text('Sharjah')),
+                DropdownMenuItem(value: 'Ajman', child: Text('Ajman')),
+                DropdownMenuItem(value: 'Fujairah', child: Text('Fujairah')),
+                DropdownMenuItem(
+                    value: 'Ras Al Khaimah', child: Text('Ras Al Khaimah')),
+                DropdownMenuItem(
+                    value: 'Umm Al Quwain', child: Text('Umm Al Quwain')),
+                DropdownMenuItem(value: 'Al Ain', child: Text('Al Ain')),
+                DropdownMenuItem(
+                    value: 'Khor Fakkan', child: Text('Khor Fakkan')),
+                DropdownMenuItem(
+                    value: 'Dibba Al-Fujairah',
+                    child: Text('Dibba Al-Fujairah')),
               ],
+              onChanged: (value) {
+                cityValue.value = value; // Correctly update cityValue
+              },
+              validator: (value) => value == null ? 'Please select city' : null,
             ),
             SizedBox(height: context.space.space_200),
-              Row(
-              children: [
-                Expanded(
-                  child: DropdownButtonFormField<String>(
-                    value: cityValue.value,
-                    decoration: InputDecoration(
-                      hintText: "Select Contry",
-                      labelText: 'Contry',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    items: [
-                      DropdownMenuItem(
-                        value: 'Select Contry',
-                        enabled: false,
-                        child: Text('United Arab Emirates'),
-                      ),
-                     
-                    ],
-                    onChanged: (value) {
-                      countryValue.value = value;
-                    },
-                    validator: (value) =>
-                        value == null ? 'Please select country' : null,
-                  ),
+            TextFormField(
+              initialValue: 'United Arab Emirates',
+              readOnly: true, // Make it non-editable
+              decoration: InputDecoration(
+                labelText: 'Country',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                
-              ],
+              ),
+              validator: (value) =>
+                  value == null ? 'Please select country' : null,
             ),
+            SizedBox(height: context.space.space_200),
             Text("Address Type", style: context.typography.bodyLarge),
             AddressTypeSelectorWidget(selectedAddressType: (AddressType value) {
               initialAddress.value = value;
