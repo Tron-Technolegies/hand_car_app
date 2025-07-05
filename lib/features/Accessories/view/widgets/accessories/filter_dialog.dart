@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:hand_car/features/Accessories/controller/products_controller/filtred_products/filter_products_controller.dart';
 import 'package:hand_car/features/Accessories/model/products/filter_products/filter_products_state.dart';
@@ -7,11 +6,13 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hand_car/features/Accessories/model/products/brand/brand_model.dart';
 
 class ProductsFilterDialog extends ConsumerStatefulWidget {
-
-  const ProductsFilterDialog( {super.key,});
+  const ProductsFilterDialog({
+    super.key,
+  });
 
   @override
-  ConsumerState<ProductsFilterDialog> createState() => _ProductsFilterDialogState();
+  ConsumerState<ProductsFilterDialog> createState() =>
+      _ProductsFilterDialogState();
 }
 
 class _ProductsFilterDialogState extends ConsumerState<ProductsFilterDialog> {
@@ -26,8 +27,11 @@ class _ProductsFilterDialogState extends ConsumerState<ProductsFilterDialog> {
 
   void _initializePrices() {
     final filter = ref.read(productsFilterNotifierProvider);
-    _minPriceController.text = filter.minPrice > 0 ? filter.minPrice.toStringAsFixed(0) : '';
-    _maxPriceController.text = filter.maxPrice < double.infinity ? filter.maxPrice.toStringAsFixed(0) : '';
+    _minPriceController.text =
+        filter.minPrice > 0 ? filter.minPrice.toStringAsFixed(0) : '';
+    _maxPriceController.text = filter.maxPrice < double.infinity
+        ? filter.maxPrice.toStringAsFixed(0)
+        : '';
   }
 
   @override
@@ -74,29 +78,29 @@ class _ProductsFilterDialogState extends ConsumerState<ProductsFilterDialog> {
                 ],
               ),
             ),
-            
+
             // Brand Section
-            const Padding(
-              padding: EdgeInsets.only(bottom: 8),
-              child: Text(
-                'Brand',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-            ),
-            
-            // Brand List with loading states
-            brandsAsync.when(
-              data: (brands) => _buildBrandList(brands, filterState, notifier),
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, _) => Text('Error: $error'),
-            ),
-            
+            // const Padding(
+            //   padding: EdgeInsets.only(bottom: 8),
+            //   child: Text(
+            //     'Brand',
+            //     style: TextStyle(
+            //       fontSize: 16,
+            //       fontWeight: FontWeight.bold,
+            //       color: Colors.black87,
+            //     ),
+            //   ),
+            // ),
+
+            // // Brand List with loading states
+            // brandsAsync.when(
+            //   data: (brands) => _buildBrandList(brands, filterState, notifier),
+            //   loading: () => const Center(child: CircularProgressIndicator()),
+            //   error: (error, _) => Text('Error: $error'),
+            // ),
+
             const SizedBox(height: 16),
-            
+
             // Price Section
             const Padding(
               padding: EdgeInsets.only(bottom: 8),
@@ -109,7 +113,7 @@ class _ProductsFilterDialogState extends ConsumerState<ProductsFilterDialog> {
                 ),
               ),
             ),
-            
+
             Row(
               children: [
                 Expanded(
@@ -121,17 +125,15 @@ class _ProductsFilterDialogState extends ConsumerState<ProductsFilterDialog> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 14),
+                          horizontal: 12, vertical: 14),
                     ),
                     keyboardType: TextInputType.number,
                   ),
                 ),
-                
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 8),
                   child: Text('TO'),
                 ),
-                
                 Expanded(
                   child: TextField(
                     controller: _maxPriceController,
@@ -141,16 +143,16 @@ class _ProductsFilterDialogState extends ConsumerState<ProductsFilterDialog> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 14),
+                          horizontal: 12, vertical: 14),
                     ),
                     keyboardType: TextInputType.number,
                   ),
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Action Buttons
             Row(
               children: [
@@ -171,14 +173,14 @@ class _ProductsFilterDialogState extends ConsumerState<ProductsFilterDialog> {
                     ),
                   ),
                 ),
-                
                 const SizedBox(width: 16),
-                
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      final min = double.tryParse(_minPriceController.text) ?? 0;
-                      final max = double.tryParse(_maxPriceController.text) ?? double.infinity;
+                      final min =
+                          double.tryParse(_minPriceController.text) ?? 0;
+                      final max = double.tryParse(_maxPriceController.text) ??
+                          double.infinity;
                       notifier.updatePriceRange(min, max);
                       notifier.applyFilters();
                       Navigator.pop(context);
@@ -195,7 +197,7 @@ class _ProductsFilterDialogState extends ConsumerState<ProductsFilterDialog> {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 8),
           ],
         ),
@@ -222,7 +224,9 @@ class _ProductsFilterDialogState extends ConsumerState<ProductsFilterDialog> {
     );
   }
 }
-final brandsProvider = FutureProvider.autoDispose<List<BrandModel>>((ref) async {
+
+final brandsProvider =
+    FutureProvider.autoDispose<List<BrandModel>>((ref) async {
   final productService = ProductsApiServices();
   return await productService.getAllBrands();
 });

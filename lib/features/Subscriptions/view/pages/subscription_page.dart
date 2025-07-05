@@ -2,17 +2,43 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
+import 'package:hand_car/features/Subscriptions/controller/my_subscription_controller.dart';
 import 'package:hand_car/features/Subscriptions/view/pages/car_wash_subscription.dart';
+import 'package:hand_car/features/Subscriptions/view/pages/my_plan_screen.dart';
 import 'package:hand_car/features/Subscriptions/view/pages/service_subscription_page.dart';
 import 'package:hand_car/gen/assets.gen.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final GlobalKey<ScaffoldState> scaffoldKey5 = GlobalKey<ScaffoldState>();
 
-class SubscriptionPage extends HookWidget {
+class SubscriptionPage extends HookConsumerWidget {
   const SubscriptionPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final subscriptionAsync = ref.watch(mySubscriptionControllerProvider);
+
+    return subscriptionAsync.when(
+      data: (data) {
+        final isSubscribed = data['subscribed'] as bool? ?? false;
+        if (isSubscribed) {
+          final plan = data['plan'] as Map<String, dynamic>? ?? {};
+          final serviceType = (plan['category'] as String?)?.toLowerCase() ?? 'car_wash';
+          return MyPlanScreen(serviceType: serviceType);
+        } else {
+          return _buildTabbedInterface(context);
+        }
+      },
+      loading: () => const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      ),
+      error: (error, _) => Scaffold(
+        body: Center(child: Text('Error: $error')),
+      ),
+    );
+  }
+
+  Widget _buildTabbedInterface(BuildContext context) {
     final tabController = useTabController(initialLength: 2);
     final activeIndex = useState(0);
 
@@ -61,7 +87,7 @@ class SubscriptionPage extends HookWidget {
           indicatorSize: TabBarIndicatorSize.label,
           tabs: const [
             Tab(text: 'Car Wash'),
-            Tab(text: 'Car Maintainance'),
+            Tab(text: 'Car Maintenance'),
           ],
         ),
       ),

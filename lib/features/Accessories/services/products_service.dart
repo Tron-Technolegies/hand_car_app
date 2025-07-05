@@ -89,13 +89,13 @@ class ProductsApiServices {
       Map<String, dynamic> queryParams) async {
     try {
       final response = await _dio.get(
-        '/view_products', // Use correct endpoint
+        '/view_products', 
         queryParameters: queryParams,
       );
 
       if (response.statusCode == 200) {
         final data = response.data as Map<String, dynamic>;
-        final List<dynamic> productList = data['product']; // Correct key
+        final List<dynamic> productList = data['product']; 
         return productList.map((dynamic item) {
           final json = Map<String, dynamic>.from(item);
           final modifiedJson = {

@@ -11,8 +11,11 @@ _$SubscriptionModelImpl _$$SubscriptionModelImplFromJson(
     _$SubscriptionModelImpl(
       plan: json['plan'] as String,
       category: json['category'] as String,
-      duration: json['duration'] as String,
-      whatsappUrl: json['whatsapp_url'] as String,
+      duration: (json['duration'] as num).toInt(),
+      whatsappUrl: json['whatsapp_url'] as String?,
+      startDate: json['start_date'] as String?,
+      endDate: json['end_date'] as String?,
+      price: json['price'] as String?,
     );
 
 Map<String, dynamic> _$$SubscriptionModelImplToJson(
@@ -21,5 +24,8 @@ Map<String, dynamic> _$$SubscriptionModelImplToJson(
       'plan': instance.plan,
       'category': instance.category,
       'duration': instance.duration,
-      'whatsapp_url': instance.whatsappUrl,
+      if (instance.whatsappUrl case final value?) 'whatsapp_url': value,
+      if (instance.startDate case final value?) 'start_date': value,
+      if (instance.endDate case final value?) 'end_date': value,
+      if (instance.price case final value?) 'price': value,
     };

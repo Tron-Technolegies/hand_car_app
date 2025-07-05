@@ -22,8 +22,11 @@ SubscriptionModel _$SubscriptionModelFromJson(Map<String, dynamic> json) {
 mixin _$SubscriptionModel {
   String get plan => throw _privateConstructorUsedError;
   String get category => throw _privateConstructorUsedError;
-  String get duration => throw _privateConstructorUsedError;
-  String get whatsappUrl => throw _privateConstructorUsedError;
+  int get duration => throw _privateConstructorUsedError;
+  String? get whatsappUrl => throw _privateConstructorUsedError;
+  String? get startDate => throw _privateConstructorUsedError;
+  String? get endDate => throw _privateConstructorUsedError;
+  String? get price => throw _privateConstructorUsedError;
 
   /// Serializes this SubscriptionModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -42,7 +45,13 @@ abstract class $SubscriptionModelCopyWith<$Res> {
       _$SubscriptionModelCopyWithImpl<$Res, SubscriptionModel>;
   @useResult
   $Res call(
-      {String plan, String category, String duration, String whatsappUrl});
+      {String plan,
+      String category,
+      int duration,
+      String? whatsappUrl,
+      String? startDate,
+      String? endDate,
+      String? price});
 }
 
 /// @nodoc
@@ -63,7 +72,10 @@ class _$SubscriptionModelCopyWithImpl<$Res, $Val extends SubscriptionModel>
     Object? plan = null,
     Object? category = null,
     Object? duration = null,
-    Object? whatsappUrl = null,
+    Object? whatsappUrl = freezed,
+    Object? startDate = freezed,
+    Object? endDate = freezed,
+    Object? price = freezed,
   }) {
     return _then(_value.copyWith(
       plan: null == plan
@@ -77,11 +89,23 @@ class _$SubscriptionModelCopyWithImpl<$Res, $Val extends SubscriptionModel>
       duration: null == duration
           ? _value.duration
           : duration // ignore: cast_nullable_to_non_nullable
-              as String,
-      whatsappUrl: null == whatsappUrl
+              as int,
+      whatsappUrl: freezed == whatsappUrl
           ? _value.whatsappUrl
           : whatsappUrl // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
+      startDate: freezed == startDate
+          ? _value.startDate
+          : startDate // ignore: cast_nullable_to_non_nullable
+              as String?,
+      endDate: freezed == endDate
+          ? _value.endDate
+          : endDate // ignore: cast_nullable_to_non_nullable
+              as String?,
+      price: freezed == price
+          ? _value.price
+          : price // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -95,7 +119,13 @@ abstract class _$$SubscriptionModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String plan, String category, String duration, String whatsappUrl});
+      {String plan,
+      String category,
+      int duration,
+      String? whatsappUrl,
+      String? startDate,
+      String? endDate,
+      String? price});
 }
 
 /// @nodoc
@@ -114,7 +144,10 @@ class __$$SubscriptionModelImplCopyWithImpl<$Res>
     Object? plan = null,
     Object? category = null,
     Object? duration = null,
-    Object? whatsappUrl = null,
+    Object? whatsappUrl = freezed,
+    Object? startDate = freezed,
+    Object? endDate = freezed,
+    Object? price = freezed,
   }) {
     return _then(_$SubscriptionModelImpl(
       plan: null == plan
@@ -128,11 +161,23 @@ class __$$SubscriptionModelImplCopyWithImpl<$Res>
       duration: null == duration
           ? _value.duration
           : duration // ignore: cast_nullable_to_non_nullable
-              as String,
-      whatsappUrl: null == whatsappUrl
+              as int,
+      whatsappUrl: freezed == whatsappUrl
           ? _value.whatsappUrl
           : whatsappUrl // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
+      startDate: freezed == startDate
+          ? _value.startDate
+          : startDate // ignore: cast_nullable_to_non_nullable
+              as String?,
+      endDate: freezed == endDate
+          ? _value.endDate
+          : endDate // ignore: cast_nullable_to_non_nullable
+              as String?,
+      price: freezed == price
+          ? _value.price
+          : price // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -144,7 +189,10 @@ class _$SubscriptionModelImpl implements _SubscriptionModel {
       {required this.plan,
       required this.category,
       required this.duration,
-      required this.whatsappUrl});
+      this.whatsappUrl,
+      this.startDate,
+      this.endDate,
+      this.price});
 
   factory _$SubscriptionModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$SubscriptionModelImplFromJson(json);
@@ -154,13 +202,19 @@ class _$SubscriptionModelImpl implements _SubscriptionModel {
   @override
   final String category;
   @override
-  final String duration;
+  final int duration;
   @override
-  final String whatsappUrl;
+  final String? whatsappUrl;
+  @override
+  final String? startDate;
+  @override
+  final String? endDate;
+  @override
+  final String? price;
 
   @override
   String toString() {
-    return 'SubscriptionModel(plan: $plan, category: $category, duration: $duration, whatsappUrl: $whatsappUrl)';
+    return 'SubscriptionModel(plan: $plan, category: $category, duration: $duration, whatsappUrl: $whatsappUrl, startDate: $startDate, endDate: $endDate, price: $price)';
   }
 
   @override
@@ -174,13 +228,17 @@ class _$SubscriptionModelImpl implements _SubscriptionModel {
             (identical(other.duration, duration) ||
                 other.duration == duration) &&
             (identical(other.whatsappUrl, whatsappUrl) ||
-                other.whatsappUrl == whatsappUrl));
+                other.whatsappUrl == whatsappUrl) &&
+            (identical(other.startDate, startDate) ||
+                other.startDate == startDate) &&
+            (identical(other.endDate, endDate) || other.endDate == endDate) &&
+            (identical(other.price, price) || other.price == price));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, plan, category, duration, whatsappUrl);
+  int get hashCode => Object.hash(runtimeType, plan, category, duration,
+      whatsappUrl, startDate, endDate, price);
 
   /// Create a copy of SubscriptionModel
   /// with the given fields replaced by the non-null parameter values.
@@ -203,8 +261,11 @@ abstract class _SubscriptionModel implements SubscriptionModel {
   const factory _SubscriptionModel(
       {required final String plan,
       required final String category,
-      required final String duration,
-      required final String whatsappUrl}) = _$SubscriptionModelImpl;
+      required final int duration,
+      final String? whatsappUrl,
+      final String? startDate,
+      final String? endDate,
+      final String? price}) = _$SubscriptionModelImpl;
 
   factory _SubscriptionModel.fromJson(Map<String, dynamic> json) =
       _$SubscriptionModelImpl.fromJson;
@@ -214,9 +275,15 @@ abstract class _SubscriptionModel implements SubscriptionModel {
   @override
   String get category;
   @override
-  String get duration;
+  int get duration;
   @override
-  String get whatsappUrl;
+  String? get whatsappUrl;
+  @override
+  String? get startDate;
+  @override
+  String? get endDate;
+  @override
+  String? get price;
 
   /// Create a copy of SubscriptionModel
   /// with the given fields replaced by the non-null parameter values.

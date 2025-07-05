@@ -10,11 +10,13 @@ class SubscriptionModel with _$SubscriptionModel {
   const factory SubscriptionModel({
     required String plan,
     required String category,
-    required String duration,
-    required String whatsappUrl,
+    required int duration, 
+    String? whatsappUrl,   
+    String? startDate,  
+    String? endDate,     
+    String? price,        
   }) = _SubscriptionModel;
 
   factory SubscriptionModel.fromJson(Map<String, dynamic> json) =>
       _$SubscriptionModelFromJson(json);
 }
-

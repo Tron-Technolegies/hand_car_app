@@ -1,15 +1,14 @@
 import 'dart:developer';
-
-import 'package:hand_car/features/Subscriptions/service/subscription_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:hand_car/features/Subscriptions/service/subscription_service.dart';
 
 part 'my_subscription_controller.g.dart';
 
 @riverpod
 class MySubscriptionController extends _$MySubscriptionController {
   @override
-  Future<Map<String, dynamic>> build() async {
-    log('Building SubscriptionNotifier');
+  FutureOr<Map<String, dynamic>> build() async {
+    log('Building MySubscriptionController');
     return await _fetchSubscriptionStatus();
   }
 
