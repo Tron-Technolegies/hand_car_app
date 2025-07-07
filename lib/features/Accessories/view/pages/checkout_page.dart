@@ -44,13 +44,23 @@ class CheckOutPage extends HookConsumerWidget {
           orElse: () => addressState.addresses.first,
         );
         selectedAddress.value = defaultAddress.id;
+        log('Set default address: ${defaultAddress.id}');
       }
       return null;
     }, [addressState.addresses]);
 
     // Function to format address from AddressModel
     String formatAddress(dynamic address) {
-      return '${address.street}, ${address.city}, ${address.state}, ZIP: ${address.zipCode}';
+      final parts = [
+        address.street,
+        address.buildingName,
+        address.floorApartmentNo,
+        address.areaDistrict,
+        address.city,
+        address.country,
+      ].where((e) => e != null && e.isNotEmpty).join(', ');
+      log('Formatted address: $parts');
+      return parts;
     }
 
     // Function to handle refresh
@@ -59,7 +69,7 @@ class CheckOutPage extends HookConsumerWidget {
       isRefreshing.value = true;
       try {
         await addressController.fetchAddresses();
-        log('Address fetch completed successfully');
+        log('Address fetch completed successfully. Addresses: ${addressState.addresses.length}');
       } catch (e) {
         log('Error fetching addresses: $e');
         if (context.mounted) {
@@ -88,7 +98,6 @@ class CheckOutPage extends HookConsumerWidget {
           .map((item) =>
               '- ${item['name']} (Qty: ${item['quantity']}, Price: ${item['price']})')
           .join('\n');
-      // Extract coupon details
       final coupon = orderDetails['coupon'] as Map<String, dynamic>?;
       String couponDetails = '';
       if (coupon != null) {
@@ -102,13 +111,13 @@ Coupon Applied:
 Order Confirmation
 Order ID: ${orderResponse.orderId}
 Name: ${orderDetails['name']}
-phone: ${orderDetails['phone']}
+Phone: ${orderDetails['contact']}
 Address: ${orderDetails['address']}
 Total: ${orderDetails['total_price']}
 Items:
 $items
 $couponDetails
-Please confirm payment details.
+Please confirm your address details.
 ''';
     }
 
@@ -161,8 +170,9 @@ Please confirm payment details.
               SizedBox(height: context.space.space_200),
 
               // Address List Section
-              Builder(
-                builder: (context) {
+              ValueListenableBuilder<String?>(
+                valueListenable: selectedAddress,
+                builder: (context, selectedId, child) {
                   if (addressState.isLoading || isRefreshing.value) {
                     return const Center(child: CircularProgressIndicator());
                   }
@@ -193,11 +203,11 @@ Please confirm payment details.
                             'No addresses found',
                             style: context.typography.bodyLarge,
                           ),
-                          // TextButton.icon(
-                          //   icon: const Icon(Icons.add),
-                          //   label: const Text('Add New Address'),
-                          //   onPressed: () => showAddressForm.value = true,
-                          // ),
+                          TextButton.icon(
+                            icon: const Icon(Icons.add),
+                            label: const Text('Add New Address'),
+                            onPressed: () => showAddressForm.value = true,
+                          ),
                         ],
                       ),
                     );
@@ -262,6 +272,7 @@ Please confirm payment details.
                 child: ButtonWidget(
                   label: "Place Order",
                   onTap: () async {
+                    log('Attempting to place order with selected address: ${selectedAddress.value}');
                     // Check authentication
                     final isAuthenticated =
                         await authController.isAuthenticated();
@@ -282,6 +293,7 @@ Please confirm payment details.
 
                     // Validate address selection
                     if (selectedAddress.value == null) {
+                      log('No address selected');
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
@@ -321,6 +333,7 @@ Please confirm payment details.
                               (address) => address.id == selectedAddress.value,
                               orElse: () => throw const CartException(
                                   'Selected address not found'));
+                      log('Selected address model: ${selectedAddressModel.toString()}');
 
                       // Format full address
                       final fullAddress = formatAddress(selectedAddressModel);
@@ -348,17 +361,17 @@ Please confirm payment details.
 
                       // Construct WhatsApp URL
                       final whatsappNumber =
-                          '9895499872'; // Replace with your business number, e.g., '+1234567890'
+                          '9895499872'; // Replace with your business number
                       final message = createWhatsAppMessage(orderResponse);
                       final encodedMessage = Uri.encodeComponent(message);
                       final whatsappUrl =
                           'https://wa.me/$whatsappNumber?text=$encodedMessage';
 
-                      // Show success dialog with Make Payment button
+                      // Show success dialog with Verify Address button
                       showModernDialog(
                         context,
                         "Order Placed Successfully",
-                        "Your order (ID: ${orderResponse.orderId}) has been successfully placed. Proceed to make payment via WhatsApp.",
+                        "Your order (ID: ${orderResponse.orderId}) has been successfully placed. Please verify your address details via WhatsApp.",
                         "Make Payment",
                         () async {
                           final uri = Uri.parse(whatsappUrl);

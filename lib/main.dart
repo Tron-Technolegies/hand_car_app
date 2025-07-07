@@ -6,8 +6,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:hand_car/config.dart';
 import 'package:hand_car/core/router/router.dart';
 import 'package:hand_car/core/theme/light_theme.dart';
-
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:upgrader/upgrader.dart'; // Import upgrader
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,14 +26,30 @@ class MainApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
 
-    return MaterialApp.router(
-      
-      title: 'Hand Car',
-      debugShowCheckedModeBanner: false,
-      theme: lightTheme,
-      scaffoldMessengerKey: scaffoldMessengerKey,
-      // Add navigatorKey for CustomToast
-      routerConfig: router,
+    return UpgradeAlert(
+      upgrader: Upgrader(
+     
+        minAppVersion: '2.0.0',
+        messages: CustomUpgraderMessages(),
+        debugDisplayAlways: false,
+      ),
+      child: MaterialApp.router(
+        title: 'Hand Car',
+        debugShowCheckedModeBanner: false,
+        theme: lightTheme,
+        scaffoldMessengerKey: scaffoldMessengerKey,
+        routerConfig: router,
+      ),
     );
   }
+}
+
+// Custom messages for the update dialog
+class CustomUpgraderMessages extends UpgraderMessages {
+  @override
+  String get title => 'Update Required';
+  @override
+  String get body => 'A new version of Hand Car is available. Update now to continue using the app.';
+  @override
+  String get prompt => 'Update Now';
 }
