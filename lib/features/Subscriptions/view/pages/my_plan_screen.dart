@@ -3,6 +3,8 @@ import 'package:hand_car/features/Subscriptions/controller/my_subscription_contr
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Subscriptions/controller/subscription_controller.dart';
+import 'package:hand_car/core/widgets/button_widget.dart';
+import 'package:hand_car/core/utils/snackbar.dart';
 
 class MyPlanScreen extends HookConsumerWidget {
   final String serviceType;
@@ -15,13 +17,35 @@ class MyPlanScreen extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('${_formatServiceType(serviceType)} Subscription'),
-        backgroundColor: context.colors.primary,
+        title: Text(
+          '${_formatServiceType(serviceType)} Subscription',
+          style: context.typography.bodyLarge,
+        ),
+        backgroundColor: context.colors.white,
       ),
-      body: subscriptionAsync.when(
-        data: (data) => _buildContent(context, data, ref, serviceType),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('Error: $error')),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          // await ref.read(mySubscriptionControllerProvider.notifier).;
+        },
+        child: LayoutBuilder(
+          builder: (context, constraints) => SingleChildScrollView(
+            padding: EdgeInsets.all(context.space.space_200),
+            child: subscriptionAsync.when(
+              data: (data) =>
+                  _buildContent(context, data, ref, serviceType, constraints),
+              loading: () => SizedBox(
+                height: constraints.maxHeight,
+                child: const Center(child: CircularProgressIndicator()),
+              ),
+              error: (error, _) => SizedBox(
+                height: constraints.maxHeight,
+                child: Center(
+                    child: Text('Error: $error',
+                        style: context.typography.bodyMedium)),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -34,7 +58,7 @@ class MyPlanScreen extends HookConsumerWidget {
   }
 
   Widget _buildContent(BuildContext context, Map<String, dynamic> data,
-      WidgetRef ref, String serviceType) {
+      WidgetRef ref, String serviceType, BoxConstraints constraints) {
     final isSubscribed = data['subscribed'] as bool? ?? false;
     final plan = data['plan'] as Map<String, dynamic>? ?? {};
     final theme = Theme.of(context);
@@ -44,78 +68,109 @@ class MyPlanScreen extends HookConsumerWidget {
             serviceType.toLowerCase();
 
     if (plan.isEmpty && isSubscribed) {
-      return const Center(child: Text('Subscription data is incomplete'));
+      return SizedBox(
+        height: constraints.maxHeight,
+        child: Center(
+            child: Text('Subscription data is incomplete',
+                style: context.typography.bodyMedium)),
+      );
     }
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Center(
+          child: Text(
             isServiceSubscribed ? 'Your Current Plan' : 'Available Plans',
-            style: theme.textTheme.headlineSmall?.copyWith(
+            style: context.typography.bodyLarge.copyWith(
               fontWeight: FontWeight.bold,
               color: context.colors.primary,
             ),
           ),
-          const SizedBox(height: 16),
-          if (isServiceSubscribed) ...[
-            _buildSubscribedView(data, theme),
-            const SizedBox(height: 16),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     // TODO: Implement subscription cancellation or management
-            //   },
-            //   style: ElevatedButton.styleFrom(
-            //     backgroundColor: Colors.redAccent,
-            //     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            //   ),
-            //   child: Text(
-            //     'Manage Subscription',
-            //     style: context.typography.bodyLarge.copyWith(color: Colors.white),
-            //   ),
-            // ),
-          ] else ...[
-            _buildAvailablePlans(context, ref, serviceType, theme),
-          ],
+        ),
+        SizedBox(height: context.space.space_200),
+        if (isServiceSubscribed) ...[
+          SizedBox(height: context.space.space_200),
+          Center(child: _buildSubscribedView(data, theme, context)),
+          SizedBox(height: context.space.space_200),
+          // SizedBox(
+          //   width: constraints.maxWidth * 0.6,
+          //   child: ButtonWidget(
+          //     label: 'Manage Subscription',
+          //     onTap: () {
+          //       // TODO: Implement subscription cancellation or management
+          //       SnackbarUtil.showsnackbar(message: 'Subscription management not implemented yet');
+          //     },
+          //   ),
+          // ),
+        ] else ...[
+          _buildAvailablePlans(context, ref, serviceType, theme, constraints),
         ],
-      ),
+      ],
     );
   }
 
-  Widget _buildSubscribedView(Map<String, dynamic> data, ThemeData theme) {
+  Widget _buildSubscribedView(
+      Map<String, dynamic> data, ThemeData theme, BuildContext context) {
     final plan = data['plan'] as Map<String, dynamic>;
     final vendors = data['vendors'] as List<dynamic>? ?? [];
 
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(context.space.space_100)),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(context.space.space_200),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               plan['name'] as String,
-              style: theme.textTheme.titleLarge
-                  ?.copyWith(fontWeight: FontWeight.bold),
+              style: context.typography.bodyLarge
+                  .copyWith(fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 8),
-            Text('Price: ${plan['price'] == 'N/A' ? 'Free' : plan['price']}'),
-            Text('Start Date: ${plan['start_date']}'),
-            Text('End Date: ${plan['end_date']}'),
-            const SizedBox(height: 12),
-            Text('Vendors:', style: theme.textTheme.titleMedium),
+            SizedBox(height: context.space.space_100),
+            Text(
+              'Price: ${plan['price'] == 'N/A' ? 'Free' : plan['price']}',
+              style: context.typography.bodyMedium,
+            ),
+            SizedBox(height: context.space.space_100),
+            Text(
+              'Start Date: ${plan['start_date']}',
+              style: context.typography.bodyMedium,
+            ),
+            SizedBox(height: context.space.space_100),
+            Text(
+              'End Date: ${plan['end_date']}',
+              style: context.typography.bodyMedium,
+            ),
+            SizedBox(height: context.space.space_200),
+            Text(
+              'Vendors:',
+              style: context.typography.bodyMedium
+                  .copyWith(fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: context.space.space_100),
             if (vendors.isEmpty)
-              const Text('No vendors available')
+              Text(
+                'No vendors available',
+                style: context.typography.bodyMedium
+                    .copyWith(color: const Color(0xff7D7D7D)),
+              )
             else
               ...vendors.map((vendor) => Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Name: ${vendor['name']}'),
-                      Text('Contact: ${vendor['contact']}'),
-                      const SizedBox(height: 8),
+                      Text(
+                        'Name: ${vendor['name']}',
+                        style: context.typography.bodyMedium,
+                      ),
+                      SizedBox(height: context.space.space_100),
+                      Text(
+                        'Contact: ${vendor['contact']}',
+                        style: context.typography.bodyMedium,
+                      ),
+                      SizedBox(height: context.space.space_100),
                     ],
                   )),
           ],
@@ -125,12 +180,17 @@ class MyPlanScreen extends HookConsumerWidget {
   }
 
   Widget _buildAvailablePlans(BuildContext context, WidgetRef ref,
-      String serviceType, ThemeData theme) {
+      String serviceType, ThemeData theme, BoxConstraints constraints) {
     final plansAsync = ref.watch(planNotifierProvider(serviceType));
 
     return plansAsync.when(
       data: (plans) => plans.isEmpty
-          ? const Center(child: Text('No plans available'))
+          ? SizedBox(
+              height: constraints.maxHeight,
+              child: Center(
+                  child: Text('No plans available',
+                      style: context.typography.bodyMedium)),
+            )
           : ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -139,46 +199,60 @@ class MyPlanScreen extends HookConsumerWidget {
                 final plan = plans[index];
                 return Card(
                   elevation: 4,
-                  margin: const EdgeInsets.only(bottom: 12),
+                  margin: EdgeInsets.only(bottom: context.space.space_200),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                      borderRadius:
+                          BorderRadius.circular(context.space.space_100)),
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: EdgeInsets.all(context.space.space_200),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           plan.name,
-                          style: theme.textTheme.titleLarge
-                              ?.copyWith(fontWeight: FontWeight.bold),
+                          style: context.typography.bodyLarge
+                              .copyWith(fontWeight: FontWeight.bold),
                         ),
-                        const SizedBox(height: 8),
-                        Text('Price: ${plan.price}'),
-                        Text('Service Type: ${plan.serviceType}'),
-                        Text('Duration: ${plan.duration}'),
+                        SizedBox(height: context.space.space_100),
+                        Text(
+                          'Price: ${plan.price}',
+                          style: context.typography.bodyMedium,
+                        ),
+                        SizedBox(height: context.space.space_100),
+                        Text(
+                          'Service Type: ${plan.serviceType}',
+                          style: context.typography.bodyMedium,
+                        ),
+                        SizedBox(height: context.space.space_100),
+                        Text(
+                          'Duration: ${plan.duration}',
+                          style: context.typography.bodyMedium,
+                        ),
                         if (plan.description != null &&
                             plan.description!.isNotEmpty) ...[
-                          const SizedBox(height: 8),
-                          Text('Features:'),
+                          SizedBox(height: context.space.space_100),
+                          Text(
+                            'Features:',
+                            style: context.typography.bodyMedium
+                                .copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: context.space.space_100),
                           Text(
                             plan.description!,
-                            style: const TextStyle(fontStyle: FontStyle.italic),
+                            style: context.typography.bodyMedium
+                                .copyWith(fontStyle: FontStyle.italic),
                           ),
                         ],
-                        const SizedBox(height: 8),
-                        ElevatedButton(
-                          onPressed: () {
-                            // TODO: Implement plan subscription logic
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: context.colors.primary,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 24, vertical: 12),
-                          ),
-                          child: Text(
-                            'Subscribe',
-                            style: context.typography.bodyLarge
-                                .copyWith(color: Colors.white),
+                        SizedBox(height: context.space.space_200),
+                        SizedBox(
+                          width: constraints.maxWidth * 0.6,
+                          child: ButtonWidget(
+                            label: 'Subscribe',
+                            onTap: () {
+                              // TODO: Implement plan subscription logic
+                              SnackbarUtil.showsnackbar(
+                                  message: 'Subscription not implemented yet');
+                            },
                           ),
                         ),
                       ],
@@ -187,8 +261,16 @@ class MyPlanScreen extends HookConsumerWidget {
                 );
               },
             ),
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => Center(child: Text('Error loading plans: $error')),
+      loading: () => SizedBox(
+        height: constraints.maxHeight,
+        child: const Center(child: CircularProgressIndicator()),
+      ),
+      error: (error, _) => SizedBox(
+        height: constraints.maxHeight,
+        child: Center(
+            child: Text('Error loading plans: $error',
+                style: context.typography.bodyMedium)),
+      ),
     );
   }
 }
