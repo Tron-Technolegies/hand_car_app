@@ -19,6 +19,19 @@ class AccessoriesProductCardWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Watch the wishlist state more efficiently
+    final wishlistState = ref.watch(wishlistNotifierProvider);
+    final price = double.tryParse(product.price) ?? 0.0; 
+
+    final originalPrice = price / (1 - product.discountPercentage / 100);
+
+
+    final isInWishlist = wishlistState.maybeWhen(
+      data: (wishlist) => wishlist.containsKey(product.id.toString()),
+      orElse: () => false,
+    );
+
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -51,17 +64,57 @@ class AccessoriesProductCardWidget extends ConsumerWidget {
                           ),
                         )
                       : const SizedBox(),
-                  IconButton(
-                    onPressed: () {
-                      ref
-                          .read(wishlistNotifierProvider.notifier)
-                          .addToWishlist(product.id);
+                  // Fixed wishlist button with proper state management
+                  Consumer(
+                    builder: (context, ref, child) {
+                      final wishlistAsync = ref.watch(wishlistNotifierProvider);
+                      final isLoading = wishlistAsync.isLoading;
+                      final isInWishlist = wishlistAsync.maybeWhen(
+                        data: (wishlist) => wishlist.containsKey(product.id.toString()),
+                        orElse: () => false,
+                      );
+
+                      return IconButton(
+                        onPressed: isLoading
+                            ? null
+                            : () async {
+                                try {
+                                  await ref
+                                      .read(wishlistNotifierProvider.notifier)
+                                      .toggleWishlist(product.id, productName: product.name);
+
+                                  // Show success message
+                                  if (context.mounted) {
+                                    SnackbarUtil.showsnackbar(
+                                      message: isInWishlist
+                                          ? '${product.name} removed from wishlist'
+                                          : '${product.name} added to wishlist',
+                                      showretry: false,
+                                    );
+                                  }
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    SnackbarUtil.showsnackbar(
+                                      message: e.toString().contains('login')
+                                          ? 'Please login to continue'
+                                          : 'Failed to update wishlist',
+                                      showretry: false,
+                                    );
+                                  }
+                                }
+                              },
+                        icon: isLoading
+                            ? const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              )
+                            : Icon(
+                                isInWishlist ? Icons.favorite : Icons.favorite_border,
+                                color: isInWishlist ? context.colors.warning : null,
+                              ),
+                      );
                     },
-                    icon: Icon(ref
-                            .watch(wishlistNotifierProvider.notifier)
-                            .isInWishlist(product.id.toString())
-                        ? Icons.favorite
-                        : Icons.favorite_border),
                   ),
                 ],
               ),
@@ -90,14 +143,15 @@ class AccessoriesProductCardWidget extends ConsumerWidget {
                 maxLines: 2,
               ),
               SizedBox(height: context.space.space_50),
+              // Current/Discounted Price
               Text(
-                "AED ${product.price}",
-                style: context.typography.bodyLarge
-                    .copyWith(color: context.colors.primaryTxt),
+                "AED ${price.toStringAsFixed(2)}",
+                style: context.typography.bodyLarge.copyWith(color: context.colors.primaryTxt),
               ),
+              // Original Price (crossed out)
               Text(
-                "AED ${product.price}",
-                style: TextStyle(
+                "AED ${originalPrice.toStringAsFixed(2)}",
+                style: const TextStyle(
                   color: Colors.grey,
                   decoration: TextDecoration.lineThrough,
                 ),
@@ -115,12 +169,19 @@ class AccessoriesProductCardWidget extends ConsumerWidget {
                       await ref
                           .read(cartControllerProvider.notifier)
                           .addToCart(product.id);
-                      SnackbarUtil.showsnackbar(
+                      if (context.mounted) {
+                        SnackbarUtil.showsnackbar(
                           message: "${product.name} added to cart",
-                          showretry: false);
+                          showretry: false,
+                        );
+                      }
                     } catch (e) {
-                      SnackbarUtil.showsnackbar(
-                          message: "Failed to add to cart", showretry: false);
+                      if (context.mounted) {
+                        SnackbarUtil.showsnackbar(
+                          message: "Failed to add to cart",
+                          showretry: false,
+                        );
+                      }
                     }
                   },
                 ),

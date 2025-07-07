@@ -1,4 +1,3 @@
-
 // features/Accessories/view/pages/accessories_details_page.dart
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -33,6 +32,9 @@ class AccessoriesDetailsPage extends HookConsumerWidget {
     final debouncer = useRef<Timer?>(null);
     final reviewsAsync = ref.watch(reviewControllerProvider);
     final wishlistAsync = ref.watch(wishlistNotifierProvider);
+    final price = double.tryParse(product.price) ?? 0.0;
+
+    final originalPrice = price / (1 - product.discountPercentage / 100);
     final isWishlistLoading = useState(false);
 
     useEffect(() {
@@ -68,13 +70,13 @@ class AccessoriesDetailsPage extends HookConsumerWidget {
                     children: [
                       Text(product.name, style: context.typography.bodyLarge),
                       SizedBox(height: context.space.space_100),
-                      Text(
-                        "Model Number: 'M7899'",
-                        style: context.typography.bodyMedium.copyWith(color: const Color(0xff7D7D7D)),
-                      ),
+                      // Text(
+                      //   "Model Number: 'M7899'",
+                      //   style: context.typography.bodyMedium.copyWith(color: const Color(0xff7D7D7D)),
+                      // ),
                       SizedBox(height: context.space.space_100),
                       Text(
-                        'AED 400.00',
+                        'AED ${originalPrice.toStringAsFixed(2)}',
                         style: TextStyle(
                           color: context.colors.primaryTxt,
                           fontSize: context.typography.bodyMedium.fontSize,
@@ -93,40 +95,54 @@ class AccessoriesDetailsPage extends HookConsumerWidget {
                       ),
                       SizedBox(height: context.space.space_200),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: context.space.space_100),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: context.space.space_100),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: context.space.space_100),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: context.space.space_100),
                               child: SizedBox(
                                 width: constraints.maxWidth * 0.6,
                                 child: ButtonWidget(
                                   label: "Add to Cart",
                                   onTap: () {
-                                    ref.read(cartControllerProvider.notifier).addToCart(product.id);
-                                    SnackbarUtil.showsnackbar(message: '${product.name} added to cart');
+                                    ref
+                                        .read(cartControllerProvider.notifier)
+                                        .addToCart(product.id);
+                                    SnackbarUtil.showsnackbar(
+                                        message:
+                                            '${product.name} added to cart');
                                   },
                                 ),
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: context.space.space_100),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: context.space.space_100),
                               child: Container(
                                 decoration: BoxDecoration(
-                                  border: Border.all(color: context.colors.primaryTxt),
-                                  borderRadius: BorderRadius.circular(context.space.space_100),
+                                  border: Border.all(
+                                      color: context.colors.primaryTxt),
+                                  borderRadius: BorderRadius.circular(
+                                      context.space.space_100),
                                 ),
                                 child: wishlistAsync.when(
                                   data: (wishlist) {
-                                    final isInWishlist = wishlist.containsKey(product.id.toString());
+                                    final isInWishlist = wishlist
+                                        .containsKey(product.id.toString());
                                     return IconButton(
                                       onPressed: isWishlistLoading.value
                                           ? null
                                           : () async {
                                               isWishlistLoading.value = true;
                                               try {
-                                                await ref.read(wishlistNotifierProvider.notifier).toggleWishlist(product.id);
+                                                await ref
+                                                    .read(
+                                                        wishlistNotifierProvider
+                                                            .notifier)
+                                                    .toggleWishlist(product.id);
                                                 SnackbarUtil.showsnackbar(
                                                   message: isInWishlist
                                                       ? '${product.name} removed from wishlist'
@@ -134,10 +150,11 @@ class AccessoriesDetailsPage extends HookConsumerWidget {
                                                 );
                                               } catch (e) {
                                                 SnackbarUtil.showsnackbar(
-                                                  message: e.toString().contains('login')
+                                                  message: e
+                                                          .toString()
+                                                          .contains('login')
                                                       ? 'Please login to continue'
                                                       : 'Failed to update wishlist',
-                                                 
                                                 );
                                               } finally {
                                                 isWishlistLoading.value = false;
@@ -147,11 +164,16 @@ class AccessoriesDetailsPage extends HookConsumerWidget {
                                           ? const SizedBox(
                                               width: 24,
                                               height: 24,
-                                              child: CircularProgressIndicator(strokeWidth: 2),
+                                              child: CircularProgressIndicator(
+                                                  strokeWidth: 2),
                                             )
                                           : Icon(
-                                              isInWishlist ? Icons.favorite : Icons.favorite_border,
-                                              color: isInWishlist ? context.colors.warning : null,
+                                              isInWishlist
+                                                  ? Icons.favorite
+                                                  : Icons.favorite_border,
+                                              color: isInWishlist
+                                                  ? context.colors.warning
+                                                  : null,
                                             ),
                                     );
                                   },
@@ -160,7 +182,8 @@ class AccessoriesDetailsPage extends HookConsumerWidget {
                                     icon: const SizedBox(
                                       width: 24,
                                       height: 24,
-                                      child: CircularProgressIndicator(strokeWidth: 2),
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 2),
                                     ),
                                   ),
                                   error: (e, _) => IconButton(
@@ -197,7 +220,8 @@ class AccessoriesDetailsPage extends HookConsumerWidget {
                 ProductSection(
                   title: 'Specifications',
                   content: [
-                    Text('No specifications available', style: context.typography.bodyMedium),
+                    Text('No specifications available',
+                        style: context.typography.bodyMedium),
                   ],
                 ),
                 ProductSection(
@@ -216,10 +240,12 @@ class AccessoriesDetailsPage extends HookConsumerWidget {
                           showModalBottomSheet(
                             isScrollControlled: true,
                             shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(20)),
                             ),
                             context: context,
-                            builder: (context) => BottomSheetForWriteAccessoryReviewWidget(
+                            builder: (context) =>
+                                BottomSheetForWriteAccessoryReviewWidget(
                               productId: product.id.toString(),
                               productName: product.name,
                             ),
@@ -245,7 +271,9 @@ class AccessoriesDetailsPage extends HookConsumerWidget {
                     log('AccessoriesDetailsPage: Reviews error state: $e');
                     return SizedBox(
                       height: context.space.space_500 * 2,
-                      child: Center(child: Text('Error: ${e.toString().replaceFirst('Exception: ', '')}')),
+                      child: Center(
+                          child: Text(
+                              'Error: ${e.toString().replaceFirst('Exception: ', '')}')),
                     );
                   },
                   data: (reviewList) {

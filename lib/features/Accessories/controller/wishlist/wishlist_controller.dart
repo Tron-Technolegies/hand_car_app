@@ -1,4 +1,3 @@
-
 import 'dart:developer';
 import 'package:hand_car/core/router/user_validation.dart';
 import 'package:hand_car/features/Accessories/model/wishlist/wishlist_model.dart';
@@ -58,68 +57,76 @@ class WishlistNotifier extends _$WishlistNotifier {
 
   Future<void> addToWishlist(int productId, {String? productName}) async {
     if (!TokenStorage().hasValidTokens) {
-      state = AsyncValue.error('Please login to continue', StackTrace.current);
-      return;
+      throw Exception('Please login to continue');
     }
 
     final previousState = state.value ?? {};
-    state = const AsyncValue.loading();
+    
+    // Optimistic update: temporarily add to wishlist
+    final optimisticState = Map<String, WishlistResponse>.from(previousState);
+    final tempWishlistItem = WishlistResponse(
+      id: productId,
+      productName: productName ?? 'Unknown Product',
+      productPrice: 0.0,
+      productImage: null,
+      productDescription: null,
+    );
+    optimisticState[productId.toString()] = tempWishlistItem;
+    state = AsyncValue.data(optimisticState);
 
     try {
       log('WishlistNotifier: Adding product to wishlist: $productId');
       final service = ref.read(wishlistServicesProvider);
       final response = await service.addToWishlist(productId, productName: productName);
 
-      // Update state with fetched data
+      // Update with actual response
       final currentItems = Map<String, WishlistResponse>.from(previousState);
       currentItems[response.id.toString()] = response;
-
       state = AsyncValue.data(currentItems);
 
-      // Force refresh to ensure getWishlist data is used
-      await fetchWishlist();
       log('WishlistNotifier: Product added to wishlist: ID ${response.id}, Name: ${response.productName}');
     } catch (error, stackTrace) {
       log('WishlistNotifier: Error adding to wishlist: $error\n$stackTrace');
+      // Revert to previous state on error
       state = AsyncValue.data(Map<String, WishlistResponse>.from(previousState));
-      state = AsyncValue.error(error, stackTrace);
       rethrow;
     }
   }
 
   Future<void> removeFromWishlist(String productId) async {
     if (!TokenStorage().hasValidTokens) {
-      state = AsyncValue.error('Please login to continue', StackTrace.current);
-      return;
+      throw Exception('Please login to continue');
     }
 
     final previousState = state.value ?? {};
-    state = const AsyncValue.loading();
+    
+    // Optimistic update: temporarily remove from wishlist
+    final optimisticState = Map<String, WishlistResponse>.from(previousState);
+    optimisticState.remove(productId);
+    state = AsyncValue.data(optimisticState);
 
     try {
       log('WishlistNotifier: Removing product from wishlist: $productId');
       final service = ref.read(wishlistServicesProvider);
       final success = await service.removeFromWishlist(productId);
 
-      final currentItems = Map<String, WishlistResponse>.from(previousState);
       if (success) {
-        currentItems.remove(productId);
-        state = AsyncValue.data(currentItems);
+        // Keep the optimistic state since it was successful
         log('WishlistNotifier: Product removed from wishlist: $productId');
       } else {
-        state = AsyncValue.data(currentItems);
+        // Revert to previous state if removal failed
+        state = AsyncValue.data(Map<String, WishlistResponse>.from(previousState));
         throw Exception('Failed to remove from wishlist');
       }
     } catch (error, stackTrace) {
       log('WishlistNotifier: Error removing from wishlist: $error\n$stackTrace');
-      final currentItems = Map<String, WishlistResponse>.from(previousState);
+      
       if (error.toString().contains('Product not found in wishlist')) {
+        // If product wasn't in wishlist, keep it removed
         log('WishlistNotifier: Product not in wishlist, treated as removed');
-        currentItems.remove(productId);
-        state = AsyncValue.data(currentItems);
       } else {
-        state = AsyncValue.data(currentItems);
-        state = AsyncValue.error(error, stackTrace);
+        // Revert to previous state on other errors
+        state = AsyncValue.data(Map<String, WishlistResponse>.from(previousState));
         rethrow;
       }
     }
@@ -128,12 +135,14 @@ class WishlistNotifier extends _$WishlistNotifier {
   Future<void> toggleWishlist(int productId, {String? productName}) async {
     final productIdStr = productId.toString();
     final wasInWishlist = isInWishlist(productIdStr);
+    
     if (wasInWishlist) {
       await removeFromWishlist(productIdStr);
     } else {
       await addToWishlist(productId, productName: productName);
     }
-    log('WishlistNotifier: Toggled wishlist for product ID: $productId, isInWishlist: ${isInWishlist(productIdStr)}');
+    
+    log('WishlistNotifier: Toggled wishlist for product ID: $productId, wasInWishlist: $wasInWishlist, nowInWishlist: ${isInWishlist(productIdStr)}');
   }
 
   bool isInWishlist(String productId) {
@@ -142,6 +151,17 @@ class WishlistNotifier extends _$WishlistNotifier {
 
   bool isInWishlistById(int productId) {
     return isInWishlist(productId.toString());
+  }
+
+  // Method to clear wishlist (useful for logout)
+  void clearWishlist() {
+    state = const AsyncValue.data({});
+    log('WishlistNotifier: Wishlist cleared');
+  }
+
+  // Method to invalidate and refetch wishlist
+  Future<void> refresh() async {
+    await fetchWishlist();
   }
 }
 
