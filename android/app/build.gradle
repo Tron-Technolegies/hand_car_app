@@ -8,11 +8,13 @@ def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file('key.properties')
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+} else {
+    logger.warn('key.properties file not found. Release signing may fail.')
 }
 
 android {
     namespace 'com.org.hand_car_app'
-    compileSdk 34
+    compileSdk 35
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -24,12 +26,18 @@ android {
         jvmTarget = '17'
     }
 
+    aaptOptions {
+        cruncherEnabled = false
+        noCompress 'png', 'jpg', 'jpeg', 'gif', 'lottie', 'json'
+    }
+
     defaultConfig {
         applicationId 'com.org.hand_car_app'
         minSdk 21
         targetSdk 35
-        versionCode 1
-        versionName '1.0'
+        versionCode flutter.versionCode
+        versionName flutter.versionName
+        multiDexEnabled true
     }
 
     signingConfigs {
@@ -42,12 +50,23 @@ android {
     }
 
     buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+            minifyEnabled false
+        }
         release {
             signingConfig signingConfigs.release
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }
 
 flutter {
     source '../..'
+}
+
+dependencies {
+    implementation 'androidx.multidex:multidex:2.0.1'
 }

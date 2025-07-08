@@ -32,7 +32,7 @@ class PlansContainer extends HookConsumerWidget {
   String createWhatsAppUrl(String plan, String price, String duration) {
     final message = Uri.encodeComponent(
         "I would like to subscribe to the $plan plan for $duration months at a price of AED $price.");
-    return "https://wa.me/917025791186?text=$message";
+    return "https://wa.me/971503507618?text=$message";
   }
 
   List<String> parseFeatures(String description) {

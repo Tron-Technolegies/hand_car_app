@@ -28,8 +28,6 @@ class MainApp extends ConsumerWidget {
 
     return UpgradeAlert(
       upgrader: Upgrader(
-     
-        minAppVersion: '2.0.0',
         messages: CustomUpgraderMessages(),
         debugDisplayAlways: false,
       ),
@@ -44,12 +42,13 @@ class MainApp extends ConsumerWidget {
   }
 }
 
-// Custom messages for the update dialog
+
 class CustomUpgraderMessages extends UpgraderMessages {
   @override
   String get title => 'Update Required';
   @override
-  String get body => 'A new version of Hand Car is available. Update now to continue using the app.';
+  String get body =>
+      'A new version of Hand Car is available. Update now to continue using the app.';
   @override
   String get prompt => 'Update Now';
 }

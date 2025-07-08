@@ -225,23 +225,23 @@ class ServicesPage extends HookConsumerWidget {
           ),
         ),
         centerTitle: true,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(8),
-                onTap: showFilterBottomSheet,
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  child: buildFilterChip(),
-                ),
-              ),
-            ),
-          ),
+        // actions: [
+        //   Padding(
+        //     padding: const EdgeInsets.only(right: 8),
+        //     child: Material(
+        //       color: Colors.transparent,
+        //       child: InkWell(
+        //         borderRadius: BorderRadius.circular(8),
+        //         onTap: showFilterBottomSheet,
+        //         child: Container(
+        //           padding: const EdgeInsets.all(8),
+        //           child: buildFilterChip(),
+        //         ),
+        //       ),
+        //     ),
+        //   ),
       
-        ],
+        // ],
       ),
 
       endDrawerEnableOpenDragGesture: true,
