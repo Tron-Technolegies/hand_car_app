@@ -1,7 +1,7 @@
 name: hand_car
 description: "A new Flutter project."
 publish_to: 'none'
-version: 2.0.0+4
+version: 2.0.0+5
 
 environment:
   sdk: '>=3.5.1 <4.0.0'
@@ -55,6 +55,7 @@ dependencies:
   pinput: ^5.0.1
   upgrader: ^11.4.0
   package_info_plus: ^8.3.0
+  cupertino_icons: ^1.0.8
 
 dev_dependencies:
   flutter_test:
