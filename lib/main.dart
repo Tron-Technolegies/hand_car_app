@@ -26,18 +26,23 @@ class MainApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
 
-    return UpgradeAlert(
-      upgrader: Upgrader(
-        messages: CustomUpgraderMessages(),
-        debugDisplayAlways: false,
-      ),
-      child: MaterialApp.router(
-        title: 'Hand Car',
-        debugShowCheckedModeBanner: false,
-        theme: lightTheme,
-        scaffoldMessengerKey: scaffoldMessengerKey,
-        routerConfig: router,
-      ),
+    return MaterialApp.router(
+      title: 'Hand Car',
+      debugShowCheckedModeBanner: false,
+      theme: lightTheme,
+      scaffoldMessengerKey: scaffoldMessengerKey,
+      routerConfig: router,
+        builder: (context, child) {
+        return UpgradeAlert(
+          navigatorKey: router.routerDelegate.navigatorKey,
+          cupertinoButtonTextStyle: TextStyle(color: Colors.black),
+          upgrader: Upgrader(
+            messages: CustomUpgraderMessages(),
+          ),
+          
+          child: child ?? Text('child'),
+        );
+      },
     );
   }
 }

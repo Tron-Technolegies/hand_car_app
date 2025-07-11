@@ -32,9 +32,9 @@ class AccessoriesDetailsPage extends HookConsumerWidget {
     final debouncer = useRef<Timer?>(null);
     final reviewsAsync = ref.watch(reviewControllerProvider);
     final wishlistAsync = ref.watch(wishlistNotifierProvider);
-    final price = double.tryParse(product.price) ?? 0.0;
+    // final price = double.tryParse(product.price) ?? 0.0;
 
-    final originalPrice = price / (1 - product.discountPercentage / 100);
+    // final originalPrice = price / (1 - product.discountPercentage / 100);
     final isWishlistLoading = useState(false);
 
     useEffect(() {
@@ -76,7 +76,7 @@ class AccessoriesDetailsPage extends HookConsumerWidget {
                       // ),
                       SizedBox(height: context.space.space_100),
                       Text(
-                        'AED ${originalPrice.toStringAsFixed(2)}',
+                        'AED ${product.originalPrice}',
                         style: TextStyle(
                           color: context.colors.primaryTxt,
                           fontSize: context.typography.bodyMedium.fontSize,
@@ -85,7 +85,7 @@ class AccessoriesDetailsPage extends HookConsumerWidget {
                       ),
                       SizedBox(height: context.space.space_100),
                       Text(
-                        'AED ${product.price} Inclusive of VAT',
+                        'AED ${product.discountedPrice} Inclusive of VAT',
                         style: context.typography.bodyMedium,
                       ),
                       SizedBox(height: context.space.space_100),

@@ -12,11 +12,14 @@ _$ProductModelImpl _$$ProductModelImplFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String,
       category: json['category'] as String,
       brand: json['brand'] as String,
-      price: json['price'] as String,
+      originalPrice: (json['original_price'] as num).toDouble(),
+      discountedPrice: (json['discounted_price'] as num).toDouble(),
       image: json['image'] as String?,
       discountPercentage: (json['discount_percentage'] as num?)?.toInt() ?? 0,
       description: json['description'] as String? ?? '',
       isBestseller: json['is_bestseller'] as bool? ?? false,
+      averageRating: (json['average_rating'] as num?)?.toDouble() ?? 0.0,
+      totalReviews: (json['total_reviews'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$$ProductModelImplToJson(_$ProductModelImpl instance) =>
@@ -25,9 +28,12 @@ Map<String, dynamic> _$$ProductModelImplToJson(_$ProductModelImpl instance) =>
       'name': instance.name,
       'category': instance.category,
       'brand': instance.brand,
-      'price': instance.price,
+      'original_price': instance.originalPrice,
+      'discounted_price': instance.discountedPrice,
       if (instance.image case final value?) 'image': value,
       'discount_percentage': instance.discountPercentage,
       'description': instance.description,
       'is_bestseller': instance.isBestseller,
+      'average_rating': instance.averageRating,
+      'total_reviews': instance.totalReviews,
     };

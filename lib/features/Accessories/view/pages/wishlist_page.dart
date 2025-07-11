@@ -59,9 +59,10 @@ class WishlistScreen extends ConsumerWidget {
                       brand: '',
                       id: item.id,
                       name: item.productName ?? 'Unknown Product',
-                      price: item.productPrice?.toStringAsFixed(2) ?? '0.0',
+                      originalPrice: item.productPrice ?? 0.0,
                       image: item.productImage ?? '',
                       description: item.productDescription ?? '',
+                      discountedPrice: 0.0,
                     );
                     return WishlistGridItem(item: item, product: product);
                   },

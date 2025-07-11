@@ -21,16 +21,14 @@ class AccessoriesProductCardWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Watch the wishlist state more efficiently
     final wishlistState = ref.watch(wishlistNotifierProvider);
-    final price = double.tryParse(product.price) ?? 0.0; 
+    // final price = double.tryParse(product.price) ?? 0.0;
 
-    final originalPrice = price / (1 - product.discountPercentage / 100);
-
+    // final originalPrice = price / (1 - product.discountPercentage / 100);
 
     final isInWishlist = wishlistState.maybeWhen(
       data: (wishlist) => wishlist.containsKey(product.id.toString()),
       orElse: () => false,
     );
-
 
     return GestureDetector(
       onTap: onTap,
@@ -70,7 +68,8 @@ class AccessoriesProductCardWidget extends ConsumerWidget {
                       final wishlistAsync = ref.watch(wishlistNotifierProvider);
                       final isLoading = wishlistAsync.isLoading;
                       final isInWishlist = wishlistAsync.maybeWhen(
-                        data: (wishlist) => wishlist.containsKey(product.id.toString()),
+                        data: (wishlist) =>
+                            wishlist.containsKey(product.id.toString()),
                         orElse: () => false,
                       );
 
@@ -81,7 +80,8 @@ class AccessoriesProductCardWidget extends ConsumerWidget {
                                 try {
                                   await ref
                                       .read(wishlistNotifierProvider.notifier)
-                                      .toggleWishlist(product.id, productName: product.name);
+                                      .toggleWishlist(product.id,
+                                          productName: product.name);
 
                                   // Show success message
                                   if (context.mounted) {
@@ -107,11 +107,16 @@ class AccessoriesProductCardWidget extends ConsumerWidget {
                             ? const SizedBox(
                                 width: 24,
                                 height: 24,
-                                child: CircularProgressIndicator(strokeWidth: 2),
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 2),
                               )
                             : Icon(
-                                isInWishlist ? Icons.favorite : Icons.favorite_border,
-                                color: isInWishlist ? context.colors.warning : null,
+                                isInWishlist
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                color: isInWishlist
+                                    ? context.colors.warning
+                                    : null,
                               ),
                       );
                     },
@@ -145,12 +150,13 @@ class AccessoriesProductCardWidget extends ConsumerWidget {
               SizedBox(height: context.space.space_50),
               // Current/Discounted Price
               Text(
-                "AED ${price.toStringAsFixed(2)}",
-                style: context.typography.bodyLarge.copyWith(color: context.colors.primaryTxt),
+                "AED ${product.discountedPrice}",
+                style: context.typography.bodyLarge
+                    .copyWith(color: context.colors.primaryTxt),
               ),
               // Original Price (crossed out)
               Text(
-                "AED ${originalPrice.toStringAsFixed(2)}",
+                "AED ${product.originalPrice}",
                 style: const TextStyle(
                   color: Colors.grey,
                   decoration: TextDecoration.lineThrough,
