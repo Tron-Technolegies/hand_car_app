@@ -10,12 +10,13 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 class AccessoriesProductCardWidget extends ConsumerWidget {
   final ProductsModel product;
   final VoidCallback onTap;
+  final double? averageRating;
 
-  const AccessoriesProductCardWidget({
-    super.key,
-    required this.product,
-    required this.onTap,
-  });
+  const AccessoriesProductCardWidget(
+      {super.key,
+      required this.product,
+      required this.onTap,
+      this.averageRating});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -162,6 +163,21 @@ class AccessoriesProductCardWidget extends ConsumerWidget {
                   decoration: TextDecoration.lineThrough,
                 ),
               ),
+              SizedBox(height: context.space.space_100),
+
+              Row(
+                children: List.generate(
+                  5,
+                  (index) => Icon(
+                    index < (product.averageRating?.floor() ?? 0)
+                        ? Icons.star
+                        : Icons.star_border,
+                    color: Colors.amber,
+                    size: context.space.space_300,
+                  ),
+                ),
+              ),
+
               SizedBox(height: context.space.space_100),
               Padding(
                 padding: EdgeInsets.symmetric(

@@ -35,7 +35,7 @@ mixin _$ProductsModel {
   @JsonKey(name: "is_bestseller")
   bool get isBestseller => throw _privateConstructorUsedError;
   @JsonKey(name: "average_rating")
-  double get averageRating => throw _privateConstructorUsedError;
+  double? get averageRating => throw _privateConstructorUsedError;
   @JsonKey(name: "total_reviews")
   int get totalReviews => throw _privateConstructorUsedError;
 
@@ -66,7 +66,7 @@ abstract class $ProductsModelCopyWith<$Res> {
       @JsonKey(name: "discount_percentage") int discountPercentage,
       String description,
       @JsonKey(name: "is_bestseller") bool isBestseller,
-      @JsonKey(name: "average_rating") double averageRating,
+      @JsonKey(name: "average_rating") double? averageRating,
       @JsonKey(name: "total_reviews") int totalReviews});
 }
 
@@ -95,7 +95,7 @@ class _$ProductsModelCopyWithImpl<$Res, $Val extends ProductsModel>
     Object? discountPercentage = null,
     Object? description = null,
     Object? isBestseller = null,
-    Object? averageRating = null,
+    Object? averageRating = freezed,
     Object? totalReviews = null,
   }) {
     return _then(_value.copyWith(
@@ -139,10 +139,10 @@ class _$ProductsModelCopyWithImpl<$Res, $Val extends ProductsModel>
           ? _value.isBestseller
           : isBestseller // ignore: cast_nullable_to_non_nullable
               as bool,
-      averageRating: null == averageRating
+      averageRating: freezed == averageRating
           ? _value.averageRating
           : averageRating // ignore: cast_nullable_to_non_nullable
-              as double,
+              as double?,
       totalReviews: null == totalReviews
           ? _value.totalReviews
           : totalReviews // ignore: cast_nullable_to_non_nullable
@@ -170,7 +170,7 @@ abstract class _$$ProductModelImplCopyWith<$Res>
       @JsonKey(name: "discount_percentage") int discountPercentage,
       String description,
       @JsonKey(name: "is_bestseller") bool isBestseller,
-      @JsonKey(name: "average_rating") double averageRating,
+      @JsonKey(name: "average_rating") double? averageRating,
       @JsonKey(name: "total_reviews") int totalReviews});
 }
 
@@ -197,7 +197,7 @@ class __$$ProductModelImplCopyWithImpl<$Res>
     Object? discountPercentage = null,
     Object? description = null,
     Object? isBestseller = null,
-    Object? averageRating = null,
+    Object? averageRating = freezed,
     Object? totalReviews = null,
   }) {
     return _then(_$ProductModelImpl(
@@ -241,10 +241,10 @@ class __$$ProductModelImplCopyWithImpl<$Res>
           ? _value.isBestseller
           : isBestseller // ignore: cast_nullable_to_non_nullable
               as bool,
-      averageRating: null == averageRating
+      averageRating: freezed == averageRating
           ? _value.averageRating
           : averageRating // ignore: cast_nullable_to_non_nullable
-              as double,
+              as double?,
       totalReviews: null == totalReviews
           ? _value.totalReviews
           : totalReviews // ignore: cast_nullable_to_non_nullable
@@ -267,7 +267,7 @@ class _$ProductModelImpl implements _ProductModel {
       @JsonKey(name: "discount_percentage") this.discountPercentage = 0,
       this.description = '',
       @JsonKey(name: "is_bestseller") this.isBestseller = false,
-      @JsonKey(name: "average_rating") this.averageRating = 0.0,
+      @JsonKey(name: "average_rating") this.averageRating,
       @JsonKey(name: "total_reviews") this.totalReviews = 0});
 
   factory _$ProductModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -300,7 +300,7 @@ class _$ProductModelImpl implements _ProductModel {
   final bool isBestseller;
   @override
   @JsonKey(name: "average_rating")
-  final double averageRating;
+  final double? averageRating;
   @override
   @JsonKey(name: "total_reviews")
   final int totalReviews;
@@ -382,7 +382,7 @@ abstract class _ProductModel implements ProductsModel {
       @JsonKey(name: "discount_percentage") final int discountPercentage,
       final String description,
       @JsonKey(name: "is_bestseller") final bool isBestseller,
-      @JsonKey(name: "average_rating") final double averageRating,
+      @JsonKey(name: "average_rating") final double? averageRating,
       @JsonKey(name: "total_reviews")
       final int totalReviews}) = _$ProductModelImpl;
 
@@ -415,7 +415,7 @@ abstract class _ProductModel implements ProductsModel {
   bool get isBestseller;
   @override
   @JsonKey(name: "average_rating")
-  double get averageRating;
+  double? get averageRating;
   @override
   @JsonKey(name: "total_reviews")
   int get totalReviews;

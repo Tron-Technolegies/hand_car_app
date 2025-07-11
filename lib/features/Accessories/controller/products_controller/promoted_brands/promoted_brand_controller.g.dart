@@ -7,12 +7,12 @@ part of 'promoted_brand_controller.dart';
 // **************************************************************************
 
 String _$promotedBrandControllerHash() =>
-    r'540b7005b1ce819642a3671ce9c38f4f808f1eac';
+    r'2af63026027907c9cd96feafd5a3f704c98e3397';
 
 /// See also [PromotedBrandController].
 @ProviderFor(PromotedBrandController)
 final promotedBrandControllerProvider = AutoDisposeAsyncNotifierProvider<
-    PromotedBrandController, List<PromotedBrandsModel>>.internal(
+    PromotedBrandController, List<PromotedBrandProductModel>>.internal(
   PromotedBrandController.new,
   name: r'promotedBrandControllerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -23,6 +23,6 @@ final promotedBrandControllerProvider = AutoDisposeAsyncNotifierProvider<
 );
 
 typedef _$PromotedBrandController
-    = AutoDisposeAsyncNotifier<List<PromotedBrandsModel>>;
+    = AutoDisposeAsyncNotifier<List<PromotedBrandProductModel>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

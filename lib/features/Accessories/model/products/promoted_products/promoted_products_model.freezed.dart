@@ -23,17 +23,25 @@ PromotedProductsModel _$PromotedProductsModelFromJson(
 mixin _$PromotedProductsModel {
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  String get category => throw _privateConstructorUsedError;
-  String get brand => throw _privateConstructorUsedError;
-  String get price => throw _privateConstructorUsedError;
-  String get description => throw _privateConstructorUsedError;
-  @JsonKey(name: 'is_bestseller')
-  bool get isBestseller => throw _privateConstructorUsedError;
-  @JsonKey(name: 'discount_percentage')
+  @JsonKey(name: "category")
+  String? get category => throw _privateConstructorUsedError;
+  @JsonKey(name: "brand")
+  String? get brand => throw _privateConstructorUsedError;
+  @JsonKey(name: "original_price")
+  double get originalPrice => throw _privateConstructorUsedError;
+  @JsonKey(name: "discounted_price")
+  double get discountedPrice => throw _privateConstructorUsedError;
+  @JsonKey(name: "discount_percentage")
   int get discountPercentage => throw _privateConstructorUsedError;
+  @JsonKey(name: "description")
+  String get description => throw _privateConstructorUsedError;
+  @JsonKey(name: "is_bestseller")
+  bool get isBestseller => throw _privateConstructorUsedError;
+  @JsonKey(name: "average_rating")
+  double? get averageRating => throw _privateConstructorUsedError;
   String? get image => throw _privateConstructorUsedError;
-  @JsonKey(name: 'created_at')
-  String get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(name: "created_at")
+  String? get createdAt => throw _privateConstructorUsedError;
 
   /// Serializes this PromotedProductsModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -54,14 +62,16 @@ abstract class $PromotedProductsModelCopyWith<$Res> {
   $Res call(
       {int id,
       String name,
-      String category,
-      String brand,
-      String price,
-      String description,
-      @JsonKey(name: 'is_bestseller') bool isBestseller,
-      @JsonKey(name: 'discount_percentage') int discountPercentage,
+      @JsonKey(name: "category") String? category,
+      @JsonKey(name: "brand") String? brand,
+      @JsonKey(name: "original_price") double originalPrice,
+      @JsonKey(name: "discounted_price") double discountedPrice,
+      @JsonKey(name: "discount_percentage") int discountPercentage,
+      @JsonKey(name: "description") String description,
+      @JsonKey(name: "is_bestseller") bool isBestseller,
+      @JsonKey(name: "average_rating") double? averageRating,
       String? image,
-      @JsonKey(name: 'created_at') String createdAt});
+      @JsonKey(name: "created_at") String? createdAt});
 }
 
 /// @nodoc
@@ -82,14 +92,16 @@ class _$PromotedProductsModelCopyWithImpl<$Res,
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? category = null,
-    Object? brand = null,
-    Object? price = null,
+    Object? category = freezed,
+    Object? brand = freezed,
+    Object? originalPrice = null,
+    Object? discountedPrice = null,
+    Object? discountPercentage = null,
     Object? description = null,
     Object? isBestseller = null,
-    Object? discountPercentage = null,
+    Object? averageRating = freezed,
     Object? image = freezed,
-    Object? createdAt = null,
+    Object? createdAt = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -100,18 +112,26 @@ class _$PromotedProductsModelCopyWithImpl<$Res,
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      category: null == category
+      category: freezed == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
-              as String,
-      brand: null == brand
+              as String?,
+      brand: freezed == brand
           ? _value.brand
           : brand // ignore: cast_nullable_to_non_nullable
-              as String,
-      price: null == price
-          ? _value.price
-          : price // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
+      originalPrice: null == originalPrice
+          ? _value.originalPrice
+          : originalPrice // ignore: cast_nullable_to_non_nullable
+              as double,
+      discountedPrice: null == discountedPrice
+          ? _value.discountedPrice
+          : discountedPrice // ignore: cast_nullable_to_non_nullable
+              as double,
+      discountPercentage: null == discountPercentage
+          ? _value.discountPercentage
+          : discountPercentage // ignore: cast_nullable_to_non_nullable
+              as int,
       description: null == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
@@ -120,18 +140,18 @@ class _$PromotedProductsModelCopyWithImpl<$Res,
           ? _value.isBestseller
           : isBestseller // ignore: cast_nullable_to_non_nullable
               as bool,
-      discountPercentage: null == discountPercentage
-          ? _value.discountPercentage
-          : discountPercentage // ignore: cast_nullable_to_non_nullable
-              as int,
+      averageRating: freezed == averageRating
+          ? _value.averageRating
+          : averageRating // ignore: cast_nullable_to_non_nullable
+              as double?,
       image: freezed == image
           ? _value.image
           : image // ignore: cast_nullable_to_non_nullable
               as String?,
-      createdAt: null == createdAt
+      createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ) as $Val);
   }
 }
@@ -148,14 +168,16 @@ abstract class _$$PromotedProductsModelImplCopyWith<$Res>
   $Res call(
       {int id,
       String name,
-      String category,
-      String brand,
-      String price,
-      String description,
-      @JsonKey(name: 'is_bestseller') bool isBestseller,
-      @JsonKey(name: 'discount_percentage') int discountPercentage,
+      @JsonKey(name: "category") String? category,
+      @JsonKey(name: "brand") String? brand,
+      @JsonKey(name: "original_price") double originalPrice,
+      @JsonKey(name: "discounted_price") double discountedPrice,
+      @JsonKey(name: "discount_percentage") int discountPercentage,
+      @JsonKey(name: "description") String description,
+      @JsonKey(name: "is_bestseller") bool isBestseller,
+      @JsonKey(name: "average_rating") double? averageRating,
       String? image,
-      @JsonKey(name: 'created_at') String createdAt});
+      @JsonKey(name: "created_at") String? createdAt});
 }
 
 /// @nodoc
@@ -174,14 +196,16 @@ class __$$PromotedProductsModelImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? category = null,
-    Object? brand = null,
-    Object? price = null,
+    Object? category = freezed,
+    Object? brand = freezed,
+    Object? originalPrice = null,
+    Object? discountedPrice = null,
+    Object? discountPercentage = null,
     Object? description = null,
     Object? isBestseller = null,
-    Object? discountPercentage = null,
+    Object? averageRating = freezed,
     Object? image = freezed,
-    Object? createdAt = null,
+    Object? createdAt = freezed,
   }) {
     return _then(_$PromotedProductsModelImpl(
       id: null == id
@@ -192,18 +216,26 @@ class __$$PromotedProductsModelImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      category: null == category
+      category: freezed == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
-              as String,
-      brand: null == brand
+              as String?,
+      brand: freezed == brand
           ? _value.brand
           : brand // ignore: cast_nullable_to_non_nullable
-              as String,
-      price: null == price
-          ? _value.price
-          : price // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
+      originalPrice: null == originalPrice
+          ? _value.originalPrice
+          : originalPrice // ignore: cast_nullable_to_non_nullable
+              as double,
+      discountedPrice: null == discountedPrice
+          ? _value.discountedPrice
+          : discountedPrice // ignore: cast_nullable_to_non_nullable
+              as double,
+      discountPercentage: null == discountPercentage
+          ? _value.discountPercentage
+          : discountPercentage // ignore: cast_nullable_to_non_nullable
+              as int,
       description: null == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
@@ -212,18 +244,18 @@ class __$$PromotedProductsModelImplCopyWithImpl<$Res>
           ? _value.isBestseller
           : isBestseller // ignore: cast_nullable_to_non_nullable
               as bool,
-      discountPercentage: null == discountPercentage
-          ? _value.discountPercentage
-          : discountPercentage // ignore: cast_nullable_to_non_nullable
-              as int,
+      averageRating: freezed == averageRating
+          ? _value.averageRating
+          : averageRating // ignore: cast_nullable_to_non_nullable
+              as double?,
       image: freezed == image
           ? _value.image
           : image // ignore: cast_nullable_to_non_nullable
               as String?,
-      createdAt: null == createdAt
+      createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
@@ -234,14 +266,16 @@ class _$PromotedProductsModelImpl implements _PromotedProductsModel {
   const _$PromotedProductsModelImpl(
       {required this.id,
       required this.name,
-      required this.category,
-      required this.brand,
-      required this.price,
-      required this.description,
-      @JsonKey(name: 'is_bestseller') required this.isBestseller,
-      @JsonKey(name: 'discount_percentage') required this.discountPercentage,
+      @JsonKey(name: "category") this.category,
+      @JsonKey(name: "brand") this.brand,
+      @JsonKey(name: "original_price") required this.originalPrice,
+      @JsonKey(name: "discounted_price") required this.discountedPrice,
+      @JsonKey(name: "discount_percentage") required this.discountPercentage,
+      @JsonKey(name: "description") this.description = '',
+      @JsonKey(name: "is_bestseller") this.isBestseller = false,
+      @JsonKey(name: "average_rating") this.averageRating,
       this.image,
-      @JsonKey(name: 'created_at') required this.createdAt});
+      @JsonKey(name: "created_at") this.createdAt});
 
   factory _$PromotedProductsModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$PromotedProductsModelImplFromJson(json);
@@ -251,28 +285,38 @@ class _$PromotedProductsModelImpl implements _PromotedProductsModel {
   @override
   final String name;
   @override
-  final String category;
+  @JsonKey(name: "category")
+  final String? category;
   @override
-  final String brand;
+  @JsonKey(name: "brand")
+  final String? brand;
   @override
-  final String price;
+  @JsonKey(name: "original_price")
+  final double originalPrice;
   @override
+  @JsonKey(name: "discounted_price")
+  final double discountedPrice;
+  @override
+  @JsonKey(name: "discount_percentage")
+  final int discountPercentage;
+  @override
+  @JsonKey(name: "description")
   final String description;
   @override
-  @JsonKey(name: 'is_bestseller')
+  @JsonKey(name: "is_bestseller")
   final bool isBestseller;
   @override
-  @JsonKey(name: 'discount_percentage')
-  final int discountPercentage;
+  @JsonKey(name: "average_rating")
+  final double? averageRating;
   @override
   final String? image;
   @override
-  @JsonKey(name: 'created_at')
-  final String createdAt;
+  @JsonKey(name: "created_at")
+  final String? createdAt;
 
   @override
   String toString() {
-    return 'PromotedProductsModel(id: $id, name: $name, category: $category, brand: $brand, price: $price, description: $description, isBestseller: $isBestseller, discountPercentage: $discountPercentage, image: $image, createdAt: $createdAt)';
+    return 'PromotedProductsModel(id: $id, name: $name, category: $category, brand: $brand, originalPrice: $originalPrice, discountedPrice: $discountedPrice, discountPercentage: $discountPercentage, description: $description, isBestseller: $isBestseller, averageRating: $averageRating, image: $image, createdAt: $createdAt)';
   }
 
   @override
@@ -285,13 +329,18 @@ class _$PromotedProductsModelImpl implements _PromotedProductsModel {
             (identical(other.category, category) ||
                 other.category == category) &&
             (identical(other.brand, brand) || other.brand == brand) &&
-            (identical(other.price, price) || other.price == price) &&
+            (identical(other.originalPrice, originalPrice) ||
+                other.originalPrice == originalPrice) &&
+            (identical(other.discountedPrice, discountedPrice) ||
+                other.discountedPrice == discountedPrice) &&
+            (identical(other.discountPercentage, discountPercentage) ||
+                other.discountPercentage == discountPercentage) &&
             (identical(other.description, description) ||
                 other.description == description) &&
             (identical(other.isBestseller, isBestseller) ||
                 other.isBestseller == isBestseller) &&
-            (identical(other.discountPercentage, discountPercentage) ||
-                other.discountPercentage == discountPercentage) &&
+            (identical(other.averageRating, averageRating) ||
+                other.averageRating == averageRating) &&
             (identical(other.image, image) || other.image == image) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt));
@@ -299,8 +348,20 @@ class _$PromotedProductsModelImpl implements _PromotedProductsModel {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, category, brand, price,
-      description, isBestseller, discountPercentage, image, createdAt);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      name,
+      category,
+      brand,
+      originalPrice,
+      discountedPrice,
+      discountPercentage,
+      description,
+      isBestseller,
+      averageRating,
+      image,
+      createdAt);
 
   /// Create a copy of PromotedProductsModel
   /// with the given fields replaced by the non-null parameter values.
@@ -321,18 +382,20 @@ class _$PromotedProductsModelImpl implements _PromotedProductsModel {
 
 abstract class _PromotedProductsModel implements PromotedProductsModel {
   const factory _PromotedProductsModel(
-          {required final int id,
-          required final String name,
-          required final String category,
-          required final String brand,
-          required final String price,
-          required final String description,
-          @JsonKey(name: 'is_bestseller') required final bool isBestseller,
-          @JsonKey(name: 'discount_percentage')
-          required final int discountPercentage,
-          final String? image,
-          @JsonKey(name: 'created_at') required final String createdAt}) =
-      _$PromotedProductsModelImpl;
+      {required final int id,
+      required final String name,
+      @JsonKey(name: "category") final String? category,
+      @JsonKey(name: "brand") final String? brand,
+      @JsonKey(name: "original_price") required final double originalPrice,
+      @JsonKey(name: "discounted_price") required final double discountedPrice,
+      @JsonKey(name: "discount_percentage")
+      required final int discountPercentage,
+      @JsonKey(name: "description") final String description,
+      @JsonKey(name: "is_bestseller") final bool isBestseller,
+      @JsonKey(name: "average_rating") final double? averageRating,
+      final String? image,
+      @JsonKey(name: "created_at")
+      final String? createdAt}) = _$PromotedProductsModelImpl;
 
   factory _PromotedProductsModel.fromJson(Map<String, dynamic> json) =
       _$PromotedProductsModelImpl.fromJson;
@@ -342,24 +405,34 @@ abstract class _PromotedProductsModel implements PromotedProductsModel {
   @override
   String get name;
   @override
-  String get category;
+  @JsonKey(name: "category")
+  String? get category;
   @override
-  String get brand;
+  @JsonKey(name: "brand")
+  String? get brand;
   @override
-  String get price;
+  @JsonKey(name: "original_price")
+  double get originalPrice;
   @override
+  @JsonKey(name: "discounted_price")
+  double get discountedPrice;
+  @override
+  @JsonKey(name: "discount_percentage")
+  int get discountPercentage;
+  @override
+  @JsonKey(name: "description")
   String get description;
   @override
-  @JsonKey(name: 'is_bestseller')
+  @JsonKey(name: "is_bestseller")
   bool get isBestseller;
   @override
-  @JsonKey(name: 'discount_percentage')
-  int get discountPercentage;
+  @JsonKey(name: "average_rating")
+  double? get averageRating;
   @override
   String? get image;
   @override
-  @JsonKey(name: 'created_at')
-  String get createdAt;
+  @JsonKey(name: "created_at")
+  String? get createdAt;
 
   /// Create a copy of PromotedProductsModel
   /// with the given fields replaced by the non-null parameter values.

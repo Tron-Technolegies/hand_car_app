@@ -14,51 +14,70 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-PromotedBrandsModel _$PromotedBrandsModelFromJson(Map<String, dynamic> json) {
-  return _PromotedBrandsModel.fromJson(json);
+PromotedBrandProductModel _$PromotedBrandProductModelFromJson(
+    Map<String, dynamic> json) {
+  return _PromotedBrandProductModel.fromJson(json);
 }
 
 /// @nodoc
-mixin _$PromotedBrandsModel {
+mixin _$PromotedBrandProductModel {
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
+  @JsonKey(name: "original_price")
+  double get originalPrice => throw _privateConstructorUsedError;
+  @JsonKey(name: "discounted_price")
+  double get discountedPrice => throw _privateConstructorUsedError;
+  @JsonKey(name: "discount_percentage")
+  int get discountPercentage => throw _privateConstructorUsedError;
+  String? get image => throw _privateConstructorUsedError;
 
-  /// Serializes this PromotedBrandsModel to a JSON map.
+  /// Serializes this PromotedBrandProductModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
-  /// Create a copy of PromotedBrandsModel
+  /// Create a copy of PromotedBrandProductModel
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $PromotedBrandsModelCopyWith<PromotedBrandsModel> get copyWith =>
+  $PromotedBrandProductModelCopyWith<PromotedBrandProductModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $PromotedBrandsModelCopyWith<$Res> {
-  factory $PromotedBrandsModelCopyWith(
-          PromotedBrandsModel value, $Res Function(PromotedBrandsModel) then) =
-      _$PromotedBrandsModelCopyWithImpl<$Res, PromotedBrandsModel>;
+abstract class $PromotedBrandProductModelCopyWith<$Res> {
+  factory $PromotedBrandProductModelCopyWith(PromotedBrandProductModel value,
+          $Res Function(PromotedBrandProductModel) then) =
+      _$PromotedBrandProductModelCopyWithImpl<$Res, PromotedBrandProductModel>;
   @useResult
-  $Res call({int id, String name});
+  $Res call(
+      {int id,
+      String name,
+      @JsonKey(name: "original_price") double originalPrice,
+      @JsonKey(name: "discounted_price") double discountedPrice,
+      @JsonKey(name: "discount_percentage") int discountPercentage,
+      String? image});
 }
 
 /// @nodoc
-class _$PromotedBrandsModelCopyWithImpl<$Res, $Val extends PromotedBrandsModel>
-    implements $PromotedBrandsModelCopyWith<$Res> {
-  _$PromotedBrandsModelCopyWithImpl(this._value, this._then);
+class _$PromotedBrandProductModelCopyWithImpl<$Res,
+        $Val extends PromotedBrandProductModel>
+    implements $PromotedBrandProductModelCopyWith<$Res> {
+  _$PromotedBrandProductModelCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of PromotedBrandsModel
+  /// Create a copy of PromotedBrandProductModel
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? id = null,
     Object? name = null,
+    Object? originalPrice = null,
+    Object? discountedPrice = null,
+    Object? discountPercentage = null,
+    Object? image = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -69,38 +88,67 @@ class _$PromotedBrandsModelCopyWithImpl<$Res, $Val extends PromotedBrandsModel>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
+      originalPrice: null == originalPrice
+          ? _value.originalPrice
+          : originalPrice // ignore: cast_nullable_to_non_nullable
+              as double,
+      discountedPrice: null == discountedPrice
+          ? _value.discountedPrice
+          : discountedPrice // ignore: cast_nullable_to_non_nullable
+              as double,
+      discountPercentage: null == discountPercentage
+          ? _value.discountPercentage
+          : discountPercentage // ignore: cast_nullable_to_non_nullable
+              as int,
+      image: freezed == image
+          ? _value.image
+          : image // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$PromotedBrandsModelImplCopyWith<$Res>
-    implements $PromotedBrandsModelCopyWith<$Res> {
-  factory _$$PromotedBrandsModelImplCopyWith(_$PromotedBrandsModelImpl value,
-          $Res Function(_$PromotedBrandsModelImpl) then) =
-      __$$PromotedBrandsModelImplCopyWithImpl<$Res>;
+abstract class _$$PromotedBrandProductModelImplCopyWith<$Res>
+    implements $PromotedBrandProductModelCopyWith<$Res> {
+  factory _$$PromotedBrandProductModelImplCopyWith(
+          _$PromotedBrandProductModelImpl value,
+          $Res Function(_$PromotedBrandProductModelImpl) then) =
+      __$$PromotedBrandProductModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, String name});
+  $Res call(
+      {int id,
+      String name,
+      @JsonKey(name: "original_price") double originalPrice,
+      @JsonKey(name: "discounted_price") double discountedPrice,
+      @JsonKey(name: "discount_percentage") int discountPercentage,
+      String? image});
 }
 
 /// @nodoc
-class __$$PromotedBrandsModelImplCopyWithImpl<$Res>
-    extends _$PromotedBrandsModelCopyWithImpl<$Res, _$PromotedBrandsModelImpl>
-    implements _$$PromotedBrandsModelImplCopyWith<$Res> {
-  __$$PromotedBrandsModelImplCopyWithImpl(_$PromotedBrandsModelImpl _value,
-      $Res Function(_$PromotedBrandsModelImpl) _then)
+class __$$PromotedBrandProductModelImplCopyWithImpl<$Res>
+    extends _$PromotedBrandProductModelCopyWithImpl<$Res,
+        _$PromotedBrandProductModelImpl>
+    implements _$$PromotedBrandProductModelImplCopyWith<$Res> {
+  __$$PromotedBrandProductModelImplCopyWithImpl(
+      _$PromotedBrandProductModelImpl _value,
+      $Res Function(_$PromotedBrandProductModelImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of PromotedBrandsModel
+  /// Create a copy of PromotedBrandProductModel
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? id = null,
     Object? name = null,
+    Object? originalPrice = null,
+    Object? discountedPrice = null,
+    Object? discountPercentage = null,
+    Object? image = freezed,
   }) {
-    return _then(_$PromotedBrandsModelImpl(
+    return _then(_$PromotedBrandProductModelImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -109,75 +157,132 @@ class __$$PromotedBrandsModelImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
+      originalPrice: null == originalPrice
+          ? _value.originalPrice
+          : originalPrice // ignore: cast_nullable_to_non_nullable
+              as double,
+      discountedPrice: null == discountedPrice
+          ? _value.discountedPrice
+          : discountedPrice // ignore: cast_nullable_to_non_nullable
+              as double,
+      discountPercentage: null == discountPercentage
+          ? _value.discountPercentage
+          : discountPercentage // ignore: cast_nullable_to_non_nullable
+              as int,
+      image: freezed == image
+          ? _value.image
+          : image // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$PromotedBrandsModelImpl implements _PromotedBrandsModel {
-  const _$PromotedBrandsModelImpl({required this.id, required this.name});
+class _$PromotedBrandProductModelImpl implements _PromotedBrandProductModel {
+  const _$PromotedBrandProductModelImpl(
+      {required this.id,
+      required this.name,
+      @JsonKey(name: "original_price") required this.originalPrice,
+      @JsonKey(name: "discounted_price") required this.discountedPrice,
+      @JsonKey(name: "discount_percentage") required this.discountPercentage,
+      this.image});
 
-  factory _$PromotedBrandsModelImpl.fromJson(Map<String, dynamic> json) =>
-      _$$PromotedBrandsModelImplFromJson(json);
+  factory _$PromotedBrandProductModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$PromotedBrandProductModelImplFromJson(json);
 
   @override
   final int id;
   @override
   final String name;
+  @override
+  @JsonKey(name: "original_price")
+  final double originalPrice;
+  @override
+  @JsonKey(name: "discounted_price")
+  final double discountedPrice;
+  @override
+  @JsonKey(name: "discount_percentage")
+  final int discountPercentage;
+  @override
+  final String? image;
 
   @override
   String toString() {
-    return 'PromotedBrandsModel(id: $id, name: $name)';
+    return 'PromotedBrandProductModel(id: $id, name: $name, originalPrice: $originalPrice, discountedPrice: $discountedPrice, discountPercentage: $discountPercentage, image: $image)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$PromotedBrandsModelImpl &&
+            other is _$PromotedBrandProductModelImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.name, name) || other.name == name));
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.originalPrice, originalPrice) ||
+                other.originalPrice == originalPrice) &&
+            (identical(other.discountedPrice, discountedPrice) ||
+                other.discountedPrice == discountedPrice) &&
+            (identical(other.discountPercentage, discountPercentage) ||
+                other.discountPercentage == discountPercentage) &&
+            (identical(other.image, image) || other.image == image));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name);
+  int get hashCode => Object.hash(runtimeType, id, name, originalPrice,
+      discountedPrice, discountPercentage, image);
 
-  /// Create a copy of PromotedBrandsModel
+  /// Create a copy of PromotedBrandProductModel
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$PromotedBrandsModelImplCopyWith<_$PromotedBrandsModelImpl> get copyWith =>
-      __$$PromotedBrandsModelImplCopyWithImpl<_$PromotedBrandsModelImpl>(
-          this, _$identity);
+  _$$PromotedBrandProductModelImplCopyWith<_$PromotedBrandProductModelImpl>
+      get copyWith => __$$PromotedBrandProductModelImplCopyWithImpl<
+          _$PromotedBrandProductModelImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$PromotedBrandsModelImplToJson(
+    return _$$PromotedBrandProductModelImplToJson(
       this,
     );
   }
 }
 
-abstract class _PromotedBrandsModel implements PromotedBrandsModel {
-  const factory _PromotedBrandsModel(
+abstract class _PromotedBrandProductModel implements PromotedBrandProductModel {
+  const factory _PromotedBrandProductModel(
       {required final int id,
-      required final String name}) = _$PromotedBrandsModelImpl;
+      required final String name,
+      @JsonKey(name: "original_price") required final double originalPrice,
+      @JsonKey(name: "discounted_price") required final double discountedPrice,
+      @JsonKey(name: "discount_percentage")
+      required final int discountPercentage,
+      final String? image}) = _$PromotedBrandProductModelImpl;
 
-  factory _PromotedBrandsModel.fromJson(Map<String, dynamic> json) =
-      _$PromotedBrandsModelImpl.fromJson;
+  factory _PromotedBrandProductModel.fromJson(Map<String, dynamic> json) =
+      _$PromotedBrandProductModelImpl.fromJson;
 
   @override
   int get id;
   @override
   String get name;
+  @override
+  @JsonKey(name: "original_price")
+  double get originalPrice;
+  @override
+  @JsonKey(name: "discounted_price")
+  double get discountedPrice;
+  @override
+  @JsonKey(name: "discount_percentage")
+  int get discountPercentage;
+  @override
+  String? get image;
 
-  /// Create a copy of PromotedBrandsModel
+  /// Create a copy of PromotedBrandProductModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$PromotedBrandsModelImplCopyWith<_$PromotedBrandsModelImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$PromotedBrandProductModelImplCopyWith<_$PromotedBrandProductModelImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }

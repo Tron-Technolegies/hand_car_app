@@ -6,12 +6,12 @@ import 'package:hand_car/features/Accessories/view/widgets/accessories/accessori
 
 class GridViewBuilderAccessoriesWidget extends StatelessWidget {
   final String categoryName;
-  final List<ProductsModel> products;  // Add products parameter
+  final List<ProductsModel> products; // Add products parameter
   final void Function(ProductsModel product) onProductTap;
 
   const GridViewBuilderAccessoriesWidget({
     required this.categoryName,
-    required this.products,  // Receive pre-filtered products
+    required this.products, // Receive pre-filtered products
     required this.onProductTap,
     super.key,
   });
@@ -41,7 +41,7 @@ class GridViewBuilderAccessoriesWidget extends StatelessWidget {
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 340,
         mainAxisSpacing: 0.5,
-        mainAxisExtent: 380,
+        mainAxisExtent: 400,
         crossAxisSpacing: 1.7,
       ),
       itemCount: products.length,

@@ -20,10 +20,11 @@ class ProductsModel with _$ProductsModel {
     @Default('') String description,
     @JsonKey(name: "is_bestseller")      
     @Default(false) bool isBestseller,
-    @JsonKey(name: "average_rating")
-    @Default(0.0) double averageRating, 
+    @JsonKey(name: "average_rating") double? averageRating,
     @JsonKey(name: "total_reviews")
     @Default(0) int totalReviews,
+   
+
   }) = _ProductModel;
 
   factory ProductsModel.fromJson(Map<String, dynamic> json) =>

@@ -5,7 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'bottom_nav_controller.freezed.dart';
 part 'bottom_nav_controller.g.dart';
 
-/// State for the Bottom nav bar provider
+
 @freezed
 class NavigationState with _$NavigationState {
   const factory NavigationState({

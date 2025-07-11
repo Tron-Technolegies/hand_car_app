@@ -18,7 +18,7 @@ _$ProductModelImpl _$$ProductModelImplFromJson(Map<String, dynamic> json) =>
       discountPercentage: (json['discount_percentage'] as num?)?.toInt() ?? 0,
       description: json['description'] as String? ?? '',
       isBestseller: json['is_bestseller'] as bool? ?? false,
-      averageRating: (json['average_rating'] as num?)?.toDouble() ?? 0.0,
+      averageRating: (json['average_rating'] as num?)?.toDouble(),
       totalReviews: (json['total_reviews'] as num?)?.toInt() ?? 0,
     );
 
@@ -34,6 +34,6 @@ Map<String, dynamic> _$$ProductModelImplToJson(_$ProductModelImpl instance) =>
       'discount_percentage': instance.discountPercentage,
       'description': instance.description,
       'is_bestseller': instance.isBestseller,
-      'average_rating': instance.averageRating,
+      if (instance.averageRating case final value?) 'average_rating': value,
       'total_reviews': instance.totalReviews,
     };

@@ -11,14 +11,16 @@ _$PromotedProductsModelImpl _$$PromotedProductsModelImplFromJson(
     _$PromotedProductsModelImpl(
       id: (json['id'] as num).toInt(),
       name: json['name'] as String,
-      category: json['category'] as String,
-      brand: json['brand'] as String,
-      price: json['price'] as String,
-      description: json['description'] as String,
-      isBestseller: json['is_bestseller'] as bool,
+      category: json['category'] as String?,
+      brand: json['brand'] as String?,
+      originalPrice: (json['original_price'] as num).toDouble(),
+      discountedPrice: (json['discounted_price'] as num).toDouble(),
       discountPercentage: (json['discount_percentage'] as num).toInt(),
+      description: json['description'] as String? ?? '',
+      isBestseller: json['is_bestseller'] as bool? ?? false,
+      averageRating: (json['average_rating'] as num?)?.toDouble(),
       image: json['image'] as String?,
-      createdAt: json['created_at'] as String,
+      createdAt: json['created_at'] as String?,
     );
 
 Map<String, dynamic> _$$PromotedProductsModelImplToJson(
@@ -26,12 +28,14 @@ Map<String, dynamic> _$$PromotedProductsModelImplToJson(
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'category': instance.category,
-      'brand': instance.brand,
-      'price': instance.price,
+      if (instance.category case final value?) 'category': value,
+      if (instance.brand case final value?) 'brand': value,
+      'original_price': instance.originalPrice,
+      'discounted_price': instance.discountedPrice,
+      'discount_percentage': instance.discountPercentage,
       'description': instance.description,
       'is_bestseller': instance.isBestseller,
-      'discount_percentage': instance.discountPercentage,
+      if (instance.averageRating case final value?) 'average_rating': value,
       if (instance.image case final value?) 'image': value,
-      'created_at': instance.createdAt,
+      if (instance.createdAt case final value?) 'created_at': value,
     };

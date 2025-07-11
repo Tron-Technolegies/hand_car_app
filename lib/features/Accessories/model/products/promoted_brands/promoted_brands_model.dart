@@ -4,13 +4,16 @@ part 'promoted_brands_model.freezed.dart';
 part 'promoted_brands_model.g.dart';
 
 @freezed
-//PromotodedBrandsModel
-class PromotedBrandsModel with _$PromotedBrandsModel {
-  const factory PromotedBrandsModel({
+class PromotedBrandProductModel with _$PromotedBrandProductModel {
+  const factory PromotedBrandProductModel({
     required int id,
     required String name,
-  }) = _PromotedBrandsModel;
+    @JsonKey(name: "original_price") required double originalPrice,
+    @JsonKey(name: "discounted_price") required double discountedPrice,
+    @JsonKey(name: "discount_percentage") required int discountPercentage,
+    String? image,
+  }) = _PromotedBrandProductModel;
 
-  factory PromotedBrandsModel.fromJson(Map<String, dynamic> json) =>
-      _$PromotedBrandsModelFromJson(json); // Corrected function call
+  factory PromotedBrandProductModel.fromJson(Map<String, dynamic> json) =>
+      _$PromotedBrandProductModelFromJson(json);
 }
