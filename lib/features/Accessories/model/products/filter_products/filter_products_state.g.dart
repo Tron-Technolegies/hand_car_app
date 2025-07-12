@@ -12,10 +12,7 @@ _$ProductsFilterStateImpl _$$ProductsFilterStateImplFromJson(
       categoryId: json['category_id'] as String?,
       minPrice: (json['min_price'] as num?)?.toDouble() ?? 0.0,
       maxPrice: (json['max_price'] as num?)?.toDouble() ?? double.infinity,
-      selectedBrandIds: (json['selected_brand_ids'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          const [],
+      brand: json['brand'] as String? ?? '',
       minRating: (json['min_rating'] as num?)?.toDouble() ?? 0.0,
       showNewArrivals: json['show_new_arrivals'] as bool? ?? false,
       showBestsellers: json['show_bestsellers'] as bool? ?? false,
@@ -28,7 +25,7 @@ Map<String, dynamic> _$$ProductsFilterStateImplToJson(
       if (instance.categoryId case final value?) 'category_id': value,
       'min_price': instance.minPrice,
       'max_price': instance.maxPrice,
-      'selected_brand_ids': instance.selectedBrandIds,
+      'brand': instance.brand,
       'min_rating': instance.minRating,
       'show_new_arrivals': instance.showNewArrivals,
       'show_bestsellers': instance.showBestsellers,

@@ -24,21 +24,27 @@ class ProductsApiServices {
   // Fetch all products
   Future<List<ProductsModel>> getProducts() async {
     const String endpoint = '/view_products';
-    log('[$_getTimestamp()] Starting fetch products from $endpoint', name: 'ProductsApiServices');
-    
+    log('[$_getTimestamp()] Starting fetch products from $endpoint',
+        name: 'ProductsApiServices');
+
     try {
       final response = await _dio.get(endpoint);
-      log('[$_getTimestamp()] Response received: Status ${response.statusCode}', name: 'ProductsApiServices');
-      log('[$_getTimestamp()] Raw API response: ${response.data}', name: 'ProductsApiServices');
+      log('[$_getTimestamp()] Response received: Status ${response.statusCode}',
+          name: 'ProductsApiServices');
+      log('[$_getTimestamp()] Raw API response: ${response.data}',
+          name: 'ProductsApiServices');
 
       final List<dynamic> productList = response.data['product'];
-      log('[$_getTimestamp()] Product list count: ${productList.length}', name: 'ProductsApiServices');
+      log('[$_getTimestamp()] Product list count: ${productList.length}',
+          name: 'ProductsApiServices');
 
       return productList.asMap().entries.map((entry) {
         final index = entry.key;
         final dynamic item = entry.value;
-        final Map<String, dynamic> json = Map<String, dynamic>.from(item as Map);
-        log('[$_getTimestamp()] Processing product #$index: $json', name: 'ProductsApiServices');
+        final Map<String, dynamic> json =
+            Map<String, dynamic>.from(item as Map);
+        log('[$_getTimestamp()] Processing product #$index: $json',
+            name: 'ProductsApiServices');
 
         // Add default values for optional fields
         final modifiedJson = {
@@ -51,73 +57,78 @@ class ProductsApiServices {
         try {
           return ProductsModel.fromJson(modifiedJson);
         } catch (e) {
-          log('[$_getTimestamp()] Error parsing product #$index: $e', name: 'ProductsApiServices', error: e);
-          log('[$_getTimestamp()] Problematic product data: $modifiedJson', name: 'ProductsApiServices');
+          log('[$_getTimestamp()] Error parsing product #$index: $e',
+              name: 'ProductsApiServices', error: e);
+          log('[$_getTimestamp()] Problematic product data: $modifiedJson',
+              name: 'ProductsApiServices');
           rethrow;
         }
       }).toList();
     } on DioException catch (e) {
-      log('[$_getTimestamp()] Dio error fetching products from $endpoint: ${e.message}', 
-          name: 'ProductsApiServices', 
-          error: e,
-          stackTrace: e.stackTrace);
-      log('[$_getTimestamp()] Response data: ${e.response?.data}', name: 'ProductsApiServices');
+      log('[$_getTimestamp()] Dio error fetching products from $endpoint: ${e.message}',
+          name: 'ProductsApiServices', error: e, stackTrace: e.stackTrace);
+      log('[$_getTimestamp()] Response data: ${e.response?.data}',
+          name: 'ProductsApiServices');
       throw Exception('Failed to fetch products: ${e.message}');
     } catch (e, stack) {
-      log('[$_getTimestamp()] Unexpected error fetching products from $endpoint: $e', 
-          name: 'ProductsApiServices', 
-          error: e, 
-          stackTrace: stack);
+      log('[$_getTimestamp()] Unexpected error fetching products from $endpoint: $e',
+          name: 'ProductsApiServices', error: e, stackTrace: stack);
       throw Exception('Failed to fetch products: $e');
     }
   }
 
   // Fetch promoted brands
-Future<List<PromotedBrandProductModel>> getPromotedBrands() async {
-  const String endpoint = '/promoted_brands_products';
-  log('[$_getTimestamp()] Starting fetch promoted brands products from $endpoint', name: 'ProductsApiServices');
-  
-  try {
-    final response = await _dio.get(endpoint);
-    log('[$_getTimestamp()] Response received: Status ${response.statusCode}', name: 'ProductsApiServices');
+  Future<List<PromotedBrandProductModel>> getPromotedBrands() async {
+    const String endpoint = '/promoted_brands_products';
+    log('[$_getTimestamp()] Starting fetch promoted brands products from $endpoint',
+        name: 'ProductsApiServices');
 
-    // Check if the key exists and is a list; otherwise, return an empty list
-    final List<dynamic> data = response.data['promoted_brands_products'] ?? [];
-    log('[$_getTimestamp()] Promoted brands products count: ${data.length}', name: 'ProductsApiServices');
-    log('[$_getTimestamp()] Promoted brands products data: $data', name: 'ProductsApiServices');
+    try {
+      final response = await _dio.get(endpoint);
+      log('[$_getTimestamp()] Response received: Status ${response.statusCode}',
+          name: 'ProductsApiServices');
 
-    return data.asMap().entries.map((entry) {
-      final index = entry.key;
-      final json = Map<String, dynamic>.from(entry.value);
-      try {
-        return PromotedBrandProductModel.fromJson(json);
-      } catch (e) {
-        log('[$_getTimestamp()] Error parsing promoted brand product #$index: $e', 
-            name: 'ProductsApiServices', 
-            error: e);
-        rethrow;
-      }
-    }).toList();
-  } catch (e, stack) {
-    log('[$_getTimestamp()] Error fetching promoted brands products from $endpoint: $e', 
-        name: 'ProductsApiServices', 
-        error: e, 
-        stackTrace: stack);
-    return []; // Return empty list to prevent crashes
+      // Check if the key exists and is a list; otherwise, return an empty list
+      final List<dynamic> data =
+          response.data['promoted_brands_products'] ?? [];
+      log('[$_getTimestamp()] Promoted brands products count: ${data.length}',
+          name: 'ProductsApiServices');
+      log('[$_getTimestamp()] Promoted brands products data: $data',
+          name: 'ProductsApiServices');
+
+      return data.asMap().entries.map((entry) {
+        final index = entry.key;
+        final json = Map<String, dynamic>.from(entry.value);
+        try {
+          return PromotedBrandProductModel.fromJson(json);
+        } catch (e) {
+          log('[$_getTimestamp()] Error parsing promoted brand product #$index: $e',
+              name: 'ProductsApiServices', error: e);
+          rethrow;
+        }
+      }).toList();
+    } catch (e, stack) {
+      log('[$_getTimestamp()] Error fetching promoted brands products from $endpoint: $e',
+          name: 'ProductsApiServices', error: e, stackTrace: stack);
+      return []; // Return empty list to prevent crashes
+    }
   }
-}
 
   // Fetch promoted products
   Future<List<PromotedProductsModel>> getPromotedProducts() async {
     const String endpoint = '/view_promoted_products';
-    log('[$_getTimestamp()] Starting fetch promoted products from $endpoint', name: 'ProductsApiServices');
-    
+    log('[$_getTimestamp()] Starting fetch promoted products from $endpoint',
+        name: 'ProductsApiServices');
+
     try {
       final response = await _dio.get(endpoint);
-      log('[$_getTimestamp()] Response received: Status ${response.statusCode}', name: 'ProductsApiServices');
+      log('[$_getTimestamp()] Response received: Status ${response.statusCode}',
+          name: 'ProductsApiServices');
       final List<dynamic> data = response.data['promoted_products'];
-      log('[$_getTimestamp()] Promoted products count: ${data.length}', name: 'ProductsApiServices');
-      log('[$_getTimestamp()] Promoted products data: $data', name: 'ProductsApiServices');
+      log('[$_getTimestamp()] Promoted products count: ${data.length}',
+          name: 'ProductsApiServices');
+      log('[$_getTimestamp()] Promoted products data: $data',
+          name: 'ProductsApiServices');
 
       return data.asMap().entries.map((entry) {
         final index = entry.key;
@@ -125,42 +136,44 @@ Future<List<PromotedBrandProductModel>> getPromotedBrands() async {
         try {
           return PromotedProductsModel.fromJson(json);
         } catch (e) {
-          log('[$_getTimestamp()] Error parsing promoted product #$index: $e', 
-              name: 'ProductsApiServices', 
-              error: e);
+          log('[$_getTimestamp()] Error parsing promoted product #$index: $e',
+              name: 'ProductsApiServices', error: e);
           rethrow;
         }
       }).toList();
     } catch (e, stack) {
-      log('[$_getTimestamp()] Error fetching promoted products from $endpoint: $e', 
-          name: 'ProductsApiServices', 
-          error: e, 
-          stackTrace: stack);
+      log('[$_getTimestamp()] Error fetching promoted products from $endpoint: $e',
+          name: 'ProductsApiServices', error: e, stackTrace: stack);
       throw Exception('Failed to fetch promoted products: $e');
     }
   }
 
   // Fetch filtered products
-  Future<List<ProductsModel>> getFilteredProducts(Map<String, dynamic> queryParams) async {
+  Future<List<ProductsModel>> getFilteredProducts(
+      Map<String, dynamic> queryParams) async {
     const String endpoint = '/view_products';
-    log('[$_getTimestamp()] Starting fetch filtered products from $endpoint with params: $queryParams', 
+    log('[$_getTimestamp()] Starting fetch filtered products from $endpoint with params: $queryParams',
         name: 'ProductsApiServices');
-    
+
     try {
       final response = await _dio.get(endpoint, queryParameters: queryParams);
-      log('[$_getTimestamp()] Response received: Status ${response.statusCode}', name: 'ProductsApiServices');
-      log('[$_getTimestamp()] Raw API response: ${response.data}', name: 'ProductsApiServices');
+      log('[$_getTimestamp()] Response received: Status ${response.statusCode}',
+          name: 'ProductsApiServices');
+      log('[$_getTimestamp()] Raw API response: ${response.data}',
+          name: 'ProductsApiServices');
 
       if (response.statusCode == 200) {
         final data = response.data as Map<String, dynamic>;
         final List<dynamic> productList = data['product'];
-        log('[$_getTimestamp()] Filtered product list count: ${productList.length}', name: 'ProductsApiServices');
+        log('[$_getTimestamp()] Filtered product list count: ${productList.length}',
+            name: 'ProductsApiServices');
 
         return productList.asMap().entries.map((entry) {
           final index = entry.key;
           final dynamic item = entry.value;
           final json = Map<String, dynamic>.from(item);
-          log('[$_getTimestamp()] Processing filtered product #$index: $json', name: 'ProductsApiServices');
+          log('[$_getTimestamp()] Processing filtered product #$index: $json',
+              name: 'ProductsApiServices');
 
           final modifiedJson = {
             ...json,
@@ -172,74 +185,54 @@ Future<List<PromotedBrandProductModel>> getPromotedBrands() async {
           try {
             return ProductsModel.fromJson(modifiedJson);
           } catch (e) {
-            log('[$_getTimestamp()] Error parsing filtered product #$index: $e', 
-                name: 'ProductsApiServices', 
-                error: e);
-            log('[$_getTimestamp()] Problematic product data: $modifiedJson', name: 'ProductsApiServices');
+            log('[$_getTimestamp()] Error parsing filtered product #$index: $e',
+                name: 'ProductsApiServices', error: e);
+            log('[$_getTimestamp()] Problematic product data: $modifiedJson',
+                name: 'ProductsApiServices');
             rethrow;
           }
         }).toList();
       } else {
-        log('[$_getTimestamp()] Failed to fetch filtered products: ${response.statusMessage}', 
+        log('[$_getTimestamp()] Failed to fetch filtered products: ${response.statusMessage}',
             name: 'ProductsApiServices');
         throw Exception('Failed to fetch products: ${response.statusMessage}');
       }
     } on DioException catch (e) {
-      log('[$_getTimestamp()] Dio error fetching filtered products from $endpoint: ${e.message}', 
-          name: 'ProductsApiServices', 
-          error: e,
-          stackTrace: e.stackTrace);
+      log('[$_getTimestamp()] Dio error fetching filtered products from $endpoint: ${e.message}',
+          name: 'ProductsApiServices', error: e, stackTrace: e.stackTrace);
       throw Exception('Dio error: ${e.message}');
     }
   }
 
-  // Fetch all brands
   Future<List<BrandModel>> getAllBrands() async {
     const String endpoint = '/view_brand';
-    log('[$_getTimestamp()] Starting fetch brands from $endpoint', name: 'ProductsApiServices');
-    
+    log('[$_getTimestamp()] Starting fetch brands from $endpoint',
+        name: 'ProductsApiServices');
     try {
       final response = await _dio.get(endpoint);
-      log('[$_getTimestamp()] Response received: Status ${response.statusCode}', name: 'ProductsApiServices');
-      log('[$_getTimestamp()] Raw API response: ${response.data}', name: 'ProductsApiServices');
-
+      log('[$_getTimestamp()] Response received: Status ${response.statusCode}',
+          name: 'ProductsApiServices');
+      log('[$_getTimestamp()] Raw API response: ${response.data}',
+          name: 'ProductsApiServices');
       if (response.statusCode == 200) {
         final data = response.data as Map<String, dynamic>;
-        final List<dynamic> brandList = data['brands'];
-        log('[$_getTimestamp()] Brand list count: ${brandList.length}', name: 'ProductsApiServices');
-
+        final List<dynamic> brandList = data['brands'] ?? [];
+        log('[$_getTimestamp()] Brand list: $brandList',
+            name: 'ProductsApiServices');
         return brandList.asMap().entries.map((entry) {
           final index = entry.key;
-          final dynamic item = entry.value;
-          final json = Map<String, dynamic>.from(item);
+          final json = Map<String, dynamic>.from(entry.value);
           json['id'] = json['id'].toString();
-          log('[$_getTimestamp()] Processing brand #$index: $json', name: 'ProductsApiServices');
-
-          try {
-            return BrandModel.fromJson(json);
-          } catch (e) {
-            log('[$_getTimestamp()] Error parsing brand #$index: $e', 
-                name: 'ProductsApiServices', 
-                error: e);
-            rethrow;
-          }
+          log('[$_getTimestamp()] Processing brand #$index: $json',
+              name: 'ProductsApiServices');
+          return BrandModel.fromJson(json);
         }).toList();
       } else {
-        log('[$_getTimestamp()] Failed to fetch brands: ${response.statusMessage}', 
-            name: 'ProductsApiServices');
         throw Exception('Failed to fetch brands: ${response.statusMessage}');
       }
-    } on DioException catch (e) {
-      log('[$_getTimestamp()] Dio error fetching brands from $endpoint: ${e.message}', 
-          name: 'ProductsApiServices', 
-          error: e,
-          stackTrace: e.stackTrace);
-      throw Exception('Dio error: ${e.message}');
     } catch (e, stack) {
-      log('[$_getTimestamp()] Unexpected error fetching brands from $endpoint: $e', 
-          name: 'ProductsApiServices', 
-          error: e, 
-          stackTrace: stack);
+      log('[$_getTimestamp()] Error fetching brands: $e',
+          name: 'ProductsApiServices', error: e, stackTrace: stack);
       throw Exception('Failed to fetch brands: $e');
     }
   }

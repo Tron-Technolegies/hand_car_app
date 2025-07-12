@@ -9,7 +9,7 @@ class ProductsFilterState with _$ProductsFilterState {
     String? categoryId,
     @Default(0.0) double minPrice,
     @Default(double.infinity) double maxPrice,
-    @Default([]) List<String> selectedBrandIds, 
+    @Default('') String brand,
     @Default(0.0) double minRating,
     @Default(false) bool showNewArrivals,
     @Default(false) bool showBestsellers,
@@ -18,6 +18,4 @@ class ProductsFilterState with _$ProductsFilterState {
 
   factory ProductsFilterState.fromJson(Map<String, dynamic> json) =>
       _$ProductsFilterStateFromJson(json);
-
-
 }

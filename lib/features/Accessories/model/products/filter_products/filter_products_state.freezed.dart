@@ -23,7 +23,7 @@ mixin _$ProductsFilterState {
   String? get categoryId => throw _privateConstructorUsedError;
   double get minPrice => throw _privateConstructorUsedError;
   double get maxPrice => throw _privateConstructorUsedError;
-  List<String> get selectedBrandIds => throw _privateConstructorUsedError;
+  String get brand => throw _privateConstructorUsedError;
   double get minRating => throw _privateConstructorUsedError;
   bool get showNewArrivals => throw _privateConstructorUsedError;
   bool get showBestsellers => throw _privateConstructorUsedError;
@@ -49,7 +49,7 @@ abstract class $ProductsFilterStateCopyWith<$Res> {
       {String? categoryId,
       double minPrice,
       double maxPrice,
-      List<String> selectedBrandIds,
+      String brand,
       double minRating,
       bool showNewArrivals,
       bool showBestsellers,
@@ -74,7 +74,7 @@ class _$ProductsFilterStateCopyWithImpl<$Res, $Val extends ProductsFilterState>
     Object? categoryId = freezed,
     Object? minPrice = null,
     Object? maxPrice = null,
-    Object? selectedBrandIds = null,
+    Object? brand = null,
     Object? minRating = null,
     Object? showNewArrivals = null,
     Object? showBestsellers = null,
@@ -93,10 +93,10 @@ class _$ProductsFilterStateCopyWithImpl<$Res, $Val extends ProductsFilterState>
           ? _value.maxPrice
           : maxPrice // ignore: cast_nullable_to_non_nullable
               as double,
-      selectedBrandIds: null == selectedBrandIds
-          ? _value.selectedBrandIds
-          : selectedBrandIds // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+      brand: null == brand
+          ? _value.brand
+          : brand // ignore: cast_nullable_to_non_nullable
+              as String,
       minRating: null == minRating
           ? _value.minRating
           : minRating // ignore: cast_nullable_to_non_nullable
@@ -129,7 +129,7 @@ abstract class _$$ProductsFilterStateImplCopyWith<$Res>
       {String? categoryId,
       double minPrice,
       double maxPrice,
-      List<String> selectedBrandIds,
+      String brand,
       double minRating,
       bool showNewArrivals,
       bool showBestsellers,
@@ -152,7 +152,7 @@ class __$$ProductsFilterStateImplCopyWithImpl<$Res>
     Object? categoryId = freezed,
     Object? minPrice = null,
     Object? maxPrice = null,
-    Object? selectedBrandIds = null,
+    Object? brand = null,
     Object? minRating = null,
     Object? showNewArrivals = null,
     Object? showBestsellers = null,
@@ -171,10 +171,10 @@ class __$$ProductsFilterStateImplCopyWithImpl<$Res>
           ? _value.maxPrice
           : maxPrice // ignore: cast_nullable_to_non_nullable
               as double,
-      selectedBrandIds: null == selectedBrandIds
-          ? _value.selectedBrandIds
-          : selectedBrandIds // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+      brand: null == brand
+          ? _value.brand
+          : brand // ignore: cast_nullable_to_non_nullable
+              as String,
       minRating: null == minRating
           ? _value.minRating
           : minRating // ignore: cast_nullable_to_non_nullable
@@ -202,7 +202,7 @@ class _$ProductsFilterStateImpl implements _ProductsFilterState {
       {this.categoryId,
       this.minPrice = 0.0,
       this.maxPrice = double.infinity,
-      this.selectedBrandIds = const [],
+      this.brand = '',
       this.minRating = 0.0,
       this.showNewArrivals = false,
       this.showBestsellers = false,
@@ -221,7 +221,7 @@ class _$ProductsFilterStateImpl implements _ProductsFilterState {
   final double maxPrice;
   @override
   @JsonKey()
-  final List<String> selectedBrandIds;
+  final String brand;
   @override
   @JsonKey()
   final double minRating;
@@ -236,7 +236,7 @@ class _$ProductsFilterStateImpl implements _ProductsFilterState {
 
   @override
   String toString() {
-    return 'ProductsFilterState(categoryId: $categoryId, minPrice: $minPrice, maxPrice: $maxPrice, selectedBrandIds: $selectedBrandIds, minRating: $minRating, showNewArrivals: $showNewArrivals, showBestsellers: $showBestsellers, searchQuery: $searchQuery)';
+    return 'ProductsFilterState(categoryId: $categoryId, minPrice: $minPrice, maxPrice: $maxPrice, brand: $brand, minRating: $minRating, showNewArrivals: $showNewArrivals, showBestsellers: $showBestsellers, searchQuery: $searchQuery)';
   }
 
   @override
@@ -250,8 +250,7 @@ class _$ProductsFilterStateImpl implements _ProductsFilterState {
                 other.minPrice == minPrice) &&
             (identical(other.maxPrice, maxPrice) ||
                 other.maxPrice == maxPrice) &&
-            const DeepCollectionEquality()
-                .equals(other.selectedBrandIds, selectedBrandIds) &&
+            (identical(other.brand, brand) || other.brand == brand) &&
             (identical(other.minRating, minRating) ||
                 other.minRating == minRating) &&
             (identical(other.showNewArrivals, showNewArrivals) ||
@@ -264,16 +263,8 @@ class _$ProductsFilterStateImpl implements _ProductsFilterState {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      categoryId,
-      minPrice,
-      maxPrice,
-      const DeepCollectionEquality().hash(selectedBrandIds),
-      minRating,
-      showNewArrivals,
-      showBestsellers,
-      searchQuery);
+  int get hashCode => Object.hash(runtimeType, categoryId, minPrice, maxPrice,
+      brand, minRating, showNewArrivals, showBestsellers, searchQuery);
 
   /// Create a copy of ProductsFilterState
   /// with the given fields replaced by the non-null parameter values.
@@ -297,7 +288,7 @@ abstract class _ProductsFilterState implements ProductsFilterState {
       {final String? categoryId,
       final double minPrice,
       final double maxPrice,
-      final List<String> selectedBrandIds,
+      final String brand,
       final double minRating,
       final bool showNewArrivals,
       final bool showBestsellers,
@@ -313,7 +304,7 @@ abstract class _ProductsFilterState implements ProductsFilterState {
   @override
   double get maxPrice;
   @override
-  List<String> get selectedBrandIds;
+  String get brand;
   @override
   double get minRating;
   @override

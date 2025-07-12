@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:hand_car/features/Accessories/model/products/brand/brand_model.dart';
 import 'package:hand_car/features/Accessories/model/products/filter_products/filter_products_state.dart';
 import 'package:hand_car/features/Accessories/model/products/products_model.dart';
 import 'package:hand_car/features/Accessories/services/products_service.dart';
+import 'package:hand_car/features/Accessories/view/pages/accessories_page.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -24,14 +27,21 @@ class ProductsController extends _$ProductsController {
   }
 
   Future<void> applyFilters(ProductsFilterState filters) async {
-    state = const AsyncValue.loading();
-    try {
-      final filteredProducts = await fetchFilteredProducts(filters);
-      state = AsyncValue.data(filteredProducts);
-    } catch (e) {
-      state = AsyncValue.error(e, StackTrace.current);
-    }
+  final selectedCategory = ref.read(selectedCategoryNameProvider);
+  
+  // Only apply filters in "All Products"
+  if (selectedCategory != 'All Products') {
+    return; // Exit without applying filters
   }
+
+  state = const AsyncValue.loading();
+  try {
+    final filteredProducts = await fetchFilteredProducts(filters);
+    state = AsyncValue.data(filteredProducts);
+  } catch (e) {
+    state = AsyncValue.error(e, StackTrace.current);
+  }
+}
 
   // Add this searchProducts method
   Future<void> searchProducts(String query) async {
@@ -47,24 +57,28 @@ class ProductsController extends _$ProductsController {
     }
   }
 
-  Future<List<ProductsModel>> fetchFilteredProducts(
-      ProductsFilterState filters) async {
-    try {
-      final productsApiService = ref.read(productsApiServiceProvider);
-      final queryParams = <String, dynamic>{
-        if (filters.categoryId != null) 'category_id': filters.categoryId,
-        'brand_id': filters.selectedBrandIds,
-        if (filters.minPrice > 0) 'min_price': filters.minPrice,
-        if (filters.maxPrice < double.infinity) 'max_price': filters.maxPrice,
-        if (filters.minRating > 0) 'min_rating': filters.minRating,
-        'bestsellers': filters.showBestsellers.toString(),
-        'new_arrivals': filters.showNewArrivals.toString(),
-      };
-      return await productsApiService.getFilteredProducts(queryParams);
-    } catch (e) {
-      throw Exception('Failed to fetch filtered products: $e');
+  Future<List<ProductsModel>> fetchFilteredProducts(ProductsFilterState filters) async {
+  try {
+    final productsApiService = ref.read(productsApiServiceProvider);
+    final queryParams = <String, dynamic>{};
+    if (filters.brand.isNotEmpty) {
+      final brands = await ref.read(productsControllerProvider.notifier).getBrands();
+      final selectedBrand = brands.firstWhere(
+        (brand) => brand.id == filters.brand,
+        orElse: () => BrandModel(id: '', name: ''),
+      );
+      if (selectedBrand.name.isNotEmpty) {
+        queryParams['brand'] = selectedBrand.name;
+      } else {
+        log('No brand found for ID: ${filters.brand}', name: 'ProductsController');
+      }
     }
+    log('Query params: $queryParams', name: 'ProductsApiServices');
+    return await productsApiService.getFilteredProducts(queryParams);
+  } catch (e) {
+    throw Exception('Failed to fetch filtered products: $e');
   }
+}
  // In ProductsController
 Future<List<BrandModel>> getBrands() async {
   try {

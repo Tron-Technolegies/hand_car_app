@@ -13,15 +13,10 @@ class ProductsFilterNotifier extends _$ProductsFilterNotifier {
 
   // Updated brand handling methods
   void toggleBrand(String brandId, bool selected) {
-    final brands = List<String>.from(state.selectedBrandIds);
-    
-    if (selected) {
-      brands.add(brandId);
-    } else {
-      brands.remove(brandId);
-    }
-    
-    state = state.copyWith(selectedBrandIds: brands);
+
+    state = state.copyWith(
+  brand: brandId,
+    );
   }
 
   void updatePriceRange(double min, double max) {

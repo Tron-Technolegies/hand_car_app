@@ -26,10 +26,15 @@ import 'package:lottie/lottie.dart';
 import 'package:badges/badges.dart' as badges;
 
 final GlobalKey<ScaffoldState> scaffoldKey2 = GlobalKey<ScaffoldState>();
+final isAllProductsProvider = StateProvider<bool>((ref) {
+  final selectedCategory = ref.watch(selectedCategoryNameProvider);
+  return selectedCategory == 'All Products';
+});
 
 // Provider to track selected category name
 final selectedCategoryNameProvider =
     StateProvider<String?>((ref) => 'All Products');
+
 final searchQueryProvider = StateProvider<String>((ref) => '');
 
 class AccessoriesPage extends HookConsumerWidget {
@@ -83,6 +88,8 @@ class AccessoriesPage extends HookConsumerWidget {
     final debounceTimer = useState<Timer?>(null);
     ref.watch(searchQueryProvider);
     ref.watch(selectedCategoryNameProvider);
+    // In the build method of AccessoriesPage:
+    final isAllProducts = ref.watch(isAllProductsProvider);
 
     // Debounced search
     void onSearchChanged(String query) {
@@ -192,15 +199,17 @@ class AccessoriesPage extends HookConsumerWidget {
                 ),
                 IconButton(
                   icon: const Icon(Icons.filter_list),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => ProductsFilterDialog(
-         
-                      
-                      ),
-                    );
-                  },
+                  onPressed: isAllProducts
+                      ? () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => ProductsFilterDialog(),
+                          );
+                        }
+                      : null, // Disable button
+                  tooltip: isAllProducts
+                      ? 'Filter products'
+                      : 'Filtering only available in "All Products"',
                 ),
               ],
               leading: isSearching.value
@@ -315,16 +324,16 @@ class AccessoriesPage extends HookConsumerWidget {
                     final selectedCategory = allCategories[index];
                     return products.when(
                       data: (productsList) {
-                        // Filter products by category name
+                        log('Products before filtering: $productsList');
+                        log('Selected category: ${selectedCategory.name}');
                         List<ProductsModel> filteredProducts = productsList;
-
                         if (selectedCategory.id != 0) {
                           filteredProducts = filteredProducts
                               .where((product) =>
                                   product.category == selectedCategory.name)
                               .toList();
+                          log('Products after filtering: $filteredProducts');
                         }
-
                         return GridViewBuilderAccessoriesWidget(
                           categoryName: selectedCategory.name,
                           products: filteredProducts,
@@ -336,10 +345,10 @@ class AccessoriesPage extends HookConsumerWidget {
                           },
                         );
                       },
-                      loading: () =>
-                          const Center(child: CircularProgressIndicator()),
                       error: (error, _) =>
                           Center(child: Lottie.asset(Assets.animations.error)),
+                      loading: () =>
+                          const Center(child: CircularProgressIndicator()),
                     );
                   },
                   loading: () =>
