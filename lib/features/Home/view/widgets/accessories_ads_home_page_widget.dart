@@ -63,28 +63,22 @@ class AccessoriesAdsHomePageWidget extends ConsumerWidget {
 
           return GestureDetector(
             onTap: () {
-              if (product.id != null) {
-                final productsModel = ProductsModel(
-                    id: product.id,
-                    name: product.name,
-                    image: product.image,
-                    description: product.description,
-                    originalPrice: product.originalPrice,
-                    discountedPrice: product.discountedPrice,
-                    discountPercentage: product.discountPercentage,
-                    averageRating: product.averageRating,
-                    isBestseller: product.isBestseller,
-                    category: product.category!,
-                    brand: product.brand!);
-                context.push(
-                  '${AccessoriesDetailsPage.route}/${product.id}',
-                  extra: productsModel,
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Invalid product ID')),
-                );
-              }
+              final productsModel = ProductsModel(
+                  id: product.id,
+                  name: product.name,
+                  image: product.image,
+                  description: product.description,
+                  originalPrice: product.originalPrice,
+                  discountedPrice: product.discountedPrice,
+                  discountPercentage: product.discountPercentage,
+                  averageRating: product.averageRating,
+                  isBestseller: product.isBestseller,
+                  category: product.category!,
+                  brand: product.brand!);
+              context.push(
+                '${AccessoriesDetailsPage.route}/${product.id}',
+                extra: productsModel,
+              );
             },
             child: Padding(
               padding: EdgeInsets.symmetric(

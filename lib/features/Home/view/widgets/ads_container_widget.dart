@@ -26,7 +26,7 @@ class CouponContainer extends StatelessWidget {
       height: 200,
       padding: EdgeInsets.all(context.space.space_200),
       decoration: BoxDecoration(
-        gradient: gradient, // Blue background color
+        gradient: gradient, 
         borderRadius: BorderRadius.circular(10),
       ),
       child: Stack(

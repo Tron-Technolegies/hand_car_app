@@ -163,9 +163,15 @@ class HomePage extends ConsumerWidget {
               height: 250,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
-                color: context.colors.primary,
+                color: context.colors.background,
               ),
-              child: const HomePageServicesContainerWidget()),
+              child: GestureDetector(
+                  onTap: () {
+                    ref
+                        .read(navigationProvider.notifier)
+                        .changeSelectedItemIndex(3);
+                  },
+                  child: const HomePageServicesContainerWidget())),
           SizedBox(
             height: context.space.space_400,
           ),
@@ -173,7 +179,13 @@ class HomePage extends ConsumerWidget {
             "Curated Original Spare Parts",
             style: context.typography.h3,
           ),
-          const SpareBrandsWidget(),
+          GestureDetector(
+              onTap: () {
+                ref
+                    .read(navigationProvider.notifier)
+                    .changeSelectedItemIndex(0);
+              },
+              child: const SpareBrandsWidget()),
           SizedBox(
             height: context.space.space_800 * 2,
           ),
