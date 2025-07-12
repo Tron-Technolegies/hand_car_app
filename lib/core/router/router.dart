@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/router/redirect.dart';
 import 'package:hand_car/features/Accessories/model/products/products_model.dart';
+import 'package:hand_car/features/Accessories/model/products/promoted_products/promoted_products_model.dart';
 import 'package:hand_car/features/Accessories/view/pages/accessories_details_page.dart';
 import 'package:hand_car/features/Accessories/view/pages/accessories_page.dart';
 import 'package:hand_car/features/Accessories/view/pages/cart_page.dart';
@@ -77,7 +78,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           return ForgotPasswordOtpPage(email: email);
         },
       ),
-   GoRoute(
+      GoRoute(
         path: ResetPasswordPage.route,
         builder: (context, state) {
           final emailMap = state.extra as Map<String, String>? ?? {};
@@ -94,13 +95,38 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AccessoriesPage.route,
         builder: (context, state) => const AccessoriesPage(),
       ),
-      GoRoute(
-        path: '${AccessoriesDetailsPage.route}/:id',
-        builder: (context, state) {
-          final product = state.extra as ProductsModel?;
-          return AccessoriesDetailsPage(product: product!);
-        },
-      ),
+     GoRoute(
+  path: '${AccessoriesDetailsPage.route}/:id',
+  builder: (context, state) {
+    final extra = state.extra;
+    ProductsModel product;
+
+    if (extra is ProductsModel) {
+      product = extra;
+    } else if (extra is PromotedProductsModel) {
+      // Convert PromotedProductsModel to ProductsModel
+      product = ProductsModel(
+        id: extra.id,
+        name: extra.name,
+        image: extra.image,
+        description: extra.description,
+        originalPrice: extra.originalPrice,
+        discountedPrice: extra.discountedPrice,
+        discountPercentage: extra.discountPercentage,
+        averageRating: extra.averageRating,
+        isBestseller: extra.isBestseller,
+        category: extra.category!, 
+     brand: extra.brand!
+      );
+    } else {
+      return Scaffold(
+        body: Center(child: Text('Invalid product data')),
+      );
+    }
+
+    return AccessoriesDetailsPage(product: product);
+  },
+),
       GoRoute(
         path: ServicesPage.route,
         builder: (context, state) => ServicesPage(),

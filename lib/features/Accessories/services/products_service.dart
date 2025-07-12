@@ -74,7 +74,7 @@ class ProductsApiServices {
 
   // Fetch promoted brands
 Future<List<PromotedBrandProductModel>> getPromotedBrands() async {
-  const String endpoint = '/view_promoted_brands';
+  const String endpoint = '/promoted_brands_products';
   log('[$_getTimestamp()] Starting fetch promoted brands products from $endpoint', name: 'ProductsApiServices');
   
   try {

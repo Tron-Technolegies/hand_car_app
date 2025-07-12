@@ -4,6 +4,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
 import 'package:hand_car/features/Accessories/controller/products_controller/promoted_brands/promoted_products_controller.dart';
+import 'package:hand_car/features/Accessories/model/products/products_model.dart';
 import 'package:hand_car/features/Accessories/view/pages/accessories_details_page.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -62,10 +63,28 @@ class AccessoriesAdsHomePageWidget extends ConsumerWidget {
 
           return GestureDetector(
             onTap: () {
-              // context.push(
-              //   '${AccessoriesDetailsPage.route}/${product.id}',
-              //   extra: product,
-              // );
+              if (product.id != null) {
+                final productsModel = ProductsModel(
+                    id: product.id,
+                    name: product.name,
+                    image: product.image,
+                    description: product.description,
+                    originalPrice: product.originalPrice,
+                    discountedPrice: product.discountedPrice,
+                    discountPercentage: product.discountPercentage,
+                    averageRating: product.averageRating,
+                    isBestseller: product.isBestseller,
+                    category: product.category!,
+                    brand: product.brand!);
+                context.push(
+                  '${AccessoriesDetailsPage.route}/${product.id}',
+                  extra: productsModel,
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Invalid product ID')),
+                );
+              }
             },
             child: Padding(
               padding: EdgeInsets.symmetric(
@@ -160,7 +179,7 @@ class AccessoriesAdsHomePageWidget extends ConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'AED ${product.originalPrice.toStringAsFixed(2)}',
+                            'AED ${product.discountedPrice.toStringAsFixed(2)}',
                             style: context.typography.bodyLarge
                                 .copyWith(color: context.colors.primaryTxt),
                           ),
@@ -169,7 +188,7 @@ class AccessoriesAdsHomePageWidget extends ConsumerWidget {
                               padding: EdgeInsets.only(
                                   left: context.space.space_200),
                               child: Text(
-                                'AED ${product.discountedPrice.toStringAsFixed(2)}',
+                                'AED ${product.originalPrice.toStringAsFixed(2)}',
                                 style: const TextStyle(
                                   color: Colors.grey,
                                   decoration: TextDecoration.lineThrough,
