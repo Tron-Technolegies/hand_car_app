@@ -23,7 +23,8 @@ class SubscriptionPage extends HookConsumerWidget {
         final isSubscribed = data['subscribed'] as bool? ?? false;
         if (isSubscribed) {
           final plan = data['plan'] as Map<String, dynamic>? ?? {};
-          final serviceType = (plan['category'] as String?)?.toLowerCase() ?? 'car_wash';
+          final serviceType =
+              (plan['category'] as String?)?.toLowerCase() ?? 'car_wash';
           return _buildSubscribedInterface(context, serviceType);
         } else {
           return _buildTabbedInterface(context);
@@ -64,30 +65,25 @@ class SubscriptionPage extends HookConsumerWidget {
         ),
         title: const Text('My Subscription'),
         centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: () {
-              scaffoldKey5.currentState?.openDrawer();
-            },
-            icon: const Icon(Icons.menu),
-          ),
-        ],
+        actions: [],
         bottom: TabBar(
           controller: tabController,
           indicatorColor: activeIndex.value == 1
-              ? context.colors.primaryTxt
+              ? context.colors.primary
               : context.colors.primary,
           labelColor: activeIndex.value == 1
-              ? context.colors.primaryTxt
+              ? context.colors.primary
               : context.colors.primary,
-          labelStyle: context.typography.bodyLarge,
+          labelStyle: context.typography.bodyLarge.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
           unselectedLabelColor:
               context.colors.primaryTxt.withValues(alpha: 0.5),
           unselectedLabelStyle: context.typography.bodyLarge,
           indicatorSize: TabBarIndicatorSize.label,
           tabs: const [
             Tab(text: 'My Plan'),
-            Tab(text: 'Upgrade Plan'),
+            Tab(text: 'Upgrade Plans'),
           ],
         ),
       ),
@@ -95,19 +91,70 @@ class SubscriptionPage extends HookConsumerWidget {
         controller: tabController,
         children: [
           MyPlanScreen(serviceType: serviceType),
-          _buildUpgradeSection(context, serviceType),
+          _buildComprehensiveUpgradeSection(context, serviceType),
         ],
       ),
     );
   }
 
-  Widget _buildUpgradeSection(BuildContext context, String serviceType) {
-    // Show the appropriate subscription page based on service type
-    if (serviceType.toLowerCase() == 'car_wash') {
-      return const CarWashPlanScreen();
-    } else {
-      return const MaintenancePlanScreen();
-    }
+  Widget _buildComprehensiveUpgradeSection(
+      BuildContext context, String serviceType) {
+    final tabController = useTabController(initialLength: 2);
+    final activeIndex = useState(0);
+
+    useEffect(() {
+      void onTabChanged() {
+        activeIndex.value = tabController.index;
+      }
+
+      tabController.addListener(onTabChanged);
+      return () => tabController.removeListener(onTabChanged);
+    }, [tabController]);
+
+    return Column(
+      children: [
+        TabBar(
+          controller: tabController,
+          isScrollable: true,
+          indicatorColor: context.colors.primary,
+          labelColor: context.colors.primary,
+          labelStyle: context.typography.bodyMedium.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+          unselectedLabelColor:
+              context.colors.primaryTxt.withValues(alpha: 0.6),
+          unselectedLabelStyle: context.typography.bodyMedium,
+          indicatorSize: TabBarIndicatorSize.label,
+          tabs: [
+            Tab(text: 'Car Wash Plans'),
+            Tab(text: 'Maintenance Plans'),
+          ],
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: tabController,
+            children: [
+              // Same category upgrade options
+              // MyPlanScreen(
+              //   serviceType: serviceType,
+              //   showUpgradeOptions: true,
+              // ),
+              // Car Wash plans
+              const CarWashPlanScreen(),
+              // Maintenance plans
+              const MaintenancePlanScreen(),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _formatServiceType(String serviceType) {
+    return serviceType
+        .split('_')
+        .map((word) => word[0].toUpperCase() + word.substring(1))
+        .join(' ');
   }
 
   Widget _buildTabbedInterface(BuildContext context) {

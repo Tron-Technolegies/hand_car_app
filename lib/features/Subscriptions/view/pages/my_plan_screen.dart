@@ -100,32 +100,6 @@ class MyPlanScreen extends HookConsumerWidget {
           SizedBox(height: context.space.space_200),
           Center(child: _buildSubscribedView(data, theme, context)),
           SizedBox(height: context.space.space_200),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          //   children: [
-          //     Expanded(
-          //       child: ButtonWidget(
-          //         label: 'Manage Subscription',
-          //         onTap: () {
-          //           _showManageSubscriptionDialog(context);
-          //         },
-          //       ),
-          //     ),
-          //     SizedBox(width: context.space.space_100),
-          //     Expanded(
-          //       child: ButtonWidget(
-          //         label: 'Upgrade Plan',
-
-          //         onTap: () {
-          //           // Navigate to upgrade tab or show upgrade options
-          //           SnackbarUtil.showsnackbar(
-          //             message: 'Switch to "Upgrade Plan" tab to see available upgrades'
-          //           );
-          //         },
-          //       ),
-          //     ),
-          //   ],
-          // ),
         ] else ...[
           _buildAvailablePlans(context, ref, serviceType, theme, constraints),
         ],
@@ -133,62 +107,7 @@ class MyPlanScreen extends HookConsumerWidget {
     );
   }
 
-  void _showManageSubscriptionDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Manage Subscription'),
-        content: Text('What would you like to do with your subscription?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              SnackbarUtil.showsnackbar(
-                  message: 'Pause subscription feature coming soon');
-            },
-            child: Text('Pause'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _showCancelConfirmationDialog(context);
-            },
-            child: Text('Cancel Plan', style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      ),
-    );
-  }
 
-  void _showCancelConfirmationDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Cancel Subscription'),
-        content: Text(
-            'Are you sure you want to cancel your subscription? This action cannot be undone.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Keep Subscription'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              // TODO: Implement actual cancellation logic
-              SnackbarUtil.showsnackbar(
-                  message: 'Subscription cancellation not implemented yet');
-            },
-            child: Text('Yes, Cancel', style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildSubscribedView(
       Map<String, dynamic> data, ThemeData theme, BuildContext context) {
@@ -293,77 +212,127 @@ class MyPlanScreen extends HookConsumerWidget {
                   child: Text('No plans available',
                       style: context.typography.bodyMedium)),
             )
-          : ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: plans.length,
-              itemBuilder: (context, index) {
-                final plan = plans[index];
-                return Card(
-                  elevation: 4,
-                  margin: EdgeInsets.only(bottom: context.space.space_200),
-                  shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(context.space.space_100)),
-                  child: Padding(
-                    padding: EdgeInsets.all(context.space.space_200),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          plan.name,
-                          style: context.typography.bodyLarge
-                              .copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: context.space.space_100),
-                        Text(
-                          'Price: ${plan.price}',
-                          style: context.typography.bodyMedium,
-                        ),
-                        SizedBox(height: context.space.space_100),
-                        Text(
-                          'Service Type: ${plan.serviceType}',
-                          style: context.typography.bodyMedium,
-                        ),
-                        SizedBox(height: context.space.space_100),
-                        Text(
-                          'Duration: ${plan.duration}',
-                          style: context.typography.bodyMedium,
-                        ),
-                        if (plan.description != null &&
-                            plan.description!.isNotEmpty) ...[
-                          SizedBox(height: context.space.space_100),
-                          Text(
-                            'Features:',
-                            style: context.typography.bodyMedium
-                                .copyWith(fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: context.space.space_100),
-                          Text(
-                            plan.description!,
-                            style: context.typography.bodyMedium
-                                .copyWith(fontStyle: FontStyle.italic),
-                          ),
-                        ],
-                        SizedBox(height: context.space.space_200),
-                        SizedBox(
-                          width: constraints.maxWidth * 0.6,
-                          child: ButtonWidget(
-                            label: showUpgradeOptions ? 'Upgrade' : 'Subscribe',
-                            onTap: () {
-                              // TODO: Implement plan subscription/upgrade logic
-                              SnackbarUtil.showsnackbar(
-                                  message: showUpgradeOptions
-                                      ? 'Plan upgrade not implemented yet'
-                                      : 'Subscription not implemented yet');
-                            },
-                          ),
-                        ),
-                      ],
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (showUpgradeOptions) ...[
+                  Padding(
+                    padding: EdgeInsets.only(bottom: context.space.space_200),
+                    child: Text(
+                      'Available ${_formatServiceType(serviceType)} Plans',
+                      style: context.typography.bodyLarge.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: context.colors.primary,
+                      ),
                     ),
                   ),
-                );
-              },
+                ],
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: plans.length,
+                  itemBuilder: (context, index) {
+                    final plan = plans[index];
+                    return Card(
+                      elevation: 4,
+                      margin: EdgeInsets.only(bottom: context.space.space_200),
+                      shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(context.space.space_100)),
+                      child: Padding(
+                        padding: EdgeInsets.all(context.space.space_200),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  plan.name,
+                                  style: context.typography.bodyLarge
+                                      .copyWith(fontWeight: FontWeight.bold),
+                                ),
+                                if (showUpgradeOptions)
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: context.space.space_100,
+                                      vertical: context.space.space_50,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: context.colors.background
+                                          .withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(
+                                          context.space.space_50),
+                                    ),
+                                    child: Text(
+                                      'Upgrade Option',
+                                      style:
+                                          context.typography.bodySmall.copyWith(
+                                        color: context.colors.primaryTxt,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            SizedBox(height: context.space.space_100),
+                            Text(
+                              'Price: ${plan.price}',
+                              style: context.typography.bodyMedium.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: context.colors.primary,
+                              ),
+                            ),
+                            SizedBox(height: context.space.space_100),
+                            Text(
+                              'Service Type: ${_formatServiceType(plan.serviceType)}',
+                              style: context.typography.bodyMedium,
+                            ),
+                            SizedBox(height: context.space.space_100),
+                            Text(
+                              'Duration: ${plan.duration}',
+                              style: context.typography.bodyMedium,
+                            ),
+                            if (plan.description != null &&
+                                plan.description!.isNotEmpty) ...[
+                              SizedBox(height: context.space.space_100),
+                              Text(
+                                'Features:',
+                                style: context.typography.bodyMedium
+                                    .copyWith(fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(height: context.space.space_100),
+                              Text(
+                                plan.description!,
+                                style: context.typography.bodyMedium
+                                    .copyWith(fontStyle: FontStyle.italic),
+                              ),
+                            ],
+                            SizedBox(height: context.space.space_200),
+                            SizedBox(
+                              width: constraints.maxWidth * 0.6,
+                              child: ButtonWidget(
+                                label: showUpgradeOptions
+                                    ? 'Upgrade to This Plan'
+                                    : 'Subscribe',
+                                onTap: () {
+                                  if (showUpgradeOptions) {
+                                    _showUpgradeConfirmationDialog(
+                                        context, plan);
+                                  } else {
+                                    _showSubscribeConfirmationDialog(
+                                        context, plan);
+                                  }
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
       loading: () => SizedBox(
         height: constraints.maxHeight,
@@ -374,6 +343,60 @@ class MyPlanScreen extends HookConsumerWidget {
         child: Center(
             child: Text('Error loading plans: $error',
                 style: context.typography.bodyMedium)),
+      ),
+    );
+  }
+
+  void _showUpgradeConfirmationDialog(BuildContext context, dynamic plan) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Upgrade Plan'),
+        content: Text(
+            'Are you sure you want to upgrade to ${plan.name}?\n\nPrice: ${plan.price}\nDuration: ${plan.duration}'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              // TODO: Implement actual upgrade logic
+              SnackbarUtil.showsnackbar(
+                  message:
+                      'Upgrading to ${plan.name}... (Not implemented yet)');
+            },
+            child: Text('Upgrade Now'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showSubscribeConfirmationDialog(BuildContext context, dynamic plan) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Subscribe to Plan'),
+        content: Text(
+            'Are you sure you want to subscribe to ${plan.name}?\n\nPrice: ${plan.price}\nDuration: ${plan.duration}'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              // TODO: Implement actual subscription logic
+              SnackbarUtil.showsnackbar(
+                  message:
+                      'Subscribing to ${plan.name}... (Not implemented yet)');
+            },
+            child: Text('Subscribe Now'),
+          ),
+        ],
       ),
     );
   }
