@@ -103,13 +103,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           children: [
             SvgPicture.asset(Assets.icons.handCarIcon),
             SizedBox(height: context.space.space_250),
-            Text(
-              "HandCar",
-              style: context.typography.h1.copyWith(
-                color: context.colors.primary,
-              ),
-            ),
-            const SizedBox(height: 20),
+            // Text(
+            //   "HandCar",
+            //   style: context.typography.h1.copyWith(
+            //     color: context.colors.primary,
+            //   ),
+            // ),
+            // const SizedBox(height: 20),
             const CircularProgressIndicator(),
           ],
         ),
