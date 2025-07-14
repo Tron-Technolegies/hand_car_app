@@ -8,24 +8,31 @@ import 'package:hand_car/core/utils/snackbar.dart';
 
 class MyPlanScreen extends HookConsumerWidget {
   final String serviceType;
+  final bool showUpgradeOptions;
 
-  const MyPlanScreen({super.key, required this.serviceType});
+  const MyPlanScreen({
+    super.key,
+    required this.serviceType,
+    this.showUpgradeOptions = false,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final subscriptionAsync = ref.watch(mySubscriptionControllerProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          '${_formatServiceType(serviceType)} Subscription',
-          style: context.typography.bodyLarge,
-        ),
-        backgroundColor: context.colors.white,
-      ),
+      appBar: showUpgradeOptions
+          ? null
+          : AppBar(
+              title: Text(
+                '${_formatServiceType(serviceType)} Subscription',
+                style: context.typography.bodyLarge,
+              ),
+              backgroundColor: context.colors.white,
+            ),
       body: RefreshIndicator(
         onRefresh: () async {
-          // await ref.read(mySubscriptionControllerProvider.notifier).;
+          ref.invalidate(mySubscriptionControllerProvider);
         },
         child: LayoutBuilder(
           builder: (context, constraints) => SingleChildScrollView(
@@ -93,20 +100,93 @@ class MyPlanScreen extends HookConsumerWidget {
           SizedBox(height: context.space.space_200),
           Center(child: _buildSubscribedView(data, theme, context)),
           SizedBox(height: context.space.space_200),
-          // SizedBox(
-          //   width: constraints.maxWidth * 0.6,
-          //   child: ButtonWidget(
-          //     label: 'Manage Subscription',
-          //     onTap: () {
-          //       // TODO: Implement subscription cancellation or management
-          //       SnackbarUtil.showsnackbar(message: 'Subscription management not implemented yet');
-          //     },
-          //   ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          //   children: [
+          //     Expanded(
+          //       child: ButtonWidget(
+          //         label: 'Manage Subscription',
+          //         onTap: () {
+          //           _showManageSubscriptionDialog(context);
+          //         },
+          //       ),
+          //     ),
+          //     SizedBox(width: context.space.space_100),
+          //     Expanded(
+          //       child: ButtonWidget(
+          //         label: 'Upgrade Plan',
+
+          //         onTap: () {
+          //           // Navigate to upgrade tab or show upgrade options
+          //           SnackbarUtil.showsnackbar(
+          //             message: 'Switch to "Upgrade Plan" tab to see available upgrades'
+          //           );
+          //         },
+          //       ),
+          //     ),
+          //   ],
           // ),
         ] else ...[
           _buildAvailablePlans(context, ref, serviceType, theme, constraints),
         ],
       ],
+    );
+  }
+
+  void _showManageSubscriptionDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Manage Subscription'),
+        content: Text('What would you like to do with your subscription?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              SnackbarUtil.showsnackbar(
+                  message: 'Pause subscription feature coming soon');
+            },
+            child: Text('Pause'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _showCancelConfirmationDialog(context);
+            },
+            child: Text('Cancel Plan', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showCancelConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Cancel Subscription'),
+        content: Text(
+            'Are you sure you want to cancel your subscription? This action cannot be undone.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Keep Subscription'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              // TODO: Implement actual cancellation logic
+              SnackbarUtil.showsnackbar(
+                  message: 'Subscription cancellation not implemented yet');
+            },
+            child: Text('Yes, Cancel', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
     );
   }
 
@@ -124,10 +204,32 @@ class MyPlanScreen extends HookConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              plan['name'] as String,
-              style: context.typography.bodyLarge
-                  .copyWith(fontWeight: FontWeight.bold),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  plan['name'] as String,
+                  style: context.typography.bodyLarge
+                      .copyWith(fontWeight: FontWeight.bold),
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.space.space_100,
+                    vertical: context.space.space_50,
+                  ),
+                  decoration: BoxDecoration(
+                    color: context.colors.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(context.space.space_50),
+                  ),
+                  child: Text(
+                    'Active',
+                    style: context.typography.bodySmall.copyWith(
+                      color: context.colors.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
             ),
             SizedBox(height: context.space.space_100),
             Text(
@@ -247,11 +349,13 @@ class MyPlanScreen extends HookConsumerWidget {
                         SizedBox(
                           width: constraints.maxWidth * 0.6,
                           child: ButtonWidget(
-                            label: 'Subscribe',
+                            label: showUpgradeOptions ? 'Upgrade' : 'Subscribe',
                             onTap: () {
-                              // TODO: Implement plan subscription logic
+                              // TODO: Implement plan subscription/upgrade logic
                               SnackbarUtil.showsnackbar(
-                                  message: 'Subscription not implemented yet');
+                                  message: showUpgradeOptions
+                                      ? 'Plan upgrade not implemented yet'
+                                      : 'Subscription not implemented yet');
                             },
                           ),
                         ),

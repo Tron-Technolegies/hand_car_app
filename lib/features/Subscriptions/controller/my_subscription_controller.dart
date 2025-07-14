@@ -9,10 +9,10 @@ class MySubscriptionController extends _$MySubscriptionController {
   @override
   FutureOr<Map<String, dynamic>> build() async {
     log('Building MySubscriptionController');
-    return await _fetchSubscriptionStatus();
+    return await fetchSubscriptionStatus();
   }
 
-  Future<Map<String, dynamic>> _fetchSubscriptionStatus() async {
+  Future<Map<String, dynamic>> fetchSubscriptionStatus() async {
     try {
       final subscriptionService = SubscriptionService();
       final status = await subscriptionService.getSubscriptionStatus();

@@ -24,7 +24,7 @@ class SubscriptionPage extends HookConsumerWidget {
         if (isSubscribed) {
           final plan = data['plan'] as Map<String, dynamic>? ?? {};
           final serviceType = (plan['category'] as String?)?.toLowerCase() ?? 'car_wash';
-          return MyPlanScreen(serviceType: serviceType);
+          return _buildSubscribedInterface(context, serviceType);
         } else {
           return _buildTabbedInterface(context);
         }
@@ -36,6 +36,78 @@ class SubscriptionPage extends HookConsumerWidget {
         body: Center(child: Text('Error: $error')),
       ),
     );
+  }
+
+  Widget _buildSubscribedInterface(BuildContext context, String serviceType) {
+    final tabController = useTabController(initialLength: 2);
+    final activeIndex = useState(0);
+
+    useEffect(() {
+      void onTabChanged() {
+        activeIndex.value = tabController.index;
+      }
+
+      tabController.addListener(onTabChanged);
+      return () => tabController.removeListener(onTabChanged);
+    }, [tabController]);
+
+    return Scaffold(
+      key: scaffoldKey5,
+      appBar: AppBar(
+        leading: Padding(
+          padding: EdgeInsets.all(context.space.space_100),
+          child: SvgPicture.asset(
+            Assets.icons.handCarIcon,
+            height: 30,
+            width: 30,
+          ),
+        ),
+        title: const Text('My Subscription'),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {
+              scaffoldKey5.currentState?.openDrawer();
+            },
+            icon: const Icon(Icons.menu),
+          ),
+        ],
+        bottom: TabBar(
+          controller: tabController,
+          indicatorColor: activeIndex.value == 1
+              ? context.colors.primaryTxt
+              : context.colors.primary,
+          labelColor: activeIndex.value == 1
+              ? context.colors.primaryTxt
+              : context.colors.primary,
+          labelStyle: context.typography.bodyLarge,
+          unselectedLabelColor:
+              context.colors.primaryTxt.withValues(alpha: 0.5),
+          unselectedLabelStyle: context.typography.bodyLarge,
+          indicatorSize: TabBarIndicatorSize.label,
+          tabs: const [
+            Tab(text: 'My Plan'),
+            Tab(text: 'Upgrade Plan'),
+          ],
+        ),
+      ),
+      body: TabBarView(
+        controller: tabController,
+        children: [
+          MyPlanScreen(serviceType: serviceType),
+          _buildUpgradeSection(context, serviceType),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUpgradeSection(BuildContext context, String serviceType) {
+    // Show the appropriate subscription page based on service type
+    if (serviceType.toLowerCase() == 'car_wash') {
+      return const CarWashPlanScreen();
+    } else {
+      return const MaintenancePlanScreen();
+    }
   }
 
   Widget _buildTabbedInterface(BuildContext context) {
