@@ -7,7 +7,7 @@ part of 'filter_products_controller.dart';
 // **************************************************************************
 
 String _$productsFilterNotifierHash() =>
-    r'4151c642112c6b0cf99f35f2a6a796fc17a773f7';
+    r'97de3b19f047b43c24ce2b39baac1a570fe7adb0';
 
 /// See also [ProductsFilterNotifier].
 @ProviderFor(ProductsFilterNotifier)

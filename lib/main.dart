@@ -12,10 +12,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await GetStorage.init();
-  
+
   // Clear upgrader preferences for testing (optional)
   // await Upgrader.clearSavedSettings();
-  
+
   log('Config: $baseUrl');
   runApp(const ProviderScope(child: MainApp()));
 }
@@ -41,21 +41,10 @@ class MainApp extends ConsumerWidget {
           cupertinoButtonTextStyle: const TextStyle(color: Colors.black),
           upgrader: Upgrader(
             messages: CustomUpgraderMessages(),
-            
-            // CRITICAL: Enable debug logging to see what's happening
             debugLogging: true,
-            
-            // FOR TESTING ONLY: Force display dialog
             debugDisplayAlways: false,
-            debugDisplayOnce: false,  
-            
-            // Reduce alert frequency for testing
-            durationUntilAlertAgain: const Duration(minutes: 1), // Default is 3 days
-            
-         
-            
-         
-            // Callback to monitor upgrade decisions
+            debugDisplayOnce: false,
+            durationUntilAlertAgain: const Duration(minutes: 1),
             willDisplayUpgrade: ({
               required bool display,
               String? installedVersion,
@@ -78,23 +67,23 @@ class MainApp extends ConsumerWidget {
 class CustomUpgraderMessages extends UpgraderMessages {
   @override
   String get title => 'Update Required';
-  
+
   @override
   String get body =>
       'A new version of Hand Car is available. Update now to continue using the app.';
-  
+
   @override
   String get prompt => 'Update Now';
-  
+
   @override
   String get buttonTitleIgnore => 'Later';
-  
+
   @override
   String get buttonTitleLater => 'Remind Me Later';
-  
+
   @override
   String get buttonTitleUpdate => 'Update Now';
-  
+
   @override
   String get releaseNotes => 'Release Notes';
 }
@@ -102,9 +91,9 @@ class CustomUpgraderMessages extends UpgraderMessages {
 // Optional: Custom upgrade widget for more control
 class CustomUpgradeAlert extends StatelessWidget {
   final Widget child;
-  
+
   const CustomUpgradeAlert({super.key, required this.child});
-  
+
   @override
   Widget build(BuildContext context) {
     final upgrader = Upgrader(
@@ -112,9 +101,12 @@ class CustomUpgradeAlert extends StatelessWidget {
       debugLogging: true,
       debugDisplayAlways: false, // Set to true for testing
       durationUntilAlertAgain: const Duration(minutes: 1),
-      willDisplayUpgrade: ({required bool display, String? installedVersion, UpgraderVersionInfo? versionInfo}) {
+      willDisplayUpgrade: (
+          {required bool display,
+          String? installedVersion,
+          UpgraderVersionInfo? versionInfo}) {
         log('Custom Upgrade Check: $display');
-        
+
         // Custom logic here if needed
         if (display) {
           // You can show your own dialog here
@@ -122,21 +114,23 @@ class CustomUpgradeAlert extends StatelessWidget {
         }
       },
     );
-    
+
     return UpgradeAlert(
       upgrader: upgrader,
       child: child,
     );
   }
-  
-  void _showCustomUpgradeDialog(BuildContext context, UpgraderVersionInfo? versionInfo) {
+
+  void _showCustomUpgradeDialog(
+      BuildContext context, UpgraderVersionInfo? versionInfo) {
     // Custom dialog implementation
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: const Text('Update Available'),
-        content: Text('Version ${versionInfo?.appStoreVersion} is available. Please update to continue.'),
+        content: Text(
+            'Version ${versionInfo?.appStoreVersion} is available. Please update to continue.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),

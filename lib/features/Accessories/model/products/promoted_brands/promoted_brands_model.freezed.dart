@@ -27,7 +27,7 @@ mixin _$PromotedBrandProductModel {
   double get originalPrice => throw _privateConstructorUsedError;
   @JsonKey(name: "discounted_price")
   double get discountedPrice => throw _privateConstructorUsedError;
-  @JsonKey(name: "discount_percentage")
+  @JsonKey(name: "discount_percentage", fromJson: _intFromJson)
   int get discountPercentage => throw _privateConstructorUsedError;
   String? get image => throw _privateConstructorUsedError;
 
@@ -52,7 +52,8 @@ abstract class $PromotedBrandProductModelCopyWith<$Res> {
       String name,
       @JsonKey(name: "original_price") double originalPrice,
       @JsonKey(name: "discounted_price") double discountedPrice,
-      @JsonKey(name: "discount_percentage") int discountPercentage,
+      @JsonKey(name: "discount_percentage", fromJson: _intFromJson)
+      int discountPercentage,
       String? image});
 }
 
@@ -122,7 +123,8 @@ abstract class _$$PromotedBrandProductModelImplCopyWith<$Res>
       String name,
       @JsonKey(name: "original_price") double originalPrice,
       @JsonKey(name: "discounted_price") double discountedPrice,
-      @JsonKey(name: "discount_percentage") int discountPercentage,
+      @JsonKey(name: "discount_percentage", fromJson: _intFromJson)
+      int discountPercentage,
       String? image});
 }
 
@@ -185,7 +187,8 @@ class _$PromotedBrandProductModelImpl implements _PromotedBrandProductModel {
       required this.name,
       @JsonKey(name: "original_price") required this.originalPrice,
       @JsonKey(name: "discounted_price") required this.discountedPrice,
-      @JsonKey(name: "discount_percentage") required this.discountPercentage,
+      @JsonKey(name: "discount_percentage", fromJson: _intFromJson)
+      required this.discountPercentage,
       this.image});
 
   factory _$PromotedBrandProductModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -202,7 +205,7 @@ class _$PromotedBrandProductModelImpl implements _PromotedBrandProductModel {
   @JsonKey(name: "discounted_price")
   final double discountedPrice;
   @override
-  @JsonKey(name: "discount_percentage")
+  @JsonKey(name: "discount_percentage", fromJson: _intFromJson)
   final int discountPercentage;
   @override
   final String? image;
@@ -256,7 +259,7 @@ abstract class _PromotedBrandProductModel implements PromotedBrandProductModel {
       required final String name,
       @JsonKey(name: "original_price") required final double originalPrice,
       @JsonKey(name: "discounted_price") required final double discountedPrice,
-      @JsonKey(name: "discount_percentage")
+      @JsonKey(name: "discount_percentage", fromJson: _intFromJson)
       required final int discountPercentage,
       final String? image}) = _$PromotedBrandProductModelImpl;
 
@@ -274,7 +277,7 @@ abstract class _PromotedBrandProductModel implements PromotedBrandProductModel {
   @JsonKey(name: "discounted_price")
   double get discountedPrice;
   @override
-  @JsonKey(name: "discount_percentage")
+  @JsonKey(name: "discount_percentage", fromJson: _intFromJson)
   int get discountPercentage;
   @override
   String? get image;

@@ -8,11 +8,12 @@ class GridViewBuilderAccessoriesWidget extends StatelessWidget {
   final String categoryName;
   final List<ProductsModel> products; // Add products parameter
   final void Function(ProductsModel product) onProductTap;
-
+final ScrollController? scrollController;
   const GridViewBuilderAccessoriesWidget({
     required this.categoryName,
     required this.products, // Receive pre-filtered products
     required this.onProductTap,
+    this.scrollController,
     super.key,
   });
 
@@ -37,6 +38,7 @@ class GridViewBuilderAccessoriesWidget extends StatelessWidget {
     }
 
     return GridView.builder(
+      controller: scrollController,
       physics: const ClampingScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 340,

@@ -31,10 +31,7 @@ final isAllProductsProvider = StateProvider<bool>((ref) {
   return selectedCategory == 'All Products';
 });
 
-// Provider to track selected category name
-final selectedCategoryNameProvider =
-    StateProvider<String?>((ref) => 'All Products');
-
+final selectedCategoryNameProvider = StateProvider<String?>((ref) => 'All Products');
 final searchQueryProvider = StateProvider<String>((ref) => '');
 
 class AccessoriesPage extends HookConsumerWidget {
@@ -68,15 +65,15 @@ class AccessoriesPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // List of image URLs (including one for "All Products")
     final List<String> images = [
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1gGXMTCuE-ZlTuR6tXgLvAxBqfyVw-_2hSQ&s', // All Products
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1gGXMTCuE-ZlTuR6tXgLvAxBqfyVw-_2hSQ&s',
       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnAKFsUZa2dWJ4Lym_512IUED-ICJmOydQ7w&s',
       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcST_jdzAn0TttNbib1DGe119FjY-Wi_L5zc8g&s',
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvOX4aF0GarSWiEFx7EP3sixmcfagZRL6zPg&s',
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:GcRvOX4aF0GarSWiEFx7EP3sixmcfagZRL6zPg&s',
     ];
 
     final controller = useScrollController();
+    final gridScrollController = useScrollController();
     final appBarVisible = useState(true);
     final pageController = usePageController();
     final currentPage = useState(0);
@@ -86,10 +83,8 @@ class AccessoriesPage extends HookConsumerWidget {
     final products = ref.watch(productsControllerProvider);
     final cartItems = ref.watch(cartControllerProvider);
     final debounceTimer = useState<Timer?>(null);
-    ref.watch(searchQueryProvider);
-    ref.watch(selectedCategoryNameProvider);
-    // In the build method of AccessoriesPage:
     final isAllProducts = ref.watch(isAllProductsProvider);
+    final productsController = ref.watch(productsControllerProvider.notifier);
 
     // Debounced search
     void onSearchChanged(String query) {
@@ -109,11 +104,9 @@ class AccessoriesPage extends HookConsumerWidget {
 
     useEffect(() {
       void onScroll() {
-        if (controller.position.userScrollDirection ==
-            ScrollDirection.reverse) {
+        if (controller.position.userScrollDirection == ScrollDirection.reverse) {
           appBarVisible.value = false;
-        } else if (controller.position.userScrollDirection ==
-            ScrollDirection.forward) {
+        } else if (controller.position.userScrollDirection == ScrollDirection.forward) {
           appBarVisible.value = true;
         }
       }
@@ -122,11 +115,38 @@ class AccessoriesPage extends HookConsumerWidget {
       return () => controller.removeListener(onScroll);
     }, [controller]);
 
+    useEffect(() {
+      void onGridScroll() {
+        if (gridScrollController.position.pixels >=
+            gridScrollController.position.maxScrollExtent - 200 &&
+            productsController.hasNext) {
+          if (isSearching.value) {
+            ref.read(productsControllerProvider.notifier).searchProducts(
+                ref.read(searchQueryProvider));
+          } else if (isAllProducts) {
+            ref.read(productsControllerProvider.notifier).loadMoreProducts();
+          } else {
+            ref.read(productsControllerProvider.notifier).loadMoreFilteredProducts(
+                ProductsFilterState(
+                    categoryId: ref.read(selectedCategoryNameProvider) == 'All Products'
+                        ? null
+                        : category.whenOrNull(
+                            data: (categories) => categories[currentPage.value].id.toString(),
+                          ),
+                ),
+            );
+          }
+        }
+      }
+
+      gridScrollController.addListener(onGridScroll);
+      return () => gridScrollController.removeListener(onGridScroll);
+    }, [gridScrollController]);
+
     final authState = ref.watch(authControllerProvider);
     final isAuthenticated = authState.whenOrNull(
           data: (auth) => auth?.isAuthenticated ?? false,
-        ) ??
-        false;
+        ) ?? false;
 
     return Scaffold(
       key: scaffoldKey2,
@@ -151,9 +171,7 @@ class AccessoriesPage extends HookConsumerWidget {
                     if (!isSearching.value) {
                       searchTextController.clear();
                       ref.read(searchQueryProvider.notifier).state = '';
-                      ref
-                          .read(productsControllerProvider.notifier)
-                          .searchProducts('');
+                      ref.read(productsControllerProvider.notifier).searchProducts('');
                     }
                   },
                 ),
@@ -179,8 +197,7 @@ class AccessoriesPage extends HookConsumerWidget {
                     ),
                     badgeStyle: badges.BadgeStyle(
                       badgeColor: Colors.orange,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                       elevation: 2,
                     ),
                     child: IconButton(
@@ -206,7 +223,7 @@ class AccessoriesPage extends HookConsumerWidget {
                             builder: (context) => ProductsFilterDialog(),
                           );
                         }
-                      : null, // Disable button
+                      : null,
                   tooltip: isAllProducts
                       ? 'Filter products'
                       : 'Filtering only available in "All Products"',
@@ -219,9 +236,7 @@ class AccessoriesPage extends HookConsumerWidget {
                         isSearching.value = false;
                         searchTextController.clear();
                         ref.read(searchQueryProvider.notifier).state = '';
-                        ref
-                            .read(productsControllerProvider.notifier)
-                            .searchProducts('');
+                        ref.read(productsControllerProvider.notifier).searchProducts('');
                       },
                     )
                   : Padding(
@@ -238,14 +253,12 @@ class AccessoriesPage extends HookConsumerWidget {
               height: context.space.space_400 * 5,
               child: category.when(
                 data: (categories) {
-                  // Add "All Products" as the first category
                   final allCategories = [
                     Category(id: 0, name: 'All Products'),
                     ...categories,
                   ];
                   return ListView.separated(
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(width: 10),
+                    separatorBuilder: (context, index) => const SizedBox(width: 10),
                     scrollDirection: Axis.horizontal,
                     itemCount: allCategories.length,
                     itemBuilder: (context, index) {
@@ -260,18 +273,11 @@ class AccessoriesPage extends HookConsumerWidget {
                             duration: const Duration(milliseconds: 300),
                             curve: Curves.easeInOut,
                           );
-                          ref
-                              .read(selectedCategoryNameProvider.notifier)
-                              .state = category.name;
+                          ref.read(selectedCategoryNameProvider.notifier).state = category.name;
 
-                          // Apply category filter (null for "All Products")
-                          ref
-                              .read(productsControllerProvider.notifier)
-                              .applyFilters(
+                          ref.read(productsControllerProvider.notifier).applyFilters(
                                 ProductsFilterState(
-                                  categoryId: category.id == 0
-                                      ? null
-                                      : category.id.toString(),
+                                  categoryId: category.id == 0 ? null : category.id.toString(),
                                 ),
                               );
                         },
@@ -279,13 +285,11 @@ class AccessoriesPage extends HookConsumerWidget {
                     },
                   );
                 },
-                error: (error, _) =>
-                    Center(child: Lottie.asset(Assets.animations.error)),
+                error: (error, _) => Center(child: Lottie.asset(Assets.animations.error)),
                 loading: () => const Center(child: CircularProgressIndicator()),
               ),
             ),
           ),
-          // In the AccessoriesPage widget
           Expanded(
             child: PageView.builder(
               controller: pageController,
@@ -300,7 +304,6 @@ class AccessoriesPage extends HookConsumerWidget {
                     ref.read(selectedCategoryNameProvider.notifier).state =
                         allCategories[index].name;
 
-                    // Apply category filter
                     ref.read(productsControllerProvider.notifier).applyFilters(
                           ProductsFilterState(
                             categoryId: allCategories[index].id == 0
@@ -311,9 +314,7 @@ class AccessoriesPage extends HookConsumerWidget {
                   },
                 );
               },
-              itemCount: category.whenOrNull(
-                      data: (categories) => categories.length + 1) ??
-                  0,
+              itemCount: category.whenOrNull(data: (categories) => categories.length + 1) ?? 0,
               itemBuilder: (context, index) {
                 return category.when(
                   data: (categories) {
@@ -329,32 +330,39 @@ class AccessoriesPage extends HookConsumerWidget {
                         List<ProductsModel> filteredProducts = productsList;
                         if (selectedCategory.id != 0) {
                           filteredProducts = filteredProducts
-                              .where((product) =>
-                                  product.category == selectedCategory.name)
+                              .where((product) => product.category == selectedCategory.name)
                               .toList();
                           log('Products after filtering: $filteredProducts');
                         }
-                        return GridViewBuilderAccessoriesWidget(
-                          categoryName: selectedCategory.name,
-                          products: filteredProducts,
-                          onProductTap: (product) {
-                            context.push(
-                              '${AccessoriesDetailsPage.route}/${product.id}',
-                              extra: product,
-                            );
-                          },
+                        return Column(
+                          children: [
+                            Expanded(
+                              child: GridViewBuilderAccessoriesWidget(
+                                categoryName: selectedCategory.name,
+                                products: filteredProducts,
+                                onProductTap: (product) {
+                                  context.push(
+                                    '${AccessoriesDetailsPage.route}/${product.id}',
+                                    extra: product,
+                                  );
+                                },
+                                scrollController: gridScrollController,
+                              ),
+                            ),
+                            if (productsController.hasNext)
+                              const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: CircularProgressIndicator(),
+                              ),
+                          ],
                         );
                       },
-                      error: (error, _) =>
-                          Center(child: Lottie.asset(Assets.animations.error)),
-                      loading: () =>
-                          const Center(child: CircularProgressIndicator()),
+                      error: (error, _) => Center(child: Lottie.asset(Assets.animations.error)),
+                      loading: () => const Center(child: CircularProgressIndicator()),
                     );
                   },
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
-                  error: (error, _) =>
-                      Center(child: Lottie.asset(Assets.animations.error)),
+                  loading: () => const Center(child: CircularProgressIndicator()),
+                  error: (error, _) => Center(child: Lottie.asset(Assets.animations.error)),
                 );
               },
             ),

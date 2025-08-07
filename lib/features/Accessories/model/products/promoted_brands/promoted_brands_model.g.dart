@@ -13,7 +13,7 @@ _$PromotedBrandProductModelImpl _$$PromotedBrandProductModelImplFromJson(
       name: json['name'] as String,
       originalPrice: (json['original_price'] as num).toDouble(),
       discountedPrice: (json['discounted_price'] as num).toDouble(),
-      discountPercentage: (json['discount_percentage'] as num).toInt(),
+      discountPercentage: _intFromJson(json['discount_percentage']),
       image: json['image'] as String?,
     );
 

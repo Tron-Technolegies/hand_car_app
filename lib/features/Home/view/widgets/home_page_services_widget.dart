@@ -99,7 +99,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hand_car/core/extension/theme_extension.dart';
-import 'package:hand_car/features/car_service/model/service_model.dart';
 
 class HomePageServicesContainerWidget extends ConsumerWidget {
   const HomePageServicesContainerWidget({super.key});
